@@ -46,11 +46,6 @@ public class CacheCollector extends Visitor implements Measurable {
   }
 
   @Override
-  public float getRatio() {
-    return (denominator > 0) ? (float) numerator / (float) denominator : 0.0f;
-  }
-
-  @Override
   public void visit(Caches objects) {
     denominator += objects
         .stream()

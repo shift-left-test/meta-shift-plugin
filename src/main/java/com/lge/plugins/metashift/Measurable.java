@@ -30,5 +30,9 @@ package com.lge.plugins.metashift;
 public interface Measurable {
   public int getDenominator();
   public int getNumerator();
-  public float getRatio();
+  default public float getRatio() {
+    int denominator = getDenominator();
+    int numerator = getNumerator();
+    return (denominator > 0) ? (float) numerator / (float) denominator : 0.0f;
+  }
 }
