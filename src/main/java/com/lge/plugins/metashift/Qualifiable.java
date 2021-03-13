@@ -24,37 +24,10 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.Caches;
-import org.junit.*;
-import static org.junit.Assert.*;
-
-public class CachesTest {
-  private Caches objects;
-
-  @Before
-  public void setUp() throws Exception {
-    objects = new Caches();
-  }
-
-  @Test
-  public void testInitialState() throws Exception {
-    assertEquals(0, objects.size());
-  }
-
-  @Test
-  public void testAddingData() throws Exception {
-    Caches.Data first = new Caches.Data("A", "do_compile", true, Caches.Type.SHAREDSTATE);
-    Caches.Data second = new Caches.Data("A", "do_fetch", false, Caches.Type.PREMIRROR);
-    objects.add(first);
-    objects.add(second);
-    assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
-  }
-
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
-    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
-    assertEquals(1, objects.size());
-  }
+/**
+ * Qualifiable interface
+ */
+public interface Qualifiable {
+  public boolean isAvailable();
+  public boolean isQualified();
 }
