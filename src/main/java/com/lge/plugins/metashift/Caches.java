@@ -24,15 +24,15 @@
 
 package com.lge.plugins.metashift;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 
-public class Caches extends ArrayList<Caches.Data> implements Acceptor {
+public class Caches extends TreeSet<Caches.Data> implements Acceptor {
   public enum Type {
     SHAREDSTATE,
     PREMIRROR,
   }
 
-  static class Data implements com.lge.plugins.metashift.Data {
+  static class Data implements com.lge.plugins.metashift.Data, Comparable<Caches.Data> {
     private String recipe;
     private String task;
     private boolean available;
@@ -43,6 +43,20 @@ public class Caches extends ArrayList<Caches.Data> implements Acceptor {
       this.task = task;
       this.available = available;
       this.type = type;
+    }
+
+    @Override
+    public int compareTo(Caches.Data other) {
+      int compared;
+      compared = recipe.compareTo(other.recipe);
+      if (compared != 0) {
+        return compared;
+      }
+      compared = task.compareTo(other.task);
+      if (compared != 0) {
+        return compared;
+      }
+      return 0;
     }
 
     @Override
@@ -103,5 +117,6 @@ public class Caches extends ArrayList<Caches.Data> implements Acceptor {
 
   @Override
   public void accept(Visitor visitor) {
+    visitor.visit(this);
   }
 }

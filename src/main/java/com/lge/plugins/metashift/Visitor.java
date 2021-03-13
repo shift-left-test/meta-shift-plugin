@@ -28,4 +28,7 @@ package com.lge.plugins.metashift;
  * Visitor class
  */
 public class Visitor {
+  public void visit(Caches objects) {
+    return;
+  }
 }

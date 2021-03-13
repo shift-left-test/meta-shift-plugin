@@ -24,11 +24,42 @@
 
 package com.lge.plugins.metashift;
 
-/**
- * Measurable interface
- */
-public interface Measurable {
-  public int getDenominator();
-  public int getNumerator();
-  public float getRatio();
+public class CacheCollector extends Visitor implements Measurable {
+  private Caches.Type type;
+  private int denominator;
+  private int numerator;
+
+  public CacheCollector(Caches.Type type) {
+    this.type = type;
+    this.denominator = 0;
+    this.numerator = 0;
+  }
+
+  @Override
+  public int getDenominator() {
+    return denominator;
+  }
+
+  @Override
+  public int getNumerator() {
+    return numerator;
+  }
+
+  @Override
+  public float getRatio() {
+    return (denominator > 0) ? (float) numerator / (float) denominator : 0.0f;
+  }
+
+  @Override
+  public void visit(Caches objects) {
+    denominator += objects
+        .stream()
+        .filter(object -> object.getType() == type)
+        .count();
+    numerator += objects
+        .stream()
+        .filter(object -> object.getType() == type && object.isAvailable())
+        .count();
+    return;
+  }
 }

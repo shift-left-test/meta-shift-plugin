@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift;
 
 import com.lge.plugins.metashift.Caches;
+import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -56,5 +57,21 @@ public class CachesDataTest {
     assertEquals(origin.hashCode(), origin.hashCode());
     assertEquals(origin.hashCode(), same.hashCode());
     assertNotEquals(origin.hashCode(), different.hashCode());
+  }
+
+
+  @Test
+  public void testComparable() throws Exception {
+    List<Caches.Data> expected = new ArrayList<>();
+    expected.add(new Caches.Data("A", "do_compile", true, Caches.Type.SHAREDSTATE));
+    expected.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    expected.add(new Caches.Data("B", "do_compile", true, Caches.Type.SHAREDSTATE));
+
+    List<Caches.Data> actual = new ArrayList<>();
+    actual.addAll(expected);
+    Collections.shuffle(actual);
+    Collections.sort(actual);
+
+    assertEquals(expected, actual);
   }
 }

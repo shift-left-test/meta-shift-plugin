@@ -48,6 +48,13 @@ public class CachesTest {
     objects.add(first);
     objects.add(second);
     assertEquals(2, objects.size());
-    assertEquals(first, objects.get(0));
+    assertEquals(first, objects.iterator().next());
+  }
+
+  @Test
+  public void testAddingDuplicates() throws Exception {
+    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    assertEquals(1, objects.size());
   }
 }
