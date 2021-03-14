@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.util.*;
 
 /**
  * Evaluates the level of cache availability
@@ -31,8 +32,7 @@ package com.lge.plugins.metashift.models;
  * @author Sung Gon Kim
  */
 public class CacheQualifier extends Visitor implements Qualifiable {
-  private CacheCollector premirror;
-  private CacheCollector sharedState;
+  private Map<Caches.Type, CacheCollector> collection;
   private float threshold;
 
   /**
@@ -41,8 +41,9 @@ public class CacheQualifier extends Visitor implements Qualifiable {
    * @param threshold for evaluation
    */
   public CacheQualifier(float threshold) {
-    this.premirror = new CacheCollector(Caches.Type.PREMIRROR);
-    this.sharedState = new CacheCollector(Caches.Type.SHAREDSTATE);
+    this.collection = new EnumMap<>(Caches.Type.class);
+    this.collection.put(Caches.Type.PREMIRROR, new CacheCollector(Caches.Type.PREMIRROR));
+    this.collection.put(Caches.Type.SHAREDSTATE, new CacheCollector(Caches.Type.SHAREDSTATE));
     this.threshold = threshold;
   }
 
@@ -51,28 +52,20 @@ public class CacheQualifier extends Visitor implements Qualifiable {
    *
    * @param type of the object to return
    * @return CacheCollector object
-   * @throws IllegalArgumentException if unknown Caches.Type given
    */
   public CacheCollector collection(Caches.Type type) {
-    switch (type) {
-      case PREMIRROR:
-        return premirror;
-      case SHAREDSTATE:
-        return sharedState;
-      default:
-        throw new IllegalArgumentException("Unknown Cache Type: " + type);
-    }
+    return collection.get(type);
   }
 
   @Override
   public boolean isAvailable() {
-    return (premirror.getDenominator() + sharedState.getDenominator()) > 0;
+    return collection.values().stream().mapToInt(CacheCollector::getDenominator).sum() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = premirror.getDenominator() + sharedState.getDenominator();
-    int numerator = premirror.getNumerator() + sharedState.getNumerator();
+    int denominator = collection.values().stream().mapToInt(CacheCollector::getDenominator).sum();
+    int numerator = collection.values().stream().mapToInt(CacheCollector::getNumerator).sum();
     if (denominator == 0) {
       return false;
     }
@@ -81,7 +74,6 @@ public class CacheQualifier extends Visitor implements Qualifiable {
 
   @Override
   public void visit(Caches objects) {
-    objects.accept(premirror);
-    objects.accept(sharedState);
+    collection.values().stream().forEach(collector -> objects.accept(collector));
   }
 }
