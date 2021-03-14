@@ -24,11 +24,21 @@
 
 package com.lge.plugins.metashift;
 
+/**
+ * Collects the cache availability information from the given data structure
+ *
+ * @author Sung Gon Kim
+ */
 public class CacheCollector extends Visitor implements Measurable {
   private Caches.Type type;
   private int denominator;
   private int numerator;
 
+  /**
+   * Default constructor
+   *
+   * @param type of Cache.Data to filter
+   */
   public CacheCollector(Caches.Type type) {
     this.type = type;
     this.denominator = 0;

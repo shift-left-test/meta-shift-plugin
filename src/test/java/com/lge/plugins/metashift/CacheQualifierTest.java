@@ -30,6 +30,11 @@ import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+/**
+ * Unit tests for the CacheQualifier class
+ *
+ * @author Sung Gon Kim
+ */
 public class CacheQualifierTest {
   private Caches objects;
   private CacheQualifier qualifier;

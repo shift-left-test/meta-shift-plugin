@@ -25,7 +25,9 @@
 package com.lge.plugins.metashift;
 
 /**
- * Data interface
+ * Provides an interface for all metric data
+ *
+ * @author Sung Gon Kim
  */
 public interface Data {
   public boolean equals(Object object);

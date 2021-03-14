@@ -25,11 +25,30 @@
 package com.lge.plugins.metashift;
 
 /**
- * Measurable interface
+ * Provides an interface to measure data
+ *
+ * @author Sung Gon Kim
  */
 public interface Measurable {
+  /**
+   * Return the denominator of the metric
+   *
+   * @return denominator
+   */
   public int getDenominator();
+
+  /**
+   * Return the numerator of the metric
+   *
+   * @return numerator
+   */
   public int getNumerator();
+
+  /**
+   * Return the calculated ratio of the metric or zero if the denominator is zero
+   *
+   * @return ratio
+   */
   default public float getRatio() {
     int denominator = getDenominator();
     int numerator = getNumerator();

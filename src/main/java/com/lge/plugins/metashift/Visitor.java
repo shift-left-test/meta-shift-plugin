@@ -25,9 +25,16 @@
 package com.lge.plugins.metashift;
 
 /**
- * Visitor class
+ * A base visitor class which provides access to various containers
+ *
+ * @author Sung Gon Kim
  */
 public class Visitor {
+  /**
+   * visits a container class for Caches.Data objects
+   *
+   * @param objects to visit
+   */
   public void visit(Caches objects) {
     return;
   }

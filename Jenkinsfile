@@ -5,13 +5,14 @@ pipeline {
         }
     }
     stages {
+        stage("Javadoc") {
+            steps {
+                sh "mvn javadoc:javadoc"
+            }
+        }
         stage("Test") {
             steps {
                 sh "mvn verify"
-            }
-        }
-        stage("Report") {
-            steps {
                 junit "target/surefire-reports/*.xml"
             }
         }

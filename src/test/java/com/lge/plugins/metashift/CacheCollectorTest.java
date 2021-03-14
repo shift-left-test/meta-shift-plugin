@@ -30,6 +30,11 @@ import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+/**
+ * Unit tests for the CacheCollector class
+ *
+ * @author Sung Gon Kim
+ */
 public class CacheCollectorTest {
   private Caches objects;
   private CacheCollector collector;

@@ -26,18 +26,36 @@ package com.lge.plugins.metashift;
 
 import java.util.TreeSet;
 
+/**
+ * A container class for Caches.Data which provides a method for Visitor classes
+ *
+ * @author Sung Gon Kim
+ */
 public class Caches extends TreeSet<Caches.Data> implements Acceptor {
   public enum Type {
     SHAREDSTATE,
     PREMIRROR,
   }
 
+  /**
+   * Represents a data class for Caches
+   *
+   * @author Sung Gon Kim
+   */
   static class Data implements com.lge.plugins.metashift.Data, Comparable<Caches.Data> {
     private String recipe;
     private String task;
     private boolean available;
     private Caches.Type type;
 
+    /**
+     * Default constructor
+     *
+     * @param recipe name
+     * @param task name
+     * @param available the cache availability
+     * @param type of the cache
+     */
     public Data(String recipe, String task, boolean available, Caches.Type type) {
       this.recipe = recipe;
       this.task = task;
@@ -91,10 +109,20 @@ public class Caches extends TreeSet<Caches.Data> implements Acceptor {
       return this.recipe;
     }
 
+    /**
+     * Return the task name
+     *
+     * @return task name
+     */
     public String getTask() {
       return this.task;
     }
 
+    /**
+     * Return the cache availability
+     *
+     * @return true if the cache is available, false otherwise
+     */
     public boolean isAvailable() {
       return this.available;
     }
@@ -110,6 +138,11 @@ public class Caches extends TreeSet<Caches.Data> implements Acceptor {
       return hashCode;
     }
 
+    /**
+     * Return the type of the cache
+     *
+     * @return type
+     */
     public Caches.Type getType() {
       return this.type;
     }

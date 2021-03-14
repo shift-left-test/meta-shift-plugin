@@ -25,8 +25,15 @@
 package com.lge.plugins.metashift;
 
 /**
- * Acceptor interface
+ * Provides an interface for container classes
+ *
+ * @author Sung Gon Kim
  */
 public interface Acceptor {
+  /**
+   * Accepts the given visitors
+   *
+   * @param visitor to accept
+   */
   public void accept(Visitor visitor);
 }

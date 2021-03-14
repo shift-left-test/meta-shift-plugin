@@ -29,6 +29,11 @@ import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+/**
+ * Unit tests for the Caches.Data class
+ *
+ * @author Sung Gon Kim
+ */
 public class CachesDataTest {
   private Caches.Data origin = new Caches.Data("A", "do_run", true, Caches.Type.PREMIRROR);
   private Caches.Data same = new Caches.Data("A", "do_run", true, Caches.Type.PREMIRROR);

@@ -26,19 +26,33 @@ package com.lge.plugins.metashift;
 
 
 /**
- * Cache Qualifier class
+ * Evaluates the level of cache availability
+ *
+ * @author Sung Gon Kim
  */
 public class CacheQualifier extends Visitor implements Qualifiable {
   private CacheCollector premirror;
   private CacheCollector sharedState;
   private float threshold;
 
+  /**
+   * Default constructor
+   *
+   * @param threshold for evaluation
+   */
   public CacheQualifier(float threshold) {
     this.premirror = new CacheCollector(Caches.Type.PREMIRROR);
     this.sharedState = new CacheCollector(Caches.Type.SHAREDSTATE);
     this.threshold = threshold;
   }
 
+  /**
+   * Returns the relevant CacheCollector object based on the given type
+   *
+   * @param type of the object to return
+   * @return CacheCollector object
+   * @throws IllegalArgumentException if unknown Caches.Type given
+   */
   public CacheCollector collection(Caches.Type type) {
     switch (type) {
       case PREMIRROR:

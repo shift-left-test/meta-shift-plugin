@@ -28,6 +28,11 @@ import com.lge.plugins.metashift.Caches;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+/**
+ * Unit tests for the Caches class
+ *
+ * @author Sung Gon Kim
+ */
 public class CachesTest {
   private Caches objects;
 
