@@ -31,6 +31,15 @@ package com.lge.plugins.metashift.models;
  */
 public class Visitor {
   /**
+   * Visits the list of container classes
+   *
+   * @param recipe to visit
+   */
+  public void visit(Recipe recipe) {
+    recipe.caches().accept(this);
+    return;
+  }
+  /**
    * visits a container class for Caches.Data objects
    *
    * @param objects to visit

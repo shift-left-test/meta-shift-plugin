@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.models.CacheCollector;
 import com.lge.plugins.metashift.models.Caches;
+import com.lge.plugins.metashift.models.Recipe;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -36,12 +37,14 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CacheCollectorTest {
-  private Caches objects;
+  private Caches caches;
   private CacheCollector collector;
+  private Recipe recipe;
 
   @Before
   public void setUp() throws Exception {
-    objects = new Caches();
+    recipe = new Recipe("A-B-C");
+    caches = new Caches();
     collector = new CacheCollector(Caches.Type.SHAREDSTATE);
   }
 
@@ -53,38 +56,38 @@ public class CacheCollectorTest {
   }
 
   @Test
-  public void testWithEmptyCache() throws Exception {
-    objects.accept(collector);
+  public void testEmptyCache() throws Exception {
+    caches.accept(collector);
     assertEquals(0, collector.getDenominator());
     assertEquals(0, collector.getNumerator());
     assertEquals(0.0f, collector.getRatio(), 0.0f);
   }
 
   @Test
-  public void testWithNonMatchingTypeCache() throws Exception {
-    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.PREMIRROR));
-    objects.accept(collector);
+  public void testNonMatchingTypeCache() throws Exception {
+    caches.add(new Caches.Data("A", "do_fetch", true, Caches.Type.PREMIRROR));
+    caches.accept(collector);
     assertEquals(0, collector.getDenominator());
     assertEquals(0, collector.getNumerator());
     assertEquals(0.0f, collector.getRatio(), 0.0f);
   }
 
   @Test
-  public void testWithMatchingTypeCache() throws Exception {
-    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
-    objects.accept(collector);
+  public void testMatchingTypeCache() throws Exception {
+    caches.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    caches.accept(collector);
     assertEquals(1, collector.getDenominator());
     assertEquals(1, collector.getNumerator());
     assertEquals(1.0f, collector.getRatio(), 0.0f);
   }
 
   @Test
-  public void testAvailableCaches() throws Exception {
-    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
-    objects.add(new Caches.Data("A", "do_compile", false, Caches.Type.SHAREDSTATE));
-    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.PREMIRROR));
-    objects.add(new Caches.Data("A", "do_compile", false, Caches.Type.PREMIRROR));
-    objects.accept(collector);
+  public void testCompoundCaches() throws Exception {
+    caches.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_compile", false, Caches.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_fetch", true, Caches.Type.PREMIRROR));
+    caches.add(new Caches.Data("A", "do_compile", false, Caches.Type.PREMIRROR));
+    caches.accept(collector);
     assertEquals(2, collector.getDenominator());
     assertEquals(1, collector.getNumerator());
     assertEquals(0.5f, collector.getRatio(), 0.0f);
@@ -106,5 +109,33 @@ public class CacheCollectorTest {
     assertEquals(4, collector.getDenominator());
     assertEquals(2, collector.getNumerator());
     assertEquals(0.5f, collector.getRatio(), 0.0f);
+  }
+
+  @Test
+  public void testEmptyRecipe() throws Exception {
+    recipe.accept(collector);
+    assertEquals(0, collector.getDenominator());
+    assertEquals(0, collector.getNumerator());
+    assertEquals(0.0f, collector.getRatio(), 0.0f);
+  }
+
+  @Test
+  public void testRecipeWithNonMatchingCache() throws Exception {
+    caches.add(new Caches.Data("A", "do_fetch", true, Caches.Type.PREMIRROR));
+    recipe = new Recipe("A-B-C", caches);
+    recipe.accept(collector);
+    assertEquals(0, collector.getDenominator());
+    assertEquals(0, collector.getNumerator());
+    assertEquals(0.0f, collector.getRatio(), 0.0f);
+  }
+
+  @Test
+  public void testRecipeWithMatchingCache() throws Exception {
+    caches.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    recipe = new Recipe("A-B-C", caches);
+    recipe.accept(collector);
+    assertEquals(1, collector.getDenominator());
+    assertEquals(1, collector.getNumerator());
+    assertEquals(1.0f, collector.getRatio(), 0.0f);
   }
 }

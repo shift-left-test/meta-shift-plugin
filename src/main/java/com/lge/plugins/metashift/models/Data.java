@@ -29,7 +29,7 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public interface Data {
+public interface Data<T> extends Comparable<T> {
   public boolean equals(Object object);
   public String getRecipe();
   public int hashCode();

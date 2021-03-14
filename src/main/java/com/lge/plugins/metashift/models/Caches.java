@@ -42,7 +42,7 @@ public class Caches extends TreeSet<Caches.Data> implements Acceptor {
    *
    * @author Sung Gon Kim
    */
-  static class Data implements com.lge.plugins.metashift.models.Data, Comparable<Caches.Data> {
+  static class Data implements com.lge.plugins.metashift.models.Data<Caches.Data> {
     private String recipe;
     private String task;
     private boolean available;
@@ -79,11 +79,11 @@ public class Caches extends TreeSet<Caches.Data> implements Acceptor {
 
     @Override
     public boolean equals(Object object) {
-      if (this == object) {
-        return true;
-      }
       if (object == null) {
         return false;
+      }
+      if (this == object) {
+        return true;
       }
       if (getClass() != object.getClass()) {
         return false;
