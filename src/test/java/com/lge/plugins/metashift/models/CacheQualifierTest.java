@@ -22,10 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.Caches;
-import com.lge.plugins.metashift.CacheQualifier;
+import com.lge.plugins.metashift.models.Caches;
+import com.lge.plugins.metashift.models.CacheQualifier;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;

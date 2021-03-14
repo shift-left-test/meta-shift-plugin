@@ -22,20 +22,44 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.models;
+
+import com.lge.plugins.metashift.models.Caches;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 /**
- * A base visitor class which provides access to various containers
+ * Unit tests for the Caches class
  *
  * @author Sung Gon Kim
  */
-public class Visitor {
-  /**
-   * visits a container class for Caches.Data objects
-   *
-   * @param objects to visit
-   */
-  public void visit(Caches objects) {
-    return;
+public class CachesTest {
+  private Caches objects;
+
+  @Before
+  public void setUp() throws Exception {
+    objects = new Caches();
+  }
+
+  @Test
+  public void testInitialState() throws Exception {
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testAddingData() throws Exception {
+    Caches.Data first = new Caches.Data("A", "do_compile", true, Caches.Type.SHAREDSTATE);
+    Caches.Data second = new Caches.Data("A", "do_fetch", false, Caches.Type.PREMIRROR);
+    objects.add(first);
+    objects.add(second);
+    assertEquals(2, objects.size());
+    assertEquals(first, objects.iterator().next());
+  }
+
+  @Test
+  public void testAddingDuplicates() throws Exception {
+    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    assertEquals(1, objects.size());
   }
 }

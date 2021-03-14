@@ -22,18 +22,20 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.models;
 
 /**
- * Provides an interface for container classes
+ * A base visitor class which provides access to various containers
  *
  * @author Sung Gon Kim
  */
-public interface Acceptor {
+public class Visitor {
   /**
-   * Accepts the given visitors
+   * visits a container class for Caches.Data objects
    *
-   * @param visitor to accept
+   * @param objects to visit
    */
-  public void accept(Visitor visitor);
+  public void visit(Caches objects) {
+    return;
+  }
 }

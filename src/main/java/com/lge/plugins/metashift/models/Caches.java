@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.models;
 
 import java.util.TreeSet;
 
@@ -42,7 +42,7 @@ public class Caches extends TreeSet<Caches.Data> implements Acceptor {
    *
    * @author Sung Gon Kim
    */
-  static class Data implements com.lge.plugins.metashift.Data, Comparable<Caches.Data> {
+  static class Data implements com.lge.plugins.metashift.models.Data, Comparable<Caches.Data> {
     private String recipe;
     private String task;
     private boolean available;

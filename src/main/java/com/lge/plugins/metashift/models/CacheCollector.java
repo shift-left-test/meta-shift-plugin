@@ -22,44 +22,49 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
-
-import com.lge.plugins.metashift.Caches;
-import org.junit.*;
-import static org.junit.Assert.*;
+package com.lge.plugins.metashift.models;
 
 /**
- * Unit tests for the Caches class
+ * Collects the cache availability information from the given data structure
  *
  * @author Sung Gon Kim
  */
-public class CachesTest {
-  private Caches objects;
+public class CacheCollector extends Visitor implements Measurable {
+  private Caches.Type type;
+  private int denominator;
+  private int numerator;
 
-  @Before
-  public void setUp() throws Exception {
-    objects = new Caches();
+  /**
+   * Default constructor
+   *
+   * @param type of Cache.Data to filter
+   */
+  public CacheCollector(Caches.Type type) {
+    this.type = type;
+    this.denominator = 0;
+    this.numerator = 0;
   }
 
-  @Test
-  public void testInitialState() throws Exception {
-    assertEquals(0, objects.size());
+  @Override
+  public int getDenominator() {
+    return denominator;
   }
 
-  @Test
-  public void testAddingData() throws Exception {
-    Caches.Data first = new Caches.Data("A", "do_compile", true, Caches.Type.SHAREDSTATE);
-    Caches.Data second = new Caches.Data("A", "do_fetch", false, Caches.Type.PREMIRROR);
-    objects.add(first);
-    objects.add(second);
-    assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
+  @Override
+  public int getNumerator() {
+    return numerator;
   }
 
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
-    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
-    assertEquals(1, objects.size());
+  @Override
+  public void visit(Caches objects) {
+    denominator += objects
+        .stream()
+        .filter(object -> object.getType() == type)
+        .count();
+    numerator += objects
+        .stream()
+        .filter(object -> object.getType() == type && object.isAvailable())
+        .count();
+    return;
   }
 }

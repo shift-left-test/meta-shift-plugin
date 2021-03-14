@@ -22,15 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.models;
 
 /**
- * Provides an interface for all metric data
+ * Provides an interface for container classes
  *
  * @author Sung Gon Kim
  */
-public interface Data {
-  public boolean equals(Object object);
-  public String getRecipe();
-  public int hashCode();
+public interface Acceptor {
+  /**
+   * Accepts the given visitors
+   *
+   * @param visitor to accept
+   */
+  public void accept(Visitor visitor);
 }

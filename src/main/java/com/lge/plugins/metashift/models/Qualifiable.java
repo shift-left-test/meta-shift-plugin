@@ -22,36 +22,25 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.models;
 
 /**
- * Provides an interface to measure data
+ * Qualifiable interface
  *
  * @author Sung Gon Kim
  */
-public interface Measurable {
+public interface Qualifiable {
   /**
-   * Return the denominator of the metric
+   * Return whether the metric is availabile
    *
-   * @return denominator
+   * @return true if the metric is available, false otherwise
    */
-  public int getDenominator();
+  public boolean isAvailable();
 
   /**
-   * Return the numerator of the metric
+   * Return whether the evaluation of the metric meets the criteria
    *
-   * @return numerator
+   * @return true if the metric meets the criteria, false otherwise
    */
-  public int getNumerator();
-
-  /**
-   * Return the calculated ratio of the metric or zero if the denominator is zero
-   *
-   * @return ratio
-   */
-  default public float getRatio() {
-    int denominator = getDenominator();
-    int numerator = getNumerator();
-    return (denominator > 0) ? (float) numerator / (float) denominator : 0.0f;
-  }
+  public boolean isQualified();
 }

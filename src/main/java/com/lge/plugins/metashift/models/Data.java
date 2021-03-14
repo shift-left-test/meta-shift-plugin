@@ -22,49 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.models;
 
 /**
- * Collects the cache availability information from the given data structure
+ * Provides an interface for all metric data
  *
  * @author Sung Gon Kim
  */
-public class CacheCollector extends Visitor implements Measurable {
-  private Caches.Type type;
-  private int denominator;
-  private int numerator;
-
-  /**
-   * Default constructor
-   *
-   * @param type of Cache.Data to filter
-   */
-  public CacheCollector(Caches.Type type) {
-    this.type = type;
-    this.denominator = 0;
-    this.numerator = 0;
-  }
-
-  @Override
-  public int getDenominator() {
-    return denominator;
-  }
-
-  @Override
-  public int getNumerator() {
-    return numerator;
-  }
-
-  @Override
-  public void visit(Caches objects) {
-    denominator += objects
-        .stream()
-        .filter(object -> object.getType() == type)
-        .count();
-    numerator += objects
-        .stream()
-        .filter(object -> object.getType() == type && object.isAvailable())
-        .count();
-    return;
-  }
+public interface Data {
+  public boolean equals(Object object);
+  public String getRecipe();
+  public int hashCode();
 }
