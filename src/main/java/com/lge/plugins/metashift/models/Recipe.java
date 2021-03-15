@@ -44,17 +44,6 @@ public class Recipe implements Data<Recipe>, Acceptor {
    * @throws IllegalArgumentException if the fullname is malformed
    */
   public Recipe(String fullname) {
-    this(fullname, new Caches());
-  }
-
-  /**
-   * Default constructor
-   *
-   * @param fullname of the recipe
-   * @param caches container
-   * @throws IllegalArgumentException if the fullname is malformed
-   */
-  public Recipe(String fullname, Caches caches) {
     String regexp = "^(?<recipe>[\\w-+]+)(?:-)(?<version>[\\w.+]+)(?:-)(?<revision>[\\w.+]+)$";
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(fullname);
@@ -68,7 +57,16 @@ public class Recipe implements Data<Recipe>, Acceptor {
       throw new IllegalArgumentException("Invalid argument: " + fullname);
     }
 
-    this.caches = caches;
+    this.caches = new Caches();
+  }
+
+  /**
+   * Add the cache container
+   *
+   * @param object of the Caches
+   */
+  public void add(Caches object) {
+    this.caches = object;
   }
 
   /**

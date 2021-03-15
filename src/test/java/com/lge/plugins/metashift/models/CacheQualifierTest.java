@@ -24,9 +24,10 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.Caches;
 import com.lge.plugins.metashift.models.CacheQualifier;
+import com.lge.plugins.metashift.models.Caches;
 import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.Recipes;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -37,15 +38,17 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CacheQualifierTest {
-  private Caches caches;
   private CacheQualifier qualifier;
+  private Caches caches;
   private Recipe recipe;
+  private Recipes recipes;
 
   @Before
   public void setUp() throws Exception {
     caches = new Caches();
     qualifier = new CacheQualifier(0.5f);
     recipe = new Recipe("A-B-C");
+    recipes = new Recipes();
   }
 
   @Test
@@ -117,6 +120,7 @@ public class CacheQualifierTest {
     caches.add(new Caches.Data("A", "do_B", false, Caches.Type.SHAREDSTATE));
     caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
     caches.accept(qualifier);
+    assertTrue(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
   }
 
@@ -126,6 +130,7 @@ public class CacheQualifierTest {
     caches.add(new Caches.Data("A", "do_B", true, Caches.Type.SHAREDSTATE));
     caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
     caches.accept(qualifier);
+    assertTrue(qualifier.isAvailable());
     assertTrue(qualifier.isQualified());
   }
 
@@ -143,8 +148,10 @@ public class CacheQualifierTest {
     caches.add(new Caches.Data("A", "do_A", true, Caches.Type.PREMIRROR));
     caches.add(new Caches.Data("A", "do_B", false, Caches.Type.SHAREDSTATE));
     caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
-    recipe = new Recipe("A-B-C", caches);
+    recipe = new Recipe("A-B-C");
+    recipe.add(caches);
     recipe.accept(qualifier);
+    assertTrue(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
   }
 
@@ -153,8 +160,36 @@ public class CacheQualifierTest {
     caches.add(new Caches.Data("A", "do_A", true, Caches.Type.PREMIRROR));
     caches.add(new Caches.Data("A", "do_B", true, Caches.Type.SHAREDSTATE));
     caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
-    recipe = new Recipe("A-B-C", caches);
+    recipe = new Recipe("A-B-C");
+    recipe.add(caches);
     recipe.accept(qualifier);
+    assertTrue(qualifier.isAvailable());
+    assertTrue(qualifier.isQualified());
+  }
+
+  @Test
+  public void testEmptyRecipes() throws Exception {
+    recipes.accept(qualifier);
+    assertFalse(qualifier.isAvailable());
+    assertFalse(qualifier.isQualified());
+  }
+
+  @Test
+  public void testRecipesWithCompoundCachesWhichQualified() throws Exception {
+    caches = new Caches();
+    caches.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(caches);
+    recipes.add(recipe);
+
+    caches = new Caches();
+    caches.add(new Caches.Data("B", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(caches);
+    recipes.add(recipe);
+
+    recipes.accept(qualifier);
+    assertTrue(qualifier.isAvailable());
     assertTrue(qualifier.isQualified());
   }
 }

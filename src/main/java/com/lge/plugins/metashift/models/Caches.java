@@ -24,8 +24,6 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.util.TreeSet;
-
 /**
  * A container class for Caches.Data which provides a method for Visitor classes
  *

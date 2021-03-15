@@ -56,14 +56,14 @@ public class CacheCollector extends Visitor implements Measurable {
   }
 
   @Override
-  public void visit(Caches objects) {
-    denominator += objects
+  public void visit(Caches caches) {
+    denominator += caches
         .stream()
-        .filter(object -> object.getType() == type)
+        .filter(o -> o.getType() == type)
         .count();
-    numerator += objects
+    numerator += caches
         .stream()
-        .filter(object -> object.getType() == type && object.isAvailable())
+        .filter(o -> o.getType() == type && o.isAvailable())
         .count();
     return;
   }

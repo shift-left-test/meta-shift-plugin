@@ -31,20 +31,31 @@ package com.lge.plugins.metashift.models;
  */
 public class Visitor {
   /**
-   * Visits the list of container classes
+   * Visits the list of data container classes
    *
-   * @param recipe to visit
+   * @param object to visit
    */
-  public void visit(Recipe recipe) {
-    recipe.caches().accept(this);
+  public void visit(Recipe object) {
+    object.caches().accept(this);
     return;
   }
+
+  /**
+   * Visits a container class for Recipe objects
+   *
+   * @param object to visit
+   */
+  public void visit(Recipes object) {
+    object.forEach(recipe -> recipe.accept(this));
+    return;
+  }
+
   /**
    * visits a container class for Caches.Data objects
    *
-   * @param objects to visit
+   * @param object to visit
    */
-  public void visit(Caches objects) {
+  public void visit(Caches object) {
     return;
   }
 }
