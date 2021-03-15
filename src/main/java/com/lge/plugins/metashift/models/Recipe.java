@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.util.*;
+import java.util.function.*;
 import java.util.regex.*;
 
 /**
@@ -32,10 +34,10 @@ import java.util.regex.*;
  * @author Sung Gon Kim
  */
 public class Recipe implements Data<Recipe>, Acceptor {
-  private Caches caches;
   private String recipe;
   private String revision;
   private String version;
+  private Map<Class<?>, DataContainer<?>> collection;
 
   /**
    * Default constructor
@@ -57,25 +59,35 @@ public class Recipe implements Data<Recipe>, Acceptor {
       throw new IllegalArgumentException("Invalid argument: " + fullname);
     }
 
-    this.caches = new Caches();
+    collection = new HashMap<>();
+    collection.put(Caches.class, new Caches());
   }
 
   /**
-   * Add the cache container
+   * Performs the given action for each entry in this map
    *
-   * @param object of the Caches
+   * @param action The action to be performed for each entry
    */
-  public void add(Caches object) {
-    this.caches = object;
+  public void forEach(BiConsumer<Class<?>, DataContainer<?>> action) {
+    collection.forEach(action);
   }
 
   /**
-   * Return the Cache container
+   * Add the given container object to the collection
    *
-   * @return caches object
+   * @param object to store
    */
-  public Caches caches() {
-    return caches;
+  public <T extends DataContainer<?>> void add(T object) {
+    collection.put(object.getClass(), object);
+  }
+
+  /**
+   * Return the relevant container object from the collection
+   *
+   * @return container object
+   */
+  public <T extends DataContainer<?>> T collection(Class<T> clazz) {
+    return clazz.cast(collection.get(clazz));
   }
 
   @Override

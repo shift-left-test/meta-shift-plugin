@@ -36,7 +36,7 @@ public class Visitor {
    * @param object to visit
    */
   public void visit(Recipe object) {
-    object.caches().accept(this);
+    object.forEach((k, v) -> v.accept(this));
     return;
   }
 
