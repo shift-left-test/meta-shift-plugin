@@ -31,9 +31,18 @@ import java.util.TreeSet;
  *
  * @author Sung Gon Kim
  */
-public class Caches extends TreeSet<Caches.Data> implements Acceptor {
+public class Caches extends DataContainer<Caches.Data> {
+  /**
+   * Cache data type
+   */
   public enum Type {
+    /**
+     * Shared state cache
+     */
     SHAREDSTATE,
+    /**
+     * Premirror cache
+     */
     PREMIRROR,
   }
 

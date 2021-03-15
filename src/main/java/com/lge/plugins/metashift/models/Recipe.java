@@ -31,7 +31,7 @@ import java.util.regex.*;
  *
  * @author Sung Gon Kim
  */
-public class Recipe implements Acceptor, Data<Recipe> {
+public class Recipe implements Data<Recipe>, Acceptor {
   private Caches caches;
   private String recipe;
   private String revision;
