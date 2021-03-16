@@ -24,55 +24,56 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.Caches;
+import com.lge.plugins.metashift.models.Sizes;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the Caches.Data class
+ * Unit tests for the Sizes.Data class
  *
  * @author Sung Gon Kim
  */
-public class CachesDataTest {
-  private Caches.Data origin = new Caches.Data("A", "do_run", true, Caches.Type.PREMIRROR);
-  private Caches.Data same = new Caches.Data("A", "do_run", true, Caches.Type.PREMIRROR);
+public class SizesDataTest {
+  private Sizes.Data origin = new Sizes.Data("A", "a.file", 100, 50, 10);
+  private Sizes.Data same = new Sizes.Data("A", "a.file", 3, 2, 1);
 
   @Test
   public void testInitialization() throws Exception {
     assertEquals("A", origin.getRecipe());
-    assertEquals("do_run", origin.getTask());
-    assertTrue(origin.isAvailable());
-    assertEquals(Caches.Type.PREMIRROR, origin.getType());
+    assertEquals("a.file", origin.getFile());
+    assertEquals(100, origin.getLines());
+    assertEquals(50, origin.getFunctions());
+    assertEquals(10, origin.getClasses());
   }
 
   @Test
   public void testEquality() throws Exception {
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new Caches.Data("B", "do_run", true, Caches.Type.PREMIRROR));
-    assertNotEquals(origin, new Caches.Data("A", "do_fetch", true, Caches.Type.PREMIRROR));
-    assertNotEquals(origin, new Caches.Data("A", "do_run", false, Caches.Type.PREMIRROR));
-    assertNotEquals(origin, new Caches.Data("A", "do_run", true, Caches.Type.SHAREDSTATE));
+    assertNotEquals(origin, new Sizes.Data("A", "b.file", 100, 50, 10));
+    assertNotEquals(origin, new Sizes.Data("B", "a.file", 100, 50, 10));
+    assertNotEquals(origin, new Sizes.Data("B", "b.file", 100, 50, 10));
   }
 
   @Test
   public void testHashCode() throws Exception {
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new Caches.Data("B", "do_run", true, Caches.Type.PREMIRROR).hashCode());
-    assertNotEquals(origin.hashCode(), new Caches.Data("A", "do_other", true, Caches.Type.PREMIRROR).hashCode());
-    assertEquals(origin.hashCode(), new Caches.Data("A", "do_run", false, Caches.Type.PREMIRROR).hashCode());
-    assertNotEquals(origin.hashCode(), new Caches.Data("A", "do_run", true, Caches.Type.SHAREDSTATE).hashCode());
+    assertNotEquals(origin.hashCode(), new Sizes.Data("B", "a.file", 100, 50, 10).hashCode());
+    assertNotEquals(origin.hashCode(), new Sizes.Data("A", "b.file", 100, 50, 10).hashCode());
+    assertEquals(origin.hashCode(), new Sizes.Data("A", "a.file", 0, 50, 10).hashCode());
+    assertEquals(origin.hashCode(), new Sizes.Data("A", "a.file", 100, 0, 10).hashCode());
+    assertEquals(origin.hashCode(), new Sizes.Data("A", "a.file", 100, 50, 0).hashCode());
   }
 
   @Test
   public void testComparable() throws Exception {
-    List<Caches.Data> expected = new ArrayList<>();
-    expected.add(new Caches.Data("A", "do_compile", true, Caches.Type.SHAREDSTATE));
-    expected.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
-    expected.add(new Caches.Data("B", "do_compile", true, Caches.Type.SHAREDSTATE));
+    List<Sizes.Data> expected = new ArrayList<>();
+    expected.add(new Sizes.Data("A", "a.file", 3, 2, 1));
+    expected.add(new Sizes.Data("A", "b.file", 3, 2, 1));
+    expected.add(new Sizes.Data("B", "a.file", 3, 2, 1));
 
-    List<Caches.Data> actual = new ArrayList<>();
+    List<Sizes.Data> actual = new ArrayList<>();
     actual.addAll(expected);
     Collections.shuffle(actual);
     Collections.sort(actual);

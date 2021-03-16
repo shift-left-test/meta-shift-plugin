@@ -25,59 +25,48 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents a container class for Caches.Data and provides a method for Visitor classes
+ * Represents a container class for Sizes.Data and provides a method for Visitor classes
  *
  * @author Sung Gon Kim
  */
-public class Caches extends DataContainer<Caches.Data> {
+public class Sizes extends DataContainer<Sizes.Data> {
   /**
-   * Cache data type
-   */
-  public enum Type {
-    /**
-     * Shared state cache
-     */
-    SHAREDSTATE,
-    /**
-     * Premirror cache
-     */
-    PREMIRROR,
-  }
-
-  /**
-   * Represents data for the Caches class
+   * Represents data for the Sizes class
    *
    * @author Sung Gon Kim
    */
-  static class Data implements com.lge.plugins.metashift.models.Data<Caches.Data> {
+  static class Data implements com.lge.plugins.metashift.models.Data<Sizes.Data> {
     private String recipe;
-    private String task;
-    private boolean available;
-    private Caches.Type type;
+    private String file;
+    private int lines;
+    private int functions;
+    private int classes;
 
     /**
      * Default constructor
      *
      * @param recipe name
-     * @param task name
-     * @param available the cache availability
-     * @param type of the cache
+     * @param file name
+     * @param lines the number of lines for the file
+     * @param functions the number of functions for the file
+     * @param classes the number of classes for the file
      */
-    public Data(String recipe, String task, boolean available, Caches.Type type) {
+    public Data(String recipe, String file, int lines, int functions, int classes) {
       this.recipe = recipe;
-      this.task = task;
-      this.available = available;
-      this.type = type;
+      this.file = file;
+      this.lines = lines;
+      this.functions = functions;
+      this.classes = classes;
     }
 
     @Override
-    public int compareTo(Caches.Data other) {
+    public int compareTo(Sizes.Data other) {
       int compared;
       compared = recipe.compareTo(other.recipe);
       if (compared != 0) {
         return compared;
       }
-      compared = task.compareTo(other.task);
+      compared = file.compareTo(other.file);
       if (compared != 0) {
         return compared;
       }
@@ -95,20 +84,23 @@ public class Caches extends DataContainer<Caches.Data> {
       if (getClass() != object.getClass()) {
         return false;
       }
-      Caches.Data other = (Caches.Data) object;
+      Sizes.Data other = (Sizes.Data) object;
       if (!recipe.equals(other.recipe)) {
         return false;
       }
-      if (!task.equals(other.task)) {
-        return false;
-      }
-      if (available != other.available) {
-        return false;
-      }
-      if (type != other.type) {
+      if (!file.equals(other.file)) {
         return false;
       }
       return true;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int hashCode = 1;
+      hashCode = prime * hashCode + recipe.hashCode();
+      hashCode = prime * hashCode + file.hashCode();
+      return hashCode;
     }
 
     @Override
@@ -117,45 +109,44 @@ public class Caches extends DataContainer<Caches.Data> {
     }
 
     /**
-     * Return the task name
+     * Return the filename
      *
-     * @return task name
+     * @return filename
      */
-    public String getTask() {
-      return task;
+    public String getFile() {
+      return file;
     }
 
     /**
-     * Return the cache availability
+     * Return the number of lines
      *
-     * @return true if the cache is available, false otherwise
+     * @return lines
      */
-    public boolean isAvailable() {
-      return available;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int hashCode = 1;
-      hashCode = prime * hashCode + recipe.hashCode();
-      hashCode = prime * hashCode + task.hashCode();
-      hashCode = prime * hashCode + type.ordinal();
-      return hashCode;
+    public int getLines() {
+      return lines;
     }
 
     /**
-     * Return the type of the cache
+     * Return the number of functions
      *
-     * @return type
+     * @return functions
      */
-    public Caches.Type getType() {
-      return type;
+    public int getFunctions() {
+      return functions;
+    }
+
+    /**
+     * Return the number of classes
+     *
+     * @return classes;
+     */
+    public int getClasses() {
+      return classes;
     }
   }
 
   @Override
   public void accept(Visitor visitor) {
-    visitor.visit(this);
+    return;
   }
 }
