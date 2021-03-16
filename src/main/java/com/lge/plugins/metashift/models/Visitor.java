@@ -37,7 +37,6 @@ public class Visitor {
    */
   public void visit(Recipe object) {
     object.forEach((k, v) -> v.accept(this));
-    return;
   }
 
   /**
@@ -47,7 +46,6 @@ public class Visitor {
    */
   public void visit(Recipes object) {
     object.forEach(recipe -> recipe.accept(this));
-    return;
   }
 
   /**
@@ -56,6 +54,15 @@ public class Visitor {
    * @param object to visit
    */
   public void visit(Caches object) {
+    return;
+  }
+
+  /**
+   * Visits a container class for Sizes.Data objects
+   *
+   * @param object to visit
+   */
+  public void visit(Sizes object) {
     return;
   }
 }

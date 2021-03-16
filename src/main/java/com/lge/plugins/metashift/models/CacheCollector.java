@@ -25,7 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the cache availability information from the given data structure
+ * Collects the cache availability information from the given data containers
  *
  * @author Sung Gon Kim
  */
@@ -65,6 +65,5 @@ public class CacheCollector extends Visitor implements Measurable {
         .stream()
         .filter(o -> o.getType() == type && o.isAvailable())
         .count();
-    return;
   }
 }

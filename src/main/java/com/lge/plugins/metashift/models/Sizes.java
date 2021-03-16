@@ -147,6 +147,6 @@ public class Sizes extends DataContainer<Sizes.Data> {
 
   @Override
   public void accept(Visitor visitor) {
-    return;
+    visitor.visit(this);
   }
 }

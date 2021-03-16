@@ -73,11 +73,11 @@ public class Recipe implements Data<Recipe>, Acceptor {
   }
 
   /**
-   * Add the given container object to the collection
+   * Set the given container object to the collection
    *
    * @param object to store
    */
-  public <T extends DataContainer<?>> void add(T object) {
+  public <T extends DataContainer<?>> void set(T object) {
     collection.put(object.getClass(), object);
   }
 

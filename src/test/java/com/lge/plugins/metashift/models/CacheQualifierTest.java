@@ -149,7 +149,7 @@ public class CacheQualifierTest {
     caches.add(new Caches.Data("A", "do_B", false, Caches.Type.SHAREDSTATE));
     caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
     recipe = new Recipe("A-B-C");
-    recipe.add(caches);
+    recipe.set(caches);
     recipe.accept(qualifier);
     assertTrue(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
@@ -161,7 +161,7 @@ public class CacheQualifierTest {
     caches.add(new Caches.Data("A", "do_B", true, Caches.Type.SHAREDSTATE));
     caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
     recipe = new Recipe("A-B-C");
-    recipe.add(caches);
+    recipe.set(caches);
     recipe.accept(qualifier);
     assertTrue(qualifier.isAvailable());
     assertTrue(qualifier.isQualified());
@@ -179,13 +179,13 @@ public class CacheQualifierTest {
     caches = new Caches();
     caches.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(caches);
+    recipe.set(caches);
     recipes.add(recipe);
 
     caches = new Caches();
     caches.add(new Caches.Data("B", "do_fetch", true, Caches.Type.SHAREDSTATE));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(caches);
+    recipe.set(caches);
     recipes.add(recipe);
 
     recipes.accept(qualifier);
