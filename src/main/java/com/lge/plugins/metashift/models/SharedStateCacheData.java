@@ -25,45 +25,19 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the cache availability information from the given data containers
+ * Represents the shared state cache data
  *
  * @author Sung Gon Kim
  */
-public class CacheCollector extends Visitor implements Measurable {
-  private Class<? extends CacheData> clazz;
-  private int denominator;
-  private int numerator;
-
+public class SharedStateCacheData extends CacheData {
   /**
    * Default constructor
    *
-   * @param clazz of CacheData to collect
+   * @param recipe name
+   * @param task name
+   * @param available the cache availability
    */
-  public CacheCollector(Class<? extends CacheData> clazz) {
-    this.clazz = clazz;
-    this.denominator = 0;
-    this.numerator = 0;
-  }
-
-  @Override
-  public int getDenominator() {
-    return denominator;
-  }
-
-  @Override
-  public int getNumerator() {
-    return numerator;
-  }
-
-  @Override
-  public void visit(CacheSet caches) {
-    denominator += caches
-        .stream()
-        .filter(o -> o.getClass() == clazz)
-        .count();
-    numerator += caches
-        .stream()
-        .filter(o -> o.getClass() == clazz && o.isAvailable())
-        .count();
+  public SharedStateCacheData(String recipe, String task, boolean available) {
+    super(recipe, task, available);
   }
 }

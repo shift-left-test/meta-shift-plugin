@@ -45,7 +45,7 @@ public class CacheCollectorTest {
 
   @Before
   public void setUp() throws Exception {
-    collector = new CacheCollector(CacheData.Type.SHAREDSTATE);
+    collector = new CacheCollector(SharedStateCacheData.class);
     caches = new CacheSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
@@ -68,7 +68,7 @@ public class CacheCollectorTest {
 
   @Test
   public void testNonMatchingTypeCache() throws Exception {
-    caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.PREMIRROR));
+    caches.add(new PremirrorCacheData("A", "do_fetch", true));
     caches.accept(collector);
     assertEquals(0, collector.getDenominator());
     assertEquals(0, collector.getNumerator());
@@ -77,7 +77,7 @@ public class CacheCollectorTest {
 
   @Test
   public void testMatchingTypeCache() throws Exception {
-    caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
+    caches.add(new SharedStateCacheData("A", "do_fetch", true));
     caches.accept(collector);
     assertEquals(1, collector.getDenominator());
     assertEquals(1, collector.getNumerator());
@@ -86,10 +86,10 @@ public class CacheCollectorTest {
 
   @Test
   public void testCompoundCacheSet() throws Exception {
-    caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
-    caches.add(new CacheData("A", "do_compile", false, CacheData.Type.SHAREDSTATE));
-    caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.PREMIRROR));
-    caches.add(new CacheData("A", "do_compile", false, CacheData.Type.PREMIRROR));
+    caches.add(new SharedStateCacheData("A", "do_fetch", true));
+    caches.add(new SharedStateCacheData("A", "do_compile", false));
+    caches.add(new PremirrorCacheData("A", "do_fetch", true));
+    caches.add(new PremirrorCacheData("A", "do_compile", false));
     caches.accept(collector);
     assertEquals(2, collector.getDenominator());
     assertEquals(1, collector.getNumerator());
@@ -100,12 +100,12 @@ public class CacheCollectorTest {
   public void testMultipleCacheSet() throws Exception {
     List<CacheSet> group = new ArrayList<>();
     CacheSet caches = new CacheSet();
-    caches.add(new CacheData("A", "do_test", true, CacheData.Type.SHAREDSTATE));
-    caches.add(new CacheData("A", "do_fetch", false, CacheData.Type.SHAREDSTATE));
+    caches.add(new SharedStateCacheData("A", "do_test", true));
+    caches.add(new SharedStateCacheData("A", "do_fetch", false));
     group.add(caches);
     caches = new CacheSet();
-    caches.add(new CacheData("B", "do_test", true, CacheData.Type.SHAREDSTATE));
-    caches.add(new CacheData("B", "do_fetch", false, CacheData.Type.SHAREDSTATE));
+    caches.add(new SharedStateCacheData("B", "do_test", true));
+    caches.add(new SharedStateCacheData("B", "do_fetch", false));
     group.add(caches);
 
     group.forEach(o -> o.accept(collector));
@@ -124,7 +124,7 @@ public class CacheCollectorTest {
 
   @Test
   public void testRecipeWithNonMatchingCache() throws Exception {
-    caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.PREMIRROR));
+    caches.add(new PremirrorCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-B-C");
     recipe.set(caches);
     recipe.accept(collector);
@@ -135,7 +135,7 @@ public class CacheCollectorTest {
 
   @Test
   public void testRecipeWithMatchingCache() throws Exception {
-    caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
+    caches.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-B-C");
     recipe.set(caches);
     recipe.accept(collector);
@@ -155,13 +155,13 @@ public class CacheCollectorTest {
   @Test
   public void testRecipeSetWithCompoundCacheSet() throws Exception {
     caches = new CacheSet();
-    caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
+    caches.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(caches);
     recipes.add(recipe);
 
     caches = new CacheSet();
-    caches.add(new CacheData("B", "do_fetch", true, CacheData.Type.SHAREDSTATE));
+    caches.add(new SharedStateCacheData("B", "do_fetch", true));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(caches);
     recipes.add(recipe);

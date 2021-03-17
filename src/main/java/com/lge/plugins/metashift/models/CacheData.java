@@ -29,25 +29,10 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public class CacheData implements Data<CacheData> {
-  /**
-   * Cache data type
-   */
-  public enum Type {
-    /**
-     * Shared state cache
-     */
-    SHAREDSTATE,
-    /**
-     * Premirror cache
-     */
-    PREMIRROR,
-  }
-
+public abstract class CacheData implements Data<CacheData> {
   private String recipe;
   private String task;
   private boolean available;
-  private CacheData.Type type;
 
   /**
    * Default constructor
@@ -55,13 +40,11 @@ public class CacheData implements Data<CacheData> {
    * @param recipe name
    * @param task name
    * @param available the cache availability
-   * @param type of the cache
    */
-  public CacheData(String recipe, String task, boolean available, CacheData.Type type) {
+  public CacheData(String recipe, String task, boolean available) {
     this.recipe = recipe;
     this.task = task;
     this.available = available;
-    this.type = type;
   }
 
   @Override
@@ -99,9 +82,6 @@ public class CacheData implements Data<CacheData> {
     if (available != other.available) {
       return false;
     }
-    if (type != other.type) {
-      return false;
-    }
     return true;
   }
 
@@ -132,18 +112,9 @@ public class CacheData implements Data<CacheData> {
   public int hashCode() {
     final int prime = 31;
     int hashCode = 1;
+    hashCode = prime * hashCode + getClass().hashCode();
     hashCode = prime * hashCode + recipe.hashCode();
     hashCode = prime * hashCode + task.hashCode();
-    hashCode = prime * hashCode + type.ordinal();
     return hashCode;
-  }
-
-  /**
-   * Return the type of the cache
-   *
-   * @return type
-   */
-  public CacheData.Type getType() {
-    return type;
   }
 }

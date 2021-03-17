@@ -35,42 +35,42 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CacheDataTest {
-  private CacheData origin = new CacheData("A", "do_run", true, CacheData.Type.PREMIRROR);
-  private CacheData same = new CacheData("A", "do_run", true, CacheData.Type.PREMIRROR);
+  private CacheData origin = new PremirrorCacheData("A", "do_run", true);
+  private CacheData same = new PremirrorCacheData("A", "do_run", true);
 
   @Test
   public void testInitialization() throws Exception {
+    assertEquals(PremirrorCacheData.class, origin.getClass());
     assertEquals("A", origin.getRecipe());
     assertEquals("do_run", origin.getTask());
     assertTrue(origin.isAvailable());
-    assertEquals(CacheData.Type.PREMIRROR, origin.getType());
   }
 
   @Test
   public void testEquality() throws Exception {
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new CacheData("B", "do_run", true, CacheData.Type.PREMIRROR));
-    assertNotEquals(origin, new CacheData("A", "do_fetch", true, CacheData.Type.PREMIRROR));
-    assertNotEquals(origin, new CacheData("A", "do_run", false, CacheData.Type.PREMIRROR));
-    assertNotEquals(origin, new CacheData("A", "do_run", true, CacheData.Type.SHAREDSTATE));
+    assertNotEquals(origin, new PremirrorCacheData("B", "do_run", true));
+    assertNotEquals(origin, new PremirrorCacheData("A", "do_fetch", true));
+    assertNotEquals(origin, new PremirrorCacheData("A", "do_run", false));
+    assertNotEquals(origin, new SharedStateCacheData("A", "do_run", true));
   }
 
   @Test
   public void testHashCode() throws Exception {
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new CacheData("B", "do_run", true, CacheData.Type.PREMIRROR).hashCode());
-    assertNotEquals(origin.hashCode(), new CacheData("A", "do_other", true, CacheData.Type.PREMIRROR).hashCode());
-    assertEquals(origin.hashCode(), new CacheData("A", "do_run", false, CacheData.Type.PREMIRROR).hashCode());
-    assertNotEquals(origin.hashCode(), new CacheData("A", "do_run", true, CacheData.Type.SHAREDSTATE).hashCode());
+    assertNotEquals(origin.hashCode(), new PremirrorCacheData("B", "do_run", true).hashCode());
+    assertNotEquals(origin.hashCode(), new PremirrorCacheData("A", "do_run2", true).hashCode());
+    assertEquals(origin.hashCode(), new PremirrorCacheData("A", "do_run", false).hashCode());
+    assertNotEquals(origin.hashCode(), new SharedStateCacheData("A", "do_run", true).hashCode());
   }
 
   @Test
   public void testComparable() throws Exception {
     List<CacheData> expected = new ArrayList<>();
-    expected.add(new CacheData("A", "do_compile", true, CacheData.Type.SHAREDSTATE));
-    expected.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
-    expected.add(new CacheData("B", "do_compile", true, CacheData.Type.SHAREDSTATE));
+    expected.add(new SharedStateCacheData("A", "do_compile", true));
+    expected.add(new SharedStateCacheData("A", "do_fetch", true));
+    expected.add(new SharedStateCacheData("B", "do_compile", true));
 
     List<CacheData> actual = new ArrayList<>();
     actual.addAll(expected);

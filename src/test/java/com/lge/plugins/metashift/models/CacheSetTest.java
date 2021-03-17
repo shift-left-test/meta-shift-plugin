@@ -48,8 +48,8 @@ public class CacheSetTest {
 
   @Test
   public void testAddingData() throws Exception {
-    CacheData first = new CacheData("A", "do_compile", true, CacheData.Type.SHAREDSTATE);
-    CacheData second = new CacheData("A", "do_fetch", false, CacheData.Type.PREMIRROR);
+    CacheData first = new SharedStateCacheData("A", "do_compile", true);
+    CacheData second = new PremirrorCacheData("A", "do_fetch", false);
     objects.add(second);
     objects.add(first);
     assertEquals(2, objects.size());
@@ -58,8 +58,8 @@ public class CacheSetTest {
 
   @Test
   public void testAddingDuplicates() throws Exception {
-    objects.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
-    objects.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
+    objects.add(new SharedStateCacheData("A", "do_fetch", true));
+    objects.add(new SharedStateCacheData("A", "do_fetch", true));
     assertEquals(1, objects.size());
   }
 }
