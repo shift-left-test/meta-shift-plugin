@@ -24,21 +24,21 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.Sizes;
+import com.lge.plugins.metashift.models.SizeSet;
 import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the Sizes class
+ * Unit tests for the SizeSet class
  *
  * @author Sung Gon Kim
  */
-public class SizesTest {
-  private Sizes sizes;
+public class SizeSetTest {
+  private SizeSet sizes;
 
   @Before
   public void setUp() throws Exception {
-    sizes = new Sizes();
+    sizes = new SizeSet();
   }
 
   @Test

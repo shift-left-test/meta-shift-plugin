@@ -25,7 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.models.SizeCollector;
-import com.lge.plugins.metashift.models.Sizes;
+import com.lge.plugins.metashift.models.SizeSet;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeSet;
 import java.util.*;
@@ -39,14 +39,14 @@ import static org.junit.Assert.*;
  */
 public class SizeCollectorTest {
   private SizeCollector collector;
-  private Sizes sizes;
+  private SizeSet sizes;
   private Recipe recipe;
   private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
     collector = new SizeCollector();
-    sizes = new Sizes();
+    sizes = new SizeSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -61,7 +61,7 @@ public class SizeCollectorTest {
   }
 
   @Test
-  public void testEmptySizes() throws Exception {
+  public void testEmptySizeSet() throws Exception {
     sizes.accept(collector);
     assertEquals(0, collector.getRecipes());
     assertEquals(0, collector.getFiles());
@@ -71,7 +71,7 @@ public class SizeCollectorTest {
   }
 
   @Test
-  public void testSizesWithMultipleSizesData() throws Exception {
+  public void testSizeSetWithMultipleSizeSetData() throws Exception {
     sizes.add(new SizeData("A", "a.file", 3, 2, 1));
     sizes.add(new SizeData("A", "b.file", 6, 4, 2));
     sizes.accept(collector);
@@ -83,7 +83,7 @@ public class SizeCollectorTest {
   }
 
   @Test
-  public void testRecipeWithMultipleSizesData() throws Exception {
+  public void testRecipeWithMultipleSizeSetData() throws Exception {
     sizes.add(new SizeData("A", "a.file", 3, 2, 1));
     sizes.add(new SizeData("A", "b.file", 6, 4, 2));
     recipe.set(sizes);
@@ -98,13 +98,13 @@ public class SizeCollectorTest {
   @Test
   public void testRecipeSetWithMultipleRecipeSet() throws Exception {
     recipe = new Recipe("A-1.0.0-r0");
-    sizes = new Sizes();
+    sizes = new SizeSet();
     sizes.add(new SizeData("A", "a.file", 3, 2, 1));
     recipe.set(sizes);
     recipes.add(recipe);
 
     recipe = new Recipe("B-1.0.0-r0");
-    sizes = new Sizes();
+    sizes = new SizeSet();
     sizes.add(new SizeData("B", "b.file", 6, 4, 2));
     recipe.set(sizes);
     recipes.add(recipe);

@@ -62,7 +62,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(Sizes object) {
+  public void visit(SizeSet object) {
     return;
   }
 }

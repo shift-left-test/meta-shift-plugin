@@ -93,7 +93,7 @@ public class SizeCollector extends Visitor {
   }
 
   @Override
-  public void visit(Sizes sizes) {
+  public void visit(SizeSet sizes) {
     recipes += sizes.stream().map(SizeData::getRecipe).distinct().count();
     files += sizes.stream().distinct().count();
     lines += sizes.stream().mapToInt(SizeData::getLines).sum();
