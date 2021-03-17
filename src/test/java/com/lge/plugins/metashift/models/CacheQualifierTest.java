@@ -25,9 +25,9 @@
 package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.models.CacheQualifier;
-import com.lge.plugins.metashift.models.Caches;
+import com.lge.plugins.metashift.models.CacheSet;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.models.RecipeSet;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -39,16 +39,16 @@ import static org.junit.Assert.*;
  */
 public class CacheQualifierTest {
   private CacheQualifier qualifier;
-  private Caches caches;
+  private CacheSet caches;
   private Recipe recipe;
-  private Recipes recipes;
+  private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
-    caches = new Caches();
+    caches = new CacheSet();
     qualifier = new CacheQualifier(0.5f);
     recipe = new Recipe("A-B-C");
-    recipes = new Recipes();
+    recipes = new RecipeSet();
   }
 
   @Test
@@ -60,7 +60,7 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testEmptyCaches() throws Exception {
+  public void testEmptyCacheSet() throws Exception {
     caches.accept(qualifier);
     assertFalse(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
@@ -168,21 +168,21 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipes() throws Exception {
+  public void testEmptyRecipeSet() throws Exception {
     recipes.accept(qualifier);
     assertFalse(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
   }
 
   @Test
-  public void testRecipesWithCompoundCachesWhichQualified() throws Exception {
-    caches = new Caches();
+  public void testRecipeSetWithCompoundCacheSetWhichQualified() throws Exception {
+    caches = new CacheSet();
     caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(caches);
     recipes.add(recipe);
 
-    caches = new Caches();
+    caches = new CacheSet();
     caches.add(new CacheData("B", "do_fetch", true, CacheData.Type.SHAREDSTATE));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(caches);

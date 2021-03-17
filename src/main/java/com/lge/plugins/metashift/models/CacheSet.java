@@ -24,42 +24,14 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.Recipes;
-import org.junit.*;
-import static org.junit.Assert.*;
-
 /**
- * Unit tests for the Recipes class
+ * Represents a set for CacheData objects
  *
  * @author Sung Gon Kim
  */
-public class RecipesTest {
-  private Recipes recipes;
-
-  @Before
-  public void setUp() throws Exception {
-    recipes = new Recipes();
-  }
-
-  @Test
-  public void testInitialState() throws Exception {
-    assertEquals(0, recipes.size());
-  }
-
-  @Test
-  public void testAddingData() throws Exception {
-    Recipe first = new Recipe("A-1.0.0-r0");
-    Recipe second = new Recipe("B-1.0.0-r0");
-    recipes.add(second);
-    recipes.add(first);
-    assertEquals(2, recipes.size());
-    assertEquals(first, recipes.iterator().next());
-  }
-
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    recipes.add(new Recipe("A-B-C"));
-    recipes.add(new Recipe("A-B-C"));
-    assertEquals(1, recipes.size());
+public class CacheSet extends DataSet<CacheData> {
+  @Override
+  public void accept(Visitor visitor) {
+    visitor.visit(this);
   }
 }

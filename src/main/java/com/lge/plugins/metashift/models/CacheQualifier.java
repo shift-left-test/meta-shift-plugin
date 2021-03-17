@@ -73,7 +73,7 @@ public class CacheQualifier extends Visitor implements Qualifiable {
   }
 
   @Override
-  public void visit(Caches objects) {
+  public void visit(CacheSet objects) {
     collection.values().stream().forEach(collector -> objects.accept(collector));
   }
 }

@@ -56,7 +56,7 @@ public class CacheCollector extends Visitor implements Measurable {
   }
 
   @Override
-  public void visit(Caches caches) {
+  public void visit(CacheSet caches) {
     denominator += caches
         .stream()
         .filter(o -> o.getType() == type)

@@ -37,7 +37,7 @@ public class Recipe implements Data<Recipe>, Acceptor {
   private String recipe;
   private String revision;
   private String version;
-  private Map<Class<?>, DataContainer<?>> collection;
+  private Map<Class<?>, DataSet<?>> collection;
 
   /**
    * Default constructor
@@ -60,7 +60,7 @@ public class Recipe implements Data<Recipe>, Acceptor {
     }
 
     collection = new HashMap<>();
-    collection.put(Caches.class, new Caches());
+    collection.put(CacheSet.class, new CacheSet());
   }
 
   /**
@@ -68,7 +68,7 @@ public class Recipe implements Data<Recipe>, Acceptor {
    *
    * @param action The action to be performed for each entry
    */
-  public void forEach(BiConsumer<Class<?>, DataContainer<?>> action) {
+  public void forEach(BiConsumer<Class<?>, DataSet<?>> action) {
     collection.forEach(action);
   }
 
@@ -77,7 +77,7 @@ public class Recipe implements Data<Recipe>, Acceptor {
    *
    * @param object to store
    */
-  public <T extends DataContainer<?>> void set(T object) {
+  public <T extends DataSet<?>> void set(T object) {
     collection.put(object.getClass(), object);
   }
 
@@ -86,7 +86,7 @@ public class Recipe implements Data<Recipe>, Acceptor {
    *
    * @return container object
    */
-  public <T extends DataContainer<?>> T collection(Class<T> clazz) {
+  public <T extends DataSet<?>> T collection(Class<T> clazz) {
     return clazz.cast(collection.get(clazz));
   }
 

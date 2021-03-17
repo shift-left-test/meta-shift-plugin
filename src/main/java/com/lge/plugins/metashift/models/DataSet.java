@@ -24,12 +24,12 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.util.TreeSet;
+
 /**
- * A container class for recipes
+ * Represents a data set for data objects
+ *
+ * @author Sung Gon Kim
  */
-public class Recipes extends DataContainer<Recipe> {
-  @Override
-  public void accept(Visitor visitor) {
-    visitor.visit(this);
-  }
+public abstract class DataSet<T> extends TreeSet<T> implements Acceptor {
 }

@@ -24,42 +24,42 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.Caches;
+import com.lge.plugins.metashift.models.RecipeSet;
 import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the Caches class
+ * Unit tests for the RecipeSet class
  *
  * @author Sung Gon Kim
  */
-public class CachesTest {
-  private Caches objects;
+public class RecipeSetTest {
+  private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
-    objects = new Caches();
+    recipes = new RecipeSet();
   }
 
   @Test
   public void testInitialState() throws Exception {
-    assertEquals(0, objects.size());
+    assertEquals(0, recipes.size());
   }
 
   @Test
   public void testAddingData() throws Exception {
-    CacheData first = new CacheData("A", "do_compile", true, CacheData.Type.SHAREDSTATE);
-    CacheData second = new CacheData("A", "do_fetch", false, CacheData.Type.PREMIRROR);
-    objects.add(second);
-    objects.add(first);
-    assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
+    Recipe first = new Recipe("A-1.0.0-r0");
+    Recipe second = new Recipe("B-1.0.0-r0");
+    recipes.add(second);
+    recipes.add(first);
+    assertEquals(2, recipes.size());
+    assertEquals(first, recipes.iterator().next());
   }
 
   @Test
   public void testAddingDuplicates() throws Exception {
-    objects.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
-    objects.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
-    assertEquals(1, objects.size());
+    recipes.add(new Recipe("A-B-C"));
+    recipes.add(new Recipe("A-B-C"));
+    assertEquals(1, recipes.size());
   }
 }

@@ -44,7 +44,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(Recipes object) {
+  public void visit(RecipeSet object) {
     object.forEach(recipe -> recipe.accept(this));
   }
 
@@ -53,7 +53,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(Caches object) {
+  public void visit(CacheSet object) {
     return;
   }
 

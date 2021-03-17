@@ -25,9 +25,9 @@
 package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.models.CacheCollector;
-import com.lge.plugins.metashift.models.Caches;
+import com.lge.plugins.metashift.models.CacheSet;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.models.RecipeSet;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -39,16 +39,16 @@ import static org.junit.Assert.*;
  */
 public class CacheCollectorTest {
   private CacheCollector collector;
-  private Caches caches;
+  private CacheSet caches;
   private Recipe recipe;
-  private Recipes recipes;
+  private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
     collector = new CacheCollector(CacheData.Type.SHAREDSTATE);
-    caches = new Caches();
+    caches = new CacheSet();
     recipe = new Recipe("A-B-C");
-    recipes = new Recipes();
+    recipes = new RecipeSet();
   }
 
   @Test
@@ -85,7 +85,7 @@ public class CacheCollectorTest {
   }
 
   @Test
-  public void testCompoundCaches() throws Exception {
+  public void testCompoundCacheSet() throws Exception {
     caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
     caches.add(new CacheData("A", "do_compile", false, CacheData.Type.SHAREDSTATE));
     caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.PREMIRROR));
@@ -97,13 +97,13 @@ public class CacheCollectorTest {
   }
 
   @Test
-  public void testMultipleCaches() throws Exception {
-    List<Caches> group = new ArrayList<>();
-    Caches caches = new Caches();
+  public void testMultipleCacheSet() throws Exception {
+    List<CacheSet> group = new ArrayList<>();
+    CacheSet caches = new CacheSet();
     caches.add(new CacheData("A", "do_test", true, CacheData.Type.SHAREDSTATE));
     caches.add(new CacheData("A", "do_fetch", false, CacheData.Type.SHAREDSTATE));
     group.add(caches);
-    caches = new Caches();
+    caches = new CacheSet();
     caches.add(new CacheData("B", "do_test", true, CacheData.Type.SHAREDSTATE));
     caches.add(new CacheData("B", "do_fetch", false, CacheData.Type.SHAREDSTATE));
     group.add(caches);
@@ -145,7 +145,7 @@ public class CacheCollectorTest {
   }
 
   @Test
-  public void testEmptyRecipes() throws Exception {
+  public void testEmptyRecipeSet() throws Exception {
     recipes.accept(collector);
     assertEquals(0, collector.getDenominator());
     assertEquals(0, collector.getNumerator());
@@ -153,14 +153,14 @@ public class CacheCollectorTest {
   }
 
   @Test
-  public void testRecipesWithCompoundCaches() throws Exception {
-    caches = new Caches();
+  public void testRecipeSetWithCompoundCacheSet() throws Exception {
+    caches = new CacheSet();
     caches.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(caches);
     recipes.add(recipe);
 
-    caches = new Caches();
+    caches = new CacheSet();
     caches.add(new CacheData("B", "do_fetch", true, CacheData.Type.SHAREDSTATE));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(caches);

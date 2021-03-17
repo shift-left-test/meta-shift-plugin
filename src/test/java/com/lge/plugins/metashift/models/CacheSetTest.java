@@ -24,14 +24,42 @@
 
 package com.lge.plugins.metashift.models;
 
+import com.lge.plugins.metashift.models.CacheSet;
+import org.junit.*;
+import static org.junit.Assert.*;
+
 /**
- * Represents a container class for CacheData and provides a method for Visitor classes
+ * Unit tests for the CacheSet class
  *
  * @author Sung Gon Kim
  */
-public class Caches extends DataContainer<CacheData> {
-  @Override
-  public void accept(Visitor visitor) {
-    visitor.visit(this);
+public class CacheSetTest {
+  private CacheSet objects;
+
+  @Before
+  public void setUp() throws Exception {
+    objects = new CacheSet();
+  }
+
+  @Test
+  public void testInitialState() throws Exception {
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testAddingData() throws Exception {
+    CacheData first = new CacheData("A", "do_compile", true, CacheData.Type.SHAREDSTATE);
+    CacheData second = new CacheData("A", "do_fetch", false, CacheData.Type.PREMIRROR);
+    objects.add(second);
+    objects.add(first);
+    assertEquals(2, objects.size());
+    assertEquals(first, objects.iterator().next());
+  }
+
+  @Test
+  public void testAddingDuplicates() throws Exception {
+    objects.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
+    objects.add(new CacheData("A", "do_fetch", true, CacheData.Type.SHAREDSTATE));
+    assertEquals(1, objects.size());
   }
 }

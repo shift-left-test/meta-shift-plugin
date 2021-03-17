@@ -27,7 +27,7 @@ package com.lge.plugins.metashift.models;
 import com.lge.plugins.metashift.models.SizeCollector;
 import com.lge.plugins.metashift.models.Sizes;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.models.RecipeSet;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -41,14 +41,14 @@ public class SizeCollectorTest {
   private SizeCollector collector;
   private Sizes sizes;
   private Recipe recipe;
-  private Recipes recipes;
+  private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
     collector = new SizeCollector();
     sizes = new Sizes();
     recipe = new Recipe("A-B-C");
-    recipes = new Recipes();
+    recipes = new RecipeSet();
   }
 
   @Test
@@ -96,7 +96,7 @@ public class SizeCollectorTest {
   }
 
   @Test
-  public void testRecipesWithMultipleRecipes() throws Exception {
+  public void testRecipeSetWithMultipleRecipeSet() throws Exception {
     recipe = new Recipe("A-1.0.0-r0");
     sizes = new Sizes();
     sizes.add(new SizeData("A", "a.file", 3, 2, 1));

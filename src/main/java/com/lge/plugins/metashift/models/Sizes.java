@@ -29,7 +29,7 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public class Sizes extends DataContainer<SizeData> {
+public class Sizes extends DataSet<SizeData> {
   @Override
   public void accept(Visitor visitor) {
     visitor.visit(this);
