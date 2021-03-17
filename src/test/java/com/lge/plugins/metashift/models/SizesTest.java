@@ -48,8 +48,8 @@ public class SizesTest {
 
   @Test
   public void testAddingData() throws Exception {
-    Sizes.Data first = new Sizes.Data("A", "a.file", 3, 2, 1);
-    Sizes.Data second = new Sizes.Data("B", "b.file", 3, 2, 1);
+    SizeData first = new SizeData("A", "a.file", 3, 2, 1);
+    SizeData second = new SizeData("B", "b.file", 3, 2, 1);
     sizes.add(second);
     sizes.add(first);
     assertEquals(2, sizes.size());
@@ -58,8 +58,8 @@ public class SizesTest {
 
   @Test
   public void testAddingDuplicates() throws Exception {
-    sizes.add(new Sizes.Data("A", "a.file", 3, 2, 1));
-    sizes.add(new Sizes.Data("A", "a.file", 30, 20, 10));
+    sizes.add(new SizeData("A", "a.file", 3, 2, 1));
+    sizes.add(new SizeData("A", "a.file", 30, 20, 10));
     assertEquals(1, sizes.size());
   }
 }

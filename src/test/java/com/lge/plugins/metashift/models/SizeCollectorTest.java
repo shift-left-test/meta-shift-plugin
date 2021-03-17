@@ -72,8 +72,8 @@ public class SizeCollectorTest {
 
   @Test
   public void testSizesWithMultipleSizesData() throws Exception {
-    sizes.add(new Sizes.Data("A", "a.file", 3, 2, 1));
-    sizes.add(new Sizes.Data("A", "b.file", 6, 4, 2));
+    sizes.add(new SizeData("A", "a.file", 3, 2, 1));
+    sizes.add(new SizeData("A", "b.file", 6, 4, 2));
     sizes.accept(collector);
     assertEquals(1, collector.getRecipes());
     assertEquals(2, collector.getFiles());
@@ -84,8 +84,8 @@ public class SizeCollectorTest {
 
   @Test
   public void testRecipeWithMultipleSizesData() throws Exception {
-    sizes.add(new Sizes.Data("A", "a.file", 3, 2, 1));
-    sizes.add(new Sizes.Data("A", "b.file", 6, 4, 2));
+    sizes.add(new SizeData("A", "a.file", 3, 2, 1));
+    sizes.add(new SizeData("A", "b.file", 6, 4, 2));
     recipe.set(sizes);
     recipe.accept(collector);
     assertEquals(1, collector.getRecipes());
@@ -99,13 +99,13 @@ public class SizeCollectorTest {
   public void testRecipesWithMultipleRecipes() throws Exception {
     recipe = new Recipe("A-1.0.0-r0");
     sizes = new Sizes();
-    sizes.add(new Sizes.Data("A", "a.file", 3, 2, 1));
+    sizes.add(new SizeData("A", "a.file", 3, 2, 1));
     recipe.set(sizes);
     recipes.add(recipe);
 
     recipe = new Recipe("B-1.0.0-r0");
     sizes = new Sizes();
-    sizes.add(new Sizes.Data("B", "b.file", 6, 4, 2));
+    sizes.add(new SizeData("B", "b.file", 6, 4, 2));
     recipe.set(sizes);
     recipes.add(recipe);
 

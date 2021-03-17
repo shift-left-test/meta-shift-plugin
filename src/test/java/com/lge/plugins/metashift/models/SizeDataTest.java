@@ -30,13 +30,13 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the Sizes.Data class
+ * Unit tests for the SizeData class
  *
  * @author Sung Gon Kim
  */
-public class SizesDataTest {
-  private Sizes.Data origin = new Sizes.Data("A", "a.file", 100, 50, 10);
-  private Sizes.Data same = new Sizes.Data("A", "a.file", 3, 2, 1);
+public class SizeDataTest {
+  private SizeData origin = new SizeData("A", "a.file", 100, 50, 10);
+  private SizeData same = new SizeData("A", "a.file", 3, 2, 1);
 
   @Test
   public void testInitialization() throws Exception {
@@ -51,29 +51,29 @@ public class SizesDataTest {
   public void testEquality() throws Exception {
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new Sizes.Data("A", "b.file", 100, 50, 10));
-    assertNotEquals(origin, new Sizes.Data("B", "a.file", 100, 50, 10));
-    assertNotEquals(origin, new Sizes.Data("B", "b.file", 100, 50, 10));
+    assertNotEquals(origin, new SizeData("A", "b.file", 100, 50, 10));
+    assertNotEquals(origin, new SizeData("B", "a.file", 100, 50, 10));
+    assertNotEquals(origin, new SizeData("B", "b.file", 100, 50, 10));
   }
 
   @Test
   public void testHashCode() throws Exception {
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new Sizes.Data("B", "a.file", 100, 50, 10).hashCode());
-    assertNotEquals(origin.hashCode(), new Sizes.Data("A", "b.file", 100, 50, 10).hashCode());
-    assertEquals(origin.hashCode(), new Sizes.Data("A", "a.file", 0, 50, 10).hashCode());
-    assertEquals(origin.hashCode(), new Sizes.Data("A", "a.file", 100, 0, 10).hashCode());
-    assertEquals(origin.hashCode(), new Sizes.Data("A", "a.file", 100, 50, 0).hashCode());
+    assertNotEquals(origin.hashCode(), new SizeData("B", "a.file", 100, 50, 10).hashCode());
+    assertNotEquals(origin.hashCode(), new SizeData("A", "b.file", 100, 50, 10).hashCode());
+    assertEquals(origin.hashCode(), new SizeData("A", "a.file", 0, 50, 10).hashCode());
+    assertEquals(origin.hashCode(), new SizeData("A", "a.file", 100, 0, 10).hashCode());
+    assertEquals(origin.hashCode(), new SizeData("A", "a.file", 100, 50, 0).hashCode());
   }
 
   @Test
   public void testComparable() throws Exception {
-    List<Sizes.Data> expected = new ArrayList<>();
-    expected.add(new Sizes.Data("A", "a.file", 3, 2, 1));
-    expected.add(new Sizes.Data("A", "b.file", 3, 2, 1));
-    expected.add(new Sizes.Data("B", "a.file", 3, 2, 1));
+    List<SizeData> expected = new ArrayList<>();
+    expected.add(new SizeData("A", "a.file", 3, 2, 1));
+    expected.add(new SizeData("A", "b.file", 3, 2, 1));
+    expected.add(new SizeData("B", "a.file", 3, 2, 1));
 
-    List<Sizes.Data> actual = new ArrayList<>();
+    List<SizeData> actual = new ArrayList<>();
     actual.addAll(expected);
     Collections.shuffle(actual);
     Collections.sort(actual);

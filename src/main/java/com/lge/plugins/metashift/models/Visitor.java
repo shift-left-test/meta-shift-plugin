@@ -58,7 +58,7 @@ public class Visitor {
   }
 
   /**
-   * Visits a container class for Sizes.Data objects
+   * Visits a container class for SizeData objects
    *
    * @param object to visit
    */
