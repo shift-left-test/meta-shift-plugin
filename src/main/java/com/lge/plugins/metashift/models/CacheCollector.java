@@ -30,16 +30,16 @@ package com.lge.plugins.metashift.models;
  * @author Sung Gon Kim
  */
 public class CacheCollector extends Visitor implements Measurable {
-  private Caches.Data.Type type;
+  private CacheData.Type type;
   private int denominator;
   private int numerator;
 
   /**
    * Default constructor
    *
-   * @param type of Cache.Data to filter
+   * @param type of CacheData to filter
    */
-  public CacheCollector(Caches.Data.Type type) {
+  public CacheCollector(CacheData.Type type) {
     this.type = type;
     this.denominator = 0;
     this.numerator = 0;

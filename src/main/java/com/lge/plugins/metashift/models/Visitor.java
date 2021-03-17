@@ -49,7 +49,7 @@ public class Visitor {
   }
 
   /**
-   * visits a container class for Caches.Data objects
+   * visits a container class for CacheData objects
    *
    * @param object to visit
    */
