@@ -32,7 +32,7 @@ import java.util.*;
  * @author Sung Gon Kim
  */
 public class CacheQualifier extends Visitor implements Qualifiable {
-  private Map<Caches.Type, CacheCollector> collection;
+  private Map<Caches.Data.Type, CacheCollector> collection;
   private float threshold;
 
   /**
@@ -41,9 +41,9 @@ public class CacheQualifier extends Visitor implements Qualifiable {
    * @param threshold for evaluation
    */
   public CacheQualifier(float threshold) {
-    this.collection = new EnumMap<>(Caches.Type.class);
-    this.collection.put(Caches.Type.PREMIRROR, new CacheCollector(Caches.Type.PREMIRROR));
-    this.collection.put(Caches.Type.SHAREDSTATE, new CacheCollector(Caches.Type.SHAREDSTATE));
+    this.collection = new EnumMap<>(Caches.Data.Type.class);
+    this.collection.put(Caches.Data.Type.PREMIRROR, new CacheCollector(Caches.Data.Type.PREMIRROR));
+    this.collection.put(Caches.Data.Type.SHAREDSTATE, new CacheCollector(Caches.Data.Type.SHAREDSTATE));
     this.threshold = threshold;
   }
 
@@ -53,7 +53,7 @@ public class CacheQualifier extends Visitor implements Qualifiable {
    * @param type of the object to return
    * @return CacheCollector object
    */
-  public CacheCollector collection(Caches.Type type) {
+  public CacheCollector collection(Caches.Data.Type type) {
     return collection.get(type);
   }
 

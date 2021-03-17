@@ -48,8 +48,8 @@ public class CachesTest {
 
   @Test
   public void testAddingData() throws Exception {
-    Caches.Data first = new Caches.Data("A", "do_compile", true, Caches.Type.SHAREDSTATE);
-    Caches.Data second = new Caches.Data("A", "do_fetch", false, Caches.Type.PREMIRROR);
+    Caches.Data first = new Caches.Data("A", "do_compile", true, Caches.Data.Type.SHAREDSTATE);
+    Caches.Data second = new Caches.Data("A", "do_fetch", false, Caches.Data.Type.PREMIRROR);
     objects.add(second);
     objects.add(first);
     assertEquals(2, objects.size());
@@ -58,8 +58,8 @@ public class CachesTest {
 
   @Test
   public void testAddingDuplicates() throws Exception {
-    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
-    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Data.Type.SHAREDSTATE));
+    objects.add(new Caches.Data("A", "do_fetch", true, Caches.Data.Type.SHAREDSTATE));
     assertEquals(1, objects.size());
   }
 }

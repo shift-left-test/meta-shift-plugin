@@ -31,29 +31,29 @@ package com.lge.plugins.metashift.models;
  */
 public class Caches extends DataContainer<Caches.Data> {
   /**
-   * Cache data type
-   */
-  public enum Type {
-    /**
-     * Shared state cache
-     */
-    SHAREDSTATE,
-    /**
-     * Premirror cache
-     */
-    PREMIRROR,
-  }
-
-  /**
    * Represents data for the Caches class
    *
    * @author Sung Gon Kim
    */
   static class Data implements com.lge.plugins.metashift.models.Data<Caches.Data> {
+    /**
+     * Cache data type
+     */
+    public enum Type {
+      /**
+       * Shared state cache
+       */
+      SHAREDSTATE,
+      /**
+       * Premirror cache
+       */
+      PREMIRROR,
+    }
+
     private String recipe;
     private String task;
     private boolean available;
-    private Caches.Type type;
+    private Caches.Data.Type type;
 
     /**
      * Default constructor
@@ -63,7 +63,7 @@ public class Caches extends DataContainer<Caches.Data> {
      * @param available the cache availability
      * @param type of the cache
      */
-    public Data(String recipe, String task, boolean available, Caches.Type type) {
+    public Data(String recipe, String task, boolean available, Caches.Data.Type type) {
       this.recipe = recipe;
       this.task = task;
       this.available = available;
@@ -149,7 +149,7 @@ public class Caches extends DataContainer<Caches.Data> {
      *
      * @return type
      */
-    public Caches.Type getType() {
+    public Caches.Data.Type getType() {
       return type;
     }
   }

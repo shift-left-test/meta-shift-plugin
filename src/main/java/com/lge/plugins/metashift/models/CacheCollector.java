@@ -30,7 +30,7 @@ package com.lge.plugins.metashift.models;
  * @author Sung Gon Kim
  */
 public class CacheCollector extends Visitor implements Measurable {
-  private Caches.Type type;
+  private Caches.Data.Type type;
   private int denominator;
   private int numerator;
 
@@ -39,7 +39,7 @@ public class CacheCollector extends Visitor implements Measurable {
    *
    * @param type of Cache.Data to filter
    */
-  public CacheCollector(Caches.Type type) {
+  public CacheCollector(Caches.Data.Type type) {
     this.type = type;
     this.denominator = 0;
     this.numerator = 0;

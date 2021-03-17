@@ -55,8 +55,8 @@ public class CacheQualifierTest {
   public void testInitialState() throws Exception {
     assertFalse(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
-    assertEquals(0.0f, qualifier.collection(Caches.Type.PREMIRROR).getRatio(), 0.0f);
-    assertEquals(0.0f, qualifier.collection(Caches.Type.SHAREDSTATE).getRatio(), 0.0f);
+    assertEquals(0.0f, qualifier.collection(Caches.Data.Type.PREMIRROR).getRatio(), 0.0f);
+    assertEquals(0.0f, qualifier.collection(Caches.Data.Type.SHAREDSTATE).getRatio(), 0.0f);
   }
 
   @Test
@@ -64,61 +64,61 @@ public class CacheQualifierTest {
     caches.accept(qualifier);
     assertFalse(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
-    assertEquals(0.0f, qualifier.collection(Caches.Type.PREMIRROR).getRatio(), 0.0f);
-    assertEquals(0.0f, qualifier.collection(Caches.Type.SHAREDSTATE).getRatio(), 0.0f);
+    assertEquals(0.0f, qualifier.collection(Caches.Data.Type.PREMIRROR).getRatio(), 0.0f);
+    assertEquals(0.0f, qualifier.collection(Caches.Data.Type.SHAREDSTATE).getRatio(), 0.0f);
   }
 
   @Test
   public void testPremirrorOnlyCacheWhichNotQualified() throws Exception {
-    caches.add(new Caches.Data("A", "do_A", true, Caches.Type.PREMIRROR));
-    caches.add(new Caches.Data("A", "do_B", false, Caches.Type.PREMIRROR));
-    caches.add(new Caches.Data("A", "do_C", false, Caches.Type.PREMIRROR));
+    caches.add(new Caches.Data("A", "do_A", true, Caches.Data.Type.PREMIRROR));
+    caches.add(new Caches.Data("A", "do_B", false, Caches.Data.Type.PREMIRROR));
+    caches.add(new Caches.Data("A", "do_C", false, Caches.Data.Type.PREMIRROR));
     caches.accept(qualifier);
     assertTrue(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
-    assertEquals(0.3f, qualifier.collection(Caches.Type.PREMIRROR).getRatio(), 0.1f);
-    assertEquals(0.0f, qualifier.collection(Caches.Type.SHAREDSTATE).getRatio(), 0.0f);
+    assertEquals(0.3f, qualifier.collection(Caches.Data.Type.PREMIRROR).getRatio(), 0.1f);
+    assertEquals(0.0f, qualifier.collection(Caches.Data.Type.SHAREDSTATE).getRatio(), 0.0f);
   }
 
   @Test
   public void testPremirrorOnlyCacheWhichQualified() throws Exception {
-    caches.add(new Caches.Data("A", "do_A", true, Caches.Type.PREMIRROR));
-    caches.add(new Caches.Data("A", "do_B", false, Caches.Type.PREMIRROR));
+    caches.add(new Caches.Data("A", "do_A", true, Caches.Data.Type.PREMIRROR));
+    caches.add(new Caches.Data("A", "do_B", false, Caches.Data.Type.PREMIRROR));
     caches.accept(qualifier);
     assertTrue(qualifier.isAvailable());
     assertTrue(qualifier.isQualified());
-    assertEquals(0.5f, qualifier.collection(Caches.Type.PREMIRROR).getRatio(), 0.1f);
-    assertEquals(0.0f, qualifier.collection(Caches.Type.SHAREDSTATE).getRatio(), 0.0f);
+    assertEquals(0.5f, qualifier.collection(Caches.Data.Type.PREMIRROR).getRatio(), 0.1f);
+    assertEquals(0.0f, qualifier.collection(Caches.Data.Type.SHAREDSTATE).getRatio(), 0.0f);
   }
 
   @Test
   public void testSharedStateOnlyCacheWhichNotQualified() throws Exception {
-    caches.add(new Caches.Data("A", "do_A", true, Caches.Type.SHAREDSTATE));
-    caches.add(new Caches.Data("A", "do_B", false, Caches.Type.SHAREDSTATE));
-    caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_A", true, Caches.Data.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_B", false, Caches.Data.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_C", false, Caches.Data.Type.SHAREDSTATE));
     caches.accept(qualifier);
     assertTrue(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
-    assertEquals(0.0f, qualifier.collection(Caches.Type.PREMIRROR).getRatio(), 0.0f);
-    assertEquals(0.3f, qualifier.collection(Caches.Type.SHAREDSTATE).getRatio(), 0.1f);
+    assertEquals(0.0f, qualifier.collection(Caches.Data.Type.PREMIRROR).getRatio(), 0.0f);
+    assertEquals(0.3f, qualifier.collection(Caches.Data.Type.SHAREDSTATE).getRatio(), 0.1f);
   }
 
   @Test
   public void testSharedStateOnlyCacheWhichQualified() throws Exception {
-    caches.add(new Caches.Data("A", "do_A", true, Caches.Type.SHAREDSTATE));
-    caches.add(new Caches.Data("A", "do_B", false, Caches.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_A", true, Caches.Data.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_B", false, Caches.Data.Type.SHAREDSTATE));
     caches.accept(qualifier);
     assertTrue(qualifier.isAvailable());
     assertTrue(qualifier.isQualified());
-    assertEquals(0.0f, qualifier.collection(Caches.Type.PREMIRROR).getRatio(), 0.0f);
-    assertEquals(0.5f, qualifier.collection(Caches.Type.SHAREDSTATE).getRatio(), 0.1f);
+    assertEquals(0.0f, qualifier.collection(Caches.Data.Type.PREMIRROR).getRatio(), 0.0f);
+    assertEquals(0.5f, qualifier.collection(Caches.Data.Type.SHAREDSTATE).getRatio(), 0.1f);
   }
 
   @Test
   public void testMixedCacheWhichNotQualified() throws Exception {
-    caches.add(new Caches.Data("A", "do_A", true, Caches.Type.PREMIRROR));
-    caches.add(new Caches.Data("A", "do_B", false, Caches.Type.SHAREDSTATE));
-    caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_A", true, Caches.Data.Type.PREMIRROR));
+    caches.add(new Caches.Data("A", "do_B", false, Caches.Data.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_C", false, Caches.Data.Type.SHAREDSTATE));
     caches.accept(qualifier);
     assertTrue(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
@@ -126,9 +126,9 @@ public class CacheQualifierTest {
 
   @Test
   public void testMixedCacheWhichQualified() throws Exception {
-    caches.add(new Caches.Data("A", "do_A", true, Caches.Type.PREMIRROR));
-    caches.add(new Caches.Data("A", "do_B", true, Caches.Type.SHAREDSTATE));
-    caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_A", true, Caches.Data.Type.PREMIRROR));
+    caches.add(new Caches.Data("A", "do_B", true, Caches.Data.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_C", false, Caches.Data.Type.SHAREDSTATE));
     caches.accept(qualifier);
     assertTrue(qualifier.isAvailable());
     assertTrue(qualifier.isQualified());
@@ -139,15 +139,15 @@ public class CacheQualifierTest {
     recipe.accept(qualifier);
     assertFalse(qualifier.isAvailable());
     assertFalse(qualifier.isQualified());
-    assertEquals(0.0f, qualifier.collection(Caches.Type.PREMIRROR).getRatio(), 0.0f);
-    assertEquals(0.0f, qualifier.collection(Caches.Type.SHAREDSTATE).getRatio(), 0.0f);
+    assertEquals(0.0f, qualifier.collection(Caches.Data.Type.PREMIRROR).getRatio(), 0.0f);
+    assertEquals(0.0f, qualifier.collection(Caches.Data.Type.SHAREDSTATE).getRatio(), 0.0f);
   }
 
   @Test
   public void testRecipeWithMixedCacheWhichNotQualified() throws Exception {
-    caches.add(new Caches.Data("A", "do_A", true, Caches.Type.PREMIRROR));
-    caches.add(new Caches.Data("A", "do_B", false, Caches.Type.SHAREDSTATE));
-    caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_A", true, Caches.Data.Type.PREMIRROR));
+    caches.add(new Caches.Data("A", "do_B", false, Caches.Data.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_C", false, Caches.Data.Type.SHAREDSTATE));
     recipe = new Recipe("A-B-C");
     recipe.set(caches);
     recipe.accept(qualifier);
@@ -157,9 +157,9 @@ public class CacheQualifierTest {
 
   @Test
   public void testRecipeWithMixedCacheWhichQualified() throws Exception {
-    caches.add(new Caches.Data("A", "do_A", true, Caches.Type.PREMIRROR));
-    caches.add(new Caches.Data("A", "do_B", true, Caches.Type.SHAREDSTATE));
-    caches.add(new Caches.Data("A", "do_C", false, Caches.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_A", true, Caches.Data.Type.PREMIRROR));
+    caches.add(new Caches.Data("A", "do_B", true, Caches.Data.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_C", false, Caches.Data.Type.SHAREDSTATE));
     recipe = new Recipe("A-B-C");
     recipe.set(caches);
     recipe.accept(qualifier);
@@ -177,13 +177,13 @@ public class CacheQualifierTest {
   @Test
   public void testRecipesWithCompoundCachesWhichQualified() throws Exception {
     caches = new Caches();
-    caches.add(new Caches.Data("A", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("A", "do_fetch", true, Caches.Data.Type.SHAREDSTATE));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(caches);
     recipes.add(recipe);
 
     caches = new Caches();
-    caches.add(new Caches.Data("B", "do_fetch", true, Caches.Type.SHAREDSTATE));
+    caches.add(new Caches.Data("B", "do_fetch", true, Caches.Data.Type.SHAREDSTATE));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(caches);
     recipes.add(recipe);
