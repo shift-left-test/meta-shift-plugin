@@ -24,48 +24,60 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Evaluates the level of cache availability
+ * Evaluates the level of cache availability.
  *
  * @author Sung Gon Kim
  */
-public class CacheQualifier extends Visitor implements Qualifiable {
+public final class CacheQualifier extends Visitor implements Qualifiable {
+  /**
+   * Represents the collection of CacheCollector objects.
+   */
   private Map<Class<? extends CacheData>, CacheCollector> collection;
+  /**
+   * Represents the threshold of the qualification.
+   */
   private float threshold;
 
   /**
-   * Default constructor
+   * Default constructor.
    *
    * @param threshold for evaluation
    */
-  public CacheQualifier(float threshold) {
-    this.collection = new HashMap<>();
-    this.collection.put(PremirrorCacheData.class, new CacheCollector(PremirrorCacheData.class));
-    this.collection.put(SharedStateCacheData.class, new CacheCollector(SharedStateCacheData.class));
+  public CacheQualifier(final float threshold) {
+    collection = new HashMap<>();
+    collection.put(PremirrorCacheData.class,
+                   new CacheCollector(PremirrorCacheData.class));
+    collection.put(SharedStateCacheData.class,
+                   new CacheCollector(SharedStateCacheData.class));
     this.threshold = threshold;
   }
 
   /**
-   * Returns the relevant CacheCollector object based on the given class type
+   * Returns the relevant CacheCollector object based on the given class type.
    *
    * @param clazz of the object to return
    * @return CacheCollector object
    */
-  public CacheCollector collection(Class<? extends CacheData> clazz) {
+  public CacheCollector collection(final Class<? extends CacheData> clazz) {
     return collection.get(clazz);
   }
 
   @Override
   public boolean isAvailable() {
-    return collection.values().stream().mapToInt(CacheCollector::getDenominator).sum() > 0;
+    return collection.values().stream()
+        .mapToInt(CacheCollector::getDenominator).sum() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection.values().stream().mapToInt(CacheCollector::getDenominator).sum();
-    int numerator = collection.values().stream().mapToInt(CacheCollector::getNumerator).sum();
+    int denominator = collection.values().stream()
+        .mapToInt(CacheCollector::getDenominator).sum();
+    int numerator = collection.values().stream()
+        .mapToInt(CacheCollector::getNumerator).sum();
     if (denominator == 0) {
       return false;
     }
@@ -73,7 +85,8 @@ public class CacheQualifier extends Visitor implements Qualifiable {
   }
 
   @Override
-  public void visit(CacheSet objects) {
-    collection.values().stream().forEach(collector -> objects.accept(collector));
+  public void visit(final CacheSet objects) {
+    collection.values().stream()
+        .forEach(collector -> objects.accept(collector));
   }
 }

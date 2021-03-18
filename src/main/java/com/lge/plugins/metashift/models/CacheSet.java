@@ -25,13 +25,13 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents a set of CacheData objects
+ * Represents a set of CacheData objects.
  *
  * @author Sung Gon Kim
  */
-public class CacheSet extends DataSet<CacheData> {
+public final class CacheSet extends DataSet<CacheData> {
   @Override
-  public void accept(Visitor visitor) {
+  public void accept(final Visitor visitor) {
     visitor.visit(this);
   }
 }

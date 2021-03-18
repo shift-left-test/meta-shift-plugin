@@ -25,53 +25,50 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * A base visitor class which provides access to various containers
+ * A base visitor class which provides access to various containers.
  *
  * @author Sung Gon Kim
  */
 public class Visitor {
   /**
-   * Visits the Recipe class
+   * Visits the Recipe class.
    *
    * @param object to visit
    */
-  public void visit(Recipe object) {
+  public void visit(final Recipe object) {
     object.forEach((k, v) -> v.accept(this));
   }
 
   /**
-   * Visits the RecipeSet class
+   * Visits the RecipeSet class.
    *
    * @param object to visit
    */
-  public void visit(RecipeSet object) {
+  public void visit(final RecipeSet object) {
     object.forEach(recipe -> recipe.accept(this));
   }
 
   /**
-   * visits the CacheSet class
+   * visits the CacheSet class.
    *
    * @param object to visit
    */
-  public void visit(CacheSet object) {
-    return;
+  public void visit(final CacheSet object) {
   }
 
   /**
-   * Visits the SizeSet class
+   * Visits the SizeSet class.
    *
    * @param object to visit
    */
-  public void visit(SizeSet object) {
-    return;
+  public void visit(final SizeSet object) {
   }
 
   /**
-   * Visits the RecipeViolationSet class
+   * Visits the RecipeViolationSet class.
    *
    * @param object to visit
    */
-  public void visit(RecipeViolationSet object) {
-    return;
+  public void visit(final RecipeViolationSet object) {
   }
 }

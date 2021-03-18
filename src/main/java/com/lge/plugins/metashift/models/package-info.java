@@ -22,17 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
-
 /**
- * Represents a container class for SizeData and
- * provides a method for Visitor classes.
- *
- * @author Sung Gon Kim
+ * Provides the data model classes.
  */
-public final class SizeSet extends DataSet<SizeData> {
-  @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
-  }
-}
+package com.lge.plugins.metashift.models;

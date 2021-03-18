@@ -24,29 +24,46 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.util.*;
-import java.util.function.*;
-import java.util.regex.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Represents a recipe containing various data for metrics
+ * Represents a recipe containing various data for metrics.
  *
  * @author Sung Gon Kim
  */
-public class Recipe implements Data<Recipe>, Acceptor {
+public final class Recipe implements Data<Recipe>, Acceptor {
+  /**
+   * Represents the name of the recipe.
+   */
   private String recipe;
+  /**
+   * Represents the revision number.
+   */
   private String revision;
+  /**
+   * Represents the version number.
+   */
   private String version;
+  /**
+   * Represents the data set mapper.
+   */
   private Map<Class<?>, DataSet<?>> collection;
 
   /**
-   * Default constructor
+   * Default constructor.
    *
    * @param fullname of the recipe
    * @throws IllegalArgumentException if the fullname is malformed
    */
-  public Recipe(String fullname) {
-    String regexp = "^(?<recipe>[\\w-+]+)(?:-)(?<version>[\\w.+]+)(?:-)(?<revision>[\\w.+]+)$";
+  public Recipe(final String fullname) {
+    String regexp = String.join("(?:-)",
+                                "^(?<recipe>[\\w-+]+)",
+                                "(?<version>[\\w.+]+)",
+                                "(?<revision>[\\w.+]+)$");
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(fullname);
     try {
@@ -54,8 +71,7 @@ public class Recipe implements Data<Recipe>, Acceptor {
       this.recipe = matcher.group("recipe");
       this.revision = matcher.group("revision");
       this.version = matcher.group("version");
-    }
-    catch (IllegalStateException | IllegalArgumentException e) {
+    } catch (IllegalStateException | IllegalArgumentException e) {
       throw new IllegalArgumentException("Invalid argument: " + fullname);
     }
 
@@ -64,39 +80,42 @@ public class Recipe implements Data<Recipe>, Acceptor {
   }
 
   /**
-   * Performs the given action for each entry in this map
+   * Performs the given action for each entry in this map.
    *
    * @param action The action to be performed for each entry
    */
-  public void forEach(BiConsumer<Class<?>, DataSet<?>> action) {
+  public void forEach(final BiConsumer<Class<?>, DataSet<?>> action) {
     collection.forEach(action);
   }
 
   /**
-   * Set the given container object to the collection
+   * Set the given container object to the collection.
    *
+   * @param <T> the class type
    * @param object to store
    */
-  public <T extends DataSet<?>> void set(T object) {
+  public <T extends DataSet<?>> void set(final T object) {
     collection.put(object.getClass(), object);
   }
 
   /**
-   * Return the relevant container object from the collection
+   * Return the relevant container object from the collection.
    *
+   * @param <T> the class type
+   * @param clazz the name of the class
    * @return container object
    */
-  public <T extends DataSet<?>> T collection(Class<T> clazz) {
+  public <T extends DataSet<?>> T collection(final Class<T> clazz) {
     return clazz.cast(collection.get(clazz));
   }
 
   @Override
-  public void accept(Visitor visitor) {
+  public void accept(final Visitor visitor) {
     visitor.visit(this);
   }
 
   @Override
-  public int compareTo(Recipe other) {
+  public int compareTo(final Recipe other) {
     int compared;
     compared = recipe.compareTo(other.recipe);
     if (compared != 0) {
@@ -114,7 +133,7 @@ public class Recipe implements Data<Recipe>, Acceptor {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(final Object object) {
     if (object == null) {
       return false;
     }
@@ -143,7 +162,7 @@ public class Recipe implements Data<Recipe>, Acceptor {
   }
 
   /**
-   * Return the revision of the recipe
+   * Return the revision of the recipe.
    *
    * @return revision
    */
@@ -152,7 +171,7 @@ public class Recipe implements Data<Recipe>, Acceptor {
   }
 
   /**
-   * Return the versino of the recipe
+   * Return the versino of the recipe.
    *
    * @return version
    */

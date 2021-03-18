@@ -27,8 +27,9 @@ package com.lge.plugins.metashift.models;
 import java.util.TreeSet;
 
 /**
- * Represents a data set for data objects
+ * Represents a data set for data objects.
  *
+ * @param <T> the class type
  * @author Sung Gon Kim
  */
 public abstract class DataSet<T> extends TreeSet<T> implements Acceptor {

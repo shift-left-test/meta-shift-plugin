@@ -25,20 +25,38 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents the recipe violation data
+ * Represents the recipe violation data.
  *
  * @author Sung Gon Kim
  */
-public class RecipeViolationData implements Data<RecipeViolationData> {
+public final class RecipeViolationData implements Data<RecipeViolationData> {
+  /**
+   * Represents the name of the recipe.
+   */
   private String recipe;
+  /**
+   * Represents the name of the file.
+   */
   private String file;
+  /**
+   * Represents the line number.
+   */
   private int line;
+  /**
+   * Represents the violation rule.
+   */
   private String rule;
+  /**
+   * Represents the description of the violation.
+   */
   private String description;
+  /**
+   * Represents the severity of the violation.
+   */
   private String severity;
 
   /**
-   * Default constructor
+   * Default constructor.
    *
    * @param recipe name
    * @param file name
@@ -47,8 +65,10 @@ public class RecipeViolationData implements Data<RecipeViolationData> {
    * @param description of the recipe violation
    * @param severity of the recipe violation
    */
-  public RecipeViolationData(String recipe, String file, int line, String rule,
-                             String description, String severity) {
+  public RecipeViolationData(final String recipe, final String file,
+                             final int line, final String rule,
+                             final String description,
+                             final String severity) {
     this.recipe = recipe;
     this.file = file;
     this.line = line;
@@ -58,7 +78,7 @@ public class RecipeViolationData implements Data<RecipeViolationData> {
   }
 
   @Override
-  public int compareTo(RecipeViolationData other) {
+  public int compareTo(final RecipeViolationData other) {
     int compared;
     compared = recipe.compareTo(other.recipe);
     if (compared != 0) {
@@ -76,7 +96,7 @@ public class RecipeViolationData implements Data<RecipeViolationData> {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(final Object object) {
     if (object == null) {
       return false;
     }
@@ -105,7 +125,7 @@ public class RecipeViolationData implements Data<RecipeViolationData> {
   }
 
   /**
-   * Return the file of the recipe violation
+   * Return the file of the recipe violation.
    *
    * @return file
    */
@@ -114,7 +134,7 @@ public class RecipeViolationData implements Data<RecipeViolationData> {
   }
 
   /**
-   * Return the line number of the recipe violation
+   * Return the line number of the recipe violation.
    *
    * @return line number
    */
@@ -123,7 +143,7 @@ public class RecipeViolationData implements Data<RecipeViolationData> {
   }
 
   /**
-   * Return the rule of the recipe violation
+   * Return the rule of the recipe violation.
    *
    * @return rule
    */
@@ -132,7 +152,7 @@ public class RecipeViolationData implements Data<RecipeViolationData> {
   }
 
   /**
-   * Return the description of the recipe violation
+   * Return the description of the recipe violation.
    *
    * @return description
    */
@@ -141,7 +161,7 @@ public class RecipeViolationData implements Data<RecipeViolationData> {
   }
 
   /**
-   * Return the severity of the recipe violation
+   * Return the severity of the recipe violation.
    *
    * @return severity
    */

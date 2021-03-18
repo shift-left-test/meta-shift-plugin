@@ -25,19 +25,20 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents the shared state cache data
+ * Represents the shared state cache data.
  *
  * @author Sung Gon Kim
  */
 public class SharedStateCacheData extends CacheData {
   /**
-   * Default constructor
+   * Default constructor.
    *
    * @param recipe name
    * @param task name
    * @param available the cache availability
    */
-  public SharedStateCacheData(String recipe, String task, boolean available) {
+  public SharedStateCacheData(final String recipe, final String task,
+                              final boolean available) {
     super(recipe, task, available);
   }
 }

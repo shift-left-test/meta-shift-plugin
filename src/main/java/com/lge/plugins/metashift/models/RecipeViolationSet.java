@@ -25,13 +25,13 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents a set of RecipeViolationData objects
+ * Represents a set of RecipeViolationData objects.
  *
  * @author Sung Gon Kim
  */
-public class RecipeViolationSet extends DataSet<RecipeViolationData> {
+public final class RecipeViolationSet extends DataSet<RecipeViolationData> {
   @Override
-  public void accept(Visitor visitor) {
+  public void accept(final Visitor visitor) {
     visitor.visit(this);
   }
 }

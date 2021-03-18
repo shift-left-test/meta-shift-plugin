@@ -25,19 +25,20 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents the premirror cache data
+ * Represents the premirror cache data.
  *
  * @author Sung Gon Kim
  */
 public class PremirrorCacheData extends CacheData {
   /**
-   * Default constructor
+   * Default constructor.
    *
    * @param recipe name
    * @param task name
    * @param available the cache availability
    */
-  public PremirrorCacheData(String recipe, String task, boolean available) {
+  public PremirrorCacheData(final String recipe, final String task,
+                            final boolean available) {
     super(recipe, task, available);
   }
 }

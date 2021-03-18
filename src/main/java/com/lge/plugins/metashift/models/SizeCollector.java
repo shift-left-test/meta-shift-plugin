@@ -25,19 +25,34 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the size information from the given data containers
+ * Collects the size information from the given data containers.
  *
  * @author Sung Gon Kim
  */
-public class SizeCollector extends Visitor {
+public final class SizeCollector extends Visitor {
+  /**
+   * Represents the sum of the number of classes.
+   */
   private int classes;
+  /**
+   * Represents the sum of the number of files.
+   */
   private int files;
+  /**
+   * Represents the sum of the number of functions.
+   */
   private int functions;
+  /**
+   * Represents the sum of the number of lines.
+   */
   private int lines;
+  /**
+   * Represents the sum of the number of recipes.
+   */
   private int recipes;
 
   /**
-   * Default constructor
+   * Default constructor.
    */
   public SizeCollector() {
     this.classes = 0;
@@ -48,7 +63,7 @@ public class SizeCollector extends Visitor {
   }
 
   /**
-   * Return the number of classes
+   * Return the number of classes.
    *
    * @return the number of classes
    */
@@ -57,7 +72,7 @@ public class SizeCollector extends Visitor {
   }
 
   /**
-   * Return the number of files
+   * Return the number of files.
    *
    * @return the number of files
    */
@@ -66,7 +81,7 @@ public class SizeCollector extends Visitor {
   }
 
   /**
-   * Return the number of functions
+   * Return the number of functions.
    *
    * @return the number of functions
    */
@@ -75,7 +90,7 @@ public class SizeCollector extends Visitor {
   }
 
   /**
-   * Return the number of lines
+   * Return the number of lines.
    *
    * @return the number of lines
    */
@@ -84,7 +99,7 @@ public class SizeCollector extends Visitor {
   }
 
   /**
-   * Return the number of recipes
+   * Return the number of recipes.
    *
    * @return the number of recipes
    */
@@ -93,7 +108,7 @@ public class SizeCollector extends Visitor {
   }
 
   @Override
-  public void visit(SizeSet sizes) {
+  public void visit(final SizeSet sizes) {
     recipes += sizes.stream().map(SizeData::getRecipe).distinct().count();
     files += sizes.stream().distinct().count();
     lines += sizes.stream().mapToInt(SizeData::getLines).sum();

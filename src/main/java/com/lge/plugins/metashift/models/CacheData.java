@@ -25,30 +25,40 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents the cache data
+ * Represents the cache data.
  *
  * @author Sung Gon Kim
  */
 public abstract class CacheData implements Data<CacheData> {
+  /**
+   * Represents the name of the recipe.
+   */
   private String recipe;
+  /**
+   * Represents the name of the task.
+   */
   private String task;
+  /**
+   * Indicates the cache availability.
+   */
   private boolean available;
 
   /**
-   * Default constructor
+   * Default constructor.
    *
-   * @param recipe name
-   * @param task name
-   * @param available the cache availability
+   * @param recipe name.
+   * @param task name.
+   * @param available the cache availability.
    */
-  public CacheData(String recipe, String task, boolean available) {
+  public CacheData(final String recipe, final String task,
+                   final boolean available) {
     this.recipe = recipe;
     this.task = task;
     this.available = available;
   }
 
   @Override
-  public int compareTo(CacheData other) {
+  public final int compareTo(final CacheData other) {
     int compared;
     compared = recipe.compareTo(other.recipe);
     if (compared != 0) {
@@ -62,7 +72,7 @@ public abstract class CacheData implements Data<CacheData> {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public final boolean equals(final Object object) {
     if (object == null) {
       return false;
     }
@@ -86,30 +96,30 @@ public abstract class CacheData implements Data<CacheData> {
   }
 
   @Override
-  public String getRecipe() {
+  public final String getRecipe() {
     return recipe;
   }
 
   /**
-   * Return the task name
+   * Return the task name.
    *
    * @return task name
    */
-  public String getTask() {
+  public final String getTask() {
     return task;
   }
 
   /**
-   * Return the cache availability
+   * Return the cache availability.
    *
-   * @return true if the cache is available, false otherwise
+   * @return true if the cache is available, false otherwise.
    */
-  public boolean isAvailable() {
+  public final boolean isAvailable() {
     return available;
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();

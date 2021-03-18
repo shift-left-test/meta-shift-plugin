@@ -25,11 +25,11 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * A container class for recipes
+ * A container class for recipes.
  */
-public class RecipeSet extends DataSet<Recipe> {
+public final class RecipeSet extends DataSet<Recipe> {
   @Override
-  public void accept(Visitor visitor) {
+  public void accept(final Visitor visitor) {
     visitor.visit(this);
   }
 }

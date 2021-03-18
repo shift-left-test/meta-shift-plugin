@@ -25,22 +25,22 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Qualifiable interface
+ * Qualifiable interface.
  *
  * @author Sung Gon Kim
  */
 public interface Qualifiable {
   /**
-   * Return whether the metric is availabile
+   * Returns whether the metric is availabile.
    *
    * @return true if the metric is available, false otherwise
    */
-  public boolean isAvailable();
+  boolean isAvailable();
 
   /**
-   * Return whether the evaluation of the metric meets the criteria
+   * Returns whether the evaluation of the metric meets the criteria.
    *
    * @return true if the metric meets the criteria, false otherwise
    */
-  public boolean isQualified();
+  boolean isQualified();
 }

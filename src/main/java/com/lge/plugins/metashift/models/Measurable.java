@@ -25,33 +25,34 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Provides an interface to measure data
+ * Provides an interface to measure data.
  *
  * @author Sung Gon Kim
  */
 public interface Measurable {
   /**
-   * Return the denominator of the metric
+   * Returns the denominator of the metric.
    *
    * @return denominator
    */
-  public int getDenominator();
+  int getDenominator();
 
   /**
-   * Return the numerator of the metric
+   * Returns the numerator of the metric.
    *
    * @return numerator
    */
-  public int getNumerator();
+  int getNumerator();
 
   /**
-   * Return the calculated ratio of the metric or zero if the denominator is zero
+   * Returns the calculated ratio of the metric or
+   * zero if the denominator is zero.
    *
    * @return ratio
    */
-  default public float getRatio() {
+  default float getRatio() {
     int denominator = getDenominator();
     int numerator = getNumerator();
-    return (denominator > 0) ? (float) numerator / (float) denominator : 0.0f;
+    return denominator > 0 ? (float) numerator / (float) denominator : 0.0f;
   }
 }

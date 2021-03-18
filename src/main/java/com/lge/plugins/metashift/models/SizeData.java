@@ -25,27 +25,43 @@
 package com.lge.plugins.metashift.models;
 
   /**
-   * Represents the size data
+   * Represents the size data.
    *
    * @author Sung Gon Kim
    */
-public class SizeData implements Data<SizeData> {
+public final class SizeData implements Data<SizeData> {
+  /**
+   * Represents the name of the recipe.
+   */
   private String recipe;
+  /**
+   * Represents the filename.
+   */
   private String file;
+  /**
+   * Represents the number of lines for the file.
+   */
   private int lines;
+  /**
+   * Represents the number of functions for the file.
+   */
   private int functions;
+  /**
+   * Represents the number of classes for the file.
+   */
   private int classes;
 
   /**
-   * Default constructor
+   * Default constructor.
    *
-   * @param recipe name
-   * @param file name
-   * @param lines the number of lines for the file
-   * @param functions the number of functions for the file
-   * @param classes the number of classes for the file
+   * @param recipe name.
+   * @param file name.
+   * @param lines the number of lines for the file.
+   * @param functions the number of functions for the file.
+   * @param classes the number of classes for the file.
    */
-  public SizeData(String recipe, String file, int lines, int functions, int classes) {
+  public SizeData(final String recipe, final String file, final int lines,
+                  final int functions, final int classes) {
     this.recipe = recipe;
     this.file = file;
     this.lines = lines;
@@ -54,7 +70,7 @@ public class SizeData implements Data<SizeData> {
   }
 
   @Override
-  public int compareTo(SizeData other) {
+  public int compareTo(final SizeData other) {
     int compared;
     compared = recipe.compareTo(other.recipe);
     if (compared != 0) {
@@ -68,7 +84,7 @@ public class SizeData implements Data<SizeData> {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(final Object object) {
     if (object == null) {
       return false;
     }
@@ -103,7 +119,7 @@ public class SizeData implements Data<SizeData> {
   }
 
   /**
-   * Return the filename
+   * Return the filename.
    *
    * @return filename
    */
@@ -112,7 +128,7 @@ public class SizeData implements Data<SizeData> {
   }
 
   /**
-   * Return the number of lines
+   * Return the number of lines.
    *
    * @return lines
    */
@@ -121,7 +137,7 @@ public class SizeData implements Data<SizeData> {
   }
 
   /**
-   * Return the number of functions
+   * Return the number of functions.
    *
    * @return functions
    */
@@ -130,9 +146,9 @@ public class SizeData implements Data<SizeData> {
   }
 
   /**
-   * Return the number of classes
+   * Return the number of classes.
    *
-   * @return classes;
+   * @return classes
    */
   public int getClasses() {
     return classes;
