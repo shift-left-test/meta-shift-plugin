@@ -24,7 +24,6 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.CacheSet;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -40,7 +39,6 @@ public class CacheDataTest {
 
   @Test
   public void testInitialization() throws Exception {
-    assertEquals(PremirrorCacheData.class, origin.getClass());
     assertEquals("A", origin.getRecipe());
     assertEquals("do_run", origin.getTask());
     assertTrue(origin.isAvailable());
