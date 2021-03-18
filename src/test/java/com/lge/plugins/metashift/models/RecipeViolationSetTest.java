@@ -24,14 +24,41 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 /**
- * Represents a set of CacheData objects
+ * Unit tests for the RecipeViolationSet class
  *
  * @author Sung Gon Kim
  */
-public class CacheSet extends DataSet<CacheData> {
-  @Override
-  public void accept(Visitor visitor) {
-    visitor.visit(this);
+public class RecipeViolationSetTest {
+  private RecipeViolationSet objects;
+
+  @Before
+  public void setUp() throws Exception {
+    objects = new RecipeViolationSet();
+  }
+
+  @Test
+  public void testInitialState() throws Exception {
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testAddingData() throws Exception {
+    RecipeViolationData first = new RecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error");
+    RecipeViolationData second = new RecipeViolationData("A", "a.file", 2, "rule1", "rule1_info", "error");
+    objects.add(second);
+    objects.add(first);
+    assertEquals(2, objects.size());
+    assertEquals(first, objects.iterator().next());
+  }
+
+  @Test
+  public void testAddingDuplicates() throws Exception {
+    objects.add(new RecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error"));
+    objects.add(new RecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error"));
+    assertEquals(1, objects.size());
   }
 }
