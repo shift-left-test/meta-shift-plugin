@@ -45,27 +45,31 @@ public class CacheQualifierTest {
 
   @Before
   public void setUp() throws Exception {
-    caches = new CacheSet();
     qualifier = new CacheQualifier(0.5f);
+    caches = new CacheSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
 
+  private void assertValues(boolean available, boolean qualified,
+                            float premirror, float sharedState) {
+    assertEquals(available, qualifier.isAvailable());
+    assertEquals(qualified, qualifier.isQualified());
+    assertEquals(premirror, qualifier.collection(
+        PremirrorCacheData.class).getRatio(), 0.1f);
+    assertEquals(sharedState, qualifier.collection(
+        SharedStateCacheData.class).getRatio(), 0.1f);
+  }
+
   @Test
   public void testInitialState() throws Exception {
-    assertFalse(qualifier.isAvailable());
-    assertFalse(qualifier.isQualified());
-    assertEquals(0.0f, qualifier.collection(PremirrorCacheData.class).getRatio(), 0.0f);
-    assertEquals(0.0f, qualifier.collection(SharedStateCacheData.class).getRatio(), 0.0f);
+    assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
   public void testEmptyCacheSet() throws Exception {
     caches.accept(qualifier);
-    assertFalse(qualifier.isAvailable());
-    assertFalse(qualifier.isQualified());
-    assertEquals(0.0f, qualifier.collection(PremirrorCacheData.class).getRatio(), 0.0f);
-    assertEquals(0.0f, qualifier.collection(SharedStateCacheData.class).getRatio(), 0.0f);
+    assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
@@ -74,10 +78,7 @@ public class CacheQualifierTest {
     caches.add(new PremirrorCacheData("A", "do_B", false));
     caches.add(new PremirrorCacheData("A", "do_C", false));
     caches.accept(qualifier);
-    assertTrue(qualifier.isAvailable());
-    assertFalse(qualifier.isQualified());
-    assertEquals(0.3f, qualifier.collection(PremirrorCacheData.class).getRatio(), 0.1f);
-    assertEquals(0.0f, qualifier.collection(SharedStateCacheData.class).getRatio(), 0.0f);
+    assertValues(true, false, 0.3f, 0.0f);
   }
 
   @Test
@@ -85,10 +86,7 @@ public class CacheQualifierTest {
     caches.add(new PremirrorCacheData("A", "do_A", true));
     caches.add(new PremirrorCacheData("A", "do_B", false));
     caches.accept(qualifier);
-    assertTrue(qualifier.isAvailable());
-    assertTrue(qualifier.isQualified());
-    assertEquals(0.5f, qualifier.collection(PremirrorCacheData.class).getRatio(), 0.1f);
-    assertEquals(0.0f, qualifier.collection(SharedStateCacheData.class).getRatio(), 0.0f);
+    assertValues(true, true, 0.5f, 0.0f);
   }
 
   @Test
@@ -97,10 +95,7 @@ public class CacheQualifierTest {
     caches.add(new SharedStateCacheData("A", "do_B", false));
     caches.add(new SharedStateCacheData("A", "do_C", false));
     caches.accept(qualifier);
-    assertTrue(qualifier.isAvailable());
-    assertFalse(qualifier.isQualified());
-    assertEquals(0.0f, qualifier.collection(PremirrorCacheData.class).getRatio(), 0.0f);
-    assertEquals(0.3f, qualifier.collection(SharedStateCacheData.class).getRatio(), 0.1f);
+    assertValues(true, false, 0.0f, 0.3f);
   }
 
   @Test
@@ -108,10 +103,7 @@ public class CacheQualifierTest {
     caches.add(new SharedStateCacheData("A", "do_A", true));
     caches.add(new SharedStateCacheData("A", "do_B", false));
     caches.accept(qualifier);
-    assertTrue(qualifier.isAvailable());
-    assertTrue(qualifier.isQualified());
-    assertEquals(0.0f, qualifier.collection(PremirrorCacheData.class).getRatio(), 0.0f);
-    assertEquals(0.5f, qualifier.collection(SharedStateCacheData.class).getRatio(), 0.1f);
+    assertValues(true, true, 0.0f, 0.5f);
   }
 
   @Test
@@ -120,8 +112,7 @@ public class CacheQualifierTest {
     caches.add(new SharedStateCacheData("A", "do_B", false));
     caches.add(new SharedStateCacheData("A", "do_C", false));
     caches.accept(qualifier);
-    assertTrue(qualifier.isAvailable());
-    assertFalse(qualifier.isQualified());
+    assertValues(true, false, 1.0f, 0.0f);
   }
 
   @Test
@@ -130,17 +121,13 @@ public class CacheQualifierTest {
     caches.add(new SharedStateCacheData("A", "do_B", true));
     caches.add(new SharedStateCacheData("A", "do_C", false));
     caches.accept(qualifier);
-    assertTrue(qualifier.isAvailable());
-    assertTrue(qualifier.isQualified());
+    assertValues(true, true, 1.0f, 0.5f);
   }
 
   @Test
   public void testEmptyRecipe() throws Exception {
     recipe.accept(qualifier);
-    assertFalse(qualifier.isAvailable());
-    assertFalse(qualifier.isQualified());
-    assertEquals(0.0f, qualifier.collection(PremirrorCacheData.class).getRatio(), 0.0f);
-    assertEquals(0.0f, qualifier.collection(SharedStateCacheData.class).getRatio(), 0.0f);
+    assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
@@ -148,11 +135,9 @@ public class CacheQualifierTest {
     caches.add(new PremirrorCacheData("A", "do_A", true));
     caches.add(new SharedStateCacheData("A", "do_B", false));
     caches.add(new SharedStateCacheData("A", "do_C", false));
-    recipe = new Recipe("A-B-C");
     recipe.set(caches);
     recipe.accept(qualifier);
-    assertTrue(qualifier.isAvailable());
-    assertFalse(qualifier.isQualified());
+    assertValues(true, false, 1.0f, 0.0f);
   }
 
   @Test
@@ -163,33 +148,32 @@ public class CacheQualifierTest {
     recipe = new Recipe("A-B-C");
     recipe.set(caches);
     recipe.accept(qualifier);
-    assertTrue(qualifier.isAvailable());
-    assertTrue(qualifier.isQualified());
+    assertValues(true, true, 1.0f, 0.5f);
   }
 
   @Test
   public void testEmptyRecipeSet() throws Exception {
     recipes.accept(qualifier);
-    assertFalse(qualifier.isAvailable());
-    assertFalse(qualifier.isQualified());
+    assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
   public void testRecipeSetWithCompoundCacheSetWhichQualified() throws Exception {
     caches = new CacheSet();
+    caches.add(new PremirrorCacheData("A", "do_packagedata", true));
     caches.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(caches);
     recipes.add(recipe);
 
     caches = new CacheSet();
+    caches.add(new PremirrorCacheData("B", "do_packagedata", true));
     caches.add(new SharedStateCacheData("B", "do_fetch", true));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(caches);
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertTrue(qualifier.isAvailable());
-    assertTrue(qualifier.isQualified());
+    assertValues(true, true, 1.0f, 1.0f);
   }
 }

@@ -28,15 +28,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Evaluates the level of cache availability.
+ * Evaluates the level of recipe violations.
  *
  * @author Sung Gon Kim
  */
-public final class CacheQualifier extends Visitor implements Qualifiable {
+public final class RecipeViolationQualifier extends Visitor
+                                            implements Qualifiable {
   /**
-   * Represents the collection of CacheCollector objects.
+   * Represents the collection of RecipeViolationCollector objects.
    */
-  private Map<Class<? extends CacheData>, CacheCollector> collection;
+  private Map<Class<? extends RecipeViolationData>,
+              RecipeViolationCollector> collection;
   /**
    * Represents the threshold of the qualification.
    */
@@ -47,45 +49,51 @@ public final class CacheQualifier extends Visitor implements Qualifiable {
    *
    * @param threshold for evaluation
    */
-  public CacheQualifier(final float threshold) {
+  public RecipeViolationQualifier(final float threshold) {
     collection = new HashMap<>();
-    collection.put(PremirrorCacheData.class,
-                   new CacheCollector(PremirrorCacheData.class));
-    collection.put(SharedStateCacheData.class,
-                   new CacheCollector(SharedStateCacheData.class));
+    collection.put(MajorRecipeViolationData.class,
+                   new RecipeViolationCollector(
+                       MajorRecipeViolationData.class));
+    collection.put(MinorRecipeViolationData.class,
+                   new RecipeViolationCollector(
+                       MinorRecipeViolationData.class));
+    collection.put(InfoRecipeViolationData.class,
+                   new RecipeViolationCollector(
+                       InfoRecipeViolationData.class));
     this.threshold = threshold;
   }
 
   /**
-   * Returns the relevant CacheCollector object based on the given class type.
+   * Returns the relevant RecipeViolationCollector object
+   * based on the given class type.
    *
    * @param clazz of the object type to return
-   * @return CacheCollector object
+   * @return RecipeViolationCollector object
    */
-  public CacheCollector collection(final Class<? extends CacheData> clazz) {
+  public RecipeViolationCollector
+  collection(final Class<? extends RecipeViolationData> clazz) {
     return collection.get(clazz);
   }
 
   @Override
   public boolean isAvailable() {
-    return collection.values().stream()
-        .mapToInt(CacheCollector::getDenominator).sum() > 0;
+    return collection(MajorRecipeViolationData.class).getDenominator() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection.values().stream()
-        .mapToInt(CacheCollector::getDenominator).sum();
-    int numerator = collection.values().stream()
-        .mapToInt(CacheCollector::getNumerator).sum();
+    int denominator =
+        collection(MajorRecipeViolationData.class).getDenominator();
+    int numerator =
+        collection(MajorRecipeViolationData.class).getNumerator();
     if (denominator == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) >= threshold;
+    return ((float) numerator / (float) denominator) <= threshold;
   }
 
   @Override
-  public void visit(final CacheSet objects) {
+  public void visit(final RecipeViolationSet objects) {
     collection.values().stream()
         .forEach(collector -> objects.accept(collector));
   }
