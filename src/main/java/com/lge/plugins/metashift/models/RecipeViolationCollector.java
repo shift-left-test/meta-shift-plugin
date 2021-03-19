@@ -29,8 +29,7 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class RecipeViolationCollector extends Visitor
-                                            implements Measurable {
+public final class RecipeViolationCollector extends Visitor implements Measurable {
   /**
    * Represents the class type.
    */
@@ -69,9 +68,6 @@ public final class RecipeViolationCollector extends Visitor
   @Override
   public void visit(final RecipeViolationSet recipeViolations) {
     denominator += recipeViolations.size();
-    numerator += recipeViolations
-        .stream()
-        .filter(o -> o.getClass() == clazz)
-        .count();
+    numerator += recipeViolations.stream().filter(o -> o.getClass() == clazz).count();
   }
 }

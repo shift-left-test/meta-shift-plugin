@@ -30,7 +30,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the Recipe class
+ * Unit tests for the Recipe class.
  *
  * @author Sung Gon Kim
  */
@@ -94,10 +94,11 @@ public class RecipeTest {
     expected.add(new Recipe("B-1.0.0-r1"));
 
     List<Recipe> actual = new ArrayList<>();
-    actual.addAll(expected);
-    Collections.shuffle(actual);
-    Collections.sort(actual);
+    actual.add(new Recipe("B-1.0.0-r1"));
+    actual.add(new Recipe("A-3.0.0-r2"));
+    actual.add(new Recipe("A-2.0.0-r3"));
 
+    Collections.sort(actual);
     assertEquals(expected, actual);
   }
 

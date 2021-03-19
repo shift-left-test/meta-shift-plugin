@@ -29,7 +29,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the SizeSet class
+ * Unit tests for the SizeSet class.
  *
  * @author Sung Gon Kim
  */

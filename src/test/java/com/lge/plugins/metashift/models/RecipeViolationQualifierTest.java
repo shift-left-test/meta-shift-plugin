@@ -55,12 +55,9 @@ public class RecipeViolationQualifierTest {
                             float major, float minor, float info) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
-    assertEquals(major, qualifier.collection(
-        MajorRecipeViolationData.class).getRatio(), 0.1f);
-    assertEquals(minor, qualifier.collection(
-        MinorRecipeViolationData.class).getRatio(), 0.1f);
-    assertEquals(info, qualifier.collection(
-        InfoRecipeViolationData.class).getRatio(), 0.1f);
+    assertEquals(major, qualifier.collection(MajorRecipeViolationData.class).getRatio(), 0.1f);
+    assertEquals(minor, qualifier.collection(MinorRecipeViolationData.class).getRatio(), 0.1f);
+    assertEquals(info, qualifier.collection(InfoRecipeViolationData.class).getRatio(), 0.1f);
   }
 
   @Test

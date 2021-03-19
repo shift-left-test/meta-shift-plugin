@@ -28,7 +28,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the CacheSet class
+ * Unit tests for the CacheSet class.
  *
  * @author Sung Gon Kim
  */

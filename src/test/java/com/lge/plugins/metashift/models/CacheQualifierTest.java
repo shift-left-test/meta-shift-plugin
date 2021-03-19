@@ -33,7 +33,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the CacheQualifier class
+ * Unit tests for the CacheQualifier class.
  *
  * @author Sung Gon Kim
  */
@@ -55,10 +55,8 @@ public class CacheQualifierTest {
                             float premirror, float sharedState) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
-    assertEquals(premirror, qualifier.collection(
-        PremirrorCacheData.class).getRatio(), 0.1f);
-    assertEquals(sharedState, qualifier.collection(
-        SharedStateCacheData.class).getRatio(), 0.1f);
+    assertEquals(premirror, qualifier.collection(PremirrorCacheData.class).getRatio(), 0.1f);
+    assertEquals(sharedState, qualifier.collection(SharedStateCacheData.class).getRatio(), 0.1f);
   }
 
   @Test

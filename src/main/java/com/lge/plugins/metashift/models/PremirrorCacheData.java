@@ -37,8 +37,7 @@ public final class PremirrorCacheData extends CacheData {
    * @param task name
    * @param available the cache availability
    */
-  public PremirrorCacheData(final String recipe, final String task,
-                            final boolean available) {
+  public PremirrorCacheData(final String recipe, final String task, final boolean available) {
     super(recipe, task, available);
   }
 }

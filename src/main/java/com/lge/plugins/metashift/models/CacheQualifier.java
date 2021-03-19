@@ -49,10 +49,8 @@ public final class CacheQualifier extends Visitor implements Qualifiable {
    */
   public CacheQualifier(final float threshold) {
     collection = new HashMap<>();
-    collection.put(PremirrorCacheData.class,
-                   new CacheCollector(PremirrorCacheData.class));
-    collection.put(SharedStateCacheData.class,
-                   new CacheCollector(SharedStateCacheData.class));
+    collection.put(PremirrorCacheData.class, new CacheCollector(PremirrorCacheData.class));
+    collection.put(SharedStateCacheData.class, new CacheCollector(SharedStateCacheData.class));
     this.threshold = threshold;
   }
 

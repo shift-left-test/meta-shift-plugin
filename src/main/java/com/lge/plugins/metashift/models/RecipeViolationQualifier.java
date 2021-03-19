@@ -32,13 +32,11 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public final class RecipeViolationQualifier extends Visitor
-                                            implements Qualifiable {
+public final class RecipeViolationQualifier extends Visitor implements Qualifiable {
   /**
    * Represents the collection of RecipeViolationCollector objects.
    */
-  private Map<Class<? extends RecipeViolationData>,
-              RecipeViolationCollector> collection;
+  private Map<Class<? extends RecipeViolationData>, RecipeViolationCollector> collection;
   /**
    * Represents the threshold of the qualification.
    */
@@ -70,8 +68,7 @@ public final class RecipeViolationQualifier extends Visitor
    * @param clazz of the object type to return
    * @return RecipeViolationCollector object
    */
-  public RecipeViolationCollector
-  collection(final Class<? extends RecipeViolationData> clazz) {
+  public RecipeViolationCollector collection(final Class<? extends RecipeViolationData> clazz) {
     return collection.get(clazz);
   }
 
@@ -82,10 +79,8 @@ public final class RecipeViolationQualifier extends Visitor
 
   @Override
   public boolean isQualified() {
-    int denominator =
-        collection(MajorRecipeViolationData.class).getDenominator();
-    int numerator =
-        collection(MajorRecipeViolationData.class).getNumerator();
+    int denominator = collection(MajorRecipeViolationData.class).getDenominator();
+    int numerator = collection(MajorRecipeViolationData.class).getNumerator();
     if (denominator == 0) {
       return false;
     }

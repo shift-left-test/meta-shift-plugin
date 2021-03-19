@@ -28,9 +28,8 @@ import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-
 /**
- * Unit tests for the RecipeViolationCollector class
+ * Unit tests for the RecipeViolationCollector class.
  *
  * @author Sung Gon Kim
  */

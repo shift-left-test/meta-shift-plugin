@@ -24,11 +24,11 @@
 
 package com.lge.plugins.metashift.models;
 
-  /**
-   * Represents the size data.
-   *
-   * @author Sung Gon Kim
-   */
+/**
+ * Represents the size data.
+ *
+ * @author Sung Gon Kim
+ */
 public final class SizeData implements Data<SizeData> {
   /**
    * Represents the name of the recipe.

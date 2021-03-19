@@ -73,10 +73,10 @@ public class CommentDataTest {
     expected.add(new CommentData("B", "b.file", 10, 5));
 
     List<CommentData> actual = new ArrayList<>();
-    actual.add(new CommentData("A", "a.file", 10, 5));
-    actual.add(new CommentData("A", "b.file", 10, 5));
-    actual.add(new CommentData("B", "a.file", 10, 5));
     actual.add(new CommentData("B", "b.file", 10, 5));
+    actual.add(new CommentData("B", "a.file", 10, 5));
+    actual.add(new CommentData("A", "b.file", 10, 5));
+    actual.add(new CommentData("A", "a.file", 10, 5));
 
     Collections.sort(actual);
     assertEquals(expected, actual);

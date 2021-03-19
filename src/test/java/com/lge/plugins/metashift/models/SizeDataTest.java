@@ -30,7 +30,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the SizeData class
+ * Unit tests for the SizeData class.
  *
  * @author Sung Gon Kim
  */

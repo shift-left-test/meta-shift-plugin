@@ -50,8 +50,7 @@ public abstract class CacheData implements Data<CacheData> {
    * @param task name
    * @param available the cache availability
    */
-  public CacheData(final String recipe, final String task,
-                   final boolean available) {
+  public CacheData(final String recipe, final String task, final boolean available) {
     this.recipe = recipe;
     this.task = task;
     this.available = available;

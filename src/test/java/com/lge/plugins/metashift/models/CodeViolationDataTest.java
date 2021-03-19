@@ -34,10 +34,8 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CodeViolationDataTest {
-  private CodeViolationData origin =
-      new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool");
-  private CodeViolationData same =
-      new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool");
+  private CodeViolationData origin = new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool");
+  private CodeViolationData same = new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool");
 
   @Test
   public void testInitData() throws Exception {

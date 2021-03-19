@@ -33,7 +33,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the SizeCollector class
+ * Unit tests for the SizeCollector class.
  *
  * @author Sung Gon Kim
  */
@@ -51,23 +51,23 @@ public class SizeCollectorTest {
     recipes = new RecipeSet();
   }
 
+  private void assertValues(int recipes, int files, int lines, int functions, int classes) {
+    assertEquals(recipes, collector.getRecipes());
+    assertEquals(files, collector.getFiles());
+    assertEquals(lines, collector.getLines());
+    assertEquals(functions, collector.getFunctions());
+    assertEquals(classes, collector.getClasses());
+  }
+
   @Test
   public void testInitialState() throws Exception {
-    assertEquals(0, collector.getRecipes());
-    assertEquals(0, collector.getFiles());
-    assertEquals(0, collector.getLines());
-    assertEquals(0, collector.getFunctions());
-    assertEquals(0, collector.getClasses());
+    assertValues(0, 0, 0, 0, 0);
   }
 
   @Test
   public void testEmptySizeSet() throws Exception {
     sizes.accept(collector);
-    assertEquals(0, collector.getRecipes());
-    assertEquals(0, collector.getFiles());
-    assertEquals(0, collector.getLines());
-    assertEquals(0, collector.getFunctions());
-    assertEquals(0, collector.getClasses());
+    assertValues(0, 0, 0, 0, 0);
   }
 
   @Test
@@ -75,11 +75,7 @@ public class SizeCollectorTest {
     sizes.add(new SizeData("A", "a.file", 3, 2, 1));
     sizes.add(new SizeData("A", "b.file", 6, 4, 2));
     sizes.accept(collector);
-    assertEquals(1, collector.getRecipes());
-    assertEquals(2, collector.getFiles());
-    assertEquals(9, collector.getLines());
-    assertEquals(6, collector.getFunctions());
-    assertEquals(3, collector.getClasses());
+    assertValues(1, 2, 9, 6, 3);
   }
 
   @Test
@@ -88,11 +84,7 @@ public class SizeCollectorTest {
     sizes.add(new SizeData("A", "b.file", 6, 4, 2));
     recipe.set(sizes);
     recipe.accept(collector);
-    assertEquals(1, collector.getRecipes());
-    assertEquals(2, collector.getFiles());
-    assertEquals(9, collector.getLines());
-    assertEquals(6, collector.getFunctions());
-    assertEquals(3, collector.getClasses());
+    assertValues(1, 2, 9, 6, 3);
   }
 
   @Test
@@ -110,10 +102,6 @@ public class SizeCollectorTest {
     recipes.add(recipe);
 
     recipes.accept(collector);
-    assertEquals(2, collector.getRecipes());
-    assertEquals(2, collector.getFiles());
-    assertEquals(9, collector.getLines());
-    assertEquals(6, collector.getFunctions());
-    assertEquals(3, collector.getClasses());
+    assertValues(2, 2, 9, 6, 3);
   }
 }

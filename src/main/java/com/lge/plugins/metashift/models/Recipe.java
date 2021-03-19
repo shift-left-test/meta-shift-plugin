@@ -60,10 +60,7 @@ public final class Recipe implements Data<Recipe>, Acceptor {
    * @throws IllegalArgumentException if the fullname is malformed
    */
   public Recipe(final String fullname) {
-    String regexp = String.join("(?:-)",
-                                "^(?<recipe>[\\w-+]+)",
-                                "(?<version>[\\w.+]+)",
-                                "(?<revision>[\\w.+]+)$");
+    String regexp = "^(?<recipe>[\\w-+]+)(?:-)(?<version>[\\w.+]+)(?:-)(?<revision>[\\w.+]+)$";
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(fullname);
     try {

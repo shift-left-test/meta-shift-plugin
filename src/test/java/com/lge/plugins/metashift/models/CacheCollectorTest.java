@@ -33,7 +33,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the CacheCollector class
+ * Unit tests for the CacheCollector class.
  *
  * @author Sung Gon Kim
  */
@@ -51,37 +51,35 @@ public class CacheCollectorTest {
     recipes = new RecipeSet();
   }
 
+  private void assertValues(int denominator, int numerator, float ratio) {
+    assertEquals(denominator, collector.getDenominator());
+    assertEquals(numerator, collector.getNumerator());
+    assertEquals(ratio, collector.getRatio(), 0.1f);
+  }
+
   @Test
   public void testInitialState() throws Exception {
-    assertEquals(0, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testEmptyCache() throws Exception {
     caches.accept(collector);
-    assertEquals(0, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testNonMatchingTypeCache() throws Exception {
     caches.add(new PremirrorCacheData("A", "do_fetch", true));
     caches.accept(collector);
-    assertEquals(0, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testMatchingTypeCache() throws Exception {
     caches.add(new SharedStateCacheData("A", "do_fetch", true));
     caches.accept(collector);
-    assertEquals(1, collector.getDenominator());
-    assertEquals(1, collector.getNumerator());
-    assertEquals(1.0f, collector.getRatio(), 0.0f);
+    assertValues(1, 1, 1.0f);
   }
 
   @Test
@@ -91,9 +89,7 @@ public class CacheCollectorTest {
     caches.add(new PremirrorCacheData("A", "do_fetch", true));
     caches.add(new PremirrorCacheData("A", "do_compile", false));
     caches.accept(collector);
-    assertEquals(2, collector.getDenominator());
-    assertEquals(1, collector.getNumerator());
-    assertEquals(0.5f, collector.getRatio(), 0.0f);
+    assertValues(2, 1, 0.5f);
   }
 
   @Test
@@ -109,17 +105,13 @@ public class CacheCollectorTest {
     group.add(caches);
 
     group.forEach(o -> o.accept(collector));
-    assertEquals(4, collector.getDenominator());
-    assertEquals(2, collector.getNumerator());
-    assertEquals(0.5f, collector.getRatio(), 0.0f);
+    assertValues(4, 2, 0.5f);
   }
 
   @Test
   public void testEmptyRecipe() throws Exception {
     recipe.accept(collector);
-    assertEquals(0, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
@@ -127,9 +119,7 @@ public class CacheCollectorTest {
     caches.add(new PremirrorCacheData("A", "do_fetch", true));
     recipe.set(caches);
     recipe.accept(collector);
-    assertEquals(0, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
@@ -138,17 +128,13 @@ public class CacheCollectorTest {
     recipe = new Recipe("A-B-C");
     recipe.set(caches);
     recipe.accept(collector);
-    assertEquals(1, collector.getDenominator());
-    assertEquals(1, collector.getNumerator());
-    assertEquals(1.0f, collector.getRatio(), 0.0f);
+    assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testEmptyRecipeSet() throws Exception {
     recipes.accept(collector);
-    assertEquals(0, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
@@ -166,8 +152,6 @@ public class CacheCollectorTest {
     recipes.add(recipe);
 
     recipes.accept(collector);
-    assertEquals(2, collector.getDenominator());
-    assertEquals(2, collector.getNumerator());
-    assertEquals(1.0f, collector.getRatio(), 0.0f);
+    assertValues(2, 2, 1.0f);
   }
 }

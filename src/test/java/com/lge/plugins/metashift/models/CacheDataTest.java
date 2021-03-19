@@ -29,7 +29,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the CacheData class
+ * Unit tests for the CacheData class.
  *
  * @author Sung Gon Kim
  */
