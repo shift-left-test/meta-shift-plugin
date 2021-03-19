@@ -24,41 +24,54 @@
 
 package com.lge.plugins.metashift.models;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-
 /**
- * Unit tests for the RecipeViolationSet class
+ * Collects the recipe violation information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public class RecipeViolationSetTest {
-  private RecipeViolationSet objects;
+public final class RecipeViolationCollector extends Visitor
+                                            implements Measurable {
+  /**
+   * Represents the class type.
+   */
+  private Class<? extends RecipeViolationData> clazz;
+  /**
+   * Represents the denominator.
+   */
+  private int denominator;
+  /**
+   * Represents the numerator.
+   */
+  private int numerator;
 
-  @Before
-  public void setUp() throws Exception {
-    objects = new RecipeViolationSet();
+  /**
+   * Default constructor.
+   *
+   * @param clazz the class type
+   */
+  public RecipeViolationCollector(
+      final Class<? extends RecipeViolationData> clazz) {
+    this.clazz = clazz;
+    this.denominator = 0;
+    this.numerator = 0;
   }
 
-  @Test
-  public void testInitialState() throws Exception {
-    assertEquals(0, objects.size());
+  @Override
+  public int getDenominator() {
+    return denominator;
   }
 
-  @Test
-  public void testAddingData() throws Exception {
-    RecipeViolationData first = new MajorRecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error");
-    RecipeViolationData second = new MajorRecipeViolationData("A", "a.file", 2, "rule1", "rule1_info", "error");
-    objects.add(second);
-    objects.add(first);
-    assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
+  @Override
+  public int getNumerator() {
+    return numerator;
   }
 
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    objects.add(new MajorRecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error"));
-    objects.add(new MajorRecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error"));
-    assertEquals(1, objects.size());
+  @Override
+  public void visit(final RecipeViolationSet recipeViolations) {
+    denominator += recipeViolations.size();
+    numerator += recipeViolations
+        .stream()
+        .filter(o -> o.getClass() == clazz)
+        .count();
   }
 }

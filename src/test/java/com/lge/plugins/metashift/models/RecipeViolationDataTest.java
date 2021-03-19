@@ -34,8 +34,8 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class RecipeViolationDataTest {
-  private RecipeViolationData origin = new RecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "error");
-  private RecipeViolationData same = new RecipeViolationData("A", "a.file", 1, "warning_rule", "warning_info", "warning");
+  private RecipeViolationData origin = new MajorRecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "error");
+  private RecipeViolationData same = new MajorRecipeViolationData("A", "a.file", 1, "error_rule", "error_info2", "error2");
 
   @Test
   public void testInitialization() throws Exception {
@@ -51,32 +51,36 @@ public class RecipeViolationDataTest {
   public void testEquality() throws Exception {
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new RecipeViolationData("B", "a.file", 1, "error_rule", "error_info", "error"));
-    assertNotEquals(origin, new RecipeViolationData("A", "b.file", 1, "error_rule", "error_info", "error"));
-    assertNotEquals(origin, new RecipeViolationData("A", "a.file", 2, "error_rule", "error_info", "error"));
-    assertEquals(origin, new RecipeViolationData("A", "a.file", 1, "warning_rule", "error_info", "error"));
-    assertEquals(origin, new RecipeViolationData("A", "a.file", 1, "error_rule", "warning_info", "error"));
-    assertEquals(origin, new RecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "warning"));
+    assertNotEquals(origin, new MinorRecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "error"));
+    assertNotEquals(origin, new InfoRecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "error"));
+    assertNotEquals(origin, new MajorRecipeViolationData("B", "a.file", 1, "error_rule", "error_info", "error"));
+    assertNotEquals(origin, new MajorRecipeViolationData("A", "b.file", 1, "error_rule", "error_info", "error"));
+    assertNotEquals(origin, new MajorRecipeViolationData("A", "a.file", 2, "error_rule", "error_info", "error"));
+    assertNotEquals(origin, new MajorRecipeViolationData("A", "a.file", 1, "warn_rule", "error_info", "error"));
+    assertEquals(origin, new MajorRecipeViolationData("A", "a.file", 1, "error_rule", "warn_info", "error"));
+    assertEquals(origin, new MajorRecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "warn"));
   }
 
   @Test
   public void testHashCode() throws Exception {
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new RecipeViolationData("B", "a.file", 1, "error_rule", "error_info", "error").hashCode());
-    assertNotEquals(origin.hashCode(), new RecipeViolationData("A", "b.file", 1, "error_rule", "error_info", "error").hashCode());
-    assertNotEquals(origin.hashCode(), new RecipeViolationData("A", "a.file", 2, "error_rule", "error_info", "error").hashCode());
-    assertEquals(origin.hashCode(), new RecipeViolationData("A", "a.file", 1, "warning_rule", "error_info", "error").hashCode());
-    assertEquals(origin.hashCode(), new RecipeViolationData("A", "a.file", 1, "error_rule", "warning_info", "error").hashCode());
-    assertEquals(origin.hashCode(), new RecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "warning").hashCode());
+    assertNotEquals(origin.hashCode(), new MinorRecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "error").hashCode());
+    assertNotEquals(origin.hashCode(), new InfoRecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "error").hashCode());
+    assertNotEquals(origin.hashCode(), new MajorRecipeViolationData("B", "a.file", 1, "error_rule", "error_info", "error").hashCode());
+    assertNotEquals(origin.hashCode(), new MajorRecipeViolationData("A", "b.file", 1, "error_rule", "error_info", "error").hashCode());
+    assertNotEquals(origin.hashCode(), new MajorRecipeViolationData("A", "a.file", 2, "error_rule", "error_info", "error").hashCode());
+    assertNotEquals(origin.hashCode(), new MajorRecipeViolationData("A", "a.file", 1, "warn_rule", "error_info", "error").hashCode());
+    assertEquals(origin.hashCode(), new MajorRecipeViolationData("A", "a.file", 1, "error_rule", "warn_info", "error").hashCode());
+    assertEquals(origin.hashCode(), new MajorRecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "warn").hashCode());
   }
 
   @Test
   public void testComparable() throws Exception {
     List<RecipeViolationData> expected = new ArrayList<>();
-    expected.add(new RecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error"));
-    expected.add(new RecipeViolationData("A", "a.file", 2, "rule1", "rule1_info", "error"));
-    expected.add(new RecipeViolationData("A", "b.file", 1, "rule1", "rule1_info", "error"));
-    expected.add(new RecipeViolationData("B", "a.file", 1, "rule1", "rule1_info", "error"));
+    expected.add(new MajorRecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error"));
+    expected.add(new MajorRecipeViolationData("A", "a.file", 2, "rule1", "rule1_info", "error"));
+    expected.add(new MajorRecipeViolationData("A", "b.file", 1, "rule1", "rule1_info", "error"));
+    expected.add(new MajorRecipeViolationData("B", "a.file", 1, "rule1", "rule1_info", "error"));
 
     List<RecipeViolationData> actual = new ArrayList<>();
     actual.addAll(expected);

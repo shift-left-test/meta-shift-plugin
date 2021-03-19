@@ -25,7 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the cache availability information from the given data containers.
+ * Collects the cache availability information from the given data sets.
  *
  * @author Sung Gon Kim
  */
@@ -46,7 +46,7 @@ public final class CacheCollector extends Visitor implements Measurable {
   /**
    * Default constructor.
    *
-   * @param clazz of CacheData to collect.
+   * @param clazz the class type
    */
   public CacheCollector(final Class<? extends CacheData> clazz) {
     this.clazz = clazz;
@@ -65,12 +65,12 @@ public final class CacheCollector extends Visitor implements Measurable {
   }
 
   @Override
-  public void visit(final CacheSet caches) {
-    denominator += caches
+  public void visit(final CacheSet objects) {
+    denominator += objects
         .stream()
         .filter(o -> o.getClass() == clazz)
         .count();
-    numerator += caches
+    numerator += objects
         .stream()
         .filter(o -> o.getClass() == clazz && o.isAvailable())
         .count();

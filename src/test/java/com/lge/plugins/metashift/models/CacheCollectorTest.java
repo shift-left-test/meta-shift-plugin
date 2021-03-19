@@ -125,7 +125,6 @@ public class CacheCollectorTest {
   @Test
   public void testRecipeWithNonMatchingCache() throws Exception {
     caches.add(new PremirrorCacheData("A", "do_fetch", true));
-    recipe = new Recipe("A-B-C");
     recipe.set(caches);
     recipe.accept(collector);
     assertEquals(0, collector.getDenominator());

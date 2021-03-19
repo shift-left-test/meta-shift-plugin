@@ -108,11 +108,11 @@ public final class SizeCollector extends Visitor {
   }
 
   @Override
-  public void visit(final SizeSet sizes) {
-    recipes += sizes.stream().map(SizeData::getRecipe).distinct().count();
-    files += sizes.stream().distinct().count();
-    lines += sizes.stream().mapToInt(SizeData::getLines).sum();
-    classes += sizes.stream().mapToInt(SizeData::getClasses).sum();
-    functions += sizes.stream().mapToInt(SizeData::getFunctions).sum();
+  public void visit(final SizeSet objects) {
+    recipes += objects.stream().map(SizeData::getRecipe).distinct().count();
+    files += objects.stream().distinct().count();
+    lines += objects.stream().mapToInt(SizeData::getLines).sum();
+    classes += objects.stream().mapToInt(SizeData::getClasses).sum();
+    functions += objects.stream().mapToInt(SizeData::getFunctions).sum();
   }
 }

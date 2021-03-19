@@ -29,7 +29,7 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public class PremirrorCacheData extends CacheData {
+public final class PremirrorCacheData extends CacheData {
   /**
    * Default constructor.
    *

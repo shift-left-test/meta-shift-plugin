@@ -29,7 +29,7 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public class SharedStateCacheData extends CacheData {
+public final class SharedStateCacheData extends CacheData {
   /**
    * Default constructor.
    *

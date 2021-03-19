@@ -29,7 +29,7 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class RecipeViolationData implements Data<RecipeViolationData> {
+public abstract class RecipeViolationData implements Data<RecipeViolationData> {
   /**
    * Represents the name of the recipe.
    */
@@ -78,7 +78,7 @@ public final class RecipeViolationData implements Data<RecipeViolationData> {
   }
 
   @Override
-  public int compareTo(final RecipeViolationData other) {
+  public final int compareTo(final RecipeViolationData other) {
     int compared;
     compared = recipe.compareTo(other.recipe);
     if (compared != 0) {
@@ -92,11 +92,15 @@ public final class RecipeViolationData implements Data<RecipeViolationData> {
     if (compared != 0) {
       return compared;
     }
+    compared = rule.compareTo(other.rule);
+    if (compared != 0) {
+      return compared;
+    }
     return 0;
   }
 
   @Override
-  public boolean equals(final Object object) {
+  public final boolean equals(final Object object) {
     if (object == null) {
       return false;
     }
@@ -116,11 +120,14 @@ public final class RecipeViolationData implements Data<RecipeViolationData> {
     if (line != other.line) {
       return false;
     }
+    if (!rule.equals(other.rule)) {
+      return false;
+    }
     return true;
   }
 
   @Override
-  public String getRecipe() {
+  public final String getRecipe() {
     return recipe;
   }
 
@@ -129,7 +136,7 @@ public final class RecipeViolationData implements Data<RecipeViolationData> {
    *
    * @return file
    */
-  public String getFile() {
+  public final String getFile() {
     return file;
   }
 
@@ -138,7 +145,7 @@ public final class RecipeViolationData implements Data<RecipeViolationData> {
    *
    * @return line number
    */
-  public int getLine() {
+  public final int getLine() {
     return line;
   }
 
@@ -147,7 +154,7 @@ public final class RecipeViolationData implements Data<RecipeViolationData> {
    *
    * @return rule
    */
-  public String getRule() {
+  public final String getRule() {
     return rule;
   }
 
@@ -156,7 +163,7 @@ public final class RecipeViolationData implements Data<RecipeViolationData> {
    *
    * @return description
    */
-  public String getDescription() {
+  public final String getDescription() {
     return description;
   }
 
@@ -165,18 +172,19 @@ public final class RecipeViolationData implements Data<RecipeViolationData> {
    *
    * @return severity
    */
-  public String getSeverity() {
+  public final String getSeverity() {
     return severity;
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
     hashCode = prime * hashCode + recipe.hashCode();
     hashCode = prime * hashCode + file.hashCode();
     hashCode = prime * hashCode + line;
+    hashCode = prime * hashCode + rule.hashCode();
     return hashCode;
   }
 }
