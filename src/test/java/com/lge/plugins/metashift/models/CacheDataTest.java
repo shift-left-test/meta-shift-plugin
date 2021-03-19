@@ -71,10 +71,11 @@ public class CacheDataTest {
     expected.add(new SharedStateCacheData("B", "do_compile", true));
 
     List<CacheData> actual = new ArrayList<>();
-    actual.addAll(expected);
-    Collections.shuffle(actual);
-    Collections.sort(actual);
+    actual.add(new SharedStateCacheData("B", "do_compile", true));
+    actual.add(new SharedStateCacheData("A", "do_fetch", true));
+    actual.add(new SharedStateCacheData("A", "do_compile", true));
 
+    Collections.sort(actual);
     assertEquals(expected, actual);
   }
 }

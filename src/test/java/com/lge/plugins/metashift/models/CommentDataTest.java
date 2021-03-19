@@ -24,59 +24,59 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.SizeSet;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the SizeData class
+ * Unit tests for the CommentData class.
  *
  * @author Sung Gon Kim
  */
-public class SizeDataTest {
-  private SizeData origin = new SizeData("A", "a.file", 100, 50, 10);
-  private SizeData same = new SizeData("A", "a.file", 3, 2, 1);
+public class CommentDataTest {
+  private CommentData origin = new CommentData("A", "a.file", 10, 5);
+  private CommentData same = new CommentData("A", "a.file", 10, 5);
 
   @Test
-  public void testInitialization() throws Exception {
+  public void testInitData() throws Exception {
     assertEquals("A", origin.getRecipe());
     assertEquals("a.file", origin.getFile());
-    assertEquals(100, origin.getLines());
-    assertEquals(50, origin.getFunctions());
-    assertEquals(10, origin.getClasses());
+    assertEquals(10, origin.getLines());
+    assertEquals(5, origin.getCommentLines());
   }
 
   @Test
   public void testEquality() throws Exception {
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new SizeData("A", "b.file", 100, 50, 10));
-    assertNotEquals(origin, new SizeData("B", "a.file", 100, 50, 10));
-    assertNotEquals(origin, new SizeData("B", "b.file", 100, 50, 10));
+    assertNotEquals(origin, new CommentData("B", "a.file", 10, 5));
+    assertNotEquals(origin, new CommentData("A", "b.file", 10, 5));
+    assertEquals(origin, new CommentData("A", "a.file", 10000, 5));
+    assertEquals(origin, new CommentData("A", "a.file", 10, 1000));
   }
 
   @Test
   public void testHashCode() throws Exception {
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new SizeData("B", "a.file", 100, 50, 10).hashCode());
-    assertNotEquals(origin.hashCode(), new SizeData("A", "b.file", 100, 50, 10).hashCode());
-    assertEquals(origin.hashCode(), new SizeData("A", "a.file", 0, 50, 10).hashCode());
-    assertEquals(origin.hashCode(), new SizeData("A", "a.file", 100, 0, 10).hashCode());
-    assertEquals(origin.hashCode(), new SizeData("A", "a.file", 100, 50, 0).hashCode());
+    assertNotEquals(origin.hashCode(), new CommentData("B", "a.file", 10, 5).hashCode());
+    assertNotEquals(origin.hashCode(), new CommentData("A", "b.file", 10, 5).hashCode());
+    assertEquals(origin.hashCode(), new CommentData("A", "a.file", 10000, 5).hashCode());
+    assertEquals(origin.hashCode(), new CommentData("A", "a.file", 10, 1000).hashCode());
   }
 
   @Test
   public void testComparable() throws Exception {
-    List<SizeData> expected = new ArrayList<>();
-    expected.add(new SizeData("A", "a.file", 3, 2, 1));
-    expected.add(new SizeData("A", "b.file", 3, 2, 1));
-    expected.add(new SizeData("B", "a.file", 3, 2, 1));
+    List<CommentData> expected = new ArrayList<>();
+    expected.add(new CommentData("A", "a.file", 10, 5));
+    expected.add(new CommentData("A", "b.file", 10, 5));
+    expected.add(new CommentData("B", "a.file", 10, 5));
+    expected.add(new CommentData("B", "b.file", 10, 5));
 
-    List<SizeData> actual = new ArrayList<>();
-    actual.add(new SizeData("B", "a.file", 3, 2, 1));
-    actual.add(new SizeData("A", "b.file", 3, 2, 1));
-    actual.add(new SizeData("A", "a.file", 3, 2, 1));
+    List<CommentData> actual = new ArrayList<>();
+    actual.add(new CommentData("A", "a.file", 10, 5));
+    actual.add(new CommentData("A", "b.file", 10, 5));
+    actual.add(new CommentData("B", "a.file", 10, 5));
+    actual.add(new CommentData("B", "b.file", 10, 5));
 
     Collections.sort(actual);
     assertEquals(expected, actual);

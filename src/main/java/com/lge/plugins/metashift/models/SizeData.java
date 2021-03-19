@@ -105,15 +105,6 @@ public final class SizeData implements Data<SizeData> {
   }
 
   @Override
-  public int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + recipe.hashCode();
-    hashCode = prime * hashCode + file.hashCode();
-    return hashCode;
-  }
-
-  @Override
   public String getRecipe() {
     return recipe;
   }
@@ -152,5 +143,15 @@ public final class SizeData implements Data<SizeData> {
    */
   public int getClasses() {
     return classes;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int hashCode = 1;
+    hashCode = prime * hashCode + getClass().hashCode();
+    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + file.hashCode();
+    return hashCode;
   }
 }

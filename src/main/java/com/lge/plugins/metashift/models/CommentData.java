@@ -25,54 +25,51 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents the cache data.
+ * Represents the comment data.
  *
  * @author Sung Gon Kim
  */
-public abstract class CacheData implements Data<CacheData> {
+public final class CommentData implements Data<CommentData> {
   /**
    * Represents the name of the recipe.
    */
   private String recipe;
   /**
-   * Represents the name of the task.
+   * Represents the name of the file.
    */
-  private String task;
+  private String file;
   /**
-   * Indicates the cache availability.
+   * Represents the number of lines.
    */
-  private boolean available;
+  private int lines;
+  /**
+   * Reprents the number of comment lines.
+   */
+  private int commentLines;
 
   /**
    * Default constructor.
    *
    * @param recipe name
-   * @param task name
-   * @param available the cache availability
+   * @param file name
+   * @param lines the number of lines
+   * @param commentLines the number of comment lines
    */
-  public CacheData(final String recipe, final String task,
-                   final boolean available) {
+  public CommentData(final String recipe, final String file,
+                     final int lines, final int commentLines) {
     this.recipe = recipe;
-    this.task = task;
-    this.available = available;
+    this.file = file;
+    this.lines = lines;
+    this.commentLines = commentLines;
   }
 
   @Override
-  public final int compareTo(final CacheData other) {
-    int compared;
-    compared = recipe.compareTo(other.recipe);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = task.compareTo(other.task);
-    if (compared != 0) {
-      return compared;
-    }
+  public int compareTo(final CommentData other) {
     return 0;
   }
 
   @Override
-  public final boolean equals(final Object object) {
+  public boolean equals(final Object object) {
     if (object == null) {
       return false;
     }
@@ -82,49 +79,55 @@ public abstract class CacheData implements Data<CacheData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    CacheData other = (CacheData) object;
+    CommentData other = (CommentData) object;
     if (!recipe.equals(other.recipe)) {
       return false;
     }
-    if (!task.equals(other.task)) {
-      return false;
-    }
-    if (available != other.available) {
+    if (!file.equals(other.file)) {
       return false;
     }
     return true;
   }
 
   @Override
-  public final String getRecipe() {
+  public String getRecipe() {
     return recipe;
   }
 
   /**
-   * Return the task name.
+   * Return the name of the file.
    *
-   * @return task name
+   * @return filename
    */
-  public final String getTask() {
-    return task;
+  public String getFile() {
+    return file;
   }
 
   /**
-   * Return the cache availability.
+   * Return the number of lines.
    *
-   * @return true if the cache is available, false otherwise.
+   * @return the number of lines
    */
-  public final boolean isAvailable() {
-    return available;
+  public int getLines() {
+    return lines;
+  }
+
+  /**
+   * Return the number of comment lines.
+   *
+   * @return the number of comment lines
+   */
+  public int getCommentLines() {
+    return commentLines;
   }
 
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
     hashCode = prime * hashCode + recipe.hashCode();
-    hashCode = prime * hashCode + task.hashCode();
+    hashCode = prime * hashCode + file.hashCode();
     return hashCode;
   }
 }

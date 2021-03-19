@@ -83,10 +83,12 @@ public class RecipeViolationDataTest {
     expected.add(new MajorRecipeViolationData("B", "a.file", 1, "rule1", "rule1_info", "error"));
 
     List<RecipeViolationData> actual = new ArrayList<>();
-    actual.addAll(expected);
-    Collections.shuffle(actual);
-    Collections.sort(actual);
+    actual.add(new MajorRecipeViolationData("B", "a.file", 1, "rule1", "rule1_info", "error"));
+    actual.add(new MajorRecipeViolationData("A", "b.file", 1, "rule1", "rule1_info", "error"));
+    actual.add(new MajorRecipeViolationData("A", "a.file", 2, "rule1", "rule1_info", "error"));
+    actual.add(new MajorRecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error"));
 
+    Collections.sort(actual);
     assertEquals(expected, actual);
   }
 }
