@@ -111,4 +111,12 @@ public class Visitor {
    */
   public void visit(final TestSet object) {
   }
+
+  /**
+   * Visits the MutationTestSet object.
+   *
+   * @param object to visit
+   */
+  public void visit(final MutationTestSet object) {
+  }
 }
