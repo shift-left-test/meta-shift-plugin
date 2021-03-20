@@ -24,67 +24,41 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 /**
- * A base visitor class which provides access to various containers.
+ * Unit tests for the CodeViolationSet class.
  *
  * @author Sung Gon Kim
  */
-public class Visitor {
-  /**
-   * Visits the Recipe class.
-   *
-   * @param object to visit
-   */
-  public void visit(final Recipe object) {
-    object.forEach((k, v) -> v.accept(this));
+public class CodeViolationSetTest {
+  private CodeViolationSet objects;
+
+  @Before
+  public void setUp() throws Exception {
+    objects = new CodeViolationSet();
   }
 
-  /**
-   * Visits the RecipeSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final RecipeSet object) {
-    object.forEach(recipe -> recipe.accept(this));
+  @Test
+  public void testInitialState() throws Exception {
+    assertEquals(0, objects.size());
   }
 
-  /**
-   * visits the CacheSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final CacheSet object) {
+  @Test
+  public void testAddingData() throws Exception {
+    CodeViolationData first = new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool");
+    CodeViolationData second = new MajorCodeViolationData("B", "b.file", 1, 2, "rule", "msg", "desc", "E", "tool");
+    objects.add(second);
+    objects.add(first);
+    assertEquals(2, objects.size());
+    assertEquals(first, objects.iterator().next());
   }
 
-  /**
-   * Visits the SizeSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final SizeSet object) {
-  }
-
-  /**
-   * Visits the CommentSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final CommentSet object) {
-  }
-
-  /**
-   * Visits the RecipeViolationSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final RecipeViolationSet object) {
-  }
-
-  /**
-   * Visits the CodeViolationSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final CodeViolationSet object) {
+  @Test
+  public void testAddingDuplicates() throws Exception {
+    objects.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool"));
+    objects.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool"));
+    assertEquals(1, objects.size());
   }
 }

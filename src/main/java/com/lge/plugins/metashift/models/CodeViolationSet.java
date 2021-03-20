@@ -25,66 +25,13 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * A base visitor class which provides access to various containers.
+ * Represents a set of CodeViolationData objects.
  *
  * @author Sung Gon Kim
  */
-public class Visitor {
-  /**
-   * Visits the Recipe class.
-   *
-   * @param object to visit
-   */
-  public void visit(final Recipe object) {
-    object.forEach((k, v) -> v.accept(this));
-  }
-
-  /**
-   * Visits the RecipeSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final RecipeSet object) {
-    object.forEach(recipe -> recipe.accept(this));
-  }
-
-  /**
-   * visits the CacheSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final CacheSet object) {
-  }
-
-  /**
-   * Visits the SizeSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final SizeSet object) {
-  }
-
-  /**
-   * Visits the CommentSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final CommentSet object) {
-  }
-
-  /**
-   * Visits the RecipeViolationSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final RecipeViolationSet object) {
-  }
-
-  /**
-   * Visits the CodeViolationSet class.
-   *
-   * @param object to visit
-   */
-  public void visit(final CodeViolationSet object) {
+public final class CodeViolationSet extends DataSet<CodeViolationData> {
+  @Override
+  public void accept(final Visitor visitor) {
+    visitor.visit(this);
   }
 }
