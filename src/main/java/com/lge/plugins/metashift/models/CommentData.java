@@ -99,6 +99,16 @@ public final class CommentData implements Data<CommentData> {
   }
 
   @Override
+  public int hashCode() {
+    final int prime = 31;
+    int hashCode = 1;
+    hashCode = prime * hashCode + getClass().hashCode();
+    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + file.hashCode();
+    return hashCode;
+  }
+
+  @Override
   public String getRecipe() {
     return recipe;
   }
@@ -128,15 +138,5 @@ public final class CommentData implements Data<CommentData> {
    */
   public int getCommentLines() {
     return commentLines;
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
-    hashCode = prime * hashCode + file.hashCode();
-    return hashCode;
   }
 }

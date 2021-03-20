@@ -156,6 +156,20 @@ public abstract class CodeViolationData implements Data<CodeViolationData> {
   }
 
   @Override
+  public final int hashCode() {
+    final int prime = 31;
+    int hashCode = 1;
+    hashCode = prime * hashCode + getClass().hashCode();
+    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + file.hashCode();
+    hashCode = prime * hashCode + line;
+    hashCode = prime * hashCode + column;
+    hashCode = prime * hashCode + rule.hashCode();
+    hashCode = prime * hashCode + tool.hashCode();
+    return hashCode;
+  }
+
+  @Override
   public final String getRecipe() {
     return recipe;
   }
@@ -230,19 +244,5 @@ public abstract class CodeViolationData implements Data<CodeViolationData> {
    */
   public final String getTool() {
     return tool;
-  }
-
-  @Override
-  public final int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
-    hashCode = prime * hashCode + file.hashCode();
-    hashCode = prime * hashCode + line;
-    hashCode = prime * hashCode + column;
-    hashCode = prime * hashCode + rule.hashCode();
-    hashCode = prime * hashCode + tool.hashCode();
-    return hashCode;
   }
 }

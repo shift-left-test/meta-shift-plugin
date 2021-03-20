@@ -93,6 +93,17 @@ public final class ComplexityData implements Data<ComplexityData> {
   }
 
   @Override
+  public final int hashCode() {
+    final int prime = 31;
+    int hashCode = 1;
+    hashCode = prime * hashCode + getClass().hashCode();
+    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + file.hashCode();
+    hashCode = prime * hashCode + function.hashCode();
+    return hashCode;
+  }
+
+  @Override
   public final String getRecipe() {
     return recipe;
   }
@@ -122,16 +133,5 @@ public final class ComplexityData implements Data<ComplexityData> {
    */
   public final int getValue() {
     return value;
-  }
-
-  @Override
-  public final int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
-    hashCode = prime * hashCode + file.hashCode();
-    hashCode = prime * hashCode + function.hashCode();
-    return hashCode;
   }
 }
