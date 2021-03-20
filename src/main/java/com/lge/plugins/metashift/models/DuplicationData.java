@@ -65,6 +65,15 @@ public final class DuplicationData implements Data<DuplicationData> {
 
   @Override
   public int compareTo(final DuplicationData other) {
+    int compared;
+    compared = recipe.compareTo(other.recipe);
+    if (compared != 0) {
+      return compared;
+    }
+    compared = file.compareTo(other.file);
+    if (compared != 0) {
+      return compared;
+    }
     return 0;
   }
 

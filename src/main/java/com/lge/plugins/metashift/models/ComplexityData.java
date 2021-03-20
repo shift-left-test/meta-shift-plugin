@@ -64,12 +64,25 @@ public final class ComplexityData implements Data<ComplexityData> {
   }
 
   @Override
-  public final int compareTo(final ComplexityData other) {
+  public int compareTo(final ComplexityData other) {
+    int compared;
+    compared = recipe.compareTo(other.recipe);
+    if (compared != 0) {
+      return compared;
+    }
+    compared = file.compareTo(other.file);
+    if (compared != 0) {
+      return compared;
+    }
+    compared = function.compareTo(other.function);
+    if (compared != 0) {
+      return compared;
+    }
     return 0;
   }
 
   @Override
-  public final boolean equals(final Object object) {
+  public boolean equals(final Object object) {
     if (object == null) {
       return false;
     }
@@ -93,7 +106,7 @@ public final class ComplexityData implements Data<ComplexityData> {
   }
 
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
@@ -104,7 +117,7 @@ public final class ComplexityData implements Data<ComplexityData> {
   }
 
   @Override
-  public final String getRecipe() {
+  public String getRecipe() {
     return recipe;
   }
 
@@ -113,7 +126,7 @@ public final class ComplexityData implements Data<ComplexityData> {
    *
    * @return filename
    */
-  public final String getFile() {
+  public String getFile() {
     return file;
   }
 
@@ -122,7 +135,7 @@ public final class ComplexityData implements Data<ComplexityData> {
    *
    * @return function name
    */
-  public final String getFunction() {
+  public String getFunction() {
     return function;
   }
 
@@ -131,7 +144,7 @@ public final class ComplexityData implements Data<ComplexityData> {
    *
    * @return complexity value
    */
-  public final int getValue() {
+  public int getValue() {
     return value;
   }
 }

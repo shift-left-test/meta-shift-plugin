@@ -71,15 +71,15 @@ public class ComplexityDataTest {
   public void testComparable() throws Exception {
     List<ComplexityData> expected = new ArrayList<>();
     expected.add(new ComplexityData("A", "a.file", "f()", 1));
-    expected.add(new ComplexityData("A", "a.file", "X()", 1));
-    expected.add(new ComplexityData("A", "X.file", "X()", 1));
-    expected.add(new ComplexityData("X", "X.file", "X()", 1));
+    expected.add(new ComplexityData("A", "a.file", "g()", 1));
+    expected.add(new ComplexityData("A", "b.file", "g()", 1));
+    expected.add(new ComplexityData("B", "b.file", "g()", 1));
 
     List<ComplexityData> actual = new ArrayList<>();
+    actual.add(new ComplexityData("B", "b.file", "g()", 1));
+    actual.add(new ComplexityData("A", "b.file", "g()", 1));
+    actual.add(new ComplexityData("A", "a.file", "g()", 1));
     actual.add(new ComplexityData("A", "a.file", "f()", 1));
-    actual.add(new ComplexityData("A", "a.file", "X()", 1));
-    actual.add(new ComplexityData("A", "X.file", "X()", 1));
-    actual.add(new ComplexityData("X", "X.file", "X()", 1));
 
     Collections.sort(actual);
     assertEquals(expected, actual);

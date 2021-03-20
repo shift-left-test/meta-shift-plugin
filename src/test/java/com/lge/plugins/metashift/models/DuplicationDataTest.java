@@ -74,9 +74,9 @@ public class DuplicationDataTest {
     expected.add(new DuplicationData("B", "b.file", 10, 5));
 
     List<DuplicationData> actual = new ArrayList<>();
-    actual.add(new DuplicationData("A", "a.file", 10, 5));
-    actual.add(new DuplicationData("A", "b.file", 10, 5));
     actual.add(new DuplicationData("B", "b.file", 10, 5));
+    actual.add(new DuplicationData("A", "b.file", 10, 5));
+    actual.add(new DuplicationData("A", "a.file", 10, 5));
 
     Collections.sort(actual);
     assertEquals(expected, actual);
