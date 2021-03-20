@@ -95,4 +95,12 @@ public class Visitor {
    */
   public void visit(final ComplexitySet object) {
   }
+
+  /**
+   * Visits the DuplicationSet objects.
+   *
+   * @param object to visit
+   */
+  public void visit(final DuplicationSet object) {
+  }
 }
