@@ -39,7 +39,7 @@ public class SizeDataTest {
   private SizeData same = new SizeData("A", "a.file", 3, 2, 1);
 
   @Test
-  public void testInitialization() throws Exception {
+  public void testInitData() throws Exception {
     assertEquals("A", origin.getRecipe());
     assertEquals("a.file", origin.getFile());
     assertEquals(100, origin.getLines());
@@ -49,6 +49,8 @@ public class SizeDataTest {
 
   @Test
   public void testEquality() throws Exception {
+    assertNotEquals(origin, null);
+    assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
     assertNotEquals(origin, new SizeData("A", "b.file", 100, 50, 10));

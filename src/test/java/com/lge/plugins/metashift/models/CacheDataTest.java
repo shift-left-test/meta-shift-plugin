@@ -38,7 +38,7 @@ public class CacheDataTest {
   private CacheData same = new PremirrorCacheData("A", "do_run", true);
 
   @Test
-  public void testInitialization() throws Exception {
+  public void testInitData() throws Exception {
     assertEquals("A", origin.getRecipe());
     assertEquals("do_run", origin.getTask());
     assertTrue(origin.isAvailable());
@@ -46,6 +46,8 @@ public class CacheDataTest {
 
   @Test
   public void testEquality() throws Exception {
+    assertNotEquals(origin, null);
+    assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
     assertNotEquals(origin, new PremirrorCacheData("B", "do_run", true));

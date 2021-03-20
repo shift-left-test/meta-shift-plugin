@@ -52,6 +52,8 @@ public class CodeViolationDataTest {
 
   @Test
   public void testEquality() throws Exception {
+    assertNotEquals(origin, null);
+    assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
     assertNotEquals(origin, new MinorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool"));

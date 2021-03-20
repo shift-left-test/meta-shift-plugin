@@ -38,7 +38,7 @@ public class RecipeViolationDataTest {
   private RecipeViolationData same = new MajorRecipeViolationData("A", "a.file", 1, "error_rule", "error_info2", "error2");
 
   @Test
-  public void testInitialization() throws Exception {
+  public void testInitData() throws Exception {
     assertEquals("A", origin.getRecipe());
     assertEquals("a.file", origin.getFile());
     assertEquals(1, origin.getLine());
@@ -49,6 +49,8 @@ public class RecipeViolationDataTest {
 
   @Test
   public void testEquality() throws Exception {
+    assertNotEquals(origin, null);
+    assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
     assertNotEquals(origin, new MinorRecipeViolationData("A", "a.file", 1, "error_rule", "error_info", "error"));

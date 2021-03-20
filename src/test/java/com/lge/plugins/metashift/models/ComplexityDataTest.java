@@ -29,20 +29,20 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the CommentData class.
+ * Unit tests for the ComplexityData class.
  *
  * @author Sung Gon Kim
  */
-public class CommentDataTest {
-  private CommentData origin = new CommentData("A", "a.file", 10, 5);
-  private CommentData same = new CommentData("A", "a.file", 10, 5);
+public class ComplexityDataTest {
+  private ComplexityData origin = new ComplexityData("A", "a.file", "f()", 1);
+  private ComplexityData same = new ComplexityData("A", "a.file", "f()", 1);
 
   @Test
   public void testInitData() throws Exception {
     assertEquals("A", origin.getRecipe());
     assertEquals("a.file", origin.getFile());
-    assertEquals(10, origin.getLines());
-    assertEquals(5, origin.getCommentLines());
+    assertEquals("f()", origin.getFunction());
+    assertEquals(1, origin.getValue());
   }
 
   @Test
@@ -51,34 +51,35 @@ public class CommentDataTest {
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new CommentData("B", "a.file", 10, 5));
-    assertNotEquals(origin, new CommentData("A", "b.file", 10, 5));
-    assertEquals(origin, new CommentData("A", "a.file", 10000, 5));
-    assertEquals(origin, new CommentData("A", "a.file", 10, 1000));
+    assertNotEquals(origin, new ComplexityData("B", "a.file", "f()", 1));
+    assertNotEquals(origin, new ComplexityData("A", "b.file", "f()", 1));
+    assertNotEquals(origin, new ComplexityData("A", "a.file", "x()", 1));
+    assertEquals(origin, new ComplexityData("A", "a.file", "f()", 2));
   }
 
   @Test
   public void testHashCode() throws Exception {
+    assertEquals(origin.hashCode(), origin.hashCode());
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new CommentData("B", "a.file", 10, 5).hashCode());
-    assertNotEquals(origin.hashCode(), new CommentData("A", "b.file", 10, 5).hashCode());
-    assertEquals(origin.hashCode(), new CommentData("A", "a.file", 10000, 5).hashCode());
-    assertEquals(origin.hashCode(), new CommentData("A", "a.file", 10, 1000).hashCode());
+    assertNotEquals(origin.hashCode(), new ComplexityData("B", "a.file", "f()", 1).hashCode());
+    assertNotEquals(origin.hashCode(), new ComplexityData("A", "b.file", "f()", 1).hashCode());
+    assertNotEquals(origin.hashCode(), new ComplexityData("A", "a.file", "x()", 1).hashCode());
+    assertEquals(origin.hashCode(), new ComplexityData("A", "a.file", "f()", 2).hashCode());
   }
 
   @Test
   public void testComparable() throws Exception {
-    List<CommentData> expected = new ArrayList<>();
-    expected.add(new CommentData("A", "a.file", 10, 5));
-    expected.add(new CommentData("A", "b.file", 10, 5));
-    expected.add(new CommentData("B", "a.file", 10, 5));
-    expected.add(new CommentData("B", "b.file", 10, 5));
+    List<ComplexityData> expected = new ArrayList<>();
+    expected.add(new ComplexityData("A", "a.file", "f()", 1));
+    expected.add(new ComplexityData("A", "a.file", "X()", 1));
+    expected.add(new ComplexityData("A", "X.file", "X()", 1));
+    expected.add(new ComplexityData("X", "X.file", "X()", 1));
 
-    List<CommentData> actual = new ArrayList<>();
-    actual.add(new CommentData("B", "b.file", 10, 5));
-    actual.add(new CommentData("B", "a.file", 10, 5));
-    actual.add(new CommentData("A", "b.file", 10, 5));
-    actual.add(new CommentData("A", "a.file", 10, 5));
+    List<ComplexityData> actual = new ArrayList<>();
+    actual.add(new ComplexityData("A", "a.file", "f()", 1));
+    actual.add(new ComplexityData("A", "a.file", "X()", 1));
+    actual.add(new ComplexityData("A", "X.file", "X()", 1));
+    actual.add(new ComplexityData("X", "X.file", "X()", 1));
 
     Collections.sort(actual);
     assertEquals(expected, actual);

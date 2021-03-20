@@ -43,20 +43,20 @@ public class CacheQualifierTest {
   private Recipe recipe;
   private RecipeSet recipes;
 
-  @Before
-  public void setUp() throws Exception {
-    qualifier = new CacheQualifier(0.5f);
-    caches = new CacheSet();
-    recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
-  }
-
   private void assertValues(boolean available, boolean qualified,
                             float premirror, float sharedState) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
     assertEquals(premirror, qualifier.collection(PremirrorCacheData.class).getRatio(), 0.1f);
     assertEquals(sharedState, qualifier.collection(SharedStateCacheData.class).getRatio(), 0.1f);
+  }
+
+  @Before
+  public void setUp() throws Exception {
+    qualifier = new CacheQualifier(0.5f);
+    caches = new CacheSet();
+    recipe = new Recipe("A-B-C");
+    recipes = new RecipeSet();
   }
 
   @Test

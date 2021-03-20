@@ -39,6 +39,12 @@ public class RecipeViolationCollectorTest {
   private Recipe recipe;
   private RecipeSet recipes;
 
+  private void assertValues(int denominator, int numerator, float ratio) {
+    assertEquals(denominator, collector.getDenominator());
+    assertEquals(numerator, collector.getNumerator());
+    assertEquals(ratio, collector.getRatio(), 0.1f);
+  }
+
   @Before
   public void setUp() throws Exception {
     collector = new RecipeViolationCollector(MajorRecipeViolationData.class);
@@ -49,14 +55,14 @@ public class RecipeViolationCollectorTest {
 
   @Test
   public void testInitialState() throws Exception {
-    assertEquals(0, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testEmptyViolationSet() throws Exception {
     violations.accept(collector);
+    assertValues(0, 0, 0.0f);
+
     assertEquals(0, collector.getDenominator());
     assertEquals(0, collector.getNumerator());
     assertEquals(0.0f, collector.getRatio(), 0.0f);
@@ -67,18 +73,14 @@ public class RecipeViolationCollectorTest {
     violations.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     violations.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     violations.accept(collector);
-    assertEquals(2, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(2, 0, 0.0f);
   }
 
   @Test
   public void testSetWithMatchingDataType() throws Exception {
     violations.add(new MajorRecipeViolationData("A", "a.file", 1, "rule", "info", "error"));
     violations.accept(collector);
-    assertEquals(1, collector.getDenominator());
-    assertEquals(1, collector.getNumerator());
-    assertEquals(1.0f, collector.getRatio(), 0.0f);
+    assertValues(1, 1, 1.0f);
   }
 
   @Test
@@ -87,9 +89,7 @@ public class RecipeViolationCollectorTest {
     violations.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     violations.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     violations.accept(collector);
-    assertEquals(3, collector.getDenominator());
-    assertEquals(1, collector.getNumerator());
-    assertEquals(0.33f, collector.getRatio(), 0.01f);
+    assertValues(3, 1, 0.3f);
   }
 
   @Test
@@ -107,17 +107,13 @@ public class RecipeViolationCollectorTest {
     group.add(violations);
 
     group.forEach(o -> o.accept(collector));
-    assertEquals(6, collector.getDenominator());
-    assertEquals(2, collector.getNumerator());
-    assertEquals(0.33f, collector.getRatio(), 0.01f);
+    assertValues(6, 2, 0.3f);
   }
 
   @Test
   public void testEmptyRecipe() throws Exception {
     recipe.accept(collector);
-    assertEquals(0, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
@@ -126,9 +122,7 @@ public class RecipeViolationCollectorTest {
     violations.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     recipe.set(violations);
     recipe.accept(collector);
-    assertEquals(2, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(2, 0, 0.0f);
   }
 
   @Test
@@ -138,17 +132,13 @@ public class RecipeViolationCollectorTest {
     violations.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     recipe.set(violations);
     recipe.accept(collector);
-    assertEquals(3, collector.getDenominator());
-    assertEquals(1, collector.getNumerator());
-    assertEquals(0.33f, collector.getRatio(), 0.01f);
+    assertValues(3, 1, 0.3f);
   }
 
   @Test
   public void testEmptyRecipeSet() throws Exception {
     recipes.accept(collector);
-    assertEquals(0, collector.getDenominator());
-    assertEquals(0, collector.getNumerator());
-    assertEquals(0.0f, collector.getRatio(), 0.0f);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
@@ -170,8 +160,6 @@ public class RecipeViolationCollectorTest {
     recipes.add(recipe);
 
     recipes.accept(collector);
-    assertEquals(6, collector.getDenominator());
-    assertEquals(2, collector.getNumerator());
-    assertEquals(0.33f, collector.getRatio(), 0.01f);
+    assertValues(6, 2, 0.3f);
   }
 }

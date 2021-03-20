@@ -43,14 +43,6 @@ public class RecipeViolationQualifierTest {
   private Recipe recipe;
   private RecipeSet recipes;
 
-  @Before
-  public void setUp() throws Exception {
-    qualifier = new RecipeViolationQualifier(0.5f);
-    violations = new RecipeViolationSet();
-    recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
-  }
-
   private void assertValues(boolean available, boolean qualified,
                             float major, float minor, float info) {
     assertEquals(available, qualifier.isAvailable());
@@ -58,6 +50,14 @@ public class RecipeViolationQualifierTest {
     assertEquals(major, qualifier.collection(MajorRecipeViolationData.class).getRatio(), 0.1f);
     assertEquals(minor, qualifier.collection(MinorRecipeViolationData.class).getRatio(), 0.1f);
     assertEquals(info, qualifier.collection(InfoRecipeViolationData.class).getRatio(), 0.1f);
+  }
+
+  @Before
+  public void setUp() throws Exception {
+    qualifier = new RecipeViolationQualifier(0.5f);
+    violations = new RecipeViolationSet();
+    recipe = new Recipe("A-B-C");
+    recipes = new RecipeSet();
   }
 
   @Test
