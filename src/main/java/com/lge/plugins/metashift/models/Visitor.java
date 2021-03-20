@@ -31,7 +31,7 @@ package com.lge.plugins.metashift.models;
  */
 public class Visitor {
   /**
-   * Visits the Recipe class.
+   * Visits the Recipe object.
    *
    * @param object to visit
    */
@@ -40,7 +40,7 @@ public class Visitor {
   }
 
   /**
-   * Visits the RecipeSet class.
+   * Visits the RecipeSet object.
    *
    * @param object to visit
    */
@@ -49,7 +49,7 @@ public class Visitor {
   }
 
   /**
-   * visits the CacheSet class.
+   * visits the CacheSet object.
    *
    * @param object to visit
    */
@@ -57,7 +57,7 @@ public class Visitor {
   }
 
   /**
-   * Visits the SizeSet class.
+   * Visits the SizeSet object.
    *
    * @param object to visit
    */
@@ -65,7 +65,7 @@ public class Visitor {
   }
 
   /**
-   * Visits the CommentSet class.
+   * Visits the CommentSet object.
    *
    * @param object to visit
    */
@@ -73,7 +73,7 @@ public class Visitor {
   }
 
   /**
-   * Visits the RecipeViolationSet class.
+   * Visits the RecipeViolationSet object.
    *
    * @param object to visit
    */
@@ -86,5 +86,13 @@ public class Visitor {
    * @param object to visit
    */
   public void visit(final CodeViolationSet object) {
+  }
+
+  /**
+   * Visits the ComplexitySet object.
+   *
+   * @param object to visit
+   */
+  public void visit(final ComplexitySet object) {
   }
 }

@@ -25,11 +25,11 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents a set of CommentData objects.
+ * Represents a set of ComplexityData objects.
  *
  * @author Sung Gon Kim
  */
-public final class CommentSet extends DataSet<CommentData> {
+public final class ComplexitySet extends DataSet<ComplexityData> {
   @Override
   public void accept(final Visitor visitor) {
     visitor.visit(this);

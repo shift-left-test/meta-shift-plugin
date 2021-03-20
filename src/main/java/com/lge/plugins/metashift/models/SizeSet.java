@@ -25,7 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents a container class for SizeData and provides a method for Visitor classes.
+ * Represents a set of SizeData objects.
  *
  * @author Sung Gon Kim
  */
