@@ -25,7 +25,9 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * A container class for recipes.
+ * Represents a set of Recipe objects.
+ *
+ * @author Sung Gon Kim
  */
 public final class RecipeSet extends DataSet<Recipe> {
   @Override

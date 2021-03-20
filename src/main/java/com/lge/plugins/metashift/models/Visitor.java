@@ -103,4 +103,12 @@ public class Visitor {
    */
   public void visit(final DuplicationSet object) {
   }
+
+  /**
+   * Visits the TestSet object.
+   *
+   * @param object to visit
+   */
+  public void visit(final TestSet object) {
+  }
 }

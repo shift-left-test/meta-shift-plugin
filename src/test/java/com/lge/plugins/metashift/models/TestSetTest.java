@@ -28,16 +28,16 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the SizeSet class.
+ * Unit tests for the TestSet class..
  *
  * @author Sung Gon Kim
  */
-public class SizeSetTest {
-  private SizeSet objects;
+public class TestSetTest {
+  private TestSet objects;
 
   @Before
   public void setUp() throws Exception {
-    objects = new SizeSet();
+    objects = new TestSet();
   }
 
   @Test
@@ -47,8 +47,8 @@ public class SizeSetTest {
 
   @Test
   public void testAddingData() throws Exception {
-    SizeData first = new SizeData("A", "a.file", 3, 2, 1);
-    SizeData second = new SizeData("B", "b.file", 3, 2, 1);
+    TestData first = new PassedTestData("A", "a.suite", "a.tc", "msg");
+    TestData second = new PassedTestData("B", "b.suite", "b.tc", "msg");
     objects.add(second);
     objects.add(first);
     assertEquals(2, objects.size());
@@ -57,8 +57,8 @@ public class SizeSetTest {
 
   @Test
   public void testAddingDuplicates() throws Exception {
-    objects.add(new SizeData("A", "a.file", 3, 2, 1));
-    objects.add(new SizeData("A", "a.file", 30, 20, 10));
+    objects.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    objects.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     assertEquals(1, objects.size());
   }
 }

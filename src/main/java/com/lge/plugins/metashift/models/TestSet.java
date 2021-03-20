@@ -24,41 +24,14 @@
 
 package com.lge.plugins.metashift.models;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-
 /**
- * Unit tests for the SizeSet class.
+ * Represents a set of TestData objects.
  *
  * @author Sung Gon Kim
  */
-public class SizeSetTest {
-  private SizeSet objects;
-
-  @Before
-  public void setUp() throws Exception {
-    objects = new SizeSet();
-  }
-
-  @Test
-  public void testInitialState() throws Exception {
-    assertEquals(0, objects.size());
-  }
-
-  @Test
-  public void testAddingData() throws Exception {
-    SizeData first = new SizeData("A", "a.file", 3, 2, 1);
-    SizeData second = new SizeData("B", "b.file", 3, 2, 1);
-    objects.add(second);
-    objects.add(first);
-    assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
-  }
-
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    objects.add(new SizeData("A", "a.file", 3, 2, 1));
-    objects.add(new SizeData("A", "a.file", 30, 20, 10));
-    assertEquals(1, objects.size());
+public final class TestSet extends DataSet<TestData> {
+  @Override
+  public void accept(final Visitor visitor) {
+    visitor.visit(this);
   }
 }
