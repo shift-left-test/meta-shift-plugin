@@ -91,11 +91,13 @@ public class RecipeViolationCollectorTest {
   @Test
   public void testMultipleSets() throws Exception {
     List<RecipeViolationSet> group = new ArrayList<>();
+
     set = new RecipeViolationSet();
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     group.add(set);
+
     set = new RecipeViolationSet();
     set.add(new MinorRecipeViolationData("B", "b.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));

@@ -95,10 +95,12 @@ public class CacheCollectorTest {
   @Test
   public void testMultipleSets() throws Exception {
     List<CacheSet> group = new ArrayList<>();
+
     set = new CacheSet();
     set.add(new SharedStateCacheData("A", "do_test", true));
     set.add(new SharedStateCacheData("A", "do_fetch", false));
     group.add(set);
+
     set = new CacheSet();
     set.add(new SharedStateCacheData("B", "do_test", true));
     set.add(new SharedStateCacheData("B", "do_fetch", false));

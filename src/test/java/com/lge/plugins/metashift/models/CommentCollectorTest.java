@@ -75,10 +75,12 @@ public class CommentCollectorTest {
   @Test
   public void testMultipleSets() throws Exception {
     List<CommentSet> group = new ArrayList<>();
+
     set = new CommentSet();
     set.add(new CommentData("A", "a.file", 10, 5));
     set.add(new CommentData("A", "b.file", 20, 10));
     group.add(set);
+
     set = new CommentSet();
     set.add(new CommentData("B", "a.file", 10, 5));
     set.add(new CommentData("B", "b.file", 20, 10));

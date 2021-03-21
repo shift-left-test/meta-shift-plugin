@@ -29,13 +29,13 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the CodeViolationCollector class.
+ * Unit tests for the ComplexityCollector class.
  *
  * @author Sung Gon Kim
  */
-public class CodeViolationCollectorTest {
-  private CodeViolationCollector collector;
-  private CodeViolationSet set;
+public class ComplexityCollectorTest {
+  private ComplexityCollector collector;
+  private ComplexitySet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
@@ -47,8 +47,8 @@ public class CodeViolationCollectorTest {
 
   @Before
   public void setUp() throws Exception {
-    collector = new CodeViolationCollector(MajorCodeViolationData.class);
-    set = new CodeViolationSet();
+    collector = new ComplexityCollector(10);
+    set = new ComplexitySet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -66,42 +66,42 @@ public class CodeViolationCollectorTest {
 
   @Test
   public void testSetWithoutMatched() throws Exception {
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    set.add(new ComplexityData("A", "a.file", "f()", 1));
+    set.add(new ComplexityData("A", "a.file", "g()", 9));
     set.accept(collector);
     assertValues(2, 0, 0.0f);
   }
 
   @Test
   public void testSetWithMatched() throws Exception {
-    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    set.add(new ComplexityData("A", "a.file", "h()", 10));
     set.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testSetWithCompoundData() throws Exception {
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    set.add(new ComplexityData("A", "a.file", "f()", 1));
+    set.add(new ComplexityData("A", "a.file", "g()", 9));
+    set.add(new ComplexityData("A", "a.file", "h()", 10));
     set.accept(collector);
     assertValues(3, 1, 0.3f);
   }
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<CodeViolationSet> group = new ArrayList<>();
+    List<ComplexitySet> group = new ArrayList<>();
 
-    set = new CodeViolationSet();
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    set = new ComplexitySet();
+    set.add(new ComplexityData("A", "a.file", "f()", 1));
+    set.add(new ComplexityData("A", "a.file", "g()", 9));
+    set.add(new ComplexityData("A", "a.file", "h()", 10));
     group.add(set);
 
-    set = new CodeViolationSet();
-    set.add(new MinorCodeViolationData("B", "b.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("B", "b.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("B", "b.file", 3, 3, "r", "m", "d", "E", "t"));
+    set = new ComplexitySet();
+    set.add(new ComplexityData("B", "a.file", "f()", 1));
+    set.add(new ComplexityData("B", "a.file", "g()", 9));
+    set.add(new ComplexityData("B", "a.file", "h()", 10));
     group.add(set);
 
     group.forEach(o -> o.accept(collector));
@@ -116,21 +116,18 @@ public class CodeViolationCollectorTest {
 
   @Test
   public void testRecipeWithoutMatched() throws Exception {
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    set.add(new ComplexityData("A", "a.file", "g()", 9));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(2, 0, 0.0f);
+    assertValues(1, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithMatched() throws Exception {
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    set.add(new ComplexityData("A", "a.file", "g()", 10));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(3, 1, 0.3f);
+    assertValues(1, 1, 1.0f);
   }
 
   @Test
@@ -141,18 +138,18 @@ public class CodeViolationCollectorTest {
 
   @Test
   public void testRecipeSetWithCompoundData() throws Exception {
-    set = new CodeViolationSet();
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    set = new ComplexitySet();
+    set.add(new ComplexityData("A", "a.file", "f()", 1));
+    set.add(new ComplexityData("A", "a.file", "g()", 9));
+    set.add(new ComplexityData("A", "a.file", "h()", 10));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new CodeViolationSet();
-    set.add(new MinorCodeViolationData("B", "b.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("B", "b.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("B", "b.file", 3, 3, "r", "m", "d", "E", "t"));
+    set = new ComplexitySet();
+    set.add(new ComplexityData("B", "a.file", "f()", 1));
+    set.add(new ComplexityData("B", "a.file", "g()", 9));
+    set.add(new ComplexityData("B", "a.file", "h()", 10));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
