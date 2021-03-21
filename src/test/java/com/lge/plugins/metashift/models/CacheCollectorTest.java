@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  */
 public class CacheCollectorTest {
   private CacheCollector collector;
-  private CacheSet caches;
+  private CacheSet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
@@ -52,7 +52,7 @@ public class CacheCollectorTest {
   @Before
   public void setUp() throws Exception {
     collector = new CacheCollector(SharedStateCacheData.class);
-    caches = new CacheSet();
+    set = new CacheSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -63,46 +63,46 @@ public class CacheCollectorTest {
   }
 
   @Test
-  public void testEmptyCache() throws Exception {
-    caches.accept(collector);
+  public void testEmptySet() throws Exception {
+    set.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testNonMatchingTypeCache() throws Exception {
-    caches.add(new PremirrorCacheData("A", "do_fetch", true));
-    caches.accept(collector);
+  public void testSetWithoutMatched() throws Exception {
+    set.add(new PremirrorCacheData("A", "do_fetch", true));
+    set.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testMatchingTypeCache() throws Exception {
-    caches.add(new SharedStateCacheData("A", "do_fetch", true));
-    caches.accept(collector);
+  public void testSetWithMatched() throws Exception {
+    set.add(new SharedStateCacheData("A", "do_fetch", true));
+    set.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
-  public void testCompoundCacheSet() throws Exception {
-    caches.add(new SharedStateCacheData("A", "do_fetch", true));
-    caches.add(new SharedStateCacheData("A", "do_compile", false));
-    caches.add(new PremirrorCacheData("A", "do_fetch", true));
-    caches.add(new PremirrorCacheData("A", "do_compile", false));
-    caches.accept(collector);
+  public void testSetWithCompoundData() throws Exception {
+    set.add(new SharedStateCacheData("A", "do_fetch", true));
+    set.add(new SharedStateCacheData("A", "do_compile", false));
+    set.add(new PremirrorCacheData("A", "do_fetch", true));
+    set.add(new PremirrorCacheData("A", "do_compile", false));
+    set.accept(collector);
     assertValues(2, 1, 0.5f);
   }
 
   @Test
-  public void testMultipleCacheSet() throws Exception {
+  public void testMultipleSets() throws Exception {
     List<CacheSet> group = new ArrayList<>();
-    CacheSet caches = new CacheSet();
-    caches.add(new SharedStateCacheData("A", "do_test", true));
-    caches.add(new SharedStateCacheData("A", "do_fetch", false));
-    group.add(caches);
-    caches = new CacheSet();
-    caches.add(new SharedStateCacheData("B", "do_test", true));
-    caches.add(new SharedStateCacheData("B", "do_fetch", false));
-    group.add(caches);
+    set = new CacheSet();
+    set.add(new SharedStateCacheData("A", "do_test", true));
+    set.add(new SharedStateCacheData("A", "do_fetch", false));
+    group.add(set);
+    set = new CacheSet();
+    set.add(new SharedStateCacheData("B", "do_test", true));
+    set.add(new SharedStateCacheData("B", "do_fetch", false));
+    group.add(set);
 
     group.forEach(o -> o.accept(collector));
     assertValues(4, 2, 0.5f);
@@ -115,18 +115,18 @@ public class CacheCollectorTest {
   }
 
   @Test
-  public void testRecipeWithNonMatchingCache() throws Exception {
-    caches.add(new PremirrorCacheData("A", "do_fetch", true));
-    recipe.set(caches);
+  public void testRecipeWithoutMatched() throws Exception {
+    set.add(new PremirrorCacheData("A", "do_fetch", true));
+    recipe.set(set);
     recipe.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeWithMatchingCache() throws Exception {
-    caches.add(new SharedStateCacheData("A", "do_fetch", true));
+  public void testRecipeWithMatched() throws Exception {
+    set.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-B-C");
-    recipe.set(caches);
+    recipe.set(set);
     recipe.accept(collector);
     assertValues(1, 1, 1.0f);
   }
@@ -138,17 +138,17 @@ public class CacheCollectorTest {
   }
 
   @Test
-  public void testRecipeSetWithCompoundCacheSet() throws Exception {
-    caches = new CacheSet();
-    caches.add(new SharedStateCacheData("A", "do_fetch", true));
+  public void testRecipeSetWithCompoundData() throws Exception {
+    set = new CacheSet();
+    set.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(caches);
+    recipe.set(set);
     recipes.add(recipe);
 
-    caches = new CacheSet();
-    caches.add(new SharedStateCacheData("B", "do_fetch", true));
+    set = new CacheSet();
+    set.add(new SharedStateCacheData("B", "do_fetch", true));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(caches);
+    recipe.set(set);
     recipes.add(recipe);
 
     recipes.accept(collector);

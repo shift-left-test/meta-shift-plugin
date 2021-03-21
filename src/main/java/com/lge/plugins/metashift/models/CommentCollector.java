@@ -25,17 +25,13 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the cache availability information from the given data sets.
+ * Collects the comment information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class CacheCollector extends Visitor implements Measurable {
+public final class CommentCollector extends Visitor implements Measurable {
   /**
-   * Represents the class type.
-   */
-  private Class<? extends CacheData> clazz;
-  /**
-   * Represents the demoniator.
+   * Represents the denominator.
    */
   private int denominator;
   /**
@@ -45,11 +41,8 @@ public final class CacheCollector extends Visitor implements Measurable {
 
   /**
    * Default constructor.
-   *
-   * @param clazz the class type
    */
-  public CacheCollector(final Class<? extends CacheData> clazz) {
-    this.clazz = clazz;
+  public CommentCollector() {
     this.denominator = 0;
     this.numerator = 0;
   }
@@ -65,14 +58,8 @@ public final class CacheCollector extends Visitor implements Measurable {
   }
 
   @Override
-  public void visit(final CacheSet caches) {
-    denominator += caches
-        .stream()
-        .filter(o -> o.getClass() == clazz)
-        .count();
-    numerator += caches
-        .stream()
-        .filter(o -> o.getClass() == clazz && o.isAvailable())
-        .count();
+  public void visit(final CommentSet comments) {
+    denominator += comments.stream().mapToInt(CommentData::getLines).sum();
+    numerator += comments.stream().mapToInt(CommentData::getCommentLines).sum();
   }
 }

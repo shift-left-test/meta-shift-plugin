@@ -54,7 +54,6 @@ public final class CodeViolationCollector extends Visitor implements Measurable 
     this.numerator = 0;
   }
 
-
   @Override
   public int getDenominator() {
     return denominator;
