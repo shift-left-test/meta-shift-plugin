@@ -39,20 +39,20 @@ public class SizeCollectorTest {
   private Recipe recipe;
   private RecipeSet recipes;
 
-  private void assertValues(int recipes, int files, int lines, int functions, int classes) {
-    assertEquals(recipes, collector.getRecipes());
-    assertEquals(files, collector.getFiles());
-    assertEquals(lines, collector.getLines());
-    assertEquals(functions, collector.getFunctions());
-    assertEquals(classes, collector.getClasses());
-  }
-
   @Before
   public void setUp() throws Exception {
     collector = new SizeCollector();
     set = new SizeSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
+  }
+
+  private void assertValues(int recipes, int files, int lines, int functions, int classes) {
+    assertEquals(recipes, collector.getRecipes());
+    assertEquals(files, collector.getFiles());
+    assertEquals(lines, collector.getLines());
+    assertEquals(functions, collector.getFunctions());
+    assertEquals(classes, collector.getClasses());
   }
 
   @Test

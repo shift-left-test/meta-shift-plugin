@@ -39,18 +39,18 @@ public class CodeViolationCollectorTest {
   private Recipe recipe;
   private RecipeSet recipes;
 
-  private void assertValues(int denominator, int numerator, float ratio) {
-    assertEquals(denominator, collector.getDenominator());
-    assertEquals(numerator, collector.getNumerator());
-    assertEquals(ratio, collector.getRatio(), 0.1f);
-  }
-
   @Before
   public void setUp() throws Exception {
     collector = new CodeViolationCollector(MajorCodeViolationData.class);
     set = new CodeViolationSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
+  }
+
+  private void assertValues(int denominator, int numerator, float ratio) {
+    assertEquals(denominator, collector.getDenominator());
+    assertEquals(numerator, collector.getNumerator());
+    assertEquals(ratio, collector.getRatio(), 0.1f);
   }
 
   @Test
