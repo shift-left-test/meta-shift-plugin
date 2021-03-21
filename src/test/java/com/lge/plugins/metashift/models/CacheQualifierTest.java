@@ -24,10 +24,6 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.CacheQualifier;
-import com.lge.plugins.metashift.models.CacheSet;
-import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.models.RecipeSet;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -39,14 +35,14 @@ import static org.junit.Assert.*;
  */
 public class CacheQualifierTest {
   private CacheQualifier qualifier;
-  private CacheSet caches;
+  private CacheSet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
     qualifier = new CacheQualifier(0.5f);
-    caches = new CacheSet();
+    set = new CacheSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -65,59 +61,59 @@ public class CacheQualifierTest {
 
   @Test
   public void testEmptyCacheSet() throws Exception {
-    caches.accept(qualifier);
+    set.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
   public void testPremirrorOnlyCacheWhichNotQualified() throws Exception {
-    caches.add(new PremirrorCacheData("A", "do_A", true));
-    caches.add(new PremirrorCacheData("A", "do_B", false));
-    caches.add(new PremirrorCacheData("A", "do_C", false));
-    caches.accept(qualifier);
+    set.add(new PremirrorCacheData("A", "do_A", true));
+    set.add(new PremirrorCacheData("A", "do_B", false));
+    set.add(new PremirrorCacheData("A", "do_C", false));
+    set.accept(qualifier);
     assertValues(true, false, 0.3f, 0.0f);
   }
 
   @Test
   public void testPremirrorOnlyCacheWhichQualified() throws Exception {
-    caches.add(new PremirrorCacheData("A", "do_A", true));
-    caches.add(new PremirrorCacheData("A", "do_B", false));
-    caches.accept(qualifier);
+    set.add(new PremirrorCacheData("A", "do_A", true));
+    set.add(new PremirrorCacheData("A", "do_B", false));
+    set.accept(qualifier);
     assertValues(true, true, 0.5f, 0.0f);
   }
 
   @Test
   public void testSharedStateOnlyCacheWhichNotQualified() throws Exception {
-    caches.add(new SharedStateCacheData("A", "do_A", true));
-    caches.add(new SharedStateCacheData("A", "do_B", false));
-    caches.add(new SharedStateCacheData("A", "do_C", false));
-    caches.accept(qualifier);
+    set.add(new SharedStateCacheData("A", "do_A", true));
+    set.add(new SharedStateCacheData("A", "do_B", false));
+    set.add(new SharedStateCacheData("A", "do_C", false));
+    set.accept(qualifier);
     assertValues(true, false, 0.0f, 0.3f);
   }
 
   @Test
   public void testSharedStateOnlyCacheWhichQualified() throws Exception {
-    caches.add(new SharedStateCacheData("A", "do_A", true));
-    caches.add(new SharedStateCacheData("A", "do_B", false));
-    caches.accept(qualifier);
+    set.add(new SharedStateCacheData("A", "do_A", true));
+    set.add(new SharedStateCacheData("A", "do_B", false));
+    set.accept(qualifier);
     assertValues(true, true, 0.0f, 0.5f);
   }
 
   @Test
   public void testMixedCacheWhichNotQualified() throws Exception {
-    caches.add(new PremirrorCacheData("A", "do_A", true));
-    caches.add(new SharedStateCacheData("A", "do_B", false));
-    caches.add(new SharedStateCacheData("A", "do_C", false));
-    caches.accept(qualifier);
+    set.add(new PremirrorCacheData("A", "do_A", true));
+    set.add(new SharedStateCacheData("A", "do_B", false));
+    set.add(new SharedStateCacheData("A", "do_C", false));
+    set.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f);
   }
 
   @Test
   public void testMixedCacheWhichQualified() throws Exception {
-    caches.add(new PremirrorCacheData("A", "do_A", true));
-    caches.add(new SharedStateCacheData("A", "do_B", true));
-    caches.add(new SharedStateCacheData("A", "do_C", false));
-    caches.accept(qualifier);
+    set.add(new PremirrorCacheData("A", "do_A", true));
+    set.add(new SharedStateCacheData("A", "do_B", true));
+    set.add(new SharedStateCacheData("A", "do_C", false));
+    set.accept(qualifier);
     assertValues(true, true, 1.0f, 0.5f);
   }
 
@@ -129,21 +125,21 @@ public class CacheQualifierTest {
 
   @Test
   public void testRecipeWithMixedCacheWhichNotQualified() throws Exception {
-    caches.add(new PremirrorCacheData("A", "do_A", true));
-    caches.add(new SharedStateCacheData("A", "do_B", false));
-    caches.add(new SharedStateCacheData("A", "do_C", false));
-    recipe.set(caches);
+    set.add(new PremirrorCacheData("A", "do_A", true));
+    set.add(new SharedStateCacheData("A", "do_B", false));
+    set.add(new SharedStateCacheData("A", "do_C", false));
+    recipe.set(set);
     recipe.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f);
   }
 
   @Test
   public void testRecipeWithMixedCacheWhichQualified() throws Exception {
-    caches.add(new PremirrorCacheData("A", "do_A", true));
-    caches.add(new SharedStateCacheData("A", "do_B", true));
-    caches.add(new SharedStateCacheData("A", "do_C", false));
+    set.add(new PremirrorCacheData("A", "do_A", true));
+    set.add(new SharedStateCacheData("A", "do_B", true));
+    set.add(new SharedStateCacheData("A", "do_C", false));
     recipe = new Recipe("A-B-C");
-    recipe.set(caches);
+    recipe.set(set);
     recipe.accept(qualifier);
     assertValues(true, true, 1.0f, 0.5f);
   }
@@ -156,18 +152,18 @@ public class CacheQualifierTest {
 
   @Test
   public void testRecipeSetWithCompoundCacheSetWhichQualified() throws Exception {
-    caches = new CacheSet();
-    caches.add(new PremirrorCacheData("A", "do_packagedata", true));
-    caches.add(new SharedStateCacheData("A", "do_fetch", true));
+    set = new CacheSet();
+    set.add(new PremirrorCacheData("A", "do_packagedata", true));
+    set.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(caches);
+    recipe.set(set);
     recipes.add(recipe);
 
-    caches = new CacheSet();
-    caches.add(new PremirrorCacheData("B", "do_packagedata", true));
-    caches.add(new SharedStateCacheData("B", "do_fetch", true));
+    set = new CacheSet();
+    set.add(new PremirrorCacheData("B", "do_packagedata", true));
+    set.add(new SharedStateCacheData("B", "do_fetch", true));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(caches);
+    recipe.set(set);
     recipes.add(recipe);
 
     recipes.accept(qualifier);

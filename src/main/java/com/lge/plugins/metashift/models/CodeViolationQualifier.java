@@ -28,17 +28,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Evaluates the level of cache availability.
+ * Evaluates the level of code violations.
  *
  * @author Sung Gon Kim
  */
-public final class CacheQualifier extends Visitor implements Qualifiable {
+public final class CodeViolationQualifier extends Visitor implements Qualifiable {
   /**
-   * Represents the collection of CacheCollector objects.
+   * Represents the collectino of CodeViolationCollector objects.
    */
-  private Map<Class<? extends CacheData>, CacheCollector> collection;
+  private Map<Class<? extends CodeViolationData>, CodeViolationCollector> collection;
   /**
-   * Represents the threshold of the qualification.
+   * Represents the threshold of the qualificiation.
    */
   private float threshold;
 
@@ -47,40 +47,44 @@ public final class CacheQualifier extends Visitor implements Qualifiable {
    *
    * @param threshold for evaluation
    */
-  public CacheQualifier(final float threshold) {
+  public CodeViolationQualifier(final float threshold) {
     collection = new HashMap<>();
-    collection.put(PremirrorCacheData.class, new CacheCollector(PremirrorCacheData.class));
-    collection.put(SharedStateCacheData.class, new CacheCollector(SharedStateCacheData.class));
+    collection.put(MajorCodeViolationData.class,
+                   new CodeViolationCollector(MajorCodeViolationData.class));
+    collection.put(MinorCodeViolationData.class,
+                   new CodeViolationCollector(MinorCodeViolationData.class));
+    collection.put(InfoCodeViolationData.class,
+                   new CodeViolationCollector(InfoCodeViolationData.class));
     this.threshold = threshold;
   }
 
   /**
-   * Returns the relevant CacheCollector object based on the given class type.
+   * Returns the relevant collector object based on the given type.
    *
    * @param clazz of the object type to return
-   * @return CacheCollector object
+   * @return CodeViolationCollector object
    */
-  public CacheCollector collection(final Class<? extends CacheData> clazz) {
+  public CodeViolationCollector collection(final Class<? extends CodeViolationData> clazz) {
     return collection.get(clazz);
   }
 
   @Override
   public boolean isAvailable() {
-    return collection.values().stream().mapToInt(CacheCollector::getDenominator).sum() > 0;
+    return collection(MajorCodeViolationData.class).getDenominator() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection.values().stream().mapToInt(CacheCollector::getDenominator).sum();
-    int numerator = collection.values().stream().mapToInt(CacheCollector::getNumerator).sum();
+    int denominator = collection(MajorCodeViolationData.class).getDenominator();
+    int numerator = collection(MajorCodeViolationData.class).getNumerator();
     if (denominator == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) >= threshold;
+    return ((float) numerator / (float) denominator) <= threshold;
   }
 
   @Override
-  public void visit(final CacheSet objects) {
+  public void visit(final CodeViolationSet objects) {
     collection.values().stream().forEach(collector -> objects.accept(collector));
   }
 }

@@ -62,8 +62,7 @@ public final class RecipeViolationQualifier extends Visitor implements Qualifiab
   }
 
   /**
-   * Returns the relevant RecipeViolationCollector object
-   * based on the given class type.
+   * Returns the relevant collector object based on the given type.
    *
    * @param clazz of the object type to return
    * @return RecipeViolationCollector object
@@ -89,7 +88,6 @@ public final class RecipeViolationQualifier extends Visitor implements Qualifiab
 
   @Override
   public void visit(final RecipeViolationSet objects) {
-    collection.values().stream()
-        .forEach(collector -> objects.accept(collector));
+    collection.values().stream().forEach(collector -> objects.accept(collector));
   }
 }

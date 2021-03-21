@@ -29,20 +29,20 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the RecipeViolationQualifier class.
+ * Unit tests for the CodeViolationQualifier class.
  *
  * @author Sung Gon Kim
  */
-public class RecipeViolationQualifierTest {
-  private RecipeViolationQualifier qualifier;
-  private RecipeViolationSet set;
+public class CodeViolationQualifierTest {
+  private CodeViolationQualifier qualifier;
+  private CodeViolationSet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
-    qualifier = new RecipeViolationQualifier(0.5f);
-    set = new RecipeViolationSet();
+    qualifier = new CodeViolationQualifier(0.5f);
+    set = new CodeViolationSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -50,9 +50,9 @@ public class RecipeViolationQualifierTest {
   private void assertValues(boolean available, boolean qualified, float major, float minor, float info) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
-    assertEquals(major, qualifier.collection(MajorRecipeViolationData.class).getRatio(), 0.1f);
-    assertEquals(minor, qualifier.collection(MinorRecipeViolationData.class).getRatio(), 0.1f);
-    assertEquals(info, qualifier.collection(InfoRecipeViolationData.class).getRatio(), 0.1f);
+    assertEquals(major, qualifier.collection(MajorCodeViolationData.class).getRatio(), 0.1f);
+    assertEquals(minor, qualifier.collection(MinorCodeViolationData.class).getRatio(), 0.1f);
+    assertEquals(info, qualifier.collection(InfoCodeViolationData.class).getRatio(), 0.1f);
   }
 
   @Test
@@ -68,16 +68,16 @@ public class RecipeViolationQualifierTest {
 
   @Test
   public void testSetWithoutQualified() throws Exception {
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testSetWithQualified() throws Exception {
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    set.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.accept(qualifier);
     assertValues(true, true, 0.3f, 0.3f, 0.3f);
   }
@@ -90,7 +90,7 @@ public class RecipeViolationQualifierTest {
 
   @Test
   public void testRecipeWithoutQualified() throws Exception {
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe.set(set);
     recipe.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f, 0.0f);
@@ -98,9 +98,9 @@ public class RecipeViolationQualifierTest {
 
   @Test
   public void testRecipeWithQualified() throws Exception {
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    set.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe.set(set);
     recipe.accept(qualifier);
     assertValues(true, true, 0.3f, 0.3f, 0.3f);
@@ -114,39 +114,36 @@ public class RecipeViolationQualifierTest {
 
   @Test
   public void testRecipeSetWithoutQualified() throws Exception {
-    set = new RecipeViolationSet();
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    set.add(new MajorRecipeViolationData("A", "a.file", 2, "major", "major", "major"));
-    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    set = new CodeViolationSet();
+    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new RecipeViolationSet();
-    set.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
-    set.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
+    set = new CodeViolationSet();
+    set.add(new MajorCodeViolationData("B", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, false, 0.6f, 0.2f, 0.2f);
+    assertValues(true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testRecipeSetWithQualified() throws Exception {
-    set = new RecipeViolationSet();
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    set = new CodeViolationSet();
+    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    set.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new RecipeViolationSet();
-    set.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
-    set.add(new MinorRecipeViolationData("B", "b.file", 1, "minor", "minor", "minor"));
-    set.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
+    set = new CodeViolationSet();
+    set.add(new MajorCodeViolationData("B", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    set.add(new MinorCodeViolationData("B", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("B", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
