@@ -24,41 +24,60 @@
 
 package com.lge.plugins.metashift.models;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Unit tests for the RecipeSet class
+ * Evaluates the level of comments.
  *
  * @author Sung Gon Kim
  */
-public class RecipeSetTest {
-  private RecipeSet recipes;
+public final class CommentQualifier extends Visitor implements Qualifiable {
+  /**
+   * Represents the collection of CommentCollector objects.
+   */
+  private CommentCollector collection;
+  /**
+   * Represents the threshold of the qualification.
+   */
+  private float threshold;
 
-  @Before
-  public void setUp() throws Exception {
-    recipes = new RecipeSet();
+  /**
+   * Default constructor.
+   *
+   * @param threshold for evaluation
+   */
+  public CommentQualifier(final float threshold) {
+    this.collection = new CommentCollector();
+    this.threshold = threshold;
   }
 
-  @Test
-  public void testInitialState() throws Exception {
-    assertEquals(0, recipes.size());
+  /**
+   * Returns the collector object.
+   *
+   * @return CommentCollector object
+   */
+  public CommentCollector collection() {
+    return collection;
   }
 
-  @Test
-  public void testAddingData() throws Exception {
-    Recipe first = new Recipe("A-1.0.0-r0");
-    Recipe second = new Recipe("B-1.0.0-r0");
-    recipes.add(second);
-    recipes.add(first);
-    assertEquals(2, recipes.size());
-    assertEquals(first, recipes.iterator().next());
+  @Override
+  public boolean isAvailable() {
+    return collection.getDenominator() > 0;
   }
 
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    recipes.add(new Recipe("A-B-C"));
-    recipes.add(new Recipe("A-B-C"));
-    assertEquals(1, recipes.size());
+  @Override
+  public boolean isQualified() {
+    int denominator = collection().getDenominator();
+    int numerator = collection().getNumerator();
+    if (denominator == 0) {
+      return false;
+    }
+    return ((float) numerator / (float) denominator) >= threshold;
+  }
+
+  @Override
+  public void visit(final CommentSet objects) {
+    objects.accept(collection);
   }
 }

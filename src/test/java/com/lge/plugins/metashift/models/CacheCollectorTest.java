@@ -24,10 +24,6 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.CacheCollector;
-import com.lge.plugins.metashift.models.CacheSet;
-import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.models.RecipeSet;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;

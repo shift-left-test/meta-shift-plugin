@@ -24,7 +24,6 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.Recipe;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
