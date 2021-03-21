@@ -29,13 +29,13 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the RecipeViolationCollector class.
+ * Unit tests for the CodeViolationCollector class.
  *
  * @author Sung Gon Kim
  */
-public class RecipeViolationCollectorTest {
-  private RecipeViolationCollector collector;
-  private RecipeViolationSet violations;
+public class CodeViolationCollectorTest {
+  private CodeViolationCollector collector;
+  private CodeViolationSet violations;
   private Recipe recipe;
   private RecipeSet recipes;
 
@@ -47,8 +47,8 @@ public class RecipeViolationCollectorTest {
 
   @Before
   public void setUp() throws Exception {
-    collector = new RecipeViolationCollector(MajorRecipeViolationData.class);
-    violations = new RecipeViolationSet();
+    collector = new CodeViolationCollector(MajorCodeViolationData.class);
+    violations = new CodeViolationSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -66,39 +66,40 @@ public class RecipeViolationCollectorTest {
 
   @Test
   public void testSetWithNonMatchingDataType() throws Exception {
-    violations.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    violations.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    violations.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    violations.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
     violations.accept(collector);
     assertValues(2, 0, 0.0f);
   }
 
   @Test
   public void testSetWithMatchingDataType() throws Exception {
-    violations.add(new MajorRecipeViolationData("A", "a.file", 1, "rule", "info", "error"));
+    violations.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     violations.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testCompoundDataSet() throws Exception {
-    violations.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    violations.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
-    violations.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));      violations.accept(collector);
+    violations.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    violations.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    violations.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    violations.accept(collector);
     assertValues(3, 1, 0.3f);
   }
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<RecipeViolationSet> group = new ArrayList<>();
-    violations = new RecipeViolationSet();
-    violations.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    violations.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    violations.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    List<CodeViolationSet> group = new ArrayList<>();
+    violations = new CodeViolationSet();
+    violations.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    violations.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    violations.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     group.add(violations);
-    violations = new RecipeViolationSet();
-    violations.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
-    violations.add(new MinorRecipeViolationData("B", "b.file", 1, "minor", "minor", "minor"));
-    violations.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
+    violations = new CodeViolationSet();
+    violations.add(new MinorCodeViolationData("B", "b.file", 1, 1, "r", "m", "d", "E", "t"));
+    violations.add(new InfoCodeViolationData("B", "b.file", 2, 2, "r", "m", "d", "E", "t"));
+    violations.add(new MajorCodeViolationData("B", "b.file", 3, 3, "r", "m", "d", "E", "t"));
     group.add(violations);
 
     group.forEach(o -> o.accept(collector));
@@ -113,8 +114,8 @@ public class RecipeViolationCollectorTest {
 
   @Test
   public void testRecipeWithNonMatchingDataType() throws Exception {
-    violations.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    violations.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    violations.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    violations.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
     recipe.set(violations);
     recipe.accept(collector);
     assertValues(2, 0, 0.0f);
@@ -122,9 +123,9 @@ public class RecipeViolationCollectorTest {
 
   @Test
   public void testRecipeWithMatchingDataType() throws Exception {
-    violations.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    violations.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    violations.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    violations.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    violations.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    violations.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     recipe.set(violations);
     recipe.accept(collector);
     assertValues(3, 1, 0.3f);
@@ -138,18 +139,18 @@ public class RecipeViolationCollectorTest {
 
   @Test
   public void testRecipeSetWithCompoundData() throws Exception {
-    violations = new RecipeViolationSet();
-    violations.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    violations.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    violations.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    violations = new CodeViolationSet();
+    violations.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    violations.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    violations.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(violations);
     recipes.add(recipe);
 
-    violations = new RecipeViolationSet();
-    violations.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
-    violations.add(new MinorRecipeViolationData("B", "b.file", 1, "minor", "minor", "minor"));
-    violations.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
+    violations = new CodeViolationSet();
+    violations.add(new MinorCodeViolationData("B", "b.file", 1, 1, "r", "m", "d", "E", "t"));
+    violations.add(new InfoCodeViolationData("B", "b.file", 2, 2, "r", "m", "d", "E", "t"));
+    violations.add(new MajorCodeViolationData("B", "b.file", 3, 3, "r", "m", "d", "E", "t"));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(violations);
     recipes.add(recipe);
