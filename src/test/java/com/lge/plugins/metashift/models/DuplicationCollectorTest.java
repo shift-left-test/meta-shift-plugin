@@ -29,75 +29,105 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the SizeCollector class.
+ * Unit tests for the DuplicationCollector class.
  *
  * @author Sung Gon Kim
  */
-public class SizeCollectorTest {
-  private SizeCollector collector;
-  private SizeSet set;
+public class DuplicationCollectorTest {
+  private DuplicationCollector collector;
+  private DuplicationSet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
-  private void assertValues(int recipes, int files, int lines, int functions, int classes) {
-    assertEquals(recipes, collector.getRecipes());
-    assertEquals(files, collector.getFiles());
-    assertEquals(lines, collector.getLines());
-    assertEquals(functions, collector.getFunctions());
-    assertEquals(classes, collector.getClasses());
+  private void assertValues(int denominator, int numerator, float ratio) {
+    assertEquals(denominator, collector.getDenominator());
+    assertEquals(numerator, collector.getNumerator());
+    assertEquals(ratio, collector.getRatio(), 0.1f);
   }
 
   @Before
   public void setUp() throws Exception {
-    collector = new SizeCollector();
-    set = new SizeSet();
+    collector = new DuplicationCollector();
+    set = new DuplicationSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
 
   @Test
   public void testInitialState() throws Exception {
-    assertValues(0, 0, 0, 0, 0);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testEmptySet() throws Exception {
     set.accept(collector);
-    assertValues(0, 0, 0, 0, 0);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testSetWithData() throws Exception {
-    set.add(new SizeData("A", "a.file", 3, 2, 1));
-    set.add(new SizeData("A", "b.file", 6, 4, 2));
+  public void testSetWithCompoundData() throws Exception {
+    set.add(new DuplicationData("A", "a.file", 10, 5));
+    set.add(new DuplicationData("A", "b.file", 10, 5));
     set.accept(collector);
-    assertValues(1, 2, 9, 6, 3);
+    assertValues(20, 10, 0.5f);
+  }
+
+  @Test
+  public void testMultipleSets() throws Exception {
+    List<DuplicationSet> group = new ArrayList<>();
+
+    set = new DuplicationSet();
+    set.add(new DuplicationData("A", "a.file", 10, 5));
+    set.add(new DuplicationData("A", "b.file", 10, 5));
+    group.add(set);
+
+    set = new DuplicationSet();
+    set.add(new DuplicationData("B", "a.file", 10, 5));
+    set.add(new DuplicationData("B", "b.file", 10, 5));
+    group.add(set);
+
+    group.forEach(o -> o.accept(collector));
+    assertValues(40, 20, 0.5f);
+  }
+
+  @Test
+  public void testEmptyRecipe() throws Exception {
+    recipe.accept(collector);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithData() throws Exception {
-    set.add(new SizeData("A", "a.file", 3, 2, 1));
-    set.add(new SizeData("A", "b.file", 6, 4, 2));
+    set.add(new DuplicationData("A", "a.file", 10, 5));
+    set.add(new DuplicationData("A", "b.file", 10, 5));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(1, 2, 9, 6, 3);
+    assertValues(20, 10, 0.5f);
+  }
+
+  @Test
+  public void testEmptyRecipeSet() throws Exception {
+    recipes.accept(collector);
+    assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeSetWithCompoundData() throws Exception {
+    set = new DuplicationSet();
+    set.add(new DuplicationData("A", "a.file", 10, 5));
+    set.add(new DuplicationData("A", "b.file", 10, 5));
     recipe = new Recipe("A-1.0.0-r0");
-    set = new SizeSet();
-    set.add(new SizeData("A", "a.file", 3, 2, 1));
     recipe.set(set);
     recipes.add(recipe);
 
+    set = new DuplicationSet();
+    set.add(new DuplicationData("B", "a.file", 10, 5));
+    set.add(new DuplicationData("B", "b.file", 10, 5));
     recipe = new Recipe("B-1.0.0-r0");
-    set = new SizeSet();
-    set.add(new SizeData("B", "b.file", 6, 4, 2));
     recipe.set(set);
     recipes.add(recipe);
 
     recipes.accept(collector);
-    assertValues(2, 2, 9, 6, 3);
+    assertValues(40, 20, 0.5f);
   }
 }
