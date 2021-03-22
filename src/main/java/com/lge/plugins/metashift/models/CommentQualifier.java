@@ -24,9 +24,6 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Evaluates the level of comments.
  *
