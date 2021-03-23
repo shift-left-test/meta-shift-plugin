@@ -56,9 +56,9 @@ public class CacheSetTest {
     return file;
   }
 
-  private void assertValues(CacheData object, String recipe, String task, boolean available) {
+  private void assertValues(CacheData object, String recipe, String signature, boolean available) {
     assertEquals(recipe, object.getRecipe());
-    assertEquals(task, object.getTask());
+    assertEquals(signature, object.getSignature());
     assertEquals(available, object.isAvailable());
   }
 
@@ -69,8 +69,8 @@ public class CacheSetTest {
 
   @Test
   public void testAddingData() throws Exception {
-    CacheData first = new SharedStateCacheData("A", "do_compile", true);
-    CacheData second = new PremirrorCacheData("A", "do_fetch", false);
+    CacheData first = new SharedStateCacheData("A", "X:do_compile", true);
+    CacheData second = new PremirrorCacheData("A", "Y", false);
     objects.add(second);
     objects.add(first);
     assertEquals(2, objects.size());
@@ -79,8 +79,8 @@ public class CacheSetTest {
 
   @Test
   public void testAddingDuplicates() throws Exception {
-    objects.add(new SharedStateCacheData("A", "do_fetch", true));
-    objects.add(new SharedStateCacheData("A", "do_fetch", true));
+    objects.add(new SharedStateCacheData("A", "X:do_fetch", true));
+    objects.add(new SharedStateCacheData("A", "X:do_fetch", true));
     assertEquals(1, objects.size());
   }
 

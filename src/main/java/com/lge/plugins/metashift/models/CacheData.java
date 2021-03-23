@@ -35,9 +35,9 @@ public abstract class CacheData implements Data<CacheData> {
    */
   private String recipe;
   /**
-   * Represents the name of the task.
+   * Represents the cache signature.
    */
-  private String task;
+  private String signature;
   /**
    * Indicates the cache availability.
    */
@@ -47,12 +47,12 @@ public abstract class CacheData implements Data<CacheData> {
    * Default constructor.
    *
    * @param recipe name
-   * @param task name
+   * @param signature name
    * @param available the cache availability
    */
-  public CacheData(final String recipe, final String task, final boolean available) {
+  public CacheData(final String recipe, final String signature, final boolean available) {
     this.recipe = recipe;
-    this.task = task;
+    this.signature = signature;
     this.available = available;
   }
 
@@ -63,7 +63,7 @@ public abstract class CacheData implements Data<CacheData> {
     if (compared != 0) {
       return compared;
     }
-    compared = task.compareTo(other.task);
+    compared = signature.compareTo(other.signature);
     if (compared != 0) {
       return compared;
     }
@@ -85,7 +85,7 @@ public abstract class CacheData implements Data<CacheData> {
     if (!recipe.equals(other.recipe)) {
       return false;
     }
-    if (!task.equals(other.task)) {
+    if (!signature.equals(other.signature)) {
       return false;
     }
     if (available != other.available) {
@@ -100,7 +100,7 @@ public abstract class CacheData implements Data<CacheData> {
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
     hashCode = prime * hashCode + recipe.hashCode();
-    hashCode = prime * hashCode + task.hashCode();
+    hashCode = prime * hashCode + signature.hashCode();
     return hashCode;
   }
 
@@ -110,12 +110,12 @@ public abstract class CacheData implements Data<CacheData> {
   }
 
   /**
-   * Return the task name.
+   * Return the cache signature.
    *
-   * @return task name
+   * @return cache signature
    */
-  public final String getTask() {
-    return task;
+  public final String getSignature() {
+    return signature;
   }
 
   /**
