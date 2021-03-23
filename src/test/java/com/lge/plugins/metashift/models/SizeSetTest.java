@@ -24,7 +24,10 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.io.*;
+import java.util.*;
 import org.junit.*;
+import org.junit.rules.*;
 import static org.junit.Assert.*;
 
 /**
@@ -33,11 +36,33 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class SizeSetTest {
+  @Rule
+  public TemporaryFolder folder = new TemporaryFolder();
   private SizeSet objects;
 
   @Before
   public void setUp() throws Exception {
     objects = new SizeSet();
+  }
+
+  private File createTempFile(String dirname, String filename, String[] data) throws Exception {
+    File directory = folder.newFolder(dirname);
+    File file = new File(directory, filename);
+    FileWriter writer = new FileWriter(file);
+    for (int i = 0; i < data.length; i++) {
+      writer.write(data[i]);
+    }
+    writer.close();
+    return file;
+  }
+
+  private void assertValues(SizeData object, String recipe, String file,
+                            int lines, int functions, int classes) {
+    assertEquals(recipe, object.getRecipe());
+    assertEquals(file, object.getFile());
+    assertEquals(lines, object.getLines());
+    assertEquals(functions, object.getFunctions());
+    assertEquals(classes, object.getClasses());
   }
 
   @Test
@@ -60,5 +85,74 @@ public class SizeSetTest {
     objects.add(new SizeData("A", "a.file", 3, 2, 1));
     objects.add(new SizeData("A", "a.file", 30, 20, 10));
     assertEquals(1, objects.size());
+  }
+
+  @Test
+  public void testCreateSetWithUnknownPath() throws Exception {
+    objects = SizeSet.create("A", new File(folder.getRoot(), "unknown"));
+    assertEquals(0, objects.size());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateSetWithMalformedReport() throws Exception {
+    String[] data = {
+      "{ \"size\": [ ",
+      "  {",
+      "    \"file\": \"a.file\",",
+      "  }",
+     };
+    File file = createTempFile("report/A", "sage_report.json", data);
+    objects = SizeSet.create("A", file.getParentFile());
+  }
+
+  @Test
+  public void testCreateSetWithSingleData() throws Exception {
+    String[] data = {
+      "{ \"size\": [ ",
+      "  {",
+      "    \"file\": \"a.file\",",
+      "    \"total_lines\": 20,",
+      "    \"code_lines\": 1,",
+      "    \"comment_lines\": 5,",
+      "    \"duplicated_lines\": 2,",
+      "    \"functions\": 15,",
+      "    \"classes\": 6",
+      "  } ",
+      "] }"
+    };
+    File file = createTempFile("report/A", "sage_report.json", data);
+
+    objects = SizeSet.create("A", file.getParentFile());
+    assertEquals(1, objects.size());
+
+    SizeData object = objects.iterator().next();
+    assertValues(object, "A", "a.file", 20, 15, 6);
+  }
+
+  @Test
+  public void testCreateSetWithMultipleData() throws Exception {
+    String[] data = {
+      "{ \"size\": [ ",
+      "{",
+      "  \"file\": \"a.file\",",
+      "  \"total_lines\": 10,",
+      "  \"functions\": 10,",
+      "  \"classes\": 5",
+      "},",
+      "{",
+      "  \"file\": \"b.file\",",
+      "  \"total_lines\": 20,",
+      "  \"functions\": 20,",
+      "  \"classes\": 10",
+      "} ] }"
+    };
+    File file = createTempFile("report/A", "sage_report.json", data);
+
+    objects = SizeSet.create("A", file.getParentFile());
+    assertEquals(2, objects.size());
+
+    Iterator<SizeData> iterator = objects.iterator();
+    assertValues(iterator.next(), "A", "a.file", 10, 10, 5);
+    assertValues(iterator.next(), "A", "b.file", 20, 20, 10);
   }
 }
