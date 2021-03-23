@@ -24,7 +24,10 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.io.*;
+import java.util.*;
 import org.junit.*;
+import org.junit.rules.*;
 import static org.junit.Assert.*;
 
 /**
@@ -33,11 +36,30 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CacheSetTest {
+  @Rule
+  public TemporaryFolder folder = new TemporaryFolder();
   private CacheSet objects;
 
   @Before
   public void setUp() throws Exception {
     objects = new CacheSet();
+  }
+
+  private File createTempFile(String dirname, String filename, String[] data) throws Exception {
+    File directory = folder.newFolder(dirname);
+    File file = new File(directory, filename);
+    FileWriter writer = new FileWriter(file);
+    for (int i = 0; i < data.length; i++) {
+      writer.write(data[i]);
+    }
+    writer.close();
+    return file;
+  }
+
+  private void assertValues(CacheData object, String recipe, String task, boolean available) {
+    assertEquals(recipe, object.getRecipe());
+    assertEquals(task, object.getTask());
+    assertEquals(available, object.isAvailable());
   }
 
   @Test
@@ -60,5 +82,62 @@ public class CacheSetTest {
     objects.add(new SharedStateCacheData("A", "do_fetch", true));
     objects.add(new SharedStateCacheData("A", "do_fetch", true));
     assertEquals(1, objects.size());
+  }
+
+  @Test
+  public void testCreateSetWithUnknownPath() throws Exception {
+    objects = CacheSet.create("A", new File(folder.getRoot(), "unknown"));
+    assertEquals(0, objects.size());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateSetWithMalformedFile() throws Exception {
+    String[] data = { "{ \"Premirror\": { }, \"Shared State\": { } }" };
+    File file = createTempFile("report/A", "caches.json", data);
+    objects = CacheSet.create("A", file.getParentFile());
+  }
+
+  @Test
+  public void testCreateSetWithEmptyData() throws Exception {
+    String[] data = {
+      "{ \"Premirror\": { \"Found\": [], \"Missed\": [] },",
+      "  \"Shared State\": { \"Found\": [], \"Missed\": [] } }",
+    };
+    File file = createTempFile("report/A", "caches.json", data);
+    objects = CacheSet.create("A", file.getParentFile());
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testCreateSetWithPremirrorData() throws Exception {
+    String[] data = {
+      "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
+      "  \"Shared State\": { \"Found\": [], \"Missed\": [] } }",
+    };
+    File file = createTempFile("report/A", "caches.json", data);
+    objects = CacheSet.create("A", file.getParentFile());
+    assertEquals(3, objects.size());
+  }
+
+  @Test
+  public void testCreateSetWithSharedStateData() throws Exception {
+    String[] data = {
+      "{ \"Premirror\": { \"Found\": [], \"Missed\": [] },",
+      "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }",
+    };
+    File file = createTempFile("report/A", "caches.json", data);
+    objects = CacheSet.create("A", file.getParentFile());
+    assertEquals(2, objects.size());
+  }
+
+  @Test
+  public void testCreateSetWithCompoundData() throws Exception {
+    String[] data = {
+      "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
+      "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }",
+    };
+    File file = createTempFile("report/A", "caches.json", data);
+    objects = CacheSet.create("A", file.getParentFile());
+    assertEquals(5, objects.size());
   }
 }

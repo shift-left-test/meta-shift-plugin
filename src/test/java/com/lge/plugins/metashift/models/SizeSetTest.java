@@ -94,7 +94,7 @@ public class SizeSetTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateSetWithMalformedReport() throws Exception {
+  public void testCreateSetWithMalformedFile() throws Exception {
     String[] data = {
       "{ \"size\": [ ",
       "  {",
@@ -104,6 +104,15 @@ public class SizeSetTest {
     File file = createTempFile("report/A", "sage_report.json", data);
     objects = SizeSet.create("A", file.getParentFile());
   }
+
+  @Test
+  public void testCreateSetWithEmptyData() throws Exception {
+    String[] data = { "{ \"size\": [] }" };
+    File file = createTempFile("report/A", "sage_report.json", data);
+    objects = SizeSet.create("A", file.getParentFile());
+    assertEquals(0, objects.size());
+  }
+
 
   @Test
   public void testCreateSetWithSingleData() throws Exception {

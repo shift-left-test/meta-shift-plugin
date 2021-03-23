@@ -24,6 +24,16 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+import org.apache.commons.io.IOUtils;
+
 /**
  * Represents a set of CacheData objects.
  *
@@ -33,5 +43,47 @@ public final class CacheSet extends DataSet<CacheData> {
   @Override
   public void accept(final Visitor visitor) {
     visitor.visit(this);
+  }
+
+  /**
+   * Create a set of objects by parsing a report file from the given path.
+   *
+   * @param recipe name
+   * @param path to the report directory
+   * @return a set of objects
+   */
+  public static CacheSet create(final String recipe, final File path) throws
+      IOException, InterruptedException {
+    File report = new File(path, "caches.json");
+    CacheSet set = new CacheSet();
+    try {
+      InputStream is = new FileInputStream(report);
+      JSONObject json = JSONObject.fromObject(IOUtils.toString(is, "UTF-8"));
+      JSONArray objects;
+      objects = json.getJSONObject("Premirror").getJSONArray("Found");
+      for (int i = 0; i < objects.size(); i++) {
+        set.add(new PremirrorCacheData(recipe, objects.getString(i), true));
+      }
+      objects = json.getJSONObject("Premirror").getJSONArray("Missed");
+      for (int i = 0; i < objects.size(); i++) {
+        set.add(new PremirrorCacheData(recipe, objects.getString(i), false));
+      }
+      objects = json.getJSONObject("Shared State").getJSONArray("Found");
+      for (int i = 0; i < objects.size(); i++) {
+        set.add(new SharedStateCacheData(recipe, objects.getString(i), true));
+      }
+      objects = json.getJSONObject("Shared State").getJSONArray("Missed");
+      for (int i = 0; i < objects.size(); i++) {
+        set.add(new SharedStateCacheData(recipe, objects.getString(i), false));
+      }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
+      throw new IllegalArgumentException("Failed to parse: " + report);
+    }
+    return set;
   }
 }

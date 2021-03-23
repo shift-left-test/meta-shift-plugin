@@ -24,7 +24,6 @@
 
 package com.lge.plugins.metashift.models;
 
-import hudson.FilePath;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -53,8 +52,8 @@ public final class SizeSet extends DataSet<SizeData> {
    * @param path to the report directory
    * @return a set of objects
    */
-  public static SizeSet create(final String recipe, final File path)
-      throws IOException, InterruptedException {
+  public static SizeSet create(final String recipe, final File path) throws
+      IOException, InterruptedException {
     File report = new File(path, "sage_report.json");
     SizeSet set = new SizeSet();
     try {
@@ -68,7 +67,6 @@ public final class SizeSet extends DataSet<SizeData> {
                              object.getInt("total_lines"),
                              object.getInt("functions"),
                              object.getInt("classes")));
-
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();
