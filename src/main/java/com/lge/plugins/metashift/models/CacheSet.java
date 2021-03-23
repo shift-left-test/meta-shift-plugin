@@ -59,22 +59,17 @@ public final class CacheSet extends DataSet<CacheData> {
     try {
       InputStream is = new FileInputStream(report);
       JSONObject json = JSONObject.fromObject(IOUtils.toString(is, "UTF-8"));
-      JSONArray objects;
-      objects = json.getJSONObject("Premirror").getJSONArray("Found");
-      for (int i = 0; i < objects.size(); i++) {
-        set.add(new PremirrorCacheData(recipe, objects.getString(i), true));
+      for (Object o : json.getJSONObject("Premirror").getJSONArray("Found")) {
+        set.add(new PremirrorCacheData(recipe, (String) o, true));
       }
-      objects = json.getJSONObject("Premirror").getJSONArray("Missed");
-      for (int i = 0; i < objects.size(); i++) {
-        set.add(new PremirrorCacheData(recipe, objects.getString(i), false));
+      for (Object o : json.getJSONObject("Premirror").getJSONArray("Missed")) {
+        set.add(new PremirrorCacheData(recipe, (String) o, false));
       }
-      objects = json.getJSONObject("Shared State").getJSONArray("Found");
-      for (int i = 0; i < objects.size(); i++) {
-        set.add(new SharedStateCacheData(recipe, objects.getString(i), true));
+      for (Object o : json.getJSONObject("Shared State").getJSONArray("Found")) {
+        set.add(new SharedStateCacheData(recipe, (String) o, true));
       }
-      objects = json.getJSONObject("Shared State").getJSONArray("Missed");
-      for (int i = 0; i < objects.size(); i++) {
-        set.add(new SharedStateCacheData(recipe, objects.getString(i), false));
+      for (Object o : json.getJSONObject("Shared State").getJSONArray("Missed")) {
+        set.add(new SharedStateCacheData(recipe, (String) o, false));
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();

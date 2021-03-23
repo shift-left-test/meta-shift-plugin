@@ -59,14 +59,12 @@ public final class SizeSet extends DataSet<SizeData> {
     try {
       InputStream is = new FileInputStream(report);
       JSONObject json = JSONObject.fromObject(IOUtils.toString(is, "UTF-8"));
-      JSONArray objects = json.getJSONArray("size");
-      for (int i = 0; i < objects.size(); i++) {
-        JSONObject object = objects.getJSONObject(i);
+      for (Object o : json.getJSONArray("size")) {
         set.add(new SizeData(recipe,
-                             object.getString("file"),
-                             object.getInt("total_lines"),
-                             object.getInt("functions"),
-                             object.getInt("classes")));
+                             ((JSONObject) o).getString("file"),
+                             ((JSONObject) o).getInt("total_lines"),
+                             ((JSONObject) o).getInt("functions"),
+                             ((JSONObject) o).getInt("classes")));
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();

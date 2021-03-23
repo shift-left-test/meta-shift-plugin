@@ -49,8 +49,8 @@ public class CacheSetTest {
     File directory = folder.newFolder(dirname);
     File file = new File(directory, filename);
     FileWriter writer = new FileWriter(file);
-    for (int i = 0; i < data.length; i++) {
-      writer.write(data[i]);
+    for (String line : data) {
+      writer.write(line);
     }
     writer.close();
     return file;
