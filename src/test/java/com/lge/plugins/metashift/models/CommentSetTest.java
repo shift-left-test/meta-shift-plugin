@@ -24,7 +24,10 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.io.*;
+import java.util.*;
 import org.junit.*;
+import org.junit.rules.*;
 import static org.junit.Assert.*;
 
 /**
@@ -33,11 +36,32 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CommentSetTest {
+  @Rule
+  public TemporaryFolder folder = new TemporaryFolder();
   private CommentSet objects;
 
   @Before
   public void setUp() throws Exception {
     objects = new CommentSet();
+  }
+
+  private File createTempFile(String dirname, String filename, String[] data) throws Exception {
+    File directory = folder.newFolder(dirname);
+    File file = new File(directory, filename);
+    FileWriter writer = new FileWriter(file);
+    for (String line : data) {
+      writer.write(line);
+    }
+    writer.close();
+    return file;
+  }
+
+  private void assertValues(CommentData object, String recipe, String file,
+                            int lines, int commentLines) {
+    assertEquals(recipe, object.getRecipe());
+    assertEquals(file, object.getFile());
+    assertEquals(lines, object.getLines());
+    assertEquals(commentLines, object.getCommentLines());
   }
 
   @Test
@@ -60,5 +84,80 @@ public class CommentSetTest {
     objects.add(new CommentData("A", "a.file", 10, 5));
     objects.add(new CommentData("A", "a.file", 10, 5));
     assertEquals(1, objects.size());
+  }
+
+  @Test
+  public void testCreateSetWithUnknownPath() throws Exception {
+    objects = CommentSet.create("A", new File(folder.getRoot(), "unknown"));
+    assertEquals(0, objects.size());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateSetWithMalformedFile() throws Exception {
+    String[] data = {
+      "{ \"size\": [ ",
+      "  {",
+      "    \"file\": \"a.file\",",
+      "  }",
+    };
+    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
+    objects = CommentSet.create("A", file.getParentFile().getParentFile());
+  }
+
+  @Test
+  public void testCreateSetWithEmptyData() throws Exception {
+    String[] data = { "{ \"size\": [] }" };
+    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
+    objects = CommentSet.create("A", file.getParentFile().getParentFile());
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testCreateSetWithSingleData() throws Exception {
+    String[] data = {
+      "{ \"size\": [ ",
+      "  {",
+      "    \"file\": \"a.file\",",
+      "    \"total_lines\": 20,",
+      "    \"code_lines\": 1,",
+      "    \"comment_lines\": 5,",
+      "    \"duplicated_lines\": 2,",
+      "    \"functions\": 15,",
+      "    \"classes\": 6",
+      "  } ",
+      "] }"
+    };
+    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
+
+    objects = CommentSet.create("A", file.getParentFile().getParentFile());
+    assertEquals(1, objects.size());
+
+    CommentData object = objects.iterator().next();
+    assertValues(object, "A", "a.file", 20, 5);
+  }
+
+  @Test
+  public void testCreateSetWithMultipleData() throws Exception {
+    String[] data = {
+      "{ \"size\": [ ",
+      "{",
+      "  \"file\": \"a.file\",",
+      "  \"total_lines\": 10,",
+      "  \"comment_lines\": 5,",
+      "},",
+      "{",
+      "  \"file\": \"b.file\",",
+      "  \"total_lines\": 20,",
+      "  \"comment_lines\": 5,",
+      "} ] }"
+    };
+    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
+
+    objects = CommentSet.create("A", file.getParentFile().getParentFile());
+    assertEquals(2, objects.size());
+
+    Iterator<CommentData> iterator = objects.iterator();
+    assertValues(iterator.next(), "A", "a.file", 10, 5);
+    assertValues(iterator.next(), "A", "b.file", 20, 5);
   }
 }

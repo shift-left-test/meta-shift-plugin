@@ -113,7 +113,6 @@ public class SizeSetTest {
     assertEquals(0, objects.size());
   }
 
-
   @Test
   public void testCreateSetWithSingleData() throws Exception {
     String[] data = {
