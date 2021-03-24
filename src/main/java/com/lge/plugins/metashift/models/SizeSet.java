@@ -24,12 +24,12 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
@@ -57,7 +57,7 @@ public final class SizeSet extends DataSet<SizeData> {
     File report = new File(path, "sage_report.json");
     SizeSet set = new SizeSet();
     try {
-      InputStream is = new FileInputStream(report);
+      InputStream is = new BufferedInputStream(new FileInputStream(report));
       JSONObject json = JSONObject.fromObject(IOUtils.toString(is, "UTF-8"));
       for (Object o : json.getJSONArray("size")) {
         set.add(new SizeData(recipe,
