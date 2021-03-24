@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -54,7 +55,7 @@ public final class SizeSet extends DataSet<SizeData> {
    */
   public static SizeSet create(final String recipe, final File path) throws
       IOException, InterruptedException {
-    File report = new File(path, "checkcode" + File.separator + "sage_report.json");
+    File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
     SizeSet set = new SizeSet();
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));

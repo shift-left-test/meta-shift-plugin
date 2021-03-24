@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -54,7 +55,7 @@ public final class CacheSet extends DataSet<CacheData> {
    */
   public static CacheSet create(final String recipe, final File path) throws
       IOException, InterruptedException {
-    File report = new File(path, "caches.json");
+    File report = FileUtils.getFile(path, "caches.json");
     CacheSet set = new CacheSet();
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));

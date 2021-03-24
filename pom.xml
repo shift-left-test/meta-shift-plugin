@@ -7,7 +7,7 @@
         <version>4.12</version>
         <relativePath />
     </parent>
-    <groupId>io.jenkins.plugins</groupId>
+    <groupId>com.lge.plugins</groupId>
     <artifactId>metashift</artifactId>
     <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>

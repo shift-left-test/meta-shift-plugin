@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.models;
 
 import java.io.*;
 import java.util.*;
+import org.apache.commons.io.*;
 import org.junit.*;
 import org.junit.rules.*;
 import static org.junit.Assert.*;
@@ -45,14 +46,10 @@ public class SizeSetTest {
     objects = new SizeSet();
   }
 
-  private File createTempFile(String dirname, String filename, String[] data) throws Exception {
-    File directory = folder.newFolder(dirname);
-    File file = new File(directory, filename);
-    FileWriter writer = new FileWriter(file);
-    for (String line : data) {
-      writer.write(line);
-    }
-    writer.close();
+  private File createTempFile(String path, Collection<String> lines) throws Exception {
+    File directory = folder.newFolder(FilenameUtils.getPath(path));
+    File file = new File(directory, FilenameUtils.getName(path));
+    FileUtils.writeLines(file, lines);
     return file;
   }
 
@@ -95,40 +92,38 @@ public class SizeSetTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateSetWithMalformedFile() throws Exception {
-    String[] data = {
-      "{ \"size\": [ ",
-      "  {",
-      "    \"file\": \"a.file\",",
-      "  }",
-     };
-    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
+    List<String> data = Arrays.asList(
+        "{ \"size\": [ ",
+        "  {",
+        "    \"file\": \"a.file\",",
+        "  }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
     objects = SizeSet.create("A", file.getParentFile().getParentFile());
   }
 
   @Test
   public void testCreateSetWithEmptyData() throws Exception {
-    String[] data = { "{ \"size\": [] }" };
-    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
+    List<String> data = Arrays.asList("{ \"size\": [] }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
     objects = SizeSet.create("A", file.getParentFile().getParentFile());
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateSetWithSingleData() throws Exception {
-    String[] data = {
-      "{ \"size\": [ ",
-      "  {",
-      "    \"file\": \"a.file\",",
-      "    \"total_lines\": 20,",
-      "    \"code_lines\": 1,",
-      "    \"comment_lines\": 5,",
-      "    \"duplicated_lines\": 2,",
-      "    \"functions\": 15,",
-      "    \"classes\": 6",
-      "  } ",
-      "] }"
-    };
-    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
+    List<String> data = Arrays.asList(
+        "{ \"size\": [ ",
+        "  {",
+        "    \"file\": \"a.file\",",
+        "    \"total_lines\": 20,",
+        "    \"code_lines\": 1,",
+        "    \"comment_lines\": 5,",
+        "    \"duplicated_lines\": 2,",
+        "    \"functions\": 15,",
+        "    \"classes\": 6",
+        "  } ",
+        "] }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
 
     objects = SizeSet.create("A", file.getParentFile().getParentFile());
     assertEquals(1, objects.size());
@@ -139,22 +134,21 @@ public class SizeSetTest {
 
   @Test
   public void testCreateSetWithMultipleData() throws Exception {
-    String[] data = {
-      "{ \"size\": [ ",
-      "{",
-      "  \"file\": \"a.file\",",
-      "  \"total_lines\": 10,",
-      "  \"functions\": 10,",
-      "  \"classes\": 5",
-      "},",
-      "{",
-      "  \"file\": \"b.file\",",
-      "  \"total_lines\": 20,",
-      "  \"functions\": 20,",
-      "  \"classes\": 10",
-      "} ] }"
-    };
-    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
+    List<String> data = Arrays.asList(
+        "{ \"size\": [ ",
+        "{",
+        "  \"file\": \"a.file\",",
+        "  \"total_lines\": 10,",
+        "  \"functions\": 10,",
+        "  \"classes\": 5",
+        "},",
+        "{",
+        "  \"file\": \"b.file\",",
+        "  \"total_lines\": 20,",
+        "  \"functions\": 20,",
+        "  \"classes\": 10",
+        "} ] }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
 
     objects = SizeSet.create("A", file.getParentFile().getParentFile());
     assertEquals(2, objects.size());
