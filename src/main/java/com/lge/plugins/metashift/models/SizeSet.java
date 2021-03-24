@@ -54,7 +54,7 @@ public final class SizeSet extends DataSet<SizeData> {
    */
   public static SizeSet create(final String recipe, final File path) throws
       IOException, InterruptedException {
-    File report = new File(path, "sage_report.json");
+    File report = new File(path, "checkcode" + File.separator + "sage_report.json");
     SizeSet set = new SizeSet();
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));

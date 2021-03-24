@@ -101,15 +101,15 @@ public class SizeSetTest {
       "    \"file\": \"a.file\",",
       "  }",
      };
-    File file = createTempFile("report/A", "sage_report.json", data);
-    objects = SizeSet.create("A", file.getParentFile());
+    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
+    objects = SizeSet.create("A", file.getParentFile().getParentFile());
   }
 
   @Test
   public void testCreateSetWithEmptyData() throws Exception {
     String[] data = { "{ \"size\": [] }" };
-    File file = createTempFile("report/A", "sage_report.json", data);
-    objects = SizeSet.create("A", file.getParentFile());
+    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
+    objects = SizeSet.create("A", file.getParentFile().getParentFile());
     assertEquals(0, objects.size());
   }
 
@@ -128,9 +128,9 @@ public class SizeSetTest {
       "  } ",
       "] }"
     };
-    File file = createTempFile("report/A", "sage_report.json", data);
+    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
 
-    objects = SizeSet.create("A", file.getParentFile());
+    objects = SizeSet.create("A", file.getParentFile().getParentFile());
     assertEquals(1, objects.size());
 
     SizeData object = objects.iterator().next();
@@ -154,9 +154,9 @@ public class SizeSetTest {
       "  \"classes\": 10",
       "} ] }"
     };
-    File file = createTempFile("report/A", "sage_report.json", data);
+    File file = createTempFile("report/A/checkcode", "sage_report.json", data);
 
-    objects = SizeSet.create("A", file.getParentFile());
+    objects = SizeSet.create("A", file.getParentFile().getParentFile());
     assertEquals(2, objects.size());
 
     Iterator<SizeData> iterator = objects.iterator();
