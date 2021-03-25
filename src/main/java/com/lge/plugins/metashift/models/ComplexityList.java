@@ -25,11 +25,11 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents a set of CodeViolationData objects.
+ * Represents a set of ComplexityData objects.
  *
  * @author Sung Gon Kim
  */
-public final class CodeViolationSet extends DataSet<CodeViolationData> {
+public final class ComplexityList extends DataList<ComplexityData> {
   @Override
   public void accept(final Visitor visitor) {
     visitor.visit(this);

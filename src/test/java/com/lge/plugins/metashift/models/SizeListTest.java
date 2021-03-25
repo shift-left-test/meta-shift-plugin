@@ -32,18 +32,18 @@ import org.junit.rules.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the SizeSet class.
+ * Unit tests for the SizeList class.
  *
  * @author Sung Gon Kim
  */
-public class SizeSetTest {
+public class SizeListTest {
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
-  private SizeSet objects;
+  private SizeList objects;
 
   @Before
   public void setUp() throws Exception {
-    objects = new SizeSet();
+    objects = new SizeList();
   }
 
   private File createTempFile(String path, Collection<String> lines) throws Exception {
@@ -74,19 +74,12 @@ public class SizeSetTest {
     objects.add(second);
     objects.add(first);
     assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
-  }
-
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    objects.add(new SizeData("A", "a.file", 3, 2, 1));
-    objects.add(new SizeData("A", "a.file", 30, 20, 10));
-    assertEquals(1, objects.size());
+    assertEquals(first, objects.get(1));
   }
 
   @Test
   public void testCreateSetWithUnknownPath() throws Exception {
-    objects = SizeSet.create("A", new File(folder.getRoot(), "unknown"));
+    objects = SizeList.create("A", new File(folder.getRoot(), "unknown"));
     assertEquals(0, objects.size());
   }
 
@@ -98,14 +91,14 @@ public class SizeSetTest {
         "    \"file\": \"a.file\",",
         "  }");
     File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = SizeSet.create("A", file.getParentFile().getParentFile());
+    objects = SizeList.create("A", file.getParentFile().getParentFile());
   }
 
   @Test
   public void testCreateSetWithEmptyData() throws Exception {
     List<String> data = Arrays.asList("{ \"size\": [] }");
     File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = SizeSet.create("A", file.getParentFile().getParentFile());
+    objects = SizeList.create("A", file.getParentFile().getParentFile());
     assertEquals(0, objects.size());
   }
 
@@ -125,7 +118,7 @@ public class SizeSetTest {
         "] }");
     File file = createTempFile("report/A/checkcode/sage_report.json", data);
 
-    objects = SizeSet.create("A", file.getParentFile().getParentFile());
+    objects = SizeList.create("A", file.getParentFile().getParentFile());
     assertEquals(1, objects.size());
 
     SizeData object = objects.iterator().next();
@@ -150,7 +143,7 @@ public class SizeSetTest {
         "} ] }");
     File file = createTempFile("report/A/checkcode/sage_report.json", data);
 
-    objects = SizeSet.create("A", file.getParentFile().getParentFile());
+    objects = SizeList.create("A", file.getParentFile().getParentFile());
     assertEquals(2, objects.size());
 
     Iterator<SizeData> iterator = objects.iterator();

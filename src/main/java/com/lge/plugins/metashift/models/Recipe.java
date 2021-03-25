@@ -43,7 +43,7 @@ public final class Recipe implements Data<Recipe>, Acceptor {
   /**
    * Represents the data set mapper.
    */
-  private Map<Class<?>, DataSet<?>> collection;
+  private Map<Class<?>, DataList<?>> collection;
 
   /**
    * Default constructor.
@@ -61,7 +61,7 @@ public final class Recipe implements Data<Recipe>, Acceptor {
 
     this.recipe = recipe;
     collection = new HashMap<>();
-    collection.put(CacheSet.class, new CacheSet());
+    collection.put(CacheList.class, new CacheList());
   }
 
   /**
@@ -69,7 +69,7 @@ public final class Recipe implements Data<Recipe>, Acceptor {
    *
    * @param action The action to be performed for each entry
    */
-  public void forEach(final BiConsumer<Class<?>, DataSet<?>> action) {
+  public void forEach(final BiConsumer<Class<?>, DataList<?>> action) {
     collection.forEach(action);
   }
 
@@ -79,7 +79,7 @@ public final class Recipe implements Data<Recipe>, Acceptor {
    * @param <T> the class type
    * @param object to store
    */
-  public <T extends DataSet<?>> void set(final T object) {
+  public <T extends DataList<?>> void set(final T object) {
     collection.put(object.getClass(), object);
   }
 
@@ -90,7 +90,7 @@ public final class Recipe implements Data<Recipe>, Acceptor {
    * @param clazz the name of the class
    * @return container object
    */
-  public <T extends DataSet<?>> T collection(final Class<T> clazz) {
+  public <T extends DataList<?>> T collection(final Class<T> clazz) {
     return clazz.cast(collection.get(clazz));
   }
 

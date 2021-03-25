@@ -65,7 +65,7 @@ public final class MutationTestCounter extends Visitor implements Counter {
   }
 
   @Override
-  public void visit(final MutationTestSet objects) {
+  public void visit(final MutationTestList objects) {
     denominator += objects.size();
     numerator += objects.stream().filter(o -> o.getClass() == clazz).count();
   }

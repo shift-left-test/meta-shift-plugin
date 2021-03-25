@@ -40,7 +40,7 @@ import org.apache.commons.io.IOUtils;
  *
  * @author Sung Gon Kim
  */
-public final class CommentSet extends DataSet<CommentData> {
+public final class CommentList extends DataList<CommentData> {
   @Override
   public void accept(final Visitor visitor) {
     visitor.visit(this);
@@ -53,10 +53,10 @@ public final class CommentSet extends DataSet<CommentData> {
    * @param path to the report directory
    * @return a set of objects
    */
-  public static CommentSet create(final String recipe, final File path) throws
+  public static CommentList create(final String recipe, final File path) throws
       IOException, InterruptedException {
     File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
-    CommentSet set = new CommentSet();
+    CommentList set = new CommentList();
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));
       JSONObject json = JSONObject.fromObject(IOUtils.toString(is, "UTF-8"));

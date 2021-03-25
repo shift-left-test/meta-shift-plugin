@@ -24,13 +24,14 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.util.TreeSet;
-
 /**
- * Represents a data set for data objects.
+ * Represents a set of DuplicationData objects.
  *
- * @param <T> the class type
  * @author Sung Gon Kim
  */
-public abstract class DataSet<T> extends TreeSet<T> implements Acceptor {
+public final class DuplicationList extends DataList<DuplicationData> {
+  @Override
+  public void accept(final Visitor visitor) {
+    visitor.visit(this);
+  }
 }

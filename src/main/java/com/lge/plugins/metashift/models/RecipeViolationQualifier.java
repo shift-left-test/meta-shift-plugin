@@ -87,7 +87,7 @@ public final class RecipeViolationQualifier extends Visitor implements Qualifier
   }
 
   @Override
-  public void visit(final RecipeViolationSet objects) {
+  public void visit(final RecipeViolationList objects) {
     collection.values().stream().forEach(collector -> objects.accept(collector));
   }
 }

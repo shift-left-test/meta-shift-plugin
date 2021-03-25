@@ -29,7 +29,7 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class TestSet extends DataSet<TestData> {
+public final class TestList extends DataList<TestData> {
   @Override
   public void accept(final Visitor visitor) {
     visitor.visit(this);

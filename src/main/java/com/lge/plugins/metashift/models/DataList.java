@@ -24,41 +24,13 @@
 
 package com.lge.plugins.metashift.models;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import java.util.ArrayList;
 
 /**
- * Unit tests for the CodeViolationSet class.
+ * Represents a set of data objects.
  *
+ * @param <T> the class type
  * @author Sung Gon Kim
  */
-public class CodeViolationSetTest {
-  private CodeViolationSet objects;
-
-  @Before
-  public void setUp() throws Exception {
-    objects = new CodeViolationSet();
-  }
-
-  @Test
-  public void testInitialState() throws Exception {
-    assertEquals(0, objects.size());
-  }
-
-  @Test
-  public void testAddingData() throws Exception {
-    CodeViolationData first = new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool");
-    CodeViolationData second = new MajorCodeViolationData("B", "b.file", 1, 2, "rule", "msg", "desc", "E", "tool");
-    objects.add(second);
-    objects.add(first);
-    assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
-  }
-
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    objects.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool"));
-    objects.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool"));
-    assertEquals(1, objects.size());
-  }
+public abstract class DataList<T> extends ArrayList<T> implements Acceptor {
 }

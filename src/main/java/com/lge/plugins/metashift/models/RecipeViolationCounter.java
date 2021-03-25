@@ -65,7 +65,7 @@ public final class RecipeViolationCounter extends Visitor implements Counter {
   }
 
   @Override
-  public void visit(final RecipeViolationSet recipeViolations) {
+  public void visit(final RecipeViolationList recipeViolations) {
     denominator += recipeViolations.size();
     numerator += recipeViolations.stream().filter(o -> o.getClass() == clazz).count();
   }

@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class DuplicationQualifierTest {
   private DuplicationQualifier qualifier;
-  private DuplicationSet set;
+  private DuplicationList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     qualifier = new DuplicationQualifier(0.5f);
-    set = new DuplicationSet();
+    set = new DuplicationList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(boolean available, boolean qualified, float ratio) {
@@ -109,21 +109,21 @@ public class DuplicationQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithoutQualified() throws Exception {
-    set = new DuplicationSet();
+  public void testRecipeListWithoutQualified() throws Exception {
+    set = new DuplicationList();
     set.add(new DuplicationData("A", "a.file", 10, 10));
     set.add(new DuplicationData("A", "b.file", 10, 5));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new DuplicationSet();
+    set = new DuplicationList();
     set.add(new DuplicationData("B", "a.file", 10, 10));
     set.add(new DuplicationData("B", "b.file", 10, 5));
     recipe = new Recipe("B-1.0.0-r0");
@@ -135,15 +135,15 @@ public class DuplicationQualifierTest {
   }
 
   @Test
-  public void testRecipeSetWithQualified() throws Exception {
-    set = new DuplicationSet();
+  public void testRecipeListWithQualified() throws Exception {
+    set = new DuplicationList();
     set.add(new DuplicationData("A", "a.file", 10, 5));
     set.add(new DuplicationData("A", "b.file", 10, 0));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new DuplicationSet();
+    set = new DuplicationList();
     set.add(new DuplicationData("B", "a.file", 10, 5));
     set.add(new DuplicationData("B", "b.file", 10, 0));
     recipe = new Recipe("B-1.0.0-r0");

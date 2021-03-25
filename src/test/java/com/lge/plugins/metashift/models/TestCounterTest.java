@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class TestCounterTest {
   private TestCounter collector;
-  private TestSet set;
+  private TestList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     collector = new TestCounter(PassedTestData.class);
-    set = new TestSet();
+    set = new TestList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
@@ -92,16 +92,16 @@ public class TestCounterTest {
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<TestSet> group = new ArrayList<>();
+    List<TestList> group = new ArrayList<>();
 
-    set = new TestSet();
+    set = new TestList();
     set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
     set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
     set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
     group.add(set);
 
-    set = new TestSet();
+    set = new TestList();
     set.add(new FailedTestData("B", "a.suite", "a.tc", "msg"));
     set.add(new ErrorTestData("B", "a.suite", "b.tc", "msg"));
     set.add(new SkippedTestData("B", "a.suite", "c.tc", "msg"));
@@ -140,14 +140,14 @@ public class TestCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithCompoundData() throws Exception {
-    set = new TestSet();
+  public void testRecipeListWithCompoundData() throws Exception {
+    set = new TestList();
     set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
     set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
@@ -156,7 +156,7 @@ public class TestCounterTest {
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new TestSet();
+    set = new TestList();
     set.add(new FailedTestData("B", "a.suite", "a.tc", "msg"));
     set.add(new ErrorTestData("B", "a.suite", "b.tc", "msg"));
     set.add(new SkippedTestData("B", "a.suite", "c.tc", "msg"));

@@ -65,7 +65,7 @@ public final class ComplexityCounter extends Visitor implements Counter {
   }
 
   @Override
-  public void visit(final ComplexitySet objects) {
+  public void visit(final ComplexityList objects) {
     denominator += objects.stream().distinct().count();
     numerator += objects.stream().filter(o -> o.getValue() >= threshold).count();
   }

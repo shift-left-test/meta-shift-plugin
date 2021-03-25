@@ -28,37 +28,25 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the RecipeSet class
+ * Unit tests for the DuplicationList class.
  *
  * @author Sung Gon Kim
  */
-public class RecipeSetTest {
-  private RecipeSet recipes;
+public class DuplicationListTest {
+  private DuplicationList objects;
 
   @Before
   public void setUp() throws Exception {
-    recipes = new RecipeSet();
-  }
-
-  @Test
-  public void testInitialState() throws Exception {
-    assertEquals(0, recipes.size());
+    objects = new DuplicationList();
   }
 
   @Test
   public void testAddingData() throws Exception {
-    Recipe first = new Recipe("A-1.0.0-r0");
-    Recipe second = new Recipe("B-1.0.0-r0");
-    recipes.add(second);
-    recipes.add(first);
-    assertEquals(2, recipes.size());
-    assertEquals(first, recipes.iterator().next());
-  }
-
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    recipes.add(new Recipe("A-B-C"));
-    recipes.add(new Recipe("A-B-C"));
-    assertEquals(1, recipes.size());
+    DuplicationData first = new DuplicationData("A", "a.file", 10, 5);
+    DuplicationData second = new DuplicationData("B", "b.file", 10, 5);
+    objects.add(second);
+    objects.add(first);
+    assertEquals(2, objects.size());
+    assertEquals(first, objects.get(1));
   }
 }

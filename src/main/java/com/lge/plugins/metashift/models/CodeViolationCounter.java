@@ -65,7 +65,7 @@ public final class CodeViolationCounter extends Visitor implements Counter {
   }
 
   @Override
-  public void visit(final CodeViolationSet codeViolations) {
+  public void visit(final CodeViolationList codeViolations) {
     denominator += codeViolations.size();
     numerator += codeViolations.stream().filter(o -> o.getClass() == clazz).count();
   }

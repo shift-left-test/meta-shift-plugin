@@ -32,18 +32,18 @@ import org.junit.rules.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the CacheSet class.
+ * Unit tests for the CommentList class.
  *
  * @author Sung Gon Kim
  */
-public class CacheSetTest {
+public class CommentListTest {
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
-  private CacheSet objects;
+  private CommentList objects;
 
   @Before
   public void setUp() throws Exception {
-    objects = new CacheSet();
+    objects = new CommentList();
   }
 
   private File createTempFile(String path, Collection<String> lines) throws Exception {
@@ -53,10 +53,12 @@ public class CacheSetTest {
     return file;
   }
 
-  private void assertValues(CacheData object, String recipe, String signature, boolean available) {
+  private void assertValues(CommentData object, String recipe, String file,
+                            int lines, int commentLines) {
     assertEquals(recipe, object.getRecipe());
-    assertEquals(signature, object.getSignature());
-    assertEquals(available, object.isAvailable());
+    assertEquals(file, object.getFile());
+    assertEquals(lines, object.getLines());
+    assertEquals(commentLines, object.getCommentLines());
   }
 
   @Test
@@ -66,71 +68,83 @@ public class CacheSetTest {
 
   @Test
   public void testAddingData() throws Exception {
-    CacheData first = new SharedStateCacheData("A", "X:do_compile", true);
-    CacheData second = new PremirrorCacheData("A", "Y", false);
+    CommentData first = new CommentData("A", "a.file", 10, 5);
+    CommentData second = new CommentData("B", "b.file", 10, 5);
     objects.add(second);
     objects.add(first);
     assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
-  }
-
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    objects.add(new SharedStateCacheData("A", "X:do_fetch", true));
-    objects.add(new SharedStateCacheData("A", "X:do_fetch", true));
-    assertEquals(1, objects.size());
+    assertEquals(first, objects.get(1));
   }
 
   @Test
   public void testCreateSetWithUnknownPath() throws Exception {
-    objects = CacheSet.create("A", new File(folder.getRoot(), "unknown"));
+    objects = CommentList.create("A", new File(folder.getRoot(), "unknown"));
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateSetWithMalformedFile() throws Exception {
-    List<String> data = Arrays.asList("{ \"Premirror\": { }, \"Shared State\": { } }");
-    File file = createTempFile("report/A/caches.json", data);
-    objects = CacheSet.create("A", file.getParentFile());
+    List<String> data = Arrays.asList(
+        "{ \"size\": [ ",
+        "  {",
+        "    \"file\": \"a.file\",",
+        "  }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+    objects = CommentList.create("A", file.getParentFile().getParentFile());
   }
 
   @Test
   public void testCreateSetWithEmptyData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"Premirror\": { \"Found\": [], \"Missed\": [] },",
-        "  \"Shared State\": { \"Found\": [], \"Missed\": [] } }");
-    File file = createTempFile("report/A/caches.json", data);
-    objects = CacheSet.create("A", file.getParentFile());
+    List<String> data = Arrays.asList("{ \"size\": [] }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+    objects = CommentList.create("A", file.getParentFile().getParentFile());
     assertEquals(0, objects.size());
   }
 
   @Test
-  public void testCreateSetWithPremirrorData() throws Exception {
+  public void testCreateSetWithSingleData() throws Exception {
     List<String> data = Arrays.asList(
-        "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
-        "  \"Shared State\": { \"Found\": [], \"Missed\": [] } }");
-    File file = createTempFile("report/A/caches.json", data);
-    objects = CacheSet.create("A", file.getParentFile());
-    assertEquals(3, objects.size());
+        "{ \"size\": [ ",
+        "  {",
+        "    \"file\": \"a.file\",",
+        "    \"total_lines\": 20,",
+        "    \"code_lines\": 1,",
+        "    \"comment_lines\": 5,",
+        "    \"duplicated_lines\": 2,",
+        "    \"functions\": 15,",
+        "    \"classes\": 6",
+        "  } ",
+        "] }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+
+    objects = CommentList.create("A", file.getParentFile().getParentFile());
+    assertEquals(1, objects.size());
+
+    CommentData object = objects.iterator().next();
+    assertValues(object, "A", "a.file", 20, 5);
   }
 
   @Test
-  public void testCreateSetWithSharedStateData() throws Exception {
+  public void testCreateSetWithMultipleData() throws Exception {
     List<String> data = Arrays.asList(
-        "{ \"Premirror\": { \"Found\": [], \"Missed\": [] },",
-        "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }");
-    File file = createTempFile("report/A/caches.json", data);
-    objects = CacheSet.create("A", file.getParentFile());
+        "{ \"size\": [ ",
+        "{",
+        "  \"file\": \"a.file\",",
+        "  \"total_lines\": 10,",
+        "  \"comment_lines\": 5,",
+        "},",
+        "{",
+        "  \"file\": \"b.file\",",
+        "  \"total_lines\": 20,",
+        "  \"comment_lines\": 5,",
+        "} ] }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+
+    objects = CommentList.create("A", file.getParentFile().getParentFile());
     assertEquals(2, objects.size());
-  }
 
-  @Test
-  public void testCreateSetWithCompoundData() throws Exception {
-    List<String> data = Arrays.asList(
-      "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
-      "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }");
-    File file = createTempFile("report/A/caches.json", data);
-    objects = CacheSet.create("A", file.getParentFile());
-    assertEquals(5, objects.size());
+    Iterator<CommentData> iterator = objects.iterator();
+    assertValues(iterator.next(), "A", "a.file", 10, 5);
+    assertValues(iterator.next(), "A", "b.file", 20, 5);
   }
 }

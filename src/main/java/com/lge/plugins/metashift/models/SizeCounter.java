@@ -108,7 +108,7 @@ public final class SizeCounter extends Visitor {
   }
 
   @Override
-  public void visit(final SizeSet objects) {
+  public void visit(final SizeList objects) {
     recipes += objects.stream().map(SizeData::getRecipe).distinct().count();
     files += objects.stream().distinct().count();
     lines += objects.stream().mapToInt(SizeData::getLines).sum();

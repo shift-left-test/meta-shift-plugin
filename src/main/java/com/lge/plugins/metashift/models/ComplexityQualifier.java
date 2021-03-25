@@ -75,7 +75,7 @@ public final class ComplexityQualifier extends Visitor implements Qualifier {
   }
 
   @Override
-  public void visit(final ComplexitySet objects) {
+  public void visit(final ComplexityList objects) {
     objects.accept(collection);
   }
 }

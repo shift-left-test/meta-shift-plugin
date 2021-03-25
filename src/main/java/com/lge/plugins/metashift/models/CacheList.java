@@ -36,11 +36,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
- * Represents a set of SizeData objects.
+ * Represents a set of CacheData objects.
  *
  * @author Sung Gon Kim
  */
-public final class SizeSet extends DataSet<SizeData> {
+public final class CacheList extends DataList<CacheData> {
   @Override
   public void accept(final Visitor visitor) {
     visitor.visit(this);
@@ -53,19 +53,24 @@ public final class SizeSet extends DataSet<SizeData> {
    * @param path to the report directory
    * @return a set of objects
    */
-  public static SizeSet create(final String recipe, final File path) throws
+  public static CacheList create(final String recipe, final File path) throws
       IOException, InterruptedException {
-    File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
-    SizeSet set = new SizeSet();
+    File report = FileUtils.getFile(path, "caches.json");
+    CacheList set = new CacheList();
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));
       JSONObject json = JSONObject.fromObject(IOUtils.toString(is, "UTF-8"));
-      for (Object o : json.getJSONArray("size")) {
-        set.add(new SizeData(recipe,
-                             ((JSONObject) o).getString("file"),
-                             ((JSONObject) o).getInt("total_lines"),
-                             ((JSONObject) o).getInt("functions"),
-                             ((JSONObject) o).getInt("classes")));
+      for (Object o : json.getJSONObject("Premirror").getJSONArray("Found")) {
+        set.add(new PremirrorCacheData(recipe, (String) o, true));
+      }
+      for (Object o : json.getJSONObject("Premirror").getJSONArray("Missed")) {
+        set.add(new PremirrorCacheData(recipe, (String) o, false));
+      }
+      for (Object o : json.getJSONObject("Shared State").getJSONArray("Found")) {
+        set.add(new SharedStateCacheData(recipe, (String) o, true));
+      }
+      for (Object o : json.getJSONObject("Shared State").getJSONArray("Missed")) {
+        set.add(new SharedStateCacheData(recipe, (String) o, false));
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();

@@ -65,7 +65,7 @@ public final class TestCounter extends Visitor implements Counter {
   }
 
   @Override
-  public void visit(final TestSet tests) {
+  public void visit(final TestList tests) {
     denominator += tests.size();
     numerator += tests.stream().filter(o -> o.getClass() == clazz).count();
   }

@@ -74,7 +74,7 @@ public final class DuplicationQualifier extends Visitor implements Qualifier {
   }
 
   @Override
-  public void visit(final DuplicationSet objects) {
+  public void visit(final DuplicationList objects) {
     objects.accept(collection);
   }
 }

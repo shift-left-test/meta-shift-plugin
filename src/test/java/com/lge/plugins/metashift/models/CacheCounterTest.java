@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class CacheCounterTest {
   private CacheCounter collector;
-  private CacheSet set;
+  private CacheList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     collector = new CacheCounter(SharedStateCacheData.class);
-    set = new CacheSet();
+    set = new CacheList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
@@ -90,14 +90,14 @@ public class CacheCounterTest {
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<CacheSet> group = new ArrayList<>();
+    List<CacheList> group = new ArrayList<>();
 
-    set = new CacheSet();
+    set = new CacheList();
     set.add(new SharedStateCacheData("A", "do_test", true));
     set.add(new SharedStateCacheData("A", "do_fetch", false));
     group.add(set);
 
-    set = new CacheSet();
+    set = new CacheList();
     set.add(new SharedStateCacheData("B", "do_test", true));
     set.add(new SharedStateCacheData("B", "do_fetch", false));
     group.add(set);
@@ -130,20 +130,20 @@ public class CacheCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithCompoundData() throws Exception {
-    set = new CacheSet();
+  public void testRecipeListWithCompoundData() throws Exception {
+    set = new CacheList();
     set.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new CacheSet();
+    set = new CacheList();
     set.add(new SharedStateCacheData("B", "do_fetch", true));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);

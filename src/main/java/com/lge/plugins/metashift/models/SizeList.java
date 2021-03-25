@@ -36,11 +36,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
- * Represents a set of CacheData objects.
+ * Represents a set of SizeData objects.
  *
  * @author Sung Gon Kim
  */
-public final class CacheSet extends DataSet<CacheData> {
+public final class SizeList extends DataList<SizeData> {
   @Override
   public void accept(final Visitor visitor) {
     visitor.visit(this);
@@ -53,24 +53,19 @@ public final class CacheSet extends DataSet<CacheData> {
    * @param path to the report directory
    * @return a set of objects
    */
-  public static CacheSet create(final String recipe, final File path) throws
+  public static SizeList create(final String recipe, final File path) throws
       IOException, InterruptedException {
-    File report = FileUtils.getFile(path, "caches.json");
-    CacheSet set = new CacheSet();
+    File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
+    SizeList set = new SizeList();
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));
       JSONObject json = JSONObject.fromObject(IOUtils.toString(is, "UTF-8"));
-      for (Object o : json.getJSONObject("Premirror").getJSONArray("Found")) {
-        set.add(new PremirrorCacheData(recipe, (String) o, true));
-      }
-      for (Object o : json.getJSONObject("Premirror").getJSONArray("Missed")) {
-        set.add(new PremirrorCacheData(recipe, (String) o, false));
-      }
-      for (Object o : json.getJSONObject("Shared State").getJSONArray("Found")) {
-        set.add(new SharedStateCacheData(recipe, (String) o, true));
-      }
-      for (Object o : json.getJSONObject("Shared State").getJSONArray("Missed")) {
-        set.add(new SharedStateCacheData(recipe, (String) o, false));
+      for (Object o : json.getJSONArray("size")) {
+        set.add(new SizeData(recipe,
+                             ((JSONObject) o).getString("file"),
+                             ((JSONObject) o).getInt("total_lines"),
+                             ((JSONObject) o).getInt("functions"),
+                             ((JSONObject) o).getInt("classes")));
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();

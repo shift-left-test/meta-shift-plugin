@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class CommentCounterTest {
   private CommentCounter collector;
-  private CommentSet set;
+  private CommentList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     collector = new CommentCounter();
-    set = new CommentSet();
+    set = new CommentList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
@@ -74,14 +74,14 @@ public class CommentCounterTest {
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<CommentSet> group = new ArrayList<>();
+    List<CommentList> group = new ArrayList<>();
 
-    set = new CommentSet();
+    set = new CommentList();
     set.add(new CommentData("A", "a.file", 10, 5));
     set.add(new CommentData("A", "b.file", 20, 10));
     group.add(set);
 
-    set = new CommentSet();
+    set = new CommentList();
     set.add(new CommentData("B", "a.file", 10, 5));
     set.add(new CommentData("B", "b.file", 20, 10));
     group.add(set);
@@ -106,21 +106,21 @@ public class CommentCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithCompoundData() throws Exception {
-    set = new CommentSet();
+  public void testRecipeListWithCompoundData() throws Exception {
+    set = new CommentList();
     set.add(new CommentData("A", "a.file", 10, 5));
     set.add(new CommentData("A", "b.file", 20, 10));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new CommentSet();
+    set = new CommentList();
     set.add(new CommentData("B", "a.file", 10, 5));
     set.add(new CommentData("B", "b.file", 20, 10));
     recipe = new Recipe("B-1.0.0-r0");

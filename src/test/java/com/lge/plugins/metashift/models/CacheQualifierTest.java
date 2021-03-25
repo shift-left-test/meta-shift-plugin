@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class CacheQualifierTest {
   private CacheQualifier qualifier;
-  private CacheSet set;
+  private CacheList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     qualifier = new CacheQualifier(0.5f);
-    set = new CacheSet();
+    set = new CacheList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(boolean available, boolean qualified, float premirror, float sharedState) {
@@ -60,7 +60,7 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testEmptyCacheSet() throws Exception {
+  public void testEmptyCacheList() throws Exception {
     set.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
@@ -145,21 +145,21 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithCompoundCacheSetWhichQualified() throws Exception {
-    set = new CacheSet();
+  public void testRecipeListWithCompoundCacheListWhichQualified() throws Exception {
+    set = new CacheList();
     set.add(new PremirrorCacheData("A", "do_packagedata", true));
     set.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new CacheSet();
+    set = new CacheList();
     set.add(new PremirrorCacheData("B", "do_packagedata", true));
     set.add(new SharedStateCacheData("B", "do_fetch", true));
     recipe = new Recipe("B-1.0.0-r0");

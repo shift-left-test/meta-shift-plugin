@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class ComplexityCounterTest {
   private ComplexityCounter collector;
-  private ComplexitySet set;
+  private ComplexityList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     collector = new ComplexityCounter(10);
-    set = new ComplexitySet();
+    set = new ComplexityList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
@@ -90,15 +90,15 @@ public class ComplexityCounterTest {
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<ComplexitySet> group = new ArrayList<>();
+    List<ComplexityList> group = new ArrayList<>();
 
-    set = new ComplexitySet();
+    set = new ComplexityList();
     set.add(new ComplexityData("A", "a.file", "f()", 1));
     set.add(new ComplexityData("A", "a.file", "g()", 9));
     set.add(new ComplexityData("A", "a.file", "h()", 10));
     group.add(set);
 
-    set = new ComplexitySet();
+    set = new ComplexityList();
     set.add(new ComplexityData("B", "a.file", "f()", 1));
     set.add(new ComplexityData("B", "a.file", "g()", 9));
     set.add(new ComplexityData("B", "a.file", "h()", 10));
@@ -131,14 +131,14 @@ public class ComplexityCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithCompoundData() throws Exception {
-    set = new ComplexitySet();
+  public void testRecipeListWithCompoundData() throws Exception {
+    set = new ComplexityList();
     set.add(new ComplexityData("A", "a.file", "f()", 1));
     set.add(new ComplexityData("A", "a.file", "g()", 9));
     set.add(new ComplexityData("A", "a.file", "h()", 10));
@@ -146,7 +146,7 @@ public class ComplexityCounterTest {
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new ComplexitySet();
+    set = new ComplexityList();
     set.add(new ComplexityData("B", "a.file", "f()", 1));
     set.add(new ComplexityData("B", "a.file", "g()", 9));
     set.add(new ComplexityData("B", "a.file", "h()", 10));

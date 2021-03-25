@@ -24,14 +24,34 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 /**
- * Represents a set of ComplexityData objects.
+ * Unit tests for the ComplexityList class.
  *
  * @author Sung Gon Kim
  */
-public final class ComplexitySet extends DataSet<ComplexityData> {
-  @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
+public class ComplexityListTest {
+  private ComplexityList objects;
+
+  @Before
+  public void setUp() throws Exception {
+    objects = new ComplexityList();
+  }
+
+  @Test
+  public void testInitialState() throws Exception {
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testAddingData() throws Exception {
+    ComplexityData first = new ComplexityData("A", "a.file", "f()", 1);
+    ComplexityData second = new ComplexityData("B", "b.file", "g()", 1);
+    objects.add(second);
+    objects.add(first);
+    assertEquals(2, objects.size());
+    assertEquals(first, objects.get(1));
   }
 }

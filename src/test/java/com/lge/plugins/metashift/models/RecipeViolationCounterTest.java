@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class RecipeViolationCounterTest {
   private RecipeViolationCounter collector;
-  private RecipeViolationSet set;
+  private RecipeViolationList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     collector = new RecipeViolationCounter(MajorRecipeViolationData.class);
-    set = new RecipeViolationSet();
+    set = new RecipeViolationList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
@@ -90,15 +90,15 @@ public class RecipeViolationCounterTest {
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<RecipeViolationSet> group = new ArrayList<>();
+    List<RecipeViolationList> group = new ArrayList<>();
 
-    set = new RecipeViolationSet();
+    set = new RecipeViolationList();
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     group.add(set);
 
-    set = new RecipeViolationSet();
+    set = new RecipeViolationList();
     set.add(new MinorRecipeViolationData("B", "b.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
     set.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
@@ -134,14 +134,14 @@ public class RecipeViolationCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithCompoundData() throws Exception {
-    set = new RecipeViolationSet();
+  public void testRecipeListWithCompoundData() throws Exception {
+    set = new RecipeViolationList();
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
@@ -149,7 +149,7 @@ public class RecipeViolationCounterTest {
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new RecipeViolationSet();
+    set = new RecipeViolationList();
     set.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
     set.add(new MinorRecipeViolationData("B", "b.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));

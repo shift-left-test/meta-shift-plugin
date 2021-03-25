@@ -65,7 +65,7 @@ public final class CacheCounter extends Visitor implements Counter {
   }
 
   @Override
-  public void visit(final CacheSet caches) {
+  public void visit(final CacheList caches) {
     denominator += caches
         .stream()
         .filter(o -> o.getClass() == clazz)

@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class MutationTestCounterTest {
   private MutationTestCounter collector;
-  private MutationTestSet set;
+  private MutationTestList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     collector = new MutationTestCounter(KilledMutationTestData.class);
-    set = new MutationTestSet();
+    set = new MutationTestList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
@@ -88,13 +88,13 @@ public class MutationTestCounterTest {
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<MutationTestSet> group = new ArrayList<>();
+    List<MutationTestList> group = new ArrayList<>();
 
-    set = new MutationTestSet();
+    set = new MutationTestList();
     set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     group.add(set);
 
-    set = new MutationTestSet();
+    set = new MutationTestList();
     set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
     group.add(set);
 
@@ -125,20 +125,20 @@ public class MutationTestCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithCompoundData() throws Exception {
-    set = new MutationTestSet();
+  public void testRecipeListWithCompoundData() throws Exception {
+    set = new MutationTestList();
     set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new MutationTestSet();
+    set = new MutationTestList();
     set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);

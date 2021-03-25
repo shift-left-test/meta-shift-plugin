@@ -24,14 +24,34 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 /**
- * Represents a set of Recipe objects.
+ * Unit tests for the MutationTestList class.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeSet extends DataSet<Recipe> {
-  @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
+public class MutationTestListTest {
+  private MutationTestList objects;
+
+  @Before
+  public void setUp() throws Exception {
+    objects = new MutationTestList();
+  }
+
+  @Test
+  public void testInitialState() throws Exception {
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testAddingData() throws Exception {
+    MutationTestData first = new KilledMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC");
+    MutationTestData second = new KilledMutationTestData("B", "b.file", "C", "f()", 1, "AOR", "TC");
+    objects.add(second);
+    objects.add(first);
+    assertEquals(2, objects.size());
+    assertEquals(first, objects.get(1));
   }
 }

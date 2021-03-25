@@ -58,7 +58,7 @@ public final class DuplicationCounter extends Visitor implements Counter {
   }
 
   @Override
-  public void visit(final DuplicationSet duplications) {
+  public void visit(final DuplicationList duplications) {
     denominator += duplications.stream().mapToInt(DuplicationData::getLines).sum();
     numerator += duplications.stream().mapToInt(DuplicationData::getDuplicatedLines).sum();
   }

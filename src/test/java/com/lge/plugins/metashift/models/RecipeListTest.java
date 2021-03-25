@@ -24,14 +24,34 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 /**
- * Represents a set of RecipeViolationData objects.
+ * Unit tests for the RecipeList class
  *
  * @author Sung Gon Kim
  */
-public final class RecipeViolationSet extends DataSet<RecipeViolationData> {
-  @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
+public class RecipeListTest {
+  private RecipeList recipes;
+
+  @Before
+  public void setUp() throws Exception {
+    recipes = new RecipeList();
+  }
+
+  @Test
+  public void testInitialState() throws Exception {
+    assertEquals(0, recipes.size());
+  }
+
+  @Test
+  public void testAddingData() throws Exception {
+    Recipe first = new Recipe("A-1.0.0-r0");
+    Recipe second = new Recipe("B-1.0.0-r0");
+    recipes.add(second);
+    recipes.add(first);
+    assertEquals(2, recipes.size());
+    assertEquals(first, recipes.get(1));
   }
 }

@@ -28,16 +28,16 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the MutationTestSet class.
+ * Unit tests for the TestList class.
  *
  * @author Sung Gon Kim
  */
-public class MutationTestSetTest {
-  private MutationTestSet objects;
+public class TestListTest {
+  private TestList objects;
 
   @Before
   public void setUp() throws Exception {
-    objects = new MutationTestSet();
+    objects = new TestList();
   }
 
   @Test
@@ -47,18 +47,11 @@ public class MutationTestSetTest {
 
   @Test
   public void testAddingData() throws Exception {
-    MutationTestData first = new KilledMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC");
-    MutationTestData second = new KilledMutationTestData("B", "b.file", "C", "f()", 1, "AOR", "TC");
+    TestData first = new PassedTestData("A", "a.suite", "a.tc", "msg");
+    TestData second = new PassedTestData("B", "b.suite", "b.tc", "msg");
     objects.add(second);
     objects.add(first);
     assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
-  }
-
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    objects.add(new KilledMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    objects.add(new KilledMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    assertEquals(1, objects.size());
+    assertEquals(first, objects.get(1));
   }
 }

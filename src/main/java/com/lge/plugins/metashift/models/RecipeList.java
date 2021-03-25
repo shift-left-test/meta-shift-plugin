@@ -25,11 +25,11 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents a set of DuplicationData objects.
+ * Represents a set of Recipe objects.
  *
  * @author Sung Gon Kim
  */
-public final class DuplicationSet extends DataSet<DuplicationData> {
+public final class RecipeList extends DataList<Recipe> {
   @Override
   public void accept(final Visitor visitor) {
     visitor.visit(this);

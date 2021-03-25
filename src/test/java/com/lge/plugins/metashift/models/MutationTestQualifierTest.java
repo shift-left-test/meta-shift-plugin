@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class MutationTestQualifierTest {
   private MutationTestQualifier qualifier;
-  private MutationTestSet set;
+  private MutationTestList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     qualifier = new MutationTestQualifier(0.5f);
-    set = new MutationTestSet();
+    set = new MutationTestList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(boolean available, boolean qualified, float killed, float survived) {
@@ -108,14 +108,14 @@ public class MutationTestQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithoutQualified() throws Exception {
-    set = new MutationTestSet();
+  public void testRecipeListWithoutQualified() throws Exception {
+    set = new MutationTestList();
     set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
@@ -123,7 +123,7 @@ public class MutationTestQualifierTest {
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new MutationTestSet();
+    set = new MutationTestList();
     set.add(new SurvivedMutationTestData("B", "a.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new SurvivedMutationTestData("B", "b.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new KilledMutationTestData("B", "c.file", "C", "f()", 1, "AOR", "TC"));
@@ -136,15 +136,15 @@ public class MutationTestQualifierTest {
   }
 
   @Test
-  public void testRecipeSetWithQualified() throws Exception {
-    set = new MutationTestSet();
+  public void testRecipeListWithQualified() throws Exception {
+    set = new MutationTestList();
     set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new MutationTestSet();
+    set = new MutationTestList();
     set.add(new SurvivedMutationTestData("B", "b.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new KilledMutationTestData("B", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe = new Recipe("B-1.0.0-r0");

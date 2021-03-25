@@ -80,7 +80,7 @@ public final class CacheQualifier extends Visitor implements Qualifier {
   }
 
   @Override
-  public void visit(final CacheSet objects) {
+  public void visit(final CacheList objects) {
     collection.values().stream().forEach(collector -> objects.accept(collector));
   }
 }

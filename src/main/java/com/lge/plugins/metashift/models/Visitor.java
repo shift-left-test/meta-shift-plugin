@@ -40,83 +40,83 @@ public class Visitor {
   }
 
   /**
-   * Visits the RecipeSet object.
+   * Visits the RecipeList object.
    *
    * @param object to visit
    */
-  public void visit(final RecipeSet object) {
+  public void visit(final RecipeList object) {
     object.forEach(recipe -> recipe.accept(this));
   }
 
   /**
-   * visits the CacheSet object.
+   * visits the CacheList object.
    *
    * @param object to visit
    */
-  public void visit(final CacheSet object) {
+  public void visit(final CacheList object) {
   }
 
   /**
-   * Visits the SizeSet object.
+   * Visits the SizeList object.
    *
    * @param object to visit
    */
-  public void visit(final SizeSet object) {
+  public void visit(final SizeList object) {
   }
 
   /**
-   * Visits the CommentSet object.
+   * Visits the CommentList object.
    *
    * @param object to visit
    */
-  public void visit(final CommentSet object) {
+  public void visit(final CommentList object) {
   }
 
   /**
-   * Visits the RecipeViolationSet object.
+   * Visits the RecipeViolationList object.
    *
    * @param object to visit
    */
-  public void visit(final RecipeViolationSet object) {
+  public void visit(final RecipeViolationList object) {
   }
 
   /**
-   * Visits the CodeViolationSet class.
+   * Visits the CodeViolationList class.
    *
    * @param object to visit
    */
-  public void visit(final CodeViolationSet object) {
+  public void visit(final CodeViolationList object) {
   }
 
   /**
-   * Visits the ComplexitySet object.
+   * Visits the ComplexityList object.
    *
    * @param object to visit
    */
-  public void visit(final ComplexitySet object) {
+  public void visit(final ComplexityList object) {
   }
 
   /**
-   * Visits the DuplicationSet objects.
+   * Visits the DuplicationList objects.
    *
    * @param object to visit
    */
-  public void visit(final DuplicationSet object) {
+  public void visit(final DuplicationList object) {
   }
 
   /**
-   * Visits the TestSet object.
+   * Visits the TestList object.
    *
    * @param object to visit
    */
-  public void visit(final TestSet object) {
+  public void visit(final TestList object) {
   }
 
   /**
-   * Visits the MutationTestSet object.
+   * Visits the MutationTestList object.
    *
    * @param object to visit
    */
-  public void visit(final MutationTestSet object) {
+  public void visit(final MutationTestList object) {
   }
 }

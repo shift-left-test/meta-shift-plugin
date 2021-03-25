@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class TestQualifierTest {
   private TestQualifier qualifier;
-  private TestSet set;
+  private TestList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     qualifier = new TestQualifier(0.5f);
-    set = new TestSet();
+    set = new TestList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(boolean available, boolean qualified,
@@ -113,21 +113,21 @@ public class TestQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithoutQualified() throws Exception {
-    set = new TestSet();
+  public void testRecipeListWithoutQualified() throws Exception {
+    set = new TestList();
     set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new TestSet();
+    set = new TestList();
     set.add(new ErrorTestData("B", "a.suite", "c.tc", "msg"));
     set.add(new SkippedTestData("B", "d.suite", "c.tc", "msg"));
     recipe = new Recipe("B-1.0.0-r0");
@@ -139,15 +139,15 @@ public class TestQualifierTest {
   }
 
   @Test
-  public void testRecipeSetWithQualified() throws Exception {
-    set = new TestSet();
+  public void testRecipeListWithQualified() throws Exception {
+    set = new TestList();
     set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new TestSet();
+    set = new TestList();
     set.add(new PassedTestData("B", "a.suite", "a.tc", "msg"));
     set.add(new FailedTestData("B", "a.suite", "b.tc", "msg"));
     recipe = new Recipe("B-1.0.0-r0");

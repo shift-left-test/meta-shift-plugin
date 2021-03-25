@@ -74,7 +74,7 @@ public final class CommentQualifier extends Visitor implements Qualifier {
   }
 
   @Override
-  public void visit(final CommentSet objects) {
+  public void visit(final CommentList objects) {
     objects.accept(collection);
   }
 }

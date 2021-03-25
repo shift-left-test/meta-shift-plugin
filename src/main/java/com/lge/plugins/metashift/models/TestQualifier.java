@@ -82,7 +82,7 @@ public final class TestQualifier extends Visitor implements Qualifier {
   }
 
   @Override
-  public void visit(final TestSet objects) {
+  public void visit(final TestList objects) {
     collection.values().stream().forEach(collector -> objects.accept(collector));
   }
 }

@@ -82,7 +82,7 @@ public final class MutationTestQualifier extends Visitor implements Qualifier {
   }
 
   @Override
-  public void visit(MutationTestSet objects) {
+  public void visit(MutationTestList objects) {
     collection.values().stream().forEach(collector -> objects.accept(collector));
   }
 }

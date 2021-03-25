@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class CodeViolationQualifierTest {
   private CodeViolationQualifier qualifier;
-  private CodeViolationSet set;
+  private CodeViolationList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     qualifier = new CodeViolationQualifier(0.5f);
-    set = new CodeViolationSet();
+    set = new CodeViolationList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(boolean available, boolean qualified, float major, float minor, float info) {
@@ -107,20 +107,20 @@ public class CodeViolationQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithoutQualified() throws Exception {
-    set = new CodeViolationSet();
+  public void testRecipeListWithoutQualified() throws Exception {
+    set = new CodeViolationList();
     set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new CodeViolationSet();
+    set = new CodeViolationList();
     set.add(new MajorCodeViolationData("B", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);
@@ -131,8 +131,8 @@ public class CodeViolationQualifierTest {
   }
 
   @Test
-  public void testRecipeSetWithQualified() throws Exception {
-    set = new CodeViolationSet();
+  public void testRecipeListWithQualified() throws Exception {
+    set = new CodeViolationList();
     set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
@@ -140,7 +140,7 @@ public class CodeViolationQualifierTest {
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new CodeViolationSet();
+    set = new CodeViolationList();
     set.add(new MajorCodeViolationData("B", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.add(new MinorCodeViolationData("B", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.add(new InfoCodeViolationData("B", "c.file", 1, 2, "rule", "m", "d", "E", "t"));

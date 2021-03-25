@@ -24,41 +24,12 @@
 
 package com.lge.plugins.metashift.models;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-
 /**
- * Unit tests for the TestSet class..
- *
- * @author Sung Gon Kim
+ * Represents a set of MutationTestData objects.
  */
-public class TestSetTest {
-  private TestSet objects;
-
-  @Before
-  public void setUp() throws Exception {
-    objects = new TestSet();
-  }
-
-  @Test
-  public void testInitialState() throws Exception {
-    assertEquals(0, objects.size());
-  }
-
-  @Test
-  public void testAddingData() throws Exception {
-    TestData first = new PassedTestData("A", "a.suite", "a.tc", "msg");
-    TestData second = new PassedTestData("B", "b.suite", "b.tc", "msg");
-    objects.add(second);
-    objects.add(first);
-    assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
-  }
-
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    objects.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    objects.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    assertEquals(1, objects.size());
+public final class MutationTestList extends DataList<MutationTestData> {
+  @Override
+  public void accept(final Visitor visitor) {
+    visitor.visit(this);
   }
 }

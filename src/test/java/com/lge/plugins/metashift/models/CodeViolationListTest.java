@@ -28,32 +28,30 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the DuplicationSet class.
+ * Unit tests for the CodeViolationList class.
  *
  * @author Sung Gon Kim
  */
-public class DuplicationSetTest {
-  private DuplicationSet objects;
+public class CodeViolationListTest {
+  private CodeViolationList objects;
 
   @Before
   public void setUp() throws Exception {
-    objects = new DuplicationSet();
+    objects = new CodeViolationList();
+  }
+
+  @Test
+  public void testInitialState() throws Exception {
+    assertEquals(0, objects.size());
   }
 
   @Test
   public void testAddingData() throws Exception {
-    DuplicationData first = new DuplicationData("A", "a.file", 10, 5);
-    DuplicationData second = new DuplicationData("B", "b.file", 10, 5);
+    CodeViolationData first = new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool");
+    CodeViolationData second = new MajorCodeViolationData("B", "b.file", 1, 2, "rule", "msg", "desc", "E", "tool");
     objects.add(second);
     objects.add(first);
     assertEquals(2, objects.size());
-    assertEquals(first, objects.iterator().next());
-  }
-
-  @Test
-  public void testAddingDuplicates() throws Exception {
-    objects.add(new DuplicationData("A", "a.file", 10, 5));
-    objects.add(new DuplicationData("A", "a.file", 10, 5));
-    assertEquals(1, objects.size());
+    assertEquals(first, objects.get(1));
   }
 }

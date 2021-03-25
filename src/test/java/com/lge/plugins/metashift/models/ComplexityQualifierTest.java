@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class ComplexityQualifierTest {
   private ComplexityQualifier qualifier;
-  private ComplexitySet set;
+  private ComplexityList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     qualifier = new ComplexityQualifier(5, 0.5f);
-    set = new ComplexitySet();
+    set = new ComplexityList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(boolean available, boolean qualified, float ratio) {
@@ -109,20 +109,20 @@ public class ComplexityQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeSet() throws Exception {
+  public void testEmptyRecipeList() throws Exception {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testRecipeSetWithoutQualified() throws Exception {
-    set = new ComplexitySet();
+  public void testRecipeListWithoutQualified() throws Exception {
+    set = new ComplexityList();
     set.add(new ComplexityData("A", "a.file", "f()", 5));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new ComplexitySet();
+    set = new ComplexityList();
     set.add(new ComplexityData("B", "a.file", "g()", 5));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);
@@ -132,14 +132,14 @@ public class ComplexityQualifierTest {
     assertValues(true, false, 1.0f);
   }
 
-  public void testRecipeSetWithQualified() throws Exception {
-    set = new ComplexitySet();
+  public void testRecipeListWithQualified() throws Exception {
+    set = new ComplexityList();
     set.add(new ComplexityData("A", "a.file", "f()", 1));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new ComplexitySet();
+    set = new ComplexityList();
     set.add(new ComplexityData("B", "a.file", "g()", 1));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);

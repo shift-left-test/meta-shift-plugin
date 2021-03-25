@@ -84,7 +84,7 @@ public final class CodeViolationQualifier extends Visitor implements Qualifier {
   }
 
   @Override
-  public void visit(final CodeViolationSet objects) {
+  public void visit(final CodeViolationList objects) {
     collection.values().stream().forEach(collector -> objects.accept(collector));
   }
 }

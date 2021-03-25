@@ -35,16 +35,16 @@ import static org.junit.Assert.*;
  */
 public class SizeCounterTest {
   private SizeCounter collector;
-  private SizeSet set;
+  private SizeList set;
   private Recipe recipe;
-  private RecipeSet recipes;
+  private RecipeList recipes;
 
   @Before
   public void setUp() throws Exception {
     collector = new SizeCounter();
-    set = new SizeSet();
+    set = new SizeList();
     recipe = new Recipe("A-B-C");
-    recipes = new RecipeSet();
+    recipes = new RecipeList();
   }
 
   private void assertValues(int recipes, int files, int lines, int functions, int classes) {
@@ -84,15 +84,15 @@ public class SizeCounterTest {
   }
 
   @Test
-  public void testRecipeSetWithCompoundData() throws Exception {
+  public void testRecipeListWithCompoundData() throws Exception {
     recipe = new Recipe("A-1.0.0-r0");
-    set = new SizeSet();
+    set = new SizeList();
     set.add(new SizeData("A", "a.file", 3, 2, 1));
     recipe.set(set);
     recipes.add(recipe);
 
     recipe = new Recipe("B-1.0.0-r0");
-    set = new SizeSet();
+    set = new SizeList();
     set.add(new SizeData("B", "b.file", 6, 4, 2));
     recipe.set(set);
     recipes.add(recipe);
