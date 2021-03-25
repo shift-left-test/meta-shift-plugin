@@ -25,15 +25,11 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the code violation information from the given data sets.
+ * Collects the comment information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class CodeViolationCollector extends Visitor implements Measurable {
-  /**
-   * Represents the class type.
-   */
-  private Class<? extends CodeViolationData> clazz;
+public final class CommentCounter extends Visitor implements Counter {
   /**
    * Represents the denominator.
    */
@@ -45,11 +41,8 @@ public final class CodeViolationCollector extends Visitor implements Measurable 
 
   /**
    * Default constructor.
-   *
-   * @param clazz the class type
    */
-  public CodeViolationCollector(final Class<? extends CodeViolationData> clazz) {
-    this.clazz = clazz;
+  public CommentCounter() {
     this.denominator = 0;
     this.numerator = 0;
   }
@@ -65,8 +58,8 @@ public final class CodeViolationCollector extends Visitor implements Measurable 
   }
 
   @Override
-  public void visit(final CodeViolationSet codeViolations) {
-    denominator += codeViolations.size();
-    numerator += codeViolations.stream().filter(o -> o.getClass() == clazz).count();
+  public void visit(final CommentSet comments) {
+    denominator += comments.stream().mapToInt(CommentData::getLines).sum();
+    numerator += comments.stream().mapToInt(CommentData::getCommentLines).sum();
   }
 }

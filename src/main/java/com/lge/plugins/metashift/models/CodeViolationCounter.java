@@ -25,11 +25,15 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the complexity information from the given data sets.
+ * Collects the code violation information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class ComplexityCollector extends Visitor implements Measurable {
+public final class CodeViolationCounter extends Visitor implements Counter {
+  /**
+   * Represents the class type.
+   */
+  private Class<? extends CodeViolationData> clazz;
   /**
    * Represents the denominator.
    */
@@ -38,20 +42,16 @@ public final class ComplexityCollector extends Visitor implements Measurable {
    * Represents the numerator.
    */
   private int numerator;
-  /**
-   * Represents the threshold.
-   */
-  private int threshold;
 
   /**
    * Default constructor.
    *
-   * @param threshold for data collection.
+   * @param clazz the class type
    */
-  public ComplexityCollector(int threshold) {
+  public CodeViolationCounter(final Class<? extends CodeViolationData> clazz) {
+    this.clazz = clazz;
     this.denominator = 0;
     this.numerator = 0;
-    this.threshold = threshold;
   }
 
   @Override
@@ -65,8 +65,8 @@ public final class ComplexityCollector extends Visitor implements Measurable {
   }
 
   @Override
-  public void visit(final ComplexitySet objects) {
-    denominator += objects.stream().distinct().count();
-    numerator += objects.stream().filter(o -> o.getValue() >= threshold).count();
+  public void visit(final CodeViolationSet codeViolations) {
+    denominator += codeViolations.size();
+    numerator += codeViolations.stream().filter(o -> o.getClass() == clazz).count();
   }
 }

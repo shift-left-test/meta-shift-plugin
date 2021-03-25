@@ -29,11 +29,11 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class ComplexityQualifier extends Visitor implements Qualifiable {
+public final class ComplexityQualifier extends Visitor implements Qualifier {
   /**
-   * Represents the collection of ComplexityCollector objects.
+   * Represents the collection of ComplexityCounter objects.
    */
-  private ComplexityCollector collection;
+  private ComplexityCounter collection;
   /**
    * Represents the threshold of the qualification.
    */
@@ -46,16 +46,16 @@ public final class ComplexityQualifier extends Visitor implements Qualifiable {
    * @param threshold for evaluation
    */
   public ComplexityQualifier(final int complexity, final float threshold) {
-    this.collection = new ComplexityCollector(complexity);
+    this.collection = new ComplexityCounter(complexity);
     this.threshold = threshold;
   }
 
   /**
    * Returns the collector object.
    *
-   * @return ComplexityCollector object
+   * @return ComplexityCounter object
    */
-  public ComplexityCollector collection() {
+  public ComplexityCounter collection() {
     return collection;
   }
 

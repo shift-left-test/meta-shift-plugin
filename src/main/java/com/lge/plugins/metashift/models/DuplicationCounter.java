@@ -25,11 +25,11 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the comment information from the given data sets.
+ * Collects the duplication information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class CommentCollector extends Visitor implements Measurable {
+public final class DuplicationCounter extends Visitor implements Counter {
   /**
    * Represents the denominator.
    */
@@ -42,7 +42,7 @@ public final class CommentCollector extends Visitor implements Measurable {
   /**
    * Default constructor.
    */
-  public CommentCollector() {
+  public DuplicationCounter() {
     this.denominator = 0;
     this.numerator = 0;
   }
@@ -58,8 +58,8 @@ public final class CommentCollector extends Visitor implements Measurable {
   }
 
   @Override
-  public void visit(final CommentSet comments) {
-    denominator += comments.stream().mapToInt(CommentData::getLines).sum();
-    numerator += comments.stream().mapToInt(CommentData::getCommentLines).sum();
+  public void visit(final DuplicationSet duplications) {
+    denominator += duplications.stream().mapToInt(DuplicationData::getLines).sum();
+    numerator += duplications.stream().mapToInt(DuplicationData::getDuplicatedLines).sum();
   }
 }

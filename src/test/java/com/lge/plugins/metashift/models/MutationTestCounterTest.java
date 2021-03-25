@@ -29,20 +29,20 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the DuplicationCollector class.
+ * Unit tests for the MutationTestCounter class.
  *
  * @author Sung Gon Kim
  */
-public class DuplicationCollectorTest {
-  private DuplicationCollector collector;
-  private DuplicationSet set;
+public class MutationTestCounterTest {
+  private MutationTestCounter collector;
+  private MutationTestSet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
-    collector = new DuplicationCollector();
-    set = new DuplicationSet();
+    collector = new MutationTestCounter(KilledMutationTestData.class);
+    set = new MutationTestSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -65,29 +65,41 @@ public class DuplicationCollectorTest {
   }
 
   @Test
-  public void testSetWithCompoundData() throws Exception {
-    set.add(new DuplicationData("A", "a.file", 10, 5));
-    set.add(new DuplicationData("A", "b.file", 10, 5));
+  public void testSetWithoutMatched() throws Exception {
+    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     set.accept(collector);
-    assertValues(20, 10, 0.5f);
+    assertValues(1, 0, 0.0f);
+  }
+
+  @Test
+  public void testSetWithMatched() throws Exception {
+    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    set.accept(collector);
+    assertValues(1, 1, 1.0f);
+  }
+
+  @Test
+  public void testSetWithCompoundData() throws Exception {
+    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    set.accept(collector);
+    assertValues(2, 1, 0.5f);
   }
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<DuplicationSet> group = new ArrayList<>();
+    List<MutationTestSet> group = new ArrayList<>();
 
-    set = new DuplicationSet();
-    set.add(new DuplicationData("A", "a.file", 10, 5));
-    set.add(new DuplicationData("A", "b.file", 10, 5));
+    set = new MutationTestSet();
+    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     group.add(set);
 
-    set = new DuplicationSet();
-    set.add(new DuplicationData("B", "a.file", 10, 5));
-    set.add(new DuplicationData("B", "b.file", 10, 5));
+    set = new MutationTestSet();
+    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
     group.add(set);
 
     group.forEach(o -> o.accept(collector));
-    assertValues(40, 20, 0.5f);
+    assertValues(2, 1, 0.5f);
   }
 
   @Test
@@ -97,12 +109,19 @@ public class DuplicationCollectorTest {
   }
 
   @Test
-  public void testRecipeWithData() throws Exception {
-    set.add(new DuplicationData("A", "a.file", 10, 5));
-    set.add(new DuplicationData("A", "b.file", 10, 5));
+  public void testRecipeWithoutMatched() throws Exception {
+    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(20, 10, 0.5f);
+    assertValues(1, 0, 0.0f);
+  }
+
+  @Test
+  public void testRecipeWithMatched() throws Exception {
+    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    recipe.set(set);
+    recipe.accept(collector);
+    assertValues(1, 1, 1.0f);
   }
 
   @Test
@@ -113,21 +132,19 @@ public class DuplicationCollectorTest {
 
   @Test
   public void testRecipeSetWithCompoundData() throws Exception {
-    set = new DuplicationSet();
-    set.add(new DuplicationData("A", "a.file", 10, 5));
-    set.add(new DuplicationData("A", "b.file", 10, 5));
+    set = new MutationTestSet();
+    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new DuplicationSet();
-    set.add(new DuplicationData("B", "a.file", 10, 5));
-    set.add(new DuplicationData("B", "b.file", 10, 5));
+    set = new MutationTestSet();
+    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
     recipes.accept(collector);
-    assertValues(40, 20, 0.5f);
+    assertValues(2, 1, 0.5f);
   }
 }

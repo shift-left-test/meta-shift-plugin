@@ -32,11 +32,11 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public final class CacheQualifier extends Visitor implements Qualifiable {
+public final class CacheQualifier extends Visitor implements Qualifier {
   /**
-   * Represents the collection of CacheCollector objects.
+   * Represents the collection of CacheCounter objects.
    */
-  private Map<Class<? extends CacheData>, CacheCollector> collection;
+  private Map<Class<? extends CacheData>, CacheCounter> collection;
   /**
    * Represents the threshold of the qualification.
    */
@@ -49,30 +49,30 @@ public final class CacheQualifier extends Visitor implements Qualifiable {
    */
   public CacheQualifier(final float threshold) {
     collection = new HashMap<>();
-    collection.put(PremirrorCacheData.class, new CacheCollector(PremirrorCacheData.class));
-    collection.put(SharedStateCacheData.class, new CacheCollector(SharedStateCacheData.class));
+    collection.put(PremirrorCacheData.class, new CacheCounter(PremirrorCacheData.class));
+    collection.put(SharedStateCacheData.class, new CacheCounter(SharedStateCacheData.class));
     this.threshold = threshold;
   }
 
   /**
-   * Returns the relevant CacheCollector object based on the given class type.
+   * Returns the relevant CacheCounter object based on the given class type.
    *
    * @param clazz of the object type to return
-   * @return CacheCollector object
+   * @return CacheCounter object
    */
-  public CacheCollector collection(final Class<? extends CacheData> clazz) {
+  public CacheCounter collection(final Class<? extends CacheData> clazz) {
     return collection.get(clazz);
   }
 
   @Override
   public boolean isAvailable() {
-    return collection.values().stream().mapToInt(CacheCollector::getDenominator).sum() > 0;
+    return collection.values().stream().mapToInt(CacheCounter::getDenominator).sum() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection.values().stream().mapToInt(CacheCollector::getDenominator).sum();
-    int numerator = collection.values().stream().mapToInt(CacheCollector::getNumerator).sum();
+    int denominator = collection.values().stream().mapToInt(CacheCounter::getDenominator).sum();
+    int numerator = collection.values().stream().mapToInt(CacheCounter::getNumerator).sum();
     if (denominator == 0) {
       return false;
     }

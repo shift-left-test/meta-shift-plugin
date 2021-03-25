@@ -25,48 +25,22 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the test information from the given data sets.
+ * Qualifier interface.
  *
  * @author Sung Gon Kim
  */
-public final class TestCollector extends Visitor implements Measurable {
+public interface Qualifier {
   /**
-   * Represents the class type.
-   */
-  private Class<? extends TestData> clazz;
-  /**
-   * Represents the denominator.
-   */
-  private int denominator;
-  /**
-   * Represents the numerator.
-   */
-  private int numerator;
-
-  /**
-   * Default constructor.
+   * Returns whether the metric is availabile.
    *
-   * @param clazz the class type
+   * @return true if the metric is available, false otherwise
    */
-  public TestCollector(final Class<? extends TestData> clazz) {
-    this.clazz = clazz;
-    this.denominator = 0;
-    this.numerator = 0;
-  }
+  boolean isAvailable();
 
-  @Override
-  public int getDenominator() {
-    return denominator;
-  }
-
-  @Override
-  public int getNumerator() {
-    return numerator;
-  }
-
-  @Override
-  public void visit(final TestSet tests) {
-    denominator += tests.size();
-    numerator += tests.stream().filter(o -> o.getClass() == clazz).count();
-  }
+  /**
+   * Returns whether the evaluation of the metric meets the criteria.
+   *
+   * @return true if the metric meets the criteria, false otherwise
+   */
+  boolean isQualified();
 }

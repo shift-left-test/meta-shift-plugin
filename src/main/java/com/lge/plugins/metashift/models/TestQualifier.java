@@ -32,11 +32,11 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public final class TestQualifier extends Visitor implements Qualifiable {
+public final class TestQualifier extends Visitor implements Qualifier {
   /**
-   * Represents the collection of TestCollector objects.
+   * Represents the collection of TestCounter objects.
    */
-  private Map<Class<? extends TestData>, TestCollector> collection;
+  private Map<Class<? extends TestData>, TestCounter> collection;
   /**
    * Represents the threshold of the qualification.
    */
@@ -49,10 +49,10 @@ public final class TestQualifier extends Visitor implements Qualifiable {
    */
   public TestQualifier(final float threshold) {
     collection = new HashMap<>();
-    collection.put(PassedTestData.class, new TestCollector(PassedTestData.class));
-    collection.put(FailedTestData.class, new TestCollector(FailedTestData.class));
-    collection.put(ErrorTestData.class, new TestCollector(ErrorTestData.class));
-    collection.put(SkippedTestData.class, new TestCollector(SkippedTestData.class));
+    collection.put(PassedTestData.class, new TestCounter(PassedTestData.class));
+    collection.put(FailedTestData.class, new TestCounter(FailedTestData.class));
+    collection.put(ErrorTestData.class, new TestCounter(ErrorTestData.class));
+    collection.put(SkippedTestData.class, new TestCounter(SkippedTestData.class));
     this.threshold = threshold;
   }
 
@@ -60,9 +60,9 @@ public final class TestQualifier extends Visitor implements Qualifiable {
    * Returns the relevant collector object based on the given type.
    *
    * @param clazz of the object type to return
-   * @return TestCollector object
+   * @return TestCounter object
    */
-  public TestCollector collection(final Class<? extends TestData> clazz) {
+  public TestCounter collection(final Class<? extends TestData> clazz) {
     return collection.get(clazz);
   }
 

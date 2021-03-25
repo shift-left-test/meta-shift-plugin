@@ -29,20 +29,20 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the MutationTestCollector class.
+ * Unit tests for the CommentCounter class.
  *
  * @author Sung Gon Kim
  */
-public class MutationTestCollectorTest {
-  private MutationTestCollector collector;
-  private MutationTestSet set;
+public class CommentCounterTest {
+  private CommentCounter collector;
+  private CommentSet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
-    collector = new MutationTestCollector(KilledMutationTestData.class);
-    set = new MutationTestSet();
+    collector = new CommentCounter();
+    set = new CommentSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -65,41 +65,29 @@ public class MutationTestCollectorTest {
   }
 
   @Test
-  public void testSetWithoutMatched() throws Exception {
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    set.accept(collector);
-    assertValues(1, 0, 0.0f);
-  }
-
-  @Test
-  public void testSetWithMatched() throws Exception {
-    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
-    set.accept(collector);
-    assertValues(1, 1, 1.0f);
-  }
-
-  @Test
   public void testSetWithCompoundData() throws Exception {
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    set.add(new CommentData("A", "a.file", 10, 5));
+    set.add(new CommentData("A", "b.file", 20, 10));
     set.accept(collector);
-    assertValues(2, 1, 0.5f);
+    assertValues(30, 15, 0.5f);
   }
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<MutationTestSet> group = new ArrayList<>();
+    List<CommentSet> group = new ArrayList<>();
 
-    set = new MutationTestSet();
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    set = new CommentSet();
+    set.add(new CommentData("A", "a.file", 10, 5));
+    set.add(new CommentData("A", "b.file", 20, 10));
     group.add(set);
 
-    set = new MutationTestSet();
-    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    set = new CommentSet();
+    set.add(new CommentData("B", "a.file", 10, 5));
+    set.add(new CommentData("B", "b.file", 20, 10));
     group.add(set);
 
     group.forEach(o -> o.accept(collector));
-    assertValues(2, 1, 0.5f);
+    assertValues(60, 30, 0.5f);
   }
 
   @Test
@@ -109,19 +97,12 @@ public class MutationTestCollectorTest {
   }
 
   @Test
-  public void testRecipeWithoutMatched() throws Exception {
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+  public void testRecipeWithData() throws Exception {
+    set.add(new CommentData("A", "a.file", 10, 5));
+    set.add(new CommentData("A", "b.file", 20, 10));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(1, 0, 0.0f);
-  }
-
-  @Test
-  public void testRecipeWithMatched() throws Exception {
-    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
-    recipe.set(set);
-    recipe.accept(collector);
-    assertValues(1, 1, 1.0f);
+    assertValues(30, 15, 0.5f);
   }
 
   @Test
@@ -132,19 +113,21 @@ public class MutationTestCollectorTest {
 
   @Test
   public void testRecipeSetWithCompoundData() throws Exception {
-    set = new MutationTestSet();
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    set = new CommentSet();
+    set.add(new CommentData("A", "a.file", 10, 5));
+    set.add(new CommentData("A", "b.file", 20, 10));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new MutationTestSet();
-    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    set = new CommentSet();
+    set.add(new CommentData("B", "a.file", 10, 5));
+    set.add(new CommentData("B", "b.file", 20, 10));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
     recipes.accept(collector);
-    assertValues(2, 1, 0.5f);
+    assertValues(60, 30, 0.5f);
   }
 }

@@ -29,20 +29,20 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the CacheCollector class.
+ * Unit tests for the DuplicationCounter class.
  *
  * @author Sung Gon Kim
  */
-public class CacheCollectorTest {
-  private CacheCollector collector;
-  private CacheSet set;
+public class DuplicationCounterTest {
+  private DuplicationCounter collector;
+  private DuplicationSet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
-    collector = new CacheCollector(SharedStateCacheData.class);
-    set = new CacheSet();
+    collector = new DuplicationCounter();
+    set = new DuplicationSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -65,45 +65,29 @@ public class CacheCollectorTest {
   }
 
   @Test
-  public void testSetWithoutMatched() throws Exception {
-    set.add(new PremirrorCacheData("A", "do_fetch", true));
-    set.accept(collector);
-    assertValues(0, 0, 0.0f);
-  }
-
-  @Test
-  public void testSetWithMatched() throws Exception {
-    set.add(new SharedStateCacheData("A", "do_fetch", true));
-    set.accept(collector);
-    assertValues(1, 1, 1.0f);
-  }
-
-  @Test
   public void testSetWithCompoundData() throws Exception {
-    set.add(new SharedStateCacheData("A", "do_fetch", true));
-    set.add(new SharedStateCacheData("A", "do_compile", false));
-    set.add(new PremirrorCacheData("A", "do_fetch", true));
-    set.add(new PremirrorCacheData("A", "do_compile", false));
+    set.add(new DuplicationData("A", "a.file", 10, 5));
+    set.add(new DuplicationData("A", "b.file", 10, 5));
     set.accept(collector);
-    assertValues(2, 1, 0.5f);
+    assertValues(20, 10, 0.5f);
   }
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<CacheSet> group = new ArrayList<>();
+    List<DuplicationSet> group = new ArrayList<>();
 
-    set = new CacheSet();
-    set.add(new SharedStateCacheData("A", "do_test", true));
-    set.add(new SharedStateCacheData("A", "do_fetch", false));
+    set = new DuplicationSet();
+    set.add(new DuplicationData("A", "a.file", 10, 5));
+    set.add(new DuplicationData("A", "b.file", 10, 5));
     group.add(set);
 
-    set = new CacheSet();
-    set.add(new SharedStateCacheData("B", "do_test", true));
-    set.add(new SharedStateCacheData("B", "do_fetch", false));
+    set = new DuplicationSet();
+    set.add(new DuplicationData("B", "a.file", 10, 5));
+    set.add(new DuplicationData("B", "b.file", 10, 5));
     group.add(set);
 
     group.forEach(o -> o.accept(collector));
-    assertValues(4, 2, 0.5f);
+    assertValues(40, 20, 0.5f);
   }
 
   @Test
@@ -113,20 +97,12 @@ public class CacheCollectorTest {
   }
 
   @Test
-  public void testRecipeWithoutMatched() throws Exception {
-    set.add(new PremirrorCacheData("A", "do_fetch", true));
+  public void testRecipeWithData() throws Exception {
+    set.add(new DuplicationData("A", "a.file", 10, 5));
+    set.add(new DuplicationData("A", "b.file", 10, 5));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(0, 0, 0.0f);
-  }
-
-  @Test
-  public void testRecipeWithMatched() throws Exception {
-    set.add(new SharedStateCacheData("A", "do_fetch", true));
-    recipe = new Recipe("A-B-C");
-    recipe.set(set);
-    recipe.accept(collector);
-    assertValues(1, 1, 1.0f);
+    assertValues(20, 10, 0.5f);
   }
 
   @Test
@@ -137,19 +113,21 @@ public class CacheCollectorTest {
 
   @Test
   public void testRecipeSetWithCompoundData() throws Exception {
-    set = new CacheSet();
-    set.add(new SharedStateCacheData("A", "do_fetch", true));
+    set = new DuplicationSet();
+    set.add(new DuplicationData("A", "a.file", 10, 5));
+    set.add(new DuplicationData("A", "b.file", 10, 5));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new CacheSet();
-    set.add(new SharedStateCacheData("B", "do_fetch", true));
+    set = new DuplicationSet();
+    set.add(new DuplicationData("B", "a.file", 10, 5));
+    set.add(new DuplicationData("B", "b.file", 10, 5));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
     recipes.accept(collector);
-    assertValues(2, 2, 1.0f);
+    assertValues(40, 20, 0.5f);
   }
 }

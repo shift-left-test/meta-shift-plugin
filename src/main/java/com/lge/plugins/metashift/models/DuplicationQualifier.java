@@ -29,11 +29,11 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class DuplicationQualifier extends Visitor implements Qualifiable {
+public final class DuplicationQualifier extends Visitor implements Qualifier {
   /**
-   * Represents the collectino of DuplicationCollector objects.
+   * Represents the collectino of DuplicationCounter objects.
    */
-  private DuplicationCollector collection;
+  private DuplicationCounter collection;
   /**
    * Represents the threshold of the qualification.
    */
@@ -45,16 +45,16 @@ public final class DuplicationQualifier extends Visitor implements Qualifiable {
    * @param threshold for evaluation
    */
   public DuplicationQualifier(final float threshold) {
-    this.collection = new DuplicationCollector();
+    this.collection = new DuplicationCounter();
     this.threshold = threshold;
   }
 
   /**
    * Returns the collector object.
    *
-   * @return DuplicationCollector object
+   * @return DuplicationCounter object
    */
-  public DuplicationCollector collection() {
+  public DuplicationCounter collection() {
     return collection;
   }
 

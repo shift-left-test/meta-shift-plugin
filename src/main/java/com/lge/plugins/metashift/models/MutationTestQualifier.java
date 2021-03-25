@@ -32,11 +32,11 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public final class MutationTestQualifier extends Visitor implements Qualifiable {
+public final class MutationTestQualifier extends Visitor implements Qualifier {
   /**
-   * Represents the collection of MutationTestCollector objects.
+   * Represents the collection of MutationTestCounter objects.
    */
-  private Map<Class<? extends MutationTestData>, MutationTestCollector> collection;
+  private Map<Class<? extends MutationTestData>, MutationTestCounter> collection;
   /**
    * Represents the threshold of the qualification.
    */
@@ -50,9 +50,9 @@ public final class MutationTestQualifier extends Visitor implements Qualifiable 
   public MutationTestQualifier(final float threshold) {
     collection = new HashMap<>();
     collection.put(KilledMutationTestData.class,
-                   new MutationTestCollector(KilledMutationTestData.class));
+                   new MutationTestCounter(KilledMutationTestData.class));
     collection.put(SurvivedMutationTestData.class,
-                   new MutationTestCollector(SurvivedMutationTestData.class));
+                   new MutationTestCounter(SurvivedMutationTestData.class));
     this.threshold = threshold;
   }
 
@@ -60,9 +60,9 @@ public final class MutationTestQualifier extends Visitor implements Qualifiable 
    * Returns the relevant collector object based on the given type.
    *
    * @param clazz of the object type to return
-   * @return MutationTestCollector object
+   * @return MutationTestCounter object
    */
-  public MutationTestCollector collection(final Class<? extends MutationTestData> clazz) {
+  public MutationTestCounter collection(final Class<? extends MutationTestData> clazz) {
     return collection.get(clazz);
   }
 

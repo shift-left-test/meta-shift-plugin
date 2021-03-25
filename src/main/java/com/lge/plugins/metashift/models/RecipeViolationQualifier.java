@@ -32,11 +32,11 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public final class RecipeViolationQualifier extends Visitor implements Qualifiable {
+public final class RecipeViolationQualifier extends Visitor implements Qualifier {
   /**
-   * Represents the collection of RecipeViolationCollector objects.
+   * Represents the collection of RecipeViolationCounter objects.
    */
-  private Map<Class<? extends RecipeViolationData>, RecipeViolationCollector> collection;
+  private Map<Class<? extends RecipeViolationData>, RecipeViolationCounter> collection;
   /**
    * Represents the threshold of the qualification.
    */
@@ -50,13 +50,13 @@ public final class RecipeViolationQualifier extends Visitor implements Qualifiab
   public RecipeViolationQualifier(final float threshold) {
     collection = new HashMap<>();
     collection.put(MajorRecipeViolationData.class,
-                   new RecipeViolationCollector(
+                   new RecipeViolationCounter(
                        MajorRecipeViolationData.class));
     collection.put(MinorRecipeViolationData.class,
-                   new RecipeViolationCollector(
+                   new RecipeViolationCounter(
                        MinorRecipeViolationData.class));
     collection.put(InfoRecipeViolationData.class,
-                   new RecipeViolationCollector(
+                   new RecipeViolationCounter(
                        InfoRecipeViolationData.class));
     this.threshold = threshold;
   }
@@ -65,9 +65,9 @@ public final class RecipeViolationQualifier extends Visitor implements Qualifiab
    * Returns the relevant collector object based on the given type.
    *
    * @param clazz of the object type to return
-   * @return RecipeViolationCollector object
+   * @return RecipeViolationCounter object
    */
-  public RecipeViolationCollector collection(final Class<? extends RecipeViolationData> clazz) {
+  public RecipeViolationCounter collection(final Class<? extends RecipeViolationData> clazz) {
     return collection.get(clazz);
   }
 

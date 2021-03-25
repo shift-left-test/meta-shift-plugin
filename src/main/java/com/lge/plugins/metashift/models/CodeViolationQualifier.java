@@ -32,11 +32,11 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public final class CodeViolationQualifier extends Visitor implements Qualifiable {
+public final class CodeViolationQualifier extends Visitor implements Qualifier {
   /**
-   * Represents the collectino of CodeViolationCollector objects.
+   * Represents the collectino of CodeViolationCounter objects.
    */
-  private Map<Class<? extends CodeViolationData>, CodeViolationCollector> collection;
+  private Map<Class<? extends CodeViolationData>, CodeViolationCounter> collection;
   /**
    * Represents the threshold of the qualificiation.
    */
@@ -50,11 +50,11 @@ public final class CodeViolationQualifier extends Visitor implements Qualifiable
   public CodeViolationQualifier(final float threshold) {
     collection = new HashMap<>();
     collection.put(MajorCodeViolationData.class,
-                   new CodeViolationCollector(MajorCodeViolationData.class));
+                   new CodeViolationCounter(MajorCodeViolationData.class));
     collection.put(MinorCodeViolationData.class,
-                   new CodeViolationCollector(MinorCodeViolationData.class));
+                   new CodeViolationCounter(MinorCodeViolationData.class));
     collection.put(InfoCodeViolationData.class,
-                   new CodeViolationCollector(InfoCodeViolationData.class));
+                   new CodeViolationCounter(InfoCodeViolationData.class));
     this.threshold = threshold;
   }
 
@@ -62,9 +62,9 @@ public final class CodeViolationQualifier extends Visitor implements Qualifiable
    * Returns the relevant collector object based on the given type.
    *
    * @param clazz of the object type to return
-   * @return CodeViolationCollector object
+   * @return CodeViolationCounter object
    */
-  public CodeViolationCollector collection(final Class<? extends CodeViolationData> clazz) {
+  public CodeViolationCounter collection(final Class<? extends CodeViolationData> clazz) {
     return collection.get(clazz);
   }
 

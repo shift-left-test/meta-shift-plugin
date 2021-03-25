@@ -25,11 +25,15 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the duplication information from the given data sets.
+ * Collects the recipe violation information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class DuplicationCollector extends Visitor implements Measurable {
+public final class RecipeViolationCounter extends Visitor implements Counter {
+  /**
+   * Represents the class type.
+   */
+  private Class<? extends RecipeViolationData> clazz;
   /**
    * Represents the denominator.
    */
@@ -41,8 +45,11 @@ public final class DuplicationCollector extends Visitor implements Measurable {
 
   /**
    * Default constructor.
+   *
+   * @param clazz the class type
    */
-  public DuplicationCollector() {
+  public RecipeViolationCounter(final Class<? extends RecipeViolationData> clazz) {
+    this.clazz = clazz;
     this.denominator = 0;
     this.numerator = 0;
   }
@@ -58,8 +65,8 @@ public final class DuplicationCollector extends Visitor implements Measurable {
   }
 
   @Override
-  public void visit(final DuplicationSet duplications) {
-    denominator += duplications.stream().mapToInt(DuplicationData::getLines).sum();
-    numerator += duplications.stream().mapToInt(DuplicationData::getDuplicatedLines).sum();
+  public void visit(final RecipeViolationSet recipeViolations) {
+    denominator += recipeViolations.size();
+    numerator += recipeViolations.stream().filter(o -> o.getClass() == clazz).count();
   }
 }

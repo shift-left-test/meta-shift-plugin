@@ -29,20 +29,20 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the TestCollector class.
+ * Unit tests for the CodeViolationCounter class.
  *
  * @author Sung Gon Kim
  */
-public class TestCollectorTest {
-  private TestCollector collector;
-  private TestSet set;
+public class CodeViolationCounterTest {
+  private CodeViolationCounter collector;
+  private CodeViolationSet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
-    collector = new TestCollector(PassedTestData.class);
-    set = new TestSet();
+    collector = new CodeViolationCounter(MajorCodeViolationData.class);
+    set = new CodeViolationSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -66,50 +66,46 @@ public class TestCollectorTest {
 
   @Test
   public void testSetWithoutMatched() throws Exception {
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
+    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
     set.accept(collector);
-    assertValues(3, 0, 0.0f);
+    assertValues(2, 0, 0.0f);
   }
 
   @Test
   public void testSetWithMatched() throws Exception {
-    set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
+    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     set.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testSetWithCompoundData() throws Exception {
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
+    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     set.accept(collector);
-    assertValues(4, 1, 0.25f);
+    assertValues(3, 1, 0.3f);
   }
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<TestSet> group = new ArrayList<>();
+    List<CodeViolationSet> group = new ArrayList<>();
 
-    set = new TestSet();
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
+    set = new CodeViolationSet();
+    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     group.add(set);
 
-    set = new TestSet();
-    set.add(new FailedTestData("B", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("B", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("B", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("B", "a.suite", "d.tc", "msg"));
+    set = new CodeViolationSet();
+    set.add(new MinorCodeViolationData("B", "b.file", 1, 1, "r", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("B", "b.file", 2, 2, "r", "m", "d", "E", "t"));
+    set.add(new MajorCodeViolationData("B", "b.file", 3, 3, "r", "m", "d", "E", "t"));
     group.add(set);
 
     group.forEach(o -> o.accept(collector));
-    assertValues(8, 2, 0.25f);
+    assertValues(6, 2, 0.3f);
   }
 
   @Test
@@ -120,23 +116,21 @@ public class TestCollectorTest {
 
   @Test
   public void testRecipeWithoutMatched() throws Exception {
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
+    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(3, 0, 0.0f);
+    assertValues(2, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithMatched() throws Exception {
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
+    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(4, 1, 0.25f);
+    assertValues(3, 1, 0.3f);
   }
 
   @Test
@@ -147,25 +141,23 @@ public class TestCollectorTest {
 
   @Test
   public void testRecipeSetWithCompoundData() throws Exception {
-    set = new TestSet();
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
+    set = new CodeViolationSet();
+    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new TestSet();
-    set.add(new FailedTestData("B", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("B", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("B", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("B", "a.suite", "d.tc", "msg"));
+    set = new CodeViolationSet();
+    set.add(new MinorCodeViolationData("B", "b.file", 1, 1, "r", "m", "d", "E", "t"));
+    set.add(new InfoCodeViolationData("B", "b.file", 2, 2, "r", "m", "d", "E", "t"));
+    set.add(new MajorCodeViolationData("B", "b.file", 3, 3, "r", "m", "d", "E", "t"));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
     recipes.accept(collector);
-    assertValues(8, 2, 0.25f);
+    assertValues(6, 2, 0.3f);
   }
 }

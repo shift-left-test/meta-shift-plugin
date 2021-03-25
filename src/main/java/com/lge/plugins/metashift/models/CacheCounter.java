@@ -25,17 +25,17 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the mutation test information from the given data sets.
+ * Collects the cache availability information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class MutationTestCollector extends Visitor implements Measurable {
+public final class CacheCounter extends Visitor implements Counter {
   /**
    * Represents the class type.
    */
-  private Class<? extends MutationTestData> clazz;
+  private Class<? extends CacheData> clazz;
   /**
-   * Represents the denominator.
+   * Represents the demoniator.
    */
   private int denominator;
   /**
@@ -48,7 +48,7 @@ public final class MutationTestCollector extends Visitor implements Measurable {
    *
    * @param clazz the class type
    */
-  public MutationTestCollector(final Class<? extends MutationTestData> clazz) {
+  public CacheCounter(final Class<? extends CacheData> clazz) {
     this.clazz = clazz;
     this.denominator = 0;
     this.numerator = 0;
@@ -65,8 +65,14 @@ public final class MutationTestCollector extends Visitor implements Measurable {
   }
 
   @Override
-  public void visit(final MutationTestSet objects) {
-    denominator += objects.size();
-    numerator += objects.stream().filter(o -> o.getClass() == clazz).count();
+  public void visit(final CacheSet caches) {
+    denominator += caches
+        .stream()
+        .filter(o -> o.getClass() == clazz)
+        .count();
+    numerator += caches
+        .stream()
+        .filter(o -> o.getClass() == clazz && o.isAvailable())
+        .count();
   }
 }

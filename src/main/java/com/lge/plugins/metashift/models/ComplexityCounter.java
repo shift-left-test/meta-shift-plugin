@@ -25,34 +25,48 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Provides an interface to measure data.
+ * Collects the complexity information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public interface Measurable {
+public final class ComplexityCounter extends Visitor implements Counter {
   /**
-   * Returns the denominator of the metric.
-   *
-   * @return denominator
+   * Represents the denominator.
    */
-  int getDenominator();
+  private int denominator;
+  /**
+   * Represents the numerator.
+   */
+  private int numerator;
+  /**
+   * Represents the threshold.
+   */
+  private int threshold;
 
   /**
-   * Returns the numerator of the metric.
+   * Default constructor.
    *
-   * @return numerator
+   * @param threshold for data collection.
    */
-  int getNumerator();
+  public ComplexityCounter(int threshold) {
+    this.denominator = 0;
+    this.numerator = 0;
+    this.threshold = threshold;
+  }
 
-  /**
-   * Returns the calculated ratio of the metric or
-   * zero if the denominator is zero.
-   *
-   * @return ratio
-   */
-  default float getRatio() {
-    int denominator = getDenominator();
-    int numerator = getNumerator();
-    return denominator > 0 ? (float) numerator / (float) denominator : 0.0f;
+  @Override
+  public int getDenominator() {
+    return denominator;
+  }
+
+  @Override
+  public int getNumerator() {
+    return numerator;
+  }
+
+  @Override
+  public void visit(final ComplexitySet objects) {
+    denominator += objects.stream().distinct().count();
+    numerator += objects.stream().filter(o -> o.getValue() >= threshold).count();
   }
 }

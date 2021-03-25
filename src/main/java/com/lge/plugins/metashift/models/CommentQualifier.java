@@ -29,11 +29,11 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class CommentQualifier extends Visitor implements Qualifiable {
+public final class CommentQualifier extends Visitor implements Qualifier {
   /**
-   * Represents the collection of CommentCollector objects.
+   * Represents the collection of CommentCounter objects.
    */
-  private CommentCollector collection;
+  private CommentCounter collection;
   /**
    * Represents the threshold of the qualification.
    */
@@ -45,16 +45,16 @@ public final class CommentQualifier extends Visitor implements Qualifiable {
    * @param threshold for evaluation
    */
   public CommentQualifier(final float threshold) {
-    this.collection = new CommentCollector();
+    this.collection = new CommentCounter();
     this.threshold = threshold;
   }
 
   /**
    * Returns the collector object.
    *
-   * @return CommentCollector object
+   * @return CommentCounter object
    */
-  public CommentCollector collection() {
+  public CommentCounter collection() {
     return collection;
   }
 

@@ -29,105 +29,75 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the CommentCollector class.
+ * Unit tests for the SizeCounter class.
  *
  * @author Sung Gon Kim
  */
-public class CommentCollectorTest {
-  private CommentCollector collector;
-  private CommentSet set;
+public class SizeCounterTest {
+  private SizeCounter collector;
+  private SizeSet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
-    collector = new CommentCollector();
-    set = new CommentSet();
+    collector = new SizeCounter();
+    set = new SizeSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
 
-  private void assertValues(int denominator, int numerator, float ratio) {
-    assertEquals(denominator, collector.getDenominator());
-    assertEquals(numerator, collector.getNumerator());
-    assertEquals(ratio, collector.getRatio(), 0.1f);
+  private void assertValues(int recipes, int files, int lines, int functions, int classes) {
+    assertEquals(recipes, collector.getRecipes());
+    assertEquals(files, collector.getFiles());
+    assertEquals(lines, collector.getLines());
+    assertEquals(functions, collector.getFunctions());
+    assertEquals(classes, collector.getClasses());
   }
 
   @Test
   public void testInitialState() throws Exception {
-    assertValues(0, 0, 0.0f);
+    assertValues(0, 0, 0, 0, 0);
   }
 
   @Test
   public void testEmptySet() throws Exception {
     set.accept(collector);
-    assertValues(0, 0, 0.0f);
+    assertValues(0, 0, 0, 0, 0);
   }
 
   @Test
-  public void testSetWithCompoundData() throws Exception {
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 20, 10));
+  public void testSetWithData() throws Exception {
+    set.add(new SizeData("A", "a.file", 3, 2, 1));
+    set.add(new SizeData("A", "b.file", 6, 4, 2));
     set.accept(collector);
-    assertValues(30, 15, 0.5f);
-  }
-
-  @Test
-  public void testMultipleSets() throws Exception {
-    List<CommentSet> group = new ArrayList<>();
-
-    set = new CommentSet();
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 20, 10));
-    group.add(set);
-
-    set = new CommentSet();
-    set.add(new CommentData("B", "a.file", 10, 5));
-    set.add(new CommentData("B", "b.file", 20, 10));
-    group.add(set);
-
-    group.forEach(o -> o.accept(collector));
-    assertValues(60, 30, 0.5f);
-  }
-
-  @Test
-  public void testEmptyRecipe() throws Exception {
-    recipe.accept(collector);
-    assertValues(0, 0, 0.0f);
+    assertValues(1, 2, 9, 6, 3);
   }
 
   @Test
   public void testRecipeWithData() throws Exception {
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 20, 10));
+    set.add(new SizeData("A", "a.file", 3, 2, 1));
+    set.add(new SizeData("A", "b.file", 6, 4, 2));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(30, 15, 0.5f);
-  }
-
-  @Test
-  public void testEmptyRecipeSet() throws Exception {
-    recipes.accept(collector);
-    assertValues(0, 0, 0.0f);
+    assertValues(1, 2, 9, 6, 3);
   }
 
   @Test
   public void testRecipeSetWithCompoundData() throws Exception {
-    set = new CommentSet();
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 20, 10));
     recipe = new Recipe("A-1.0.0-r0");
+    set = new SizeSet();
+    set.add(new SizeData("A", "a.file", 3, 2, 1));
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new CommentSet();
-    set.add(new CommentData("B", "a.file", 10, 5));
-    set.add(new CommentData("B", "b.file", 20, 10));
     recipe = new Recipe("B-1.0.0-r0");
+    set = new SizeSet();
+    set.add(new SizeData("B", "b.file", 6, 4, 2));
     recipe.set(set);
     recipes.add(recipe);
 
     recipes.accept(collector);
-    assertValues(60, 30, 0.5f);
+    assertValues(2, 2, 9, 6, 3);
   }
 }

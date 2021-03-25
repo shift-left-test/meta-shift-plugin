@@ -25,54 +25,34 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the cache availability information from the given data sets.
+ * Provides an interface to count data.
  *
  * @author Sung Gon Kim
  */
-public final class CacheCollector extends Visitor implements Measurable {
+public interface Counter {
   /**
-   * Represents the class type.
-   */
-  private Class<? extends CacheData> clazz;
-  /**
-   * Represents the demoniator.
-   */
-  private int denominator;
-  /**
-   * Represents the numerator.
-   */
-  private int numerator;
-
-  /**
-   * Default constructor.
+   * Returns the denominator of the metric.
    *
-   * @param clazz the class type
+   * @return denominator
    */
-  public CacheCollector(final Class<? extends CacheData> clazz) {
-    this.clazz = clazz;
-    this.denominator = 0;
-    this.numerator = 0;
-  }
+  int getDenominator();
 
-  @Override
-  public int getDenominator() {
-    return denominator;
-  }
+  /**
+   * Returns the numerator of the metric.
+   *
+   * @return numerator
+   */
+  int getNumerator();
 
-  @Override
-  public int getNumerator() {
-    return numerator;
-  }
-
-  @Override
-  public void visit(final CacheSet caches) {
-    denominator += caches
-        .stream()
-        .filter(o -> o.getClass() == clazz)
-        .count();
-    numerator += caches
-        .stream()
-        .filter(o -> o.getClass() == clazz && o.isAvailable())
-        .count();
+  /**
+   * Returns the calculated ratio of the metric or
+   * zero if the denominator is zero.
+   *
+   * @return ratio
+   */
+  default float getRatio() {
+    int denominator = getDenominator();
+    int numerator = getNumerator();
+    return denominator > 0 ? (float) numerator / (float) denominator : 0.0f;
   }
 }

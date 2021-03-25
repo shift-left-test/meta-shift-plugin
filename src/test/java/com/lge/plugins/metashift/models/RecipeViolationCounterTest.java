@@ -29,20 +29,20 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for the ComplexityCollector class.
+ * Unit tests for the RecipeViolationCounter class.
  *
  * @author Sung Gon Kim
  */
-public class ComplexityCollectorTest {
-  private ComplexityCollector collector;
-  private ComplexitySet set;
+public class RecipeViolationCounterTest {
+  private RecipeViolationCounter collector;
+  private RecipeViolationSet set;
   private Recipe recipe;
   private RecipeSet recipes;
 
   @Before
   public void setUp() throws Exception {
-    collector = new ComplexityCollector(10);
-    set = new ComplexitySet();
+    collector = new RecipeViolationCounter(MajorRecipeViolationData.class);
+    set = new RecipeViolationSet();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeSet();
   }
@@ -66,42 +66,42 @@ public class ComplexityCollectorTest {
 
   @Test
   public void testSetWithoutMatched() throws Exception {
-    set.add(new ComplexityData("A", "a.file", "f()", 1));
-    set.add(new ComplexityData("A", "a.file", "g()", 9));
+    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     set.accept(collector);
     assertValues(2, 0, 0.0f);
   }
 
   @Test
   public void testSetWithMatched() throws Exception {
-    set.add(new ComplexityData("A", "a.file", "h()", 10));
+    set.add(new MajorRecipeViolationData("A", "a.file", 1, "rule", "info", "error"));
     set.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testSetWithCompoundData() throws Exception {
-    set.add(new ComplexityData("A", "a.file", "f()", 1));
-    set.add(new ComplexityData("A", "a.file", "g()", 9));
-    set.add(new ComplexityData("A", "a.file", "h()", 10));
+    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     set.accept(collector);
     assertValues(3, 1, 0.3f);
   }
 
   @Test
   public void testMultipleSets() throws Exception {
-    List<ComplexitySet> group = new ArrayList<>();
+    List<RecipeViolationSet> group = new ArrayList<>();
 
-    set = new ComplexitySet();
-    set.add(new ComplexityData("A", "a.file", "f()", 1));
-    set.add(new ComplexityData("A", "a.file", "g()", 9));
-    set.add(new ComplexityData("A", "a.file", "h()", 10));
+    set = new RecipeViolationSet();
+    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     group.add(set);
 
-    set = new ComplexitySet();
-    set.add(new ComplexityData("B", "a.file", "f()", 1));
-    set.add(new ComplexityData("B", "a.file", "g()", 9));
-    set.add(new ComplexityData("B", "a.file", "h()", 10));
+    set = new RecipeViolationSet();
+    set.add(new MinorRecipeViolationData("B", "b.file", 1, "minor", "minor", "minor"));
+    set.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
+    set.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
     group.add(set);
 
     group.forEach(o -> o.accept(collector));
@@ -116,18 +116,21 @@ public class ComplexityCollectorTest {
 
   @Test
   public void testRecipeWithoutMatched() throws Exception {
-    set.add(new ComplexityData("A", "a.file", "g()", 9));
+    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(1, 0, 0.0f);
+    assertValues(2, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithMatched() throws Exception {
-    set.add(new ComplexityData("A", "a.file", "g()", 10));
+    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     recipe.set(set);
     recipe.accept(collector);
-    assertValues(1, 1, 1.0f);
+    assertValues(3, 1, 0.3f);
   }
 
   @Test
@@ -138,18 +141,18 @@ public class ComplexityCollectorTest {
 
   @Test
   public void testRecipeSetWithCompoundData() throws Exception {
-    set = new ComplexitySet();
-    set.add(new ComplexityData("A", "a.file", "f()", 1));
-    set.add(new ComplexityData("A", "a.file", "g()", 9));
-    set.add(new ComplexityData("A", "a.file", "h()", 10));
+    set = new RecipeViolationSet();
+    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);
 
-    set = new ComplexitySet();
-    set.add(new ComplexityData("B", "a.file", "f()", 1));
-    set.add(new ComplexityData("B", "a.file", "g()", 9));
-    set.add(new ComplexityData("B", "a.file", "h()", 10));
+    set = new RecipeViolationSet();
+    set.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
+    set.add(new MinorRecipeViolationData("B", "b.file", 1, "minor", "minor", "minor"));
+    set.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(set);
     recipes.add(recipe);

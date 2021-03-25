@@ -25,15 +25,15 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Collects the recipe violation information from the given data sets.
+ * Collects the mutation test information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeViolationCollector extends Visitor implements Measurable {
+public final class MutationTestCounter extends Visitor implements Counter {
   /**
    * Represents the class type.
    */
-  private Class<? extends RecipeViolationData> clazz;
+  private Class<? extends MutationTestData> clazz;
   /**
    * Represents the denominator.
    */
@@ -48,7 +48,7 @@ public final class RecipeViolationCollector extends Visitor implements Measurabl
    *
    * @param clazz the class type
    */
-  public RecipeViolationCollector(final Class<? extends RecipeViolationData> clazz) {
+  public MutationTestCounter(final Class<? extends MutationTestData> clazz) {
     this.clazz = clazz;
     this.denominator = 0;
     this.numerator = 0;
@@ -65,8 +65,8 @@ public final class RecipeViolationCollector extends Visitor implements Measurabl
   }
 
   @Override
-  public void visit(final RecipeViolationSet recipeViolations) {
-    denominator += recipeViolations.size();
-    numerator += recipeViolations.stream().filter(o -> o.getClass() == clazz).count();
+  public void visit(final MutationTestSet objects) {
+    denominator += objects.size();
+    numerator += objects.stream().filter(o -> o.getClass() == clazz).count();
   }
 }

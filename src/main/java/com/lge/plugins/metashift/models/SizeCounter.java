@@ -29,7 +29,7 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class SizeCollector extends Visitor {
+public final class SizeCounter extends Visitor {
   /**
    * Represents the sum of the number of classes.
    */
@@ -54,7 +54,7 @@ public final class SizeCollector extends Visitor {
   /**
    * Default constructor.
    */
-  public SizeCollector() {
+  public SizeCounter() {
     this.classes = 0;
     this.files = 0;
     this.functions = 0;
