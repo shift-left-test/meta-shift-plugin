@@ -1,0 +1,12 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <l:header />
+  <l:side-panel>
+    <l:tasks>
+      <j:set var="buildUrl" value="${h.decompose(request)}" />
+      <st:include it="${it.run}" page="tasks.jelly"/>
+      <st:include it="${it.run}" page="delete.jelly" />
+      <st:include it="${it.run}" page="actions.jelly" />
+    </l:tasks>
+  </l:side-panel>
+</j:jelly>
