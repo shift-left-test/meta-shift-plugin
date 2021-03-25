@@ -24,6 +24,17 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
 /**
  * Represents a set of DuplicationData objects.
  *
@@ -33,5 +44,36 @@ public final class DuplicationList extends DataList<DuplicationData> {
   @Override
   public void accept(final Visitor visitor) {
     visitor.visit(this);
+  }
+
+  /**
+   * Create a set of objects by parsing a report file from the given path.
+   *
+   * @param recipe name
+   * @param path to the report directory
+   * @return a set of objects
+   */
+  public static DuplicationList create(final String recipe, final File path) throws
+      IOException, InterruptedException {
+    File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
+    DuplicationList set = new DuplicationList();
+    try {
+      InputStream is = new BufferedInputStream(new FileInputStream(report));
+      JSONObject json = JSONObject.fromObject(IOUtils.toString(is, "UTF-8"));
+      for (Object o : json.getJSONArray("size")) {
+        set.add(new DuplicationData(recipe,
+                                    ((JSONObject) o).getString("file"),
+                                    ((JSONObject) o).getInt("total_lines"),
+                                    ((JSONObject) o).getInt("duplicated_lines")));
+      }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
+      throw new IllegalArgumentException("Failed to parse: " + report);
+    }
+    return set;
   }
 }

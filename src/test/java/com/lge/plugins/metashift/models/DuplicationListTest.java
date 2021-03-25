@@ -24,7 +24,11 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.io.*;
+import java.util.*;
+import org.apache.commons.io.*;
 import org.junit.*;
+import org.junit.rules.*;
 import static org.junit.Assert.*;
 
 /**
@@ -33,11 +37,28 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class DuplicationListTest {
+  @Rule
+  public TemporaryFolder folder = new TemporaryFolder();
   private DuplicationList objects;
 
   @Before
   public void setUp() throws Exception {
     objects = new DuplicationList();
+  }
+
+  private File createTempFile(String path, Collection<String> lines) throws Exception {
+    File directory = folder.newFolder(FilenameUtils.getPath(path));
+    File file = new File(directory, FilenameUtils.getName(path));
+    FileUtils.writeLines(file, lines);
+    return file;
+  }
+
+  private void assertValues(DuplicationData object, String recipe, String file,
+                            int lines, int duplicatedLines) {
+    assertEquals(recipe, object.getRecipe());
+    assertEquals(file, object.getFile());
+    assertEquals(lines, object.getLines());
+    assertEquals(duplicatedLines, object.getDuplicatedLines());
   }
 
   @Test
@@ -48,5 +69,77 @@ public class DuplicationListTest {
     objects.add(first);
     assertEquals(2, objects.size());
     assertEquals(first, objects.get(1));
+  }
+
+  @Test
+  public void testCreateSetWithUnknownPath() throws Exception {
+    objects = DuplicationList.create("A", new File(folder.getRoot(), "unknown"));
+    assertEquals(0, objects.size());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateSetWithMalformedFile() throws Exception {
+    List<String> data = Arrays.asList(
+        "{ \"size\": [ ",
+        "  {",
+        "    \"file\": \"a.file\",",
+        "  }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+    objects = DuplicationList.create("A", file.getParentFile().getParentFile());
+  }
+
+  @Test
+  public void testCreateSetWithEmptyData() throws Exception {
+    List<String> data = Arrays.asList("{ \"size\": [] }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+    objects = DuplicationList.create("A", file.getParentFile().getParentFile());
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testCreateSetWithSingleData() throws Exception {
+    List<String> data = Arrays.asList(
+        "{ \"size\": [ ",
+        "  {",
+        "    \"file\": \"a.file\",",
+        "    \"total_lines\": 20,",
+        "    \"code_lines\": 1,",
+        "    \"comment_lines\": 5,",
+        "    \"duplicated_lines\": 2,",
+        "    \"functions\": 15,",
+        "    \"classes\": 6",
+        "  } ",
+        "] }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+
+    objects = DuplicationList.create("A", file.getParentFile().getParentFile());
+    assertEquals(1, objects.size());
+
+    DuplicationData object = objects.iterator().next();
+    assertValues(object, "A", "a.file", 20, 2);
+  }
+
+  @Test
+  public void testCreateSetWithMultipleData() throws Exception {
+    List<String> data = Arrays.asList(
+        "{ \"size\": [ ",
+        "{",
+        "  \"file\": \"a.file\",",
+        "  \"total_lines\": 10,",
+        "  \"duplicated_lines\": 5,",
+        "},",
+        "{",
+        "  \"file\": \"b.file\",",
+        "  \"total_lines\": 20,",
+        "  \"duplicated_lines\": 5,",
+        "} ] }");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+
+    objects = DuplicationList.create("A", file.getParentFile().getParentFile());
+    assertEquals(2, objects.size());
+
+    Iterator<DuplicationData> iterator = objects.iterator();
+    assertValues(iterator.next(), "A", "a.file", 10, 5);
+    assertValues(iterator.next(), "A", "b.file", 20, 5);
   }
 }
