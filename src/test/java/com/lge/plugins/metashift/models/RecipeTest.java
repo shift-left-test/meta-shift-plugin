@@ -45,9 +45,7 @@ public class RecipeTest {
 
   @Test
   public void testInitialState() throws Exception {
-    assertEquals("cmake-project", origin.getRecipe());
-    assertEquals("1.0.0", origin.getVersion());
-    assertEquals("r0", origin.getRevision());
+    assertEquals("cmake-project-1.0.0-r0", origin.getRecipe());
   }
 
   @Test(expected=IllegalArgumentException.class)
@@ -63,9 +61,7 @@ public class RecipeTest {
   @Test
   public void testInitWithComplexFullname() throws Exception {
     Recipe recipe = new Recipe("qtbase+-native-5.15.2+gitAUTOINC+40143c189b-r+1.0");
-    assertEquals("qtbase+-native", recipe.getRecipe());
-    assertEquals("5.15.2+gitAUTOINC+40143c189b", recipe.getVersion());
-    assertEquals("r+1.0", recipe.getRevision());
+    assertEquals("qtbase+-native-5.15.2+gitAUTOINC+40143c189b-r+1.0", recipe.getRecipe());
   }
 
   @Test

@@ -41,14 +41,6 @@ public final class Recipe implements Data<Recipe>, Acceptor {
    */
   private String recipe;
   /**
-   * Represents the revision number.
-   */
-  private String revision;
-  /**
-   * Represents the version number.
-   */
-  private String version;
-  /**
    * Represents the data set mapper.
    */
   private Map<Class<?>, DataSet<?>> collection;
@@ -56,22 +48,18 @@ public final class Recipe implements Data<Recipe>, Acceptor {
   /**
    * Default constructor.
    *
-   * @param fullname of the recipe
-   * @throws IllegalArgumentException if the fullname is malformed
+   * @param recipe name
+   * @throws IllegalArgumentException if the recipe name is malformed
    */
-  public Recipe(final String fullname) {
+  public Recipe(final String recipe) {
     String regexp = "^(?<recipe>[\\w-+]+)(?:-)(?<version>[\\w.+]+)(?:-)(?<revision>[\\w.+]+)$";
     Pattern pattern = Pattern.compile(regexp);
-    Matcher matcher = pattern.matcher(fullname);
-    try {
-      matcher.matches();
-      this.recipe = matcher.group("recipe");
-      this.revision = matcher.group("revision");
-      this.version = matcher.group("version");
-    } catch (IllegalStateException | IllegalArgumentException e) {
-      throw new IllegalArgumentException("Invalid argument: " + fullname);
+    Matcher matcher = pattern.matcher(recipe);
+    if (!matcher.matches()) {
+      throw new IllegalArgumentException("Invalid recipe name: " + recipe);
     }
 
+    this.recipe = recipe;
     collection = new HashMap<>();
     collection.put(CacheSet.class, new CacheSet());
   }
@@ -118,14 +106,6 @@ public final class Recipe implements Data<Recipe>, Acceptor {
     if (compared != 0) {
       return compared;
     }
-    compared = version.compareTo(other.version);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = revision.compareTo(other.revision);
-    if (compared != 0) {
-      return compared;
-    }
     return 0;
   }
 
@@ -144,12 +124,6 @@ public final class Recipe implements Data<Recipe>, Acceptor {
     if (!recipe.equals(other.recipe)) {
       return false;
     }
-    if (!version.equals(other.version)) {
-      return false;
-    }
-    if (!revision.equals(other.revision)) {
-      return false;
-    }
     return true;
   }
 
@@ -158,31 +132,12 @@ public final class Recipe implements Data<Recipe>, Acceptor {
     return recipe;
   }
 
-  /**
-   * Return the revision of the recipe.
-   *
-   * @return revision
-   */
-  public String getRevision() {
-    return revision;
-  }
-
-  /**
-   * Return the versino of the recipe.
-   *
-   * @return version
-   */
-  public String getVersion() {
-    return version;
-  }
-
   @Override
   public int hashCode() {
     final int prime = 31;
     int hashCode = 1;
+    hashCode = prime * hashCode + getClass().hashCode();
     hashCode = prime * hashCode + recipe.hashCode();
-    hashCode = prime * hashCode + version.hashCode();
-    hashCode = prime * hashCode + revision.hashCode();
     return hashCode;
   }
 }
