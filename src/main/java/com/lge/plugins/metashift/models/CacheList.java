@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.models;
 
+import com.lge.plugins.metashift.metrics.Visitor;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;

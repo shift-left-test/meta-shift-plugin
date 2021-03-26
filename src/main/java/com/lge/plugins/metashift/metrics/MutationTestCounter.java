@@ -22,18 +22,54 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.metrics.Visitor;
+import com.lge.plugins.metashift.models.MutationTestData;
+import com.lge.plugins.metashift.models.MutationTestList;
 
 /**
- * Represents a set of Recipe objects.
+ * Collects the mutation test information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeList extends DataList<Recipe> {
+public final class MutationTestCounter extends Visitor implements Counter {
+  /**
+   * Represents the class type.
+   */
+  private Class<? extends MutationTestData> clazz;
+  /**
+   * Represents the denominator.
+   */
+  private int denominator;
+  /**
+   * Represents the numerator.
+   */
+  private int numerator;
+
+  /**
+   * Default constructor.
+   *
+   * @param clazz the class type
+   */
+  public MutationTestCounter(final Class<? extends MutationTestData> clazz) {
+    this.clazz = clazz;
+    this.denominator = 0;
+    this.numerator = 0;
+  }
+
   @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
+  public int getDenominator() {
+    return denominator;
+  }
+
+  @Override
+  public int getNumerator() {
+    return numerator;
+  }
+
+  @Override
+  public void visit(final MutationTestList objects) {
+    denominator += objects.size();
+    numerator += objects.stream().filter(o -> o.getClass() == clazz).count();
   }
 }

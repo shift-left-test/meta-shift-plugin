@@ -22,18 +22,25 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
-
-import com.lge.plugins.metashift.metrics.Visitor;
+package com.lge.plugins.metashift.metrics;
 
 /**
- * Represents a set of Recipe objects.
+ * Qualifier interface.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeList extends DataList<Recipe> {
-  @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
-  }
+public interface Qualifier {
+  /**
+   * Returns whether the metric is availabile.
+   *
+   * @return true if the metric is available, false otherwise
+   */
+  boolean isAvailable();
+
+  /**
+   * Returns whether the evaluation of the metric meets the criteria.
+   *
+   * @return true if the metric meets the criteria, false otherwise
+   */
+  boolean isQualified();
 }

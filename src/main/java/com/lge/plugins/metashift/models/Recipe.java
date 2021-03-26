@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.models;
 
+import com.lge.plugins.metashift.metrics.Visitor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;

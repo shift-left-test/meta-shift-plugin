@@ -22,18 +22,47 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.metrics.Visitor;
+import com.lge.plugins.metashift.models.CommentData;
+import com.lge.plugins.metashift.models.CommentList;
 
 /**
- * Represents a set of Recipe objects.
+ * Collects the comment information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeList extends DataList<Recipe> {
+public final class CommentCounter extends Visitor implements Counter {
+  /**
+   * Represents the denominator.
+   */
+  private int denominator;
+  /**
+   * Represents the numerator.
+   */
+  private int numerator;
+
+  /**
+   * Default constructor.
+   */
+  public CommentCounter() {
+    this.denominator = 0;
+    this.numerator = 0;
+  }
+
   @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
+  public int getDenominator() {
+    return denominator;
+  }
+
+  @Override
+  public int getNumerator() {
+    return numerator;
+  }
+
+  @Override
+  public void visit(final CommentList comments) {
+    denominator += comments.stream().mapToInt(CommentData::getLines).sum();
+    numerator += comments.stream().mapToInt(CommentData::getCommentLines).sum();
   }
 }

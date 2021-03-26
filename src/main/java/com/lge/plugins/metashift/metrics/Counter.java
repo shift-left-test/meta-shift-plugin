@@ -22,18 +22,37 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
-
-import com.lge.plugins.metashift.metrics.Visitor;
+package com.lge.plugins.metashift.metrics;
 
 /**
- * Represents a set of Recipe objects.
+ * Provides an interface to count data.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeList extends DataList<Recipe> {
-  @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
+public interface Counter {
+  /**
+   * Returns the denominator of the metric.
+   *
+   * @return denominator
+   */
+  int getDenominator();
+
+  /**
+   * Returns the numerator of the metric.
+   *
+   * @return numerator
+   */
+  int getNumerator();
+
+  /**
+   * Returns the calculated ratio of the metric or
+   * zero if the denominator is zero.
+   *
+   * @return ratio
+   */
+  default float getRatio() {
+    int denominator = getDenominator();
+    int numerator = getNumerator();
+    return denominator > 0 ? (float) numerator / (float) denominator : 0.0f;
   }
 }

@@ -22,18 +22,47 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.metrics.Visitor;
+import com.lge.plugins.metashift.models.DuplicationData;
+import com.lge.plugins.metashift.models.DuplicationList;
 
 /**
- * Represents a set of Recipe objects.
+ * Collects the duplication information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeList extends DataList<Recipe> {
+public final class DuplicationCounter extends Visitor implements Counter {
+  /**
+   * Represents the denominator.
+   */
+  private int denominator;
+  /**
+   * Represents the numerator.
+   */
+  private int numerator;
+
+  /**
+   * Default constructor.
+   */
+  public DuplicationCounter() {
+    this.denominator = 0;
+    this.numerator = 0;
+  }
+
   @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
+  public int getDenominator() {
+    return denominator;
+  }
+
+  @Override
+  public int getNumerator() {
+    return numerator;
+  }
+
+  @Override
+  public void visit(final DuplicationList duplications) {
+    denominator += duplications.stream().mapToInt(DuplicationData::getLines).sum();
+    numerator += duplications.stream().mapToInt(DuplicationData::getDuplicatedLines).sum();
   }
 }

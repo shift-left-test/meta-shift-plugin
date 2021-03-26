@@ -22,18 +22,54 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.metrics.Visitor;
+import com.lge.plugins.metashift.models.CodeViolationData;
+import com.lge.plugins.metashift.models.CodeViolationList;
 
 /**
- * Represents a set of Recipe objects.
+ * Collects the code violation information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeList extends DataList<Recipe> {
+public final class CodeViolationCounter extends Visitor implements Counter {
+  /**
+   * Represents the class type.
+   */
+  private Class<? extends CodeViolationData> clazz;
+  /**
+   * Represents the denominator.
+   */
+  private int denominator;
+  /**
+   * Represents the numerator.
+   */
+  private int numerator;
+
+  /**
+   * Default constructor.
+   *
+   * @param clazz the class type
+   */
+  public CodeViolationCounter(final Class<? extends CodeViolationData> clazz) {
+    this.clazz = clazz;
+    this.denominator = 0;
+    this.numerator = 0;
+  }
+
   @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
+  public int getDenominator() {
+    return denominator;
+  }
+
+  @Override
+  public int getNumerator() {
+    return numerator;
+  }
+
+  @Override
+  public void visit(final CodeViolationList codeViolations) {
+    denominator += codeViolations.size();
+    numerator += codeViolations.stream().filter(o -> o.getClass() == clazz).count();
   }
 }

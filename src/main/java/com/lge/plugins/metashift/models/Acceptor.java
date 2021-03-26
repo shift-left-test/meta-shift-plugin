@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.models;
 
+import com.lge.plugins.metashift.metrics.Visitor;
+
 /**
  * Provides an interface for container classes.
  *

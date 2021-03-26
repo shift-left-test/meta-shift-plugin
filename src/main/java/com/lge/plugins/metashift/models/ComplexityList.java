@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.models;
 
+import com.lge.plugins.metashift.metrics.Visitor;
+
 /**
  * Represents a set of ComplexityData objects.
  *

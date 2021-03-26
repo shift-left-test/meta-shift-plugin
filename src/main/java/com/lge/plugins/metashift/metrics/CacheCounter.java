@@ -22,18 +22,60 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.metrics.Visitor;
+import com.lge.plugins.metashift.models.CacheData;
+import com.lge.plugins.metashift.models.CacheList;
 
 /**
- * Represents a set of Recipe objects.
+ * Collects the cache availability information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeList extends DataList<Recipe> {
+public final class CacheCounter extends Visitor implements Counter {
+  /**
+   * Represents the class type.
+   */
+  private Class<? extends CacheData> clazz;
+  /**
+   * Represents the demoniator.
+   */
+  private int denominator;
+  /**
+   * Represents the numerator.
+   */
+  private int numerator;
+
+  /**
+   * Default constructor.
+   *
+   * @param clazz the class type
+   */
+  public CacheCounter(final Class<? extends CacheData> clazz) {
+    this.clazz = clazz;
+    this.denominator = 0;
+    this.numerator = 0;
+  }
+
   @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
+  public int getDenominator() {
+    return denominator;
+  }
+
+  @Override
+  public int getNumerator() {
+    return numerator;
+  }
+
+  @Override
+  public void visit(final CacheList caches) {
+    denominator += caches
+        .stream()
+        .filter(o -> o.getClass() == clazz)
+        .count();
+    numerator += caches
+        .stream()
+        .filter(o -> o.getClass() == clazz && o.isAvailable())
+        .count();
   }
 }

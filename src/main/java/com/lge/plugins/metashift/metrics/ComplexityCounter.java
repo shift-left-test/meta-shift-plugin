@@ -22,18 +22,53 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.metrics.Visitor;
+import com.lge.plugins.metashift.models.ComplexityList;
 
 /**
- * Represents a set of Recipe objects.
+ * Collects the complexity information from the given data sets.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeList extends DataList<Recipe> {
+public final class ComplexityCounter extends Visitor implements Counter {
+  /**
+   * Represents the denominator.
+   */
+  private int denominator;
+  /**
+   * Represents the numerator.
+   */
+  private int numerator;
+  /**
+   * Represents the threshold.
+   */
+  private int threshold;
+
+  /**
+   * Default constructor.
+   *
+   * @param threshold for data collection.
+   */
+  public ComplexityCounter(int threshold) {
+    this.denominator = 0;
+    this.numerator = 0;
+    this.threshold = threshold;
+  }
+
   @Override
-  public void accept(final Visitor visitor) {
-    visitor.visit(this);
+  public int getDenominator() {
+    return denominator;
+  }
+
+  @Override
+  public int getNumerator() {
+    return numerator;
+  }
+
+  @Override
+  public void visit(final ComplexityList objects) {
+    denominator += objects.stream().distinct().count();
+    numerator += objects.stream().filter(o -> o.getValue() >= threshold).count();
   }
 }
