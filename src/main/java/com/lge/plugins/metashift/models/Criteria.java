@@ -79,17 +79,46 @@ public final class Criteria {
    * Default constructor.
    */
   public Criteria() {
-    cacheThreshold = 0.0f;
-    codeViolationThreshold = 0.0f;
-    commentThreshold = 0.0f;
-    complexityLevel = 0;
-    complexityThreshold = 0.0f;
-    coverageThreshold = 0.0f;
-    duplicationThreshold = 0.0f;
-    mutationTestThreshold = 0.0f;
-    overallThreshold = 0.0f;
-    recipeViolationThreshold = 0.0f;
-    testThreshold = 0.0f;
+    this(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+  }
+
+  /**
+   * Default constructor.
+   *
+   * @param overallThreshold overall threshold
+   * @param cacheThreshold cache availability threshold
+   * @param recipeViolationThreshold recipe violation threshold
+   * @param commentThreshold comment threshold
+   * @param codeViolationThreshold code violation threshold
+   * @param complexityLevel complexity level
+   * @param complexityThreshold complexity threshold
+   * @param duplicationThreshold duplication threshold
+   * @param testThreshold test threshold
+   * @param coverageThreshold coverage threshold
+   * @param mutationTestThreshold mutation test threshold
+   */
+  public Criteria(final float overallThreshold,
+                  final float cacheThreshold,
+                  final float recipeViolationThreshold,
+                  final float commentThreshold,
+                  final float codeViolationThreshold,
+                  final int complexityLevel,
+                  final float complexityThreshold,
+                  final float duplicationThreshold,
+                  final float testThreshold,
+                  final float coverageThreshold,
+                  final float mutationTestThreshold) {
+    this.overallThreshold = overallThreshold;
+    this.cacheThreshold = cacheThreshold;
+    this.recipeViolationThreshold = recipeViolationThreshold;
+    this.commentThreshold = commentThreshold;
+    this.codeViolationThreshold = codeViolationThreshold;
+    this.complexityLevel = complexityLevel;
+    this.complexityThreshold = complexityThreshold;
+    this.duplicationThreshold = duplicationThreshold;
+    this.testThreshold = testThreshold;
+    this.coverageThreshold = coverageThreshold;
+    this.mutationTestThreshold = mutationTestThreshold;
   }
 
   /**

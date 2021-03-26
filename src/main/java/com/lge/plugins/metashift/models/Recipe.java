@@ -60,8 +60,18 @@ public final class Recipe implements Data<Recipe>, Acceptor {
     }
 
     this.recipe = recipe;
+
     collection = new HashMap<>();
     collection.put(CacheList.class, new CacheList());
+    collection.put(RecipeViolationList.class, new RecipeViolationList());
+    collection.put(CommentList.class, new CommentList());
+    collection.put(CodeViolationList.class, new CodeViolationList());
+    collection.put(ComplexityList.class, new ComplexityList());
+    collection.put(DuplicationList.class, new DuplicationList());
+    collection.put(TestList.class, new TestList());
+    // TODO(sunggon82.kim): CoverageList required
+    // collection.put(CoverageList.class, new CoverageList());
+    collection.put(MutationTestList.class, new MutationTestList());
   }
 
   /**
