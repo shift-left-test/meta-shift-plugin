@@ -29,29 +29,27 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public abstract class CacheData implements Data<CacheData> {
-  /**
-   * Represents the name of the recipe.
-   */
-  private String recipe;
+public abstract class CacheData extends Data<CacheData> {
+
   /**
    * Represents the cache signature.
    */
-  private String signature;
+  private final String signature;
+
   /**
    * Indicates the cache availability.
    */
-  private boolean available;
+  private final boolean available;
 
   /**
    * Default constructor.
    *
-   * @param recipe name
+   * @param recipe    name
    * @param signature name
    * @param available the cache availability
    */
   public CacheData(final String recipe, final String signature, final boolean available) {
-    this.recipe = recipe;
+    super(recipe);
     this.signature = signature;
     this.available = available;
   }
@@ -59,15 +57,12 @@ public abstract class CacheData implements Data<CacheData> {
   @Override
   public final int compareTo(final CacheData other) {
     int compared;
-    compared = recipe.compareTo(other.recipe);
+    compared = getRecipe().compareTo(other.getRecipe());
     if (compared != 0) {
       return compared;
     }
     compared = signature.compareTo(other.signature);
-    if (compared != 0) {
-      return compared;
-    }
-    return 0;
+    return compared;
   }
 
   @Override
@@ -82,16 +77,13 @@ public abstract class CacheData implements Data<CacheData> {
       return false;
     }
     CacheData other = (CacheData) object;
-    if (!recipe.equals(other.recipe)) {
+    if (!getRecipe().equals(other.getRecipe())) {
       return false;
     }
     if (!signature.equals(other.signature)) {
       return false;
     }
-    if (available != other.available) {
-      return false;
-    }
-    return true;
+    return available == other.available;
   }
 
   @Override
@@ -99,14 +91,9 @@ public abstract class CacheData implements Data<CacheData> {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + getRecipe().hashCode();
     hashCode = prime * hashCode + signature.hashCode();
     return hashCode;
-  }
-
-  @Override
-  public final String getRecipe() {
-    return recipe;
   }
 
   /**

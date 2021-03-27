@@ -29,40 +29,40 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class SizeData implements Data<SizeData> {
-  /**
-   * Represents the name of the recipe.
-   */
-  private String recipe;
+public final class SizeData extends Data<SizeData> {
+
   /**
    * Represents the filename.
    */
-  private String file;
+  private final String file;
+
   /**
    * Represents the number of lines for the file.
    */
-  private int lines;
+  private final int lines;
+
   /**
    * Represents the number of functions for the file.
    */
-  private int functions;
+  private final int functions;
+
   /**
    * Represents the number of classes for the file.
    */
-  private int classes;
+  private final int classes;
 
   /**
    * Default constructor.
    *
-   * @param recipe name.
-   * @param file name.
-   * @param lines the number of lines for the file.
+   * @param recipe    name.
+   * @param file      name.
+   * @param lines     the number of lines for the file.
    * @param functions the number of functions for the file.
-   * @param classes the number of classes for the file.
+   * @param classes   the number of classes for the file.
    */
   public SizeData(final String recipe, final String file, final int lines,
-                  final int functions, final int classes) {
-    this.recipe = recipe;
+      final int functions, final int classes) {
+    super(recipe);
     this.file = file;
     this.lines = lines;
     this.functions = functions;
@@ -72,15 +72,12 @@ public final class SizeData implements Data<SizeData> {
   @Override
   public int compareTo(final SizeData other) {
     int compared;
-    compared = recipe.compareTo(other.recipe);
+    compared = getRecipe().compareTo(other.getRecipe());
     if (compared != 0) {
       return compared;
     }
     compared = file.compareTo(other.file);
-    if (compared != 0) {
-      return compared;
-    }
-    return 0;
+    return compared;
   }
 
   @Override
@@ -95,13 +92,10 @@ public final class SizeData implements Data<SizeData> {
       return false;
     }
     SizeData other = (SizeData) object;
-    if (!recipe.equals(other.recipe)) {
+    if (!getRecipe().equals(other.getRecipe())) {
       return false;
     }
-    if (!file.equals(other.file)) {
-      return false;
-    }
-    return true;
+    return file.equals(other.file);
   }
 
   @Override
@@ -109,14 +103,9 @@ public final class SizeData implements Data<SizeData> {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + getRecipe().hashCode();
     hashCode = prime * hashCode + file.hashCode();
     return hashCode;
-  }
-
-  @Override
-  public String getRecipe() {
-    return recipe;
   }
 
   /**

@@ -24,10 +24,17 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.KilledMutationTestData;
+import com.lge.plugins.metashift.models.MutationTestList;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.SurvivedMutationTestData;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the MutationTestCounter class.
@@ -35,14 +42,15 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class MutationTestCounterTest {
+
   private MutationTestCounter collector;
   private MutationTestList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
-    collector = new MutationTestCounter(KilledMutationTestData.class);
+  public void setUp() {
+    collector = new KilledMutationTestCounter();
     set = new MutationTestList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
@@ -55,32 +63,32 @@ public class MutationTestCounterTest {
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testSetWithoutMatched() throws Exception {
+  public void testSetWithoutMatched() {
     set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     set.accept(collector);
     assertValues(1, 0, 0.0f);
   }
 
   @Test
-  public void testSetWithMatched() throws Exception {
+  public void testSetWithMatched() {
     set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
     set.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
-  public void testSetWithCompoundData() throws Exception {
+  public void testSetWithCompoundData() {
     set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
     set.accept(collector);
@@ -88,7 +96,7 @@ public class MutationTestCounterTest {
   }
 
   @Test
-  public void testMultipleSets() throws Exception {
+  public void testMultipleSets() {
     List<MutationTestList> group = new ArrayList<>();
 
     set = new MutationTestList();
@@ -104,13 +112,13 @@ public class MutationTestCounterTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutMatched() throws Exception {
+  public void testRecipeWithoutMatched() {
     set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     recipe.set(set);
     recipe.accept(collector);
@@ -118,7 +126,7 @@ public class MutationTestCounterTest {
   }
 
   @Test
-  public void testRecipeWithMatched() throws Exception {
+  public void testRecipeWithMatched() {
     set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
     recipe.set(set);
     recipe.accept(collector);
@@ -126,13 +134,13 @@ public class MutationTestCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithCompoundData() throws Exception {
+  public void testRecipeListWithCompoundData() {
     set = new MutationTestList();
     set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     recipe = new Recipe("A-1.0.0-r0");

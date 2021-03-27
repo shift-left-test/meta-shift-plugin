@@ -24,13 +24,13 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.metrics.Visitor;
+import com.lge.plugins.metashift.metrics.Visitable;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -42,8 +42,9 @@ import org.apache.commons.io.IOUtils;
  * @author Sung Gon Kim
  */
 public final class SizeList extends DataList<SizeData> {
+
   @Override
-  public void accept(final Visitor visitor) {
+  public void accept(final Visitable visitor) {
     visitor.visit(this);
   }
 
@@ -51,25 +52,22 @@ public final class SizeList extends DataList<SizeData> {
    * Create a set of objects by parsing a report file from the given path.
    *
    * @param recipe name
-   * @param path to the report directory
+   * @param path   to the report directory
    * @return a set of objects
    */
-  public static SizeList create(final String recipe, final File path) throws
-      IOException, InterruptedException {
+  public static SizeList create(final String recipe, final File path) {
     File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
     SizeList set = new SizeList();
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));
-      JSONObject json = JSONObject.fromObject(IOUtils.toString(is, "UTF-8"));
+      JSONObject json = JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
       for (Object o : json.getJSONArray("size")) {
         set.add(new SizeData(recipe,
-                             ((JSONObject) o).getString("file"),
-                             ((JSONObject) o).getInt("total_lines"),
-                             ((JSONObject) o).getInt("functions"),
-                             ((JSONObject) o).getInt("classes")));
+            ((JSONObject) o).getString("file"),
+            ((JSONObject) o).getInt("total_lines"),
+            ((JSONObject) o).getInt("functions"),
+            ((JSONObject) o).getInt("classes")));
       }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     } catch (JSONException e) {

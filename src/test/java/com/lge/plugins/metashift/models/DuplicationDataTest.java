@@ -24,9 +24,13 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.junit.Test;
 
 /**
  * Unit tests for the DuplicationData class.
@@ -34,11 +38,12 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class DuplicationDataTest {
-  private DuplicationData origin = new DuplicationData("A", "a.file", 10, 5);
-  private DuplicationData same = new DuplicationData("A", "a.file", 10, 5);
+
+  private final DuplicationData origin = new DuplicationData("A", "a.file", 10, 5);
+  private final DuplicationData same = new DuplicationData("A", "a.file", 10, 5);
 
   @Test
-  public void testInitData() throws Exception {
+  public void testInitData() {
     assertEquals("A", origin.getRecipe());
     assertEquals("a.file", origin.getFile());
     assertEquals(10, origin.getLines());
@@ -46,7 +51,7 @@ public class DuplicationDataTest {
   }
 
   @Test
-  public void testEquality() throws Exception {
+  public void testEquality() {
     assertNotEquals(origin, null);
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
@@ -58,7 +63,7 @@ public class DuplicationDataTest {
   }
 
   @Test
-  public void testHashCode() throws Exception {
+  public void testHashCode() {
     assertEquals(origin.hashCode(), same.hashCode());
     assertNotEquals(origin.hashCode(), new DuplicationData("B", "a.file", 10, 5).hashCode());
     assertNotEquals(origin.hashCode(), new DuplicationData("A", "b.file", 10, 5).hashCode());
@@ -67,7 +72,7 @@ public class DuplicationDataTest {
   }
 
   @Test
-  public void testComparable() throws Exception {
+  public void testComparable() {
     List<DuplicationData> expected = new ArrayList<>();
     expected.add(new DuplicationData("A", "a.file", 10, 5));
     expected.add(new DuplicationData("A", "b.file", 10, 5));

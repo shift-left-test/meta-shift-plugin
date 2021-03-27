@@ -29,63 +29,67 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public abstract class CodeViolationData implements Data<CodeViolationData> {
-  /**
-   * Represents the name of the recipe.
-   */
-  private String recipe;
+public abstract class CodeViolationData extends Data<CodeViolationData> {
+
   /**
    * Represents the name fo the file.
    */
-  private String file;
+  private final String file;
+
   /**
    * Represents the line number.
    */
-  private int line;
+  private final int line;
+
   /**
    * Represents the column number.
    */
-  private int column;
+  private final int column;
+
   /**
    * Represents the rule.
    */
-  private String rule;
+  private final String rule;
+
   /**
    * Represents the message.
    */
-  private String message;
+  private final String message;
+
   /**
    * Represents the description.
    */
-  private String description;
+  private final String description;
+
   /**
    * Represents the severity.
    */
-  private String severity;
+  private final String severity;
+
   /**
    * Represents the tool.
    */
-  private String tool;
+  private final String tool;
 
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param file name
-   * @param line number
-   * @param column number
-   * @param rule name
-   * @param message of the violation
+   * @param recipe      name
+   * @param file        name
+   * @param line        number
+   * @param column      number
+   * @param rule        name
+   * @param message     of the violation
    * @param description of the violation
-   * @param severity of the violation
-   * @param tool used for analysis
+   * @param severity    of the violation
+   * @param tool        used for analysis
    */
   public CodeViolationData(final String recipe, final String file,
-                           final int line, final int column,
-                           final String rule, final String message,
-                           final String description,
-                           final String severity, final String tool) {
-    this.recipe = recipe;
+      final int line, final int column,
+      final String rule, final String message,
+      final String description,
+      final String severity, final String tool) {
+    super(recipe);
     this.file = file;
     this.line = line;
     this.column = column;
@@ -99,7 +103,7 @@ public abstract class CodeViolationData implements Data<CodeViolationData> {
   @Override
   public final int compareTo(final CodeViolationData other) {
     int compared;
-    compared = recipe.compareTo(other.recipe);
+    compared = getRecipe().compareTo(other.getRecipe());
     if (compared != 0) {
       return compared;
     }
@@ -116,10 +120,7 @@ public abstract class CodeViolationData implements Data<CodeViolationData> {
       return compared;
     }
     compared = rule.compareTo(other.rule);
-    if (compared != 0) {
-      return compared;
-    }
-    return 0;
+    return compared;
   }
 
   @Override
@@ -134,7 +135,7 @@ public abstract class CodeViolationData implements Data<CodeViolationData> {
       return false;
     }
     CodeViolationData other = (CodeViolationData) object;
-    if (!recipe.equals(other.recipe)) {
+    if (!getRecipe().equals(other.getRecipe())) {
       return false;
     }
     if (!file.equals(other.file)) {
@@ -149,10 +150,7 @@ public abstract class CodeViolationData implements Data<CodeViolationData> {
     if (!rule.equals(other.rule)) {
       return false;
     }
-    if (!tool.equals(other.tool)) {
-      return false;
-    }
-    return true;
+    return tool.equals(other.tool);
   }
 
   @Override
@@ -160,18 +158,13 @@ public abstract class CodeViolationData implements Data<CodeViolationData> {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + getRecipe().hashCode();
     hashCode = prime * hashCode + file.hashCode();
     hashCode = prime * hashCode + line;
     hashCode = prime * hashCode + column;
     hashCode = prime * hashCode + rule.hashCode();
     hashCode = prime * hashCode + tool.hashCode();
     return hashCode;
-  }
-
-  @Override
-  public final String getRecipe() {
-    return recipe;
   }
 
   /**

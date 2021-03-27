@@ -22,20 +22,21 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.metrics.Visitor;
+import com.lge.plugins.metashift.models.MajorCodeViolationData;
 
 /**
- * Provides an interface for container classes.
+ * Represents the major code violation counter.
  *
  * @author Sung Gon Kim
  */
-public interface Acceptor {
+public final class MajorCodeViolationCounter extends CodeViolationCounter {
+
   /**
-   * Accepts the given visitors.
-   *
-   * @param visitor to accept.
+   * Default constructor.
    */
-  void accept(Visitor visitor);
+  public MajorCodeViolationCounter() {
+    super(MajorCodeViolationData.class);
+  }
 }

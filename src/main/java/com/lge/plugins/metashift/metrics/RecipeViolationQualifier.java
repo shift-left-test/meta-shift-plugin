@@ -24,28 +24,14 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.InfoRecipeViolationData;
-import com.lge.plugins.metashift.models.MajorRecipeViolationData;
-import com.lge.plugins.metashift.models.MinorRecipeViolationData;
-import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.models.RecipeViolationList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Evaluates the level of recipe violations.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeViolationQualifier extends Visitor implements Qualifier {
-  /**
-   * Represents the collection of RecipeViolationCounter objects.
-   */
-  private Map<Class<? extends RecipeViolationData>, RecipeViolationCounter> collection;
-  /**
-   * Represents the threshold of the qualification.
-   */
-  private float threshold;
+public final class RecipeViolationQualifier extends Qualifier<RecipeViolationCounter> {
 
   /**
    * Default constructor.
@@ -53,46 +39,29 @@ public final class RecipeViolationQualifier extends Visitor implements Qualifier
    * @param threshold for evaluation
    */
   public RecipeViolationQualifier(final float threshold) {
-    collection = new HashMap<>();
-    collection.put(MajorRecipeViolationData.class,
-                   new RecipeViolationCounter(
-                       MajorRecipeViolationData.class));
-    collection.put(MinorRecipeViolationData.class,
-                   new RecipeViolationCounter(
-                       MinorRecipeViolationData.class));
-    collection.put(InfoRecipeViolationData.class,
-                   new RecipeViolationCounter(
-                       InfoRecipeViolationData.class));
-    this.threshold = threshold;
-  }
-
-  /**
-   * Returns the relevant collector object based on the given type.
-   *
-   * @param clazz of the object type to return
-   * @return RecipeViolationCounter object
-   */
-  public RecipeViolationCounter collection(final Class<? extends RecipeViolationData> clazz) {
-    return collection.get(clazz);
+    super(threshold,
+        new MajorRecipeViolationCounter(),
+        new MinorRecipeViolationCounter(),
+        new InfoRecipeViolationCounter());
   }
 
   @Override
   public boolean isAvailable() {
-    return collection(MajorRecipeViolationData.class).getDenominator() > 0;
+    return get(MajorRecipeViolationCounter.class).getDenominator() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection(MajorRecipeViolationData.class).getDenominator();
-    int numerator = collection(MajorRecipeViolationData.class).getNumerator();
+    int denominator = get(MajorRecipeViolationCounter.class).getDenominator();
+    int numerator = get(MajorRecipeViolationCounter.class).getNumerator();
     if (denominator == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) <= threshold;
+    return ((float) numerator / (float) denominator) <= getThreshold();
   }
 
   @Override
   public void visit(final RecipeViolationList objects) {
-    collection.values().stream().forEach(collector -> objects.accept(collector));
+    getCollection().values().forEach(objects::accept);
   }
 }

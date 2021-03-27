@@ -24,10 +24,16 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.CodeViolationList;
+import com.lge.plugins.metashift.models.InfoCodeViolationData;
+import com.lge.plugins.metashift.models.MajorCodeViolationData;
+import com.lge.plugins.metashift.models.MinorCodeViolationData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the CodeViolationQualifier class.
@@ -35,47 +41,49 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CodeViolationQualifierTest {
+
   private CodeViolationQualifier qualifier;
   private CodeViolationList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     qualifier = new CodeViolationQualifier(0.5f);
     set = new CodeViolationList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
 
-  private void assertValues(boolean available, boolean qualified, float major, float minor, float info) {
+  private void assertValues(boolean available, boolean qualified, float major, float minor,
+      float info) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
-    assertEquals(major, qualifier.collection(MajorCodeViolationData.class).getRatio(), 0.1f);
-    assertEquals(minor, qualifier.collection(MinorCodeViolationData.class).getRatio(), 0.1f);
-    assertEquals(info, qualifier.collection(InfoCodeViolationData.class).getRatio(), 0.1f);
+    assertEquals(major, qualifier.get(MajorCodeViolationCounter.class).getRatio(), 0.1f);
+    assertEquals(minor, qualifier.get(MinorCodeViolationCounter.class).getRatio(), 0.1f);
+    assertEquals(info, qualifier.get(InfoCodeViolationCounter.class).getRatio(), 0.1f);
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testSetWithoutQualified() throws Exception {
+  public void testSetWithoutQualified() {
     set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testSetWithQualified() throws Exception {
+  public void testSetWithQualified() {
     set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
@@ -84,13 +92,13 @@ public class CodeViolationQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutQualified() throws Exception {
+  public void testRecipeWithoutQualified() {
     set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe.set(set);
     recipe.accept(qualifier);
@@ -98,7 +106,7 @@ public class CodeViolationQualifierTest {
   }
 
   @Test
-  public void testRecipeWithQualified() throws Exception {
+  public void testRecipeWithQualified() {
     set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
@@ -108,13 +116,13 @@ public class CodeViolationQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithoutQualified() throws Exception {
+  public void testRecipeListWithoutQualified() {
     set = new CodeViolationList();
     set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("A-1.0.0-r0");
@@ -132,7 +140,7 @@ public class CodeViolationQualifierTest {
   }
 
   @Test
-  public void testRecipeListWithQualified() throws Exception {
+  public void testRecipeListWithQualified() {
     set = new CodeViolationList();
     set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     set.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));

@@ -38,14 +38,15 @@ import org.apache.tools.ant.types.selectors.TypeSelector.FileType;
  * @author Sung Gon Kim
  */
 public final class FileFinder {
+
   /**
    * Represents a list of patterns of files that must be included.
    */
-  private String includes;
+  private final String includes;
   /**
    * Represents a list of patterns of files that must be excluded.
    */
-  private String excludes;
+  private final String excludes;
 
   /**
    * Default constructor.

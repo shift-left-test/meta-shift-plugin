@@ -24,27 +24,14 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.CacheData;
 import com.lge.plugins.metashift.models.CacheList;
-import com.lge.plugins.metashift.models.PremirrorCacheData;
-import com.lge.plugins.metashift.models.SharedStateCacheData;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Evaluates the level of cache availability.
  *
  * @author Sung Gon Kim
  */
-public final class CacheQualifier extends Visitor implements Qualifier {
-  /**
-   * Represents the collection of CacheCounter objects.
-   */
-  private Map<Class<? extends CacheData>, CacheCounter> collection;
-  /**
-   * Represents the threshold of the qualification.
-   */
-  private float threshold;
+public final class CacheQualifier extends Qualifier<CacheCounter> {
 
   /**
    * Default constructor.
@@ -52,39 +39,27 @@ public final class CacheQualifier extends Visitor implements Qualifier {
    * @param threshold for evaluation
    */
   public CacheQualifier(final float threshold) {
-    collection = new HashMap<>();
-    collection.put(PremirrorCacheData.class, new CacheCounter(PremirrorCacheData.class));
-    collection.put(SharedStateCacheData.class, new CacheCounter(SharedStateCacheData.class));
-    this.threshold = threshold;
-  }
-
-  /**
-   * Returns the relevant CacheCounter object based on the given class type.
-   *
-   * @param clazz of the object type to return
-   * @return CacheCounter object
-   */
-  public CacheCounter collection(final Class<? extends CacheData> clazz) {
-    return collection.get(clazz);
+    super(threshold, new PremirrorCacheCounter(), new SharedStateCacheCounter());
   }
 
   @Override
   public boolean isAvailable() {
-    return collection.values().stream().mapToInt(CacheCounter::getDenominator).sum() > 0;
+    return getCollection().values().stream().mapToInt(CacheCounter::getDenominator).sum() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection.values().stream().mapToInt(CacheCounter::getDenominator).sum();
-    int numerator = collection.values().stream().mapToInt(CacheCounter::getNumerator).sum();
+    int denominator = getCollection().values().stream().mapToInt(CacheCounter::getDenominator)
+        .sum();
+    int numerator = getCollection().values().stream().mapToInt(CacheCounter::getNumerator).sum();
     if (denominator == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) >= threshold;
+    return ((float) numerator / (float) denominator) >= getThreshold();
   }
 
   @Override
   public void visit(final CacheList objects) {
-    collection.values().stream().forEach(collector -> objects.accept(collector));
+    getCollection().values().forEach(objects::accept);
   }
 }

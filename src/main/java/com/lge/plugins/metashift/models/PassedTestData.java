@@ -30,16 +30,17 @@ package com.lge.plugins.metashift.models;
  * @author Sung Gon Kim
  */
 public final class PassedTestData extends TestData {
+
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param suite name
-   * @param name of the test
+   * @param recipe  name
+   * @param suite   name
+   * @param name    of the test
    * @param message of the test
    */
   public PassedTestData(final String recipe, final String suite, final String name,
-                        final String message) {
+      final String message) {
     super(recipe, suite, name, message);
   }
 }

@@ -32,15 +32,18 @@ import com.lge.plugins.metashift.models.TestList;
  *
  * @author Sung Gon Kim
  */
-public final class TestCounter extends Visitor implements Counter {
+public abstract class TestCounter implements Countable {
+
   /**
    * Represents the class type.
    */
-  private Class<? extends TestData> clazz;
+  private final Class<? extends TestData> clazz;
+
   /**
    * Represents the denominator.
    */
   private int denominator;
+
   /**
    * Represents the numerator.
    */

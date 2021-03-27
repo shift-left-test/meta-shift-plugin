@@ -30,11 +30,12 @@ package com.lge.plugins.metashift.models;
  * @author Sung Gon Kim
  */
 public final class PremirrorCacheData extends CacheData {
+
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param task name
+   * @param recipe    name
+   * @param task      name
    * @param available the cache availability
    */
   public PremirrorCacheData(final String recipe, final String task, final boolean available) {

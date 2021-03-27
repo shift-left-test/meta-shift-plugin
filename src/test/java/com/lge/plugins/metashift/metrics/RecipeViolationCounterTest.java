@@ -24,10 +24,18 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.InfoRecipeViolationData;
+import com.lge.plugins.metashift.models.MajorRecipeViolationData;
+import com.lge.plugins.metashift.models.MinorRecipeViolationData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.RecipeViolationList;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the RecipeViolationCounter class.
@@ -35,14 +43,15 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class RecipeViolationCounterTest {
+
   private RecipeViolationCounter collector;
   private RecipeViolationList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
-    collector = new RecipeViolationCounter(MajorRecipeViolationData.class);
+  public void setUp() {
+    collector = new MajorRecipeViolationCounter();
     set = new RecipeViolationList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
@@ -55,18 +64,18 @@ public class RecipeViolationCounterTest {
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testSetWithoutMatched() throws Exception {
+  public void testSetWithoutMatched() {
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     set.accept(collector);
@@ -74,14 +83,14 @@ public class RecipeViolationCounterTest {
   }
 
   @Test
-  public void testSetWithMatched() throws Exception {
+  public void testSetWithMatched() {
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "rule", "info", "error"));
     set.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
-  public void testSetWithCompoundData() throws Exception {
+  public void testSetWithCompoundData() {
     set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
@@ -90,7 +99,7 @@ public class RecipeViolationCounterTest {
   }
 
   @Test
-  public void testMultipleSets() throws Exception {
+  public void testMultipleSets() {
     List<RecipeViolationList> group = new ArrayList<>();
 
     set = new RecipeViolationList();
@@ -110,13 +119,13 @@ public class RecipeViolationCounterTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutMatched() throws Exception {
+  public void testRecipeWithoutMatched() {
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     recipe.set(set);
@@ -125,7 +134,7 @@ public class RecipeViolationCounterTest {
   }
 
   @Test
-  public void testRecipeWithMatched() throws Exception {
+  public void testRecipeWithMatched() {
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
@@ -135,13 +144,13 @@ public class RecipeViolationCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithCompoundData() throws Exception {
+  public void testRecipeListWithCompoundData() {
     set = new RecipeViolationList();
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));

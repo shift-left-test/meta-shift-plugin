@@ -29,51 +29,53 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public abstract class MutationTestData implements Data<MutationTestData> {
-  /**
-   * Represents the name of the recipe.
-   */
-  private String recipe;
+public abstract class MutationTestData extends Data<MutationTestData> {
+
   /**
    * Represents the name of the file.
    */
-  private String file;
+  private final String file;
+
   /**
    * Represents the name of the mutated class.
    */
-  private String mutatedClass;
+  private final String mutatedClass;
+
   /**
    * Represents the name of the mutated method.
    */
-  private String mutatedMethod;
+  private final String mutatedMethod;
+
   /**
    * Represents the line number.
    */
-  private int line;
+  private final int line;
+
   /**
    * Represents the mutation operator.
    */
-  private String mutator;
+  private final String mutator;
+
   /**
    * Represents the test that kills the mutant.
    */
-  private String killingTest;
+  private final String killingTest;
 
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param file name
-   * @param mutatedClass the mutated class
+   * @param recipe        name
+   * @param file          name
+   * @param mutatedClass  the mutated class
    * @param mutatedMethod the mutated method
-   * @param line the line number
-   * @param mutator the mutation operator
-   * @param killingTest the test that kills the mutant
+   * @param line          the line number
+   * @param mutator       the mutation operator
+   * @param killingTest   the test that kills the mutant
    */
   public MutationTestData(final String recipe, final String file, final String mutatedClass,
-                          final String mutatedMethod, final int line, final String mutator,
-                          final String killingTest) {
-    this.recipe = recipe;
+      final String mutatedMethod, final int line, final String mutator,
+      final String killingTest) {
+    super(recipe);
     this.file = file;
     this.mutatedClass = mutatedClass;
     this.mutatedMethod = mutatedMethod;
@@ -85,7 +87,7 @@ public abstract class MutationTestData implements Data<MutationTestData> {
   @Override
   public final int compareTo(final MutationTestData other) {
     int compared;
-    compared = recipe.compareTo(other.recipe);
+    compared = getRecipe().compareTo(other.getRecipe());
     if (compared != 0) {
       return compared;
     }
@@ -110,10 +112,7 @@ public abstract class MutationTestData implements Data<MutationTestData> {
       return compared;
     }
     compared = killingTest.compareTo(other.killingTest);
-    if (compared != 0) {
-      return compared;
-    }
-    return 0;
+    return compared;
   }
 
   @Override
@@ -128,7 +127,7 @@ public abstract class MutationTestData implements Data<MutationTestData> {
       return false;
     }
     MutationTestData other = (MutationTestData) object;
-    if (!recipe.equals(other.recipe)) {
+    if (!getRecipe().equals(other.getRecipe())) {
       return false;
     }
     if (!file.equals(other.file)) {
@@ -146,10 +145,7 @@ public abstract class MutationTestData implements Data<MutationTestData> {
     if (!mutator.equals(other.mutator)) {
       return false;
     }
-    if (!killingTest.equals(other.killingTest)) {
-      return false;
-    }
-    return true;
+    return killingTest.equals(other.killingTest);
   }
 
   @Override
@@ -157,7 +153,7 @@ public abstract class MutationTestData implements Data<MutationTestData> {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + getRecipe().hashCode();
     hashCode = prime * hashCode + file.hashCode();
     hashCode = prime * hashCode + mutatedClass.hashCode();
     hashCode = prime * hashCode + mutatedMethod.hashCode();
@@ -165,11 +161,6 @@ public abstract class MutationTestData implements Data<MutationTestData> {
     hashCode = prime * hashCode + mutator.hashCode();
     hashCode = prime * hashCode + killingTest.hashCode();
     return hashCode;
-  }
-
-  @Override
-  public final String getRecipe() {
-    return recipe;
   }
 
   /**

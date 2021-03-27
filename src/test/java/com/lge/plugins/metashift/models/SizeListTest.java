@@ -24,12 +24,20 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.io.*;
-import java.util.*;
-import org.apache.commons.io.*;
-import org.junit.*;
-import org.junit.rules.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Unit tests for the SizeList class.
@@ -37,12 +45,13 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class SizeListTest {
+
   @Rule
-  public TemporaryFolder folder = new TemporaryFolder();
+  public final TemporaryFolder folder = new TemporaryFolder();
   private SizeList objects;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     objects = new SizeList();
   }
 
@@ -54,7 +63,7 @@ public class SizeListTest {
   }
 
   private void assertValues(SizeData object, String recipe, String file,
-                            int lines, int functions, int classes) {
+      int lines, int functions, int classes) {
     assertEquals(recipe, object.getRecipe());
     assertEquals(file, object.getFile());
     assertEquals(lines, object.getLines());
@@ -63,12 +72,12 @@ public class SizeListTest {
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertEquals(0, objects.size());
   }
 
   @Test
-  public void testAddingData() throws Exception {
+  public void testAddingData() {
     SizeData first = new SizeData("A", "a.file", 3, 2, 1);
     SizeData second = new SizeData("B", "b.file", 3, 2, 1);
     objects.add(second);
@@ -78,7 +87,7 @@ public class SizeListTest {
   }
 
   @Test
-  public void testCreateSetWithUnknownPath() throws Exception {
+  public void testCreateSetWithUnknownPath() {
     objects = SizeList.create("A", new File(folder.getRoot(), "unknown"));
     assertEquals(0, objects.size());
   }
@@ -96,7 +105,7 @@ public class SizeListTest {
 
   @Test
   public void testCreateSetWithEmptyData() throws Exception {
-    List<String> data = Arrays.asList("{ \"size\": [] }");
+    List<String> data = Collections.singletonList("{ \"size\": [] }");
     File file = createTempFile("report/A/checkcode/sage_report.json", data);
     objects = SizeList.create("A", file.getParentFile().getParentFile());
     assertEquals(0, objects.size());

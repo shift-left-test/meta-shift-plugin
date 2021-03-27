@@ -24,8 +24,10 @@
 
 package com.lge.plugins.metashift.models;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the RecipeList class
@@ -33,20 +35,21 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class RecipeListTest {
+
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     recipes = new RecipeList();
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertEquals(0, recipes.size());
   }
 
   @Test
-  public void testAddingData() throws Exception {
+  public void testAddingData() {
     Recipe first = new Recipe("A-1.0.0-r0");
     Recipe second = new Recipe("B-1.0.0-r0");
     recipes.add(second);

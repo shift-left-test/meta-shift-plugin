@@ -24,10 +24,15 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.CacheList;
+import com.lge.plugins.metashift.models.PremirrorCacheData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.SharedStateCacheData;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the CacheQualifier class.
@@ -35,39 +40,41 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CacheQualifierTest {
+
   private CacheQualifier qualifier;
   private CacheList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     qualifier = new CacheQualifier(0.5f);
     set = new CacheList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
 
-  private void assertValues(boolean available, boolean qualified, float premirror, float sharedState) {
+  private void assertValues(boolean available, boolean qualified, float premirror,
+      float sharedState) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
-    assertEquals(premirror, qualifier.collection(PremirrorCacheData.class).getRatio(), 0.1f);
-    assertEquals(sharedState, qualifier.collection(SharedStateCacheData.class).getRatio(), 0.1f);
+    assertEquals(premirror, qualifier.get(PremirrorCacheCounter.class).getRatio(), 0.1f);
+    assertEquals(sharedState, qualifier.get(SharedStateCacheCounter.class).getRatio(), 0.1f);
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
-  public void testEmptyCacheList() throws Exception {
+  public void testEmptyCacheList() {
     set.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
-  public void testPremirrorOnlyCacheWhichNotQualified() throws Exception {
+  public void testPremirrorOnlyCacheWhichNotQualified() {
     set.add(new PremirrorCacheData("A", "do_A", true));
     set.add(new PremirrorCacheData("A", "do_B", false));
     set.add(new PremirrorCacheData("A", "do_C", false));
@@ -76,7 +83,7 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testPremirrorOnlyCacheWhichQualified() throws Exception {
+  public void testPremirrorOnlyCacheWhichQualified() {
     set.add(new PremirrorCacheData("A", "do_A", true));
     set.add(new PremirrorCacheData("A", "do_B", false));
     set.accept(qualifier);
@@ -84,7 +91,7 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testSharedStateOnlyCacheWhichNotQualified() throws Exception {
+  public void testSharedStateOnlyCacheWhichNotQualified() {
     set.add(new SharedStateCacheData("A", "do_A", true));
     set.add(new SharedStateCacheData("A", "do_B", false));
     set.add(new SharedStateCacheData("A", "do_C", false));
@@ -93,7 +100,7 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testSharedStateOnlyCacheWhichQualified() throws Exception {
+  public void testSharedStateOnlyCacheWhichQualified() {
     set.add(new SharedStateCacheData("A", "do_A", true));
     set.add(new SharedStateCacheData("A", "do_B", false));
     set.accept(qualifier);
@@ -101,7 +108,7 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testMixedCacheWhichNotQualified() throws Exception {
+  public void testMixedCacheWhichNotQualified() {
     set.add(new PremirrorCacheData("A", "do_A", true));
     set.add(new SharedStateCacheData("A", "do_B", false));
     set.add(new SharedStateCacheData("A", "do_C", false));
@@ -110,7 +117,7 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testMixedCacheWhichQualified() throws Exception {
+  public void testMixedCacheWhichQualified() {
     set.add(new PremirrorCacheData("A", "do_A", true));
     set.add(new SharedStateCacheData("A", "do_B", true));
     set.add(new SharedStateCacheData("A", "do_C", false));
@@ -119,13 +126,13 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeWithMixedCacheWhichNotQualified() throws Exception {
+  public void testRecipeWithMixedCacheWhichNotQualified() {
     set.add(new PremirrorCacheData("A", "do_A", true));
     set.add(new SharedStateCacheData("A", "do_B", false));
     set.add(new SharedStateCacheData("A", "do_C", false));
@@ -135,7 +142,7 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testRecipeWithMixedCacheWhichQualified() throws Exception {
+  public void testRecipeWithMixedCacheWhichQualified() {
     set.add(new PremirrorCacheData("A", "do_A", true));
     set.add(new SharedStateCacheData("A", "do_B", true));
     set.add(new SharedStateCacheData("A", "do_C", false));
@@ -146,13 +153,13 @@ public class CacheQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithCompoundCacheListWhichQualified() throws Exception {
+  public void testRecipeListWithCompoundCacheListWhichQualified() {
     set = new CacheList();
     set.add(new PremirrorCacheData("A", "do_packagedata", true));
     set.add(new SharedStateCacheData("A", "do_fetch", true));

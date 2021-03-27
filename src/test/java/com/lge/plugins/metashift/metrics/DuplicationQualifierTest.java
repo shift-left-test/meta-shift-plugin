@@ -24,10 +24,14 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.DuplicationData;
+import com.lge.plugins.metashift.models.DuplicationList;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the DuplicationQualifier class.
@@ -35,13 +39,14 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class DuplicationQualifierTest {
+
   private DuplicationQualifier qualifier;
   private DuplicationList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     qualifier = new DuplicationQualifier(0.5f);
     set = new DuplicationList();
     recipe = new Recipe("A-B-C");
@@ -51,36 +56,36 @@ public class DuplicationQualifierTest {
   private void assertValues(boolean available, boolean qualified, float ratio) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
-    assertEquals(ratio, qualifier.collection().getRatio(), 0.1f);
+    assertEquals(ratio, qualifier.get(DuplicationCounter.class).getRatio(), 0.1f);
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(qualifier);
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testSetWithoutQualified() throws Exception {
+  public void testSetWithoutQualified() {
     set.add(new DuplicationData("A", "a.file", 10, 6));
     set.accept(qualifier);
     assertValues(true, false, 0.6f);
   }
 
   @Test
-  public void testSetWithQualifed() throws Exception {
+  public void testSetWithQualified() {
     set.add(new DuplicationData("A", "b.file", 10, 4));
     set.accept(qualifier);
     assertValues(true, true, 0.5f);
   }
 
   @Test
-  public void testSetWithCompoundData() throws Exception {
+  public void testSetWithCompoundData() {
     set.add(new DuplicationData("A", "a.file", 10, 6));
     set.add(new DuplicationData("A", "b.file", 10, 4));
     set.accept(qualifier);
@@ -88,13 +93,13 @@ public class DuplicationQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(qualifier);
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutQualified() throws Exception {
+  public void testRecipeWithoutQualified() {
     set.add(new DuplicationData("A", "a.file", 10, 6));
     recipe.set(set);
     recipe.accept(qualifier);
@@ -102,7 +107,7 @@ public class DuplicationQualifierTest {
   }
 
   @Test
-  public void testRecipeWithQualified() throws Exception {
+  public void testRecipeWithQualified() {
     set.add(new DuplicationData("A", "b.file", 10, 4));
     recipe.set(set);
     recipe.accept(qualifier);
@@ -110,13 +115,13 @@ public class DuplicationQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithoutQualified() throws Exception {
+  public void testRecipeListWithoutQualified() {
     set = new DuplicationList();
     set.add(new DuplicationData("A", "a.file", 10, 10));
     set.add(new DuplicationData("A", "b.file", 10, 5));
@@ -136,7 +141,7 @@ public class DuplicationQualifierTest {
   }
 
   @Test
-  public void testRecipeListWithQualified() throws Exception {
+  public void testRecipeListWithQualified() {
     set = new DuplicationList();
     set.add(new DuplicationData("A", "a.file", 10, 5));
     set.add(new DuplicationData("A", "b.file", 10, 0));

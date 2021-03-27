@@ -24,10 +24,18 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.CodeViolationList;
+import com.lge.plugins.metashift.models.InfoCodeViolationData;
+import com.lge.plugins.metashift.models.MajorCodeViolationData;
+import com.lge.plugins.metashift.models.MinorCodeViolationData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the CodeViolationCounter class.
@@ -35,14 +43,15 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CodeViolationCounterTest {
+
   private CodeViolationCounter collector;
   private CodeViolationList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
-    collector = new CodeViolationCounter(MajorCodeViolationData.class);
+  public void setUp() {
+    collector = new MajorCodeViolationCounter();
     set = new CodeViolationList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
@@ -55,18 +64,18 @@ public class CodeViolationCounterTest {
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testSetWithoutMatched() throws Exception {
+  public void testSetWithoutMatched() {
     set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
     set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
     set.accept(collector);
@@ -74,14 +83,14 @@ public class CodeViolationCounterTest {
   }
 
   @Test
-  public void testSetWithMatched() throws Exception {
+  public void testSetWithMatched() {
     set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     set.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
-  public void testSetWithCompoundData() throws Exception {
+  public void testSetWithCompoundData() {
     set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
     set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
     set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
@@ -90,7 +99,7 @@ public class CodeViolationCounterTest {
   }
 
   @Test
-  public void testMultipleSets() throws Exception {
+  public void testMultipleSets() {
     List<CodeViolationList> group = new ArrayList<>();
 
     set = new CodeViolationList();
@@ -110,13 +119,13 @@ public class CodeViolationCounterTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutMatched() throws Exception {
+  public void testRecipeWithoutMatched() {
     set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
     set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
     recipe.set(set);
@@ -125,7 +134,7 @@ public class CodeViolationCounterTest {
   }
 
   @Test
-  public void testRecipeWithMatched() throws Exception {
+  public void testRecipeWithMatched() {
     set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
     set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
     set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
@@ -135,13 +144,13 @@ public class CodeViolationCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithCompoundData() throws Exception {
+  public void testRecipeListWithCompoundData() {
     set = new CodeViolationList();
     set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
     set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));

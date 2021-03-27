@@ -32,5 +32,6 @@ import java.util.ArrayList;
  * @param <T> the class type
  * @author Sung Gon Kim
  */
-public abstract class DataList<T> extends ArrayList<T> implements Acceptor {
+public abstract class DataList<T> extends ArrayList<T> implements Acceptable {
+
 }

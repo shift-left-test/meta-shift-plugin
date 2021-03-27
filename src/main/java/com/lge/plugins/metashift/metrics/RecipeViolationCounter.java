@@ -32,15 +32,18 @@ import com.lge.plugins.metashift.models.RecipeViolationList;
  *
  * @author Sung Gon Kim
  */
-public final class RecipeViolationCounter extends Visitor implements Counter {
+public abstract class RecipeViolationCounter implements Countable {
+
   /**
    * Represents the class type.
    */
-  private Class<? extends RecipeViolationData> clazz;
+  private final Class<? extends RecipeViolationData> clazz;
+
   /**
    * Represents the denominator.
    */
   private int denominator;
+
   /**
    * Represents the numerator.
    */

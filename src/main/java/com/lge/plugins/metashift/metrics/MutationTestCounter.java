@@ -32,15 +32,18 @@ import com.lge.plugins.metashift.models.MutationTestList;
  *
  * @author Sung Gon Kim
  */
-public final class MutationTestCounter extends Visitor implements Counter {
+public abstract class MutationTestCounter implements Countable {
+
   /**
    * Represents the class type.
    */
-  private Class<? extends MutationTestData> clazz;
+  private final Class<? extends MutationTestData> clazz;
+
   /**
    * Represents the denominator.
    */
   private int denominator;
+
   /**
    * Represents the numerator.
    */

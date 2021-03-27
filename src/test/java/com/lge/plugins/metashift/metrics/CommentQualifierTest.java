@@ -24,10 +24,14 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.CommentData;
+import com.lge.plugins.metashift.models.CommentList;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the CommentQualifier class.
@@ -35,13 +39,14 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CommentQualifierTest {
+
   private CommentQualifier qualifier;
   private CommentList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     qualifier = new CommentQualifier(0.5f);
     set = new CommentList();
     recipe = new Recipe("A-B-C");
@@ -51,22 +56,22 @@ public class CommentQualifierTest {
   private void assertValues(boolean available, boolean qualified, float ratio) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
-    assertEquals(ratio, qualifier.collection().getRatio(), 0.1f);
+    assertEquals(ratio, qualifier.get(CommentCounter.class).getRatio(), 0.1f);
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(qualifier);
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testSetWithoutQualified() throws Exception {
+  public void testSetWithoutQualified() {
     set.add(new CommentData("A", "a.file", 10, 5));
     set.add(new CommentData("A", "b.file", 10, 0));
     set.accept(qualifier);
@@ -74,7 +79,7 @@ public class CommentQualifierTest {
   }
 
   @Test
-  public void testSetWithQualified() throws Exception {
+  public void testSetWithQualified() {
     set.add(new CommentData("A", "a.file", 10, 5));
     set.add(new CommentData("A", "b.file", 10, 5));
     set.accept(qualifier);
@@ -82,13 +87,13 @@ public class CommentQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(qualifier);
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutQualified() throws Exception {
+  public void testRecipeWithoutQualified() {
     set.add(new CommentData("A", "a.file", 10, 5));
     set.add(new CommentData("A", "b.file", 10, 0));
     recipe.set(set);
@@ -97,7 +102,7 @@ public class CommentQualifierTest {
   }
 
   @Test
-  public void testRecipeWithQualified() throws Exception {
+  public void testRecipeWithQualified() {
     set.add(new CommentData("A", "a.file", 10, 5));
     set.add(new CommentData("A", "b.file", 10, 5));
     recipe.set(set);
@@ -106,13 +111,13 @@ public class CommentQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithoutQualified() throws Exception {
+  public void testRecipeListWithoutQualified() {
     set = new CommentList();
     set.add(new CommentData("A", "a.file", 10, 5));
     set.add(new CommentData("A", "b.file", 10, 0));
@@ -132,7 +137,7 @@ public class CommentQualifierTest {
   }
 
   @Test
-  public void testRecipeListWithQualified() throws Exception {
+  public void testRecipeListWithQualified() {
     set = new CommentList();
     set.add(new CommentData("A", "a.file", 10, 5));
     set.add(new CommentData("A", "b.file", 10, 5));

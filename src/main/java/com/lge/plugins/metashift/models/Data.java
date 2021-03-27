@@ -25,31 +25,48 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Provides an interface for all metric data.
+ * Represents a data object for all metrics.
  *
  * @param <T> the class type
  * @author Sung Gon Kim
  */
-public interface Data<T> extends Comparable<T> {
+public abstract class Data<T> implements Comparable<T> {
+
+  /**
+   * Represents the name of the recipe.
+   */
+  private final String recipe;
+
+  /**
+   * Default constructor.
+   *
+   * @param recipe name
+   */
+  public Data(final String recipe) {
+    this.recipe = recipe;
+  }
+
   /**
    * Indicates whether some other object is "equal to" this one.
    *
    * @param object the reference object with which to compare
    * @return true if this is the same as the other, false otherwise
    */
-  boolean equals(Object object);
+  public abstract boolean equals(Object object);
 
   /**
    * Returns the name of the recipe.
    *
    * @return the name of the recipe
    */
-  String getRecipe();
+  public String getRecipe() {
+    return recipe;
+  }
 
   /**
    * Returns a hash code value for the object.
    *
    * @return a hash code value for this object
    */
-  int hashCode();
+  public abstract int hashCode();
 }

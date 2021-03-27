@@ -24,9 +24,13 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.junit.Test;
 
 /**
  * Unit tests for the TestData class.
@@ -34,11 +38,12 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class TestDataTest {
-  private TestData origin = new PassedTestData("A", "a.suite", "a.tc", "msg");
-  private TestData same = new PassedTestData("A", "a.suite", "a.tc", "msg");
+
+  private final TestData origin = new PassedTestData("A", "a.suite", "a.tc", "msg");
+  private final TestData same = new PassedTestData("A", "a.suite", "a.tc", "msg");
 
   @Test
-  public void testInitData() throws Exception {
+  public void testInitData() {
     assertEquals("A", origin.getRecipe());
     assertEquals("a.suite", origin.getSuite());
     assertEquals("a.tc", origin.getName());
@@ -46,7 +51,7 @@ public class TestDataTest {
   }
 
   @Test
-  public void testEquality() throws Exception {
+  public void testEquality() {
     assertNotEquals(origin, null);
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
@@ -61,19 +66,24 @@ public class TestDataTest {
   }
 
   @Test
-  public void testHashCode() throws Exception {
+  public void testHashCode() {
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new FailedTestData("A", "a.suite", "a.tc", "msg").hashCode());
+    assertNotEquals(origin.hashCode(),
+        new FailedTestData("A", "a.suite", "a.tc", "msg").hashCode());
     assertNotEquals(origin.hashCode(), new ErrorTestData("A", "a.suite", "a.tc", "msg").hashCode());
-    assertNotEquals(origin.hashCode(), new SkippedTestData("A", "a.suite", "a.tc", "msg").hashCode());
-    assertNotEquals(origin.hashCode(), new PassedTestData("B", "a.suite", "a.tc", "msg").hashCode());
-    assertNotEquals(origin.hashCode(), new PassedTestData("A", "b.suite", "a.tc", "msg").hashCode());
-    assertNotEquals(origin.hashCode(), new PassedTestData("A", "a.suite", "b.tc", "msg").hashCode());
+    assertNotEquals(origin.hashCode(),
+        new SkippedTestData("A", "a.suite", "a.tc", "msg").hashCode());
+    assertNotEquals(origin.hashCode(),
+        new PassedTestData("B", "a.suite", "a.tc", "msg").hashCode());
+    assertNotEquals(origin.hashCode(),
+        new PassedTestData("A", "b.suite", "a.tc", "msg").hashCode());
+    assertNotEquals(origin.hashCode(),
+        new PassedTestData("A", "a.suite", "b.tc", "msg").hashCode());
     assertEquals(origin.hashCode(), new PassedTestData("A", "a.suite", "a.tc", "X").hashCode());
   }
 
   @Test
-  public void testComparable() throws Exception {
+  public void testComparable() {
     List<TestData> expected = new ArrayList<>();
     expected.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     expected.add(new PassedTestData("A", "a.suite", "b.tc", "msg"));

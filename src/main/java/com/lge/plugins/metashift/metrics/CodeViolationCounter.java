@@ -32,15 +32,18 @@ import com.lge.plugins.metashift.models.CodeViolationList;
  *
  * @author Sung Gon Kim
  */
-public final class CodeViolationCounter extends Visitor implements Counter {
+public abstract class CodeViolationCounter implements Countable {
+
   /**
    * Represents the class type.
    */
-  private Class<? extends CodeViolationData> clazz;
+  private final Class<? extends CodeViolationData> clazz;
+
   /**
    * Represents the denominator.
    */
   private int denominator;
+
   /**
    * Represents the numerator.
    */

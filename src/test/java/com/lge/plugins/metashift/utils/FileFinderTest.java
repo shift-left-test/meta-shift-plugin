@@ -24,10 +24,15 @@
 
 package com.lge.plugins.metashift.utils;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.*;
-import org.junit.rules.*;
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Unit tests for the FileFinder class.
@@ -35,37 +40,38 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class FileFinderTest {
+
   @Rule
-  public TemporaryFolder folder = new TemporaryFolder();
+  public final TemporaryFolder folder = new TemporaryFolder();
   private FileFinder finder;
 
   @Before
   public void setUp() throws Exception {
-    folder.newFolder("path/to").mkdirs();
-    folder.newFile("path/to/report1.xml").createNewFile();
-    folder.newFile("path/to/report2.xml").createNewFile();
+    File directory = folder.newFolder("path/to");
+    FileUtils.touch(new File(directory, "report1.xml"));
+    FileUtils.touch(new File(directory, "report2.xml"));
   }
 
   @Test
-  public void testFindWithEmptyPattern() throws Exception {
+  public void testFindWithEmptyPattern() {
     finder = new FileFinder(StringUtils.EMPTY);
     assertEquals(0, finder.find(folder.getRoot()).length);
   }
 
   @Test
-  public void testFindWithoutMatchingPattern() throws Exception {
+  public void testFindWithoutMatchingPattern() {
     finder = new FileFinder("**/report*.json");
     assertEquals(0, finder.find(folder.getRoot()).length);
   }
 
   @Test
-  public void testFindWithMatchingPattern() throws Exception {
+  public void testFindWithMatchingPattern() {
     finder = new FileFinder("**/report*.xml");
     assertEquals(2, finder.find(folder.getRoot()).length);
   }
 
   @Test
-  public void testFindWithExcludePattern() throws Exception {
+  public void testFindWithExcludePattern() {
     finder = new FileFinder("**/report*.xml", "**/to/**");
     assertEquals(0, finder.find(folder.getRoot()).length);
   }

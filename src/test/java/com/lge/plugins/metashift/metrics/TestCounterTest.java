@@ -24,10 +24,19 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.ErrorTestData;
+import com.lge.plugins.metashift.models.FailedTestData;
+import com.lge.plugins.metashift.models.PassedTestData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.SkippedTestData;
+import com.lge.plugins.metashift.models.TestList;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the TestCounter class.
@@ -35,14 +44,15 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class TestCounterTest {
+
   private TestCounter collector;
   private TestList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
-    collector = new TestCounter(PassedTestData.class);
+  public void setUp() {
+    collector = new PassedTestCounter();
     set = new TestList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
@@ -55,18 +65,18 @@ public class TestCounterTest {
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testSetWithoutMatched() throws Exception {
+  public void testSetWithoutMatched() {
     set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
     set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
@@ -75,14 +85,14 @@ public class TestCounterTest {
   }
 
   @Test
-  public void testSetWithMatched() throws Exception {
+  public void testSetWithMatched() {
     set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
     set.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
-  public void testSetWithCompoundData() throws Exception {
+  public void testSetWithCompoundData() {
     set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
     set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
@@ -92,7 +102,7 @@ public class TestCounterTest {
   }
 
   @Test
-  public void testMultipleSets() throws Exception {
+  public void testMultipleSets() {
     List<TestList> group = new ArrayList<>();
 
     set = new TestList();
@@ -114,13 +124,13 @@ public class TestCounterTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutMatched() throws Exception {
+  public void testRecipeWithoutMatched() {
     set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
     set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
@@ -130,7 +140,7 @@ public class TestCounterTest {
   }
 
   @Test
-  public void testRecipeWithMatched() throws Exception {
+  public void testRecipeWithMatched() {
     set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
     set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
@@ -141,13 +151,13 @@ public class TestCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithCompoundData() throws Exception {
+  public void testRecipeListWithCompoundData() {
     set = new TestList();
     set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));

@@ -24,10 +24,17 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.CacheList;
+import com.lge.plugins.metashift.models.PremirrorCacheData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.SharedStateCacheData;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the CacheCounter class.
@@ -35,14 +42,15 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CacheCounterTest {
+
   private CacheCounter collector;
   private CacheList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
-    collector = new CacheCounter(SharedStateCacheData.class);
+  public void setUp() {
+    collector = new SharedStateCacheCounter();
     set = new CacheList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
@@ -55,32 +63,32 @@ public class CacheCounterTest {
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testSetWithoutMatched() throws Exception {
+  public void testSetWithoutMatched() {
     set.add(new PremirrorCacheData("A", "do_fetch", true));
     set.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testSetWithMatched() throws Exception {
+  public void testSetWithMatched() {
     set.add(new SharedStateCacheData("A", "do_fetch", true));
     set.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
-  public void testSetWithCompoundData() throws Exception {
+  public void testSetWithCompoundData() {
     set.add(new SharedStateCacheData("A", "do_fetch", true));
     set.add(new SharedStateCacheData("A", "do_compile", false));
     set.add(new PremirrorCacheData("A", "do_fetch", true));
@@ -90,7 +98,7 @@ public class CacheCounterTest {
   }
 
   @Test
-  public void testMultipleSets() throws Exception {
+  public void testMultipleSets() {
     List<CacheList> group = new ArrayList<>();
 
     set = new CacheList();
@@ -108,13 +116,13 @@ public class CacheCounterTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutMatched() throws Exception {
+  public void testRecipeWithoutMatched() {
     set.add(new PremirrorCacheData("A", "do_fetch", true));
     recipe.set(set);
     recipe.accept(collector);
@@ -122,7 +130,7 @@ public class CacheCounterTest {
   }
 
   @Test
-  public void testRecipeWithMatched() throws Exception {
+  public void testRecipeWithMatched() {
     set.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-B-C");
     recipe.set(set);
@@ -131,13 +139,13 @@ public class CacheCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithCompoundData() throws Exception {
+  public void testRecipeListWithCompoundData() {
     set = new CacheList();
     set.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-1.0.0-r0");

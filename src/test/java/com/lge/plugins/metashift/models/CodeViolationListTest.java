@@ -24,8 +24,10 @@
 
 package com.lge.plugins.metashift.models;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the CodeViolationList class.
@@ -33,22 +35,25 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CodeViolationListTest {
+
   private CodeViolationList objects;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     objects = new CodeViolationList();
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertEquals(0, objects.size());
   }
 
   @Test
-  public void testAddingData() throws Exception {
-    CodeViolationData first = new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool");
-    CodeViolationData second = new MajorCodeViolationData("B", "b.file", 1, 2, "rule", "msg", "desc", "E", "tool");
+  public void testAddingData() {
+    CodeViolationData first = new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "msg", "desc",
+        "E", "tool");
+    CodeViolationData second = new MajorCodeViolationData("B", "b.file", 1, 2, "rule", "msg",
+        "desc", "E", "tool");
     objects.add(second);
     objects.add(first);
     assertEquals(2, objects.size());

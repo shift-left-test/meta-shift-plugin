@@ -24,10 +24,34 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import com.lge.plugins.metashift.models.CacheList;
+import com.lge.plugins.metashift.models.CodeViolationList;
+import com.lge.plugins.metashift.models.CommentData;
+import com.lge.plugins.metashift.models.CommentList;
+import com.lge.plugins.metashift.models.ComplexityData;
+import com.lge.plugins.metashift.models.ComplexityList;
+import com.lge.plugins.metashift.models.DuplicationData;
+import com.lge.plugins.metashift.models.DuplicationList;
+import com.lge.plugins.metashift.models.FailedTestData;
+import com.lge.plugins.metashift.models.KilledMutationTestData;
+import com.lge.plugins.metashift.models.MajorCodeViolationData;
+import com.lge.plugins.metashift.models.MajorRecipeViolationData;
+import com.lge.plugins.metashift.models.MinorCodeViolationData;
+import com.lge.plugins.metashift.models.MinorRecipeViolationData;
+import com.lge.plugins.metashift.models.MutationTestList;
+import com.lge.plugins.metashift.models.PassedTestData;
+import com.lge.plugins.metashift.models.PremirrorCacheData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.RecipeViolationList;
+import com.lge.plugins.metashift.models.SurvivedMutationTestData;
+import com.lge.plugins.metashift.models.TestList;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the Metrics class.
@@ -35,14 +59,14 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class MetricsTest {
-  private Criteria criteria;
+
   private Metrics metrics;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
-    criteria = new Criteria(0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 5, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f);
+  public void setUp() {
+    Criteria criteria = new Criteria(0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 5, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f);
     metrics = new Metrics(criteria);
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
@@ -56,178 +80,174 @@ public class MetricsTest {
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testWithEmptyRecipes() throws Exception {
+  public void testWithEmptyRecipes() {
     RecipeList recipes = new RecipeList();
     recipes.accept(metrics);
     assertValues(false, false, 0.0f);
   }
 
   @Test
-  public void testRecipesWithoutQualifiedCacheData() throws Exception {
-    recipe.collection(CacheList.class).add(new PremirrorCacheData("A-B-C", "X", false));
+  public void testRecipesWithoutQualifiedCacheData() {
+    recipe.get(CacheList.class).add(new PremirrorCacheData("A-B-C", "X", false));
     recipes.accept(metrics);
     assertValues(true, false, 0.0f);
   }
 
   @Test
-  public void testRecipesWithQualifiedCacheData() throws Exception {
-    recipe.collection(CacheList.class).add(new PremirrorCacheData("A-B-C", "X", true));
+  public void testRecipesWithQualifiedCacheData() {
+    recipe.get(CacheList.class).add(new PremirrorCacheData("A-B-C", "X", true));
     recipes.accept(metrics);
     assertValues(true, true, 1.0f);
   }
 
   @Test
-  public void testRecipesWithoutQualifiedRecipeViolationData() throws Exception {
-    recipe.collection(RecipeViolationList.class).add(
+  public void testRecipesWithoutQualifiedRecipeViolationData() {
+    recipe.get(RecipeViolationList.class).add(
         new MajorRecipeViolationData("A-B-C", "a.file", 1, "e", "e", "e"));
     recipes.accept(metrics);
     assertValues(true, false, 0.0f);
   }
 
   @Test
-  public void testRecipesWithQualifiedRecipeViolationData() throws Exception {
-    recipe.collection(RecipeViolationList.class).add(
+  public void testRecipesWithQualifiedRecipeViolationData() {
+    recipe.get(RecipeViolationList.class).add(
         new MinorRecipeViolationData("A-B-C", "a.file", 1, "e", "e", "e"));
     recipes.accept(metrics);
     assertValues(true, true, 1.0f);
   }
 
   @Test
-  public void testRecipesWithoutQualifiedCommentData() throws Exception {
-    recipe.collection(CommentList.class).add(new CommentData("A-B-C", "a.file", 10, 0));
+  public void testRecipesWithoutQualifiedCommentData() {
+    recipe.get(CommentList.class).add(new CommentData("A-B-C", "a.file", 10, 0));
     recipes.accept(metrics);
     assertValues(true, false, 0.0f);
   }
 
   @Test
-  public void testRecipesWithQualifiedCommentData() throws Exception {
-    recipe.collection(CommentList.class).add(new CommentData("A-B-C", "a.file", 10, 5));
+  public void testRecipesWithQualifiedCommentData() {
+    recipe.get(CommentList.class).add(new CommentData("A-B-C", "a.file", 10, 5));
     recipes.accept(metrics);
     assertValues(true, true, 1.0f);
   }
 
   @Test
-  public void testRecipesWithoutQualifiedCodeViolationData() throws Exception {
-    recipe.collection(CodeViolationList.class).add(
+  public void testRecipesWithoutQualifiedCodeViolationData() {
+    recipe.get(CodeViolationList.class).add(
         new MajorCodeViolationData("A-B-C", "a.file", 1, 2, "r", "m", "d", "E", "t"));
     recipes.accept(metrics);
     assertValues(true, false, 0.0f);
   }
 
   @Test
-  public void testRecipesWithQualifiedCodeViolationData() throws Exception {
-    recipe.collection(CodeViolationList.class).add(
+  public void testRecipesWithQualifiedCodeViolationData() {
+    recipe.get(CodeViolationList.class).add(
         new MinorCodeViolationData("A-B-C", "a.file", 1, 2, "r", "m", "d", "E", "t"));
     recipes.accept(metrics);
     assertValues(true, true, 1.0f);
   }
 
   @Test
-  public void testRecipesWithoutQualifiedComplexityData() throws Exception {
-    recipe.collection(ComplexityList.class).add(
+  public void testRecipesWithoutQualifiedComplexityData() {
+    recipe.get(ComplexityList.class).add(
         new ComplexityData("A-B-C", "a.file", "f()", 10));
     recipes.accept(metrics);
     assertValues(true, false, 0.0f);
   }
 
   @Test
-  public void testRecipesWithQualifiedComplexityData() throws Exception {
-    recipe.collection(ComplexityList.class).add(
+  public void testRecipesWithQualifiedComplexityData() {
+    recipe.get(ComplexityList.class).add(
         new ComplexityData("A-B-C", "a.file", "f()", 0));
     recipes.accept(metrics);
     assertValues(true, true, 1.0f);
   }
 
   @Test
-  public void testRecipesWithoutQualifiedDuplicationData() throws Exception {
-    recipe.collection(DuplicationList.class).add(
+  public void testRecipesWithoutQualifiedDuplicationData() {
+    recipe.get(DuplicationList.class).add(
         new DuplicationData("A-B-C", "a.file", 10, 10));
     recipes.accept(metrics);
     assertValues(true, false, 0.0f);
   }
 
   @Test
-  public void testRecipesWithQualifiedDuplicationData() throws Exception {
-    recipe.collection(DuplicationList.class).add(
+  public void testRecipesWithQualifiedDuplicationData() {
+    recipe.get(DuplicationList.class).add(
         new DuplicationData("A-B-C", "a.file", 10, 0));
     recipes.accept(metrics);
     assertValues(true, true, 1.0f);
   }
 
   @Test
-  public void testRecipesWithoutQualifiedTestData() throws Exception {
-    recipe.collection(TestList.class).add(
+  public void testRecipesWithoutQualifiedTestData() {
+    recipe.get(TestList.class).add(
         new FailedTestData("A-B-C", "a.suite", "a.tc", "msg"));
     recipes.accept(metrics);
     assertValues(true, false, 0.0f);
   }
 
   @Test
-  public void testRecipesWithQualifiedTestData() throws Exception {
-    recipe.collection(TestList.class).add(
+  public void testRecipesWithQualifiedTestData() {
+    recipe.get(TestList.class).add(
         new PassedTestData("A-B-C", "a.suite", "a.tc", "msg"));
     recipes.accept(metrics);
     assertValues(true, true, 1.0f);
   }
 
-  @Ignore
   @Test
-  public void testRecipesWithoutQualifiedCoverageData() throws Exception {
-  }
-
-  @Ignore
-  @Test
-  public void testRecipesWithQualifiedCoverageData() throws Exception {
-  }
-
-  @Test
-  public void testRecipesWithoutQualifiedMutationTestData() throws Exception {
-    recipe.collection(MutationTestList.class).add(
+  public void testRecipesWithoutQualifiedMutationTestData() {
+    recipe.get(MutationTestList.class).add(
         new SurvivedMutationTestData("A-B-C", "a.file", "C", "f()", 1, "AOR", "TC"));
     recipes.accept(metrics);
     assertValues(true, false, 0.0f);
   }
 
   @Test
-  public void testRecipesWithQualifiedMutationTestData() throws Exception {
-    recipe.collection(MutationTestList.class).add(
+  public void testRecipesWithQualifiedMutationTestData() {
+    recipe.get(MutationTestList.class).add(
         new KilledMutationTestData("A-B-C", "a.file", "C", "f()", 1, "AOR", "TC"));
     recipes.accept(metrics);
     assertValues(true, true, 1.0f);
   }
 
   @Test
-  public void testRecipesWithoutQualifiedMixedData() throws Exception {
+  public void testRecipesWithoutQualifiedMixedData() {
     // Unqualified
-    recipe.collection(CacheList.class).add(new PremirrorCacheData("A-B-C", "X", false));
-    recipe.collection(RecipeViolationList.class).add(
+    recipe.get(CacheList.class).add(new PremirrorCacheData("A-B-C", "X", false));
+    recipe.get(RecipeViolationList.class).add(
         new MajorRecipeViolationData("A-B-C", "a.file", 1, "e", "e", "e"));
 
     // Qualified
-    recipe.collection(CommentList.class).add(new CommentData("A-B-C", "a.file", 10, 5));
+    recipe.get(CommentList.class).add(new CommentData("A-B-C", "a.file", 10, 5));
 
     recipes.accept(metrics);
+    assertFalse(metrics.get(CacheQualifier.class).isQualified());
+    assertFalse(metrics.get(RecipeViolationQualifier.class).isQualified());
+    assertTrue(metrics.get(CommentQualifier.class).isQualified());
     assertValues(true, false, 0.3f);
   }
 
   @Test
-  public void testRecipesWithQualifiedMixedData() throws Exception {
+  public void testRecipesWithQualifiedMixedData() {
     // Unqualified
-    recipe.collection(CodeViolationList.class).add(
+    recipe.get(CodeViolationList.class).add(
         new MajorCodeViolationData("A-B-C", "a.file", 1, 2, "r", "m", "d", "E", "t"));
 
     // Qualified
-    recipe.collection(ComplexityList.class).add(
+    recipe.get(ComplexityList.class).add(
         new ComplexityData("A-B-C", "a.file", "f()", 0));
-    recipe.collection(DuplicationList.class).add(
+    recipe.get(DuplicationList.class).add(
         new DuplicationData("A-B-C", "a.file", 10, 0));
 
     recipes.accept(metrics);
+    assertFalse(metrics.get(CodeViolationQualifier.class).isQualified());
+    assertTrue(metrics.get(ComplexityQualifier.class).isQualified());
+    assertTrue(metrics.get(DuplicationQualifier.class).isQualified());
     assertValues(true, true, 0.6f);
   }
 }

@@ -31,53 +31,35 @@ import com.lge.plugins.metashift.models.ComplexityList;
  *
  * @author Sung Gon Kim
  */
-public final class ComplexityQualifier extends Visitor implements Qualifier {
-  /**
-   * Represents the collection of ComplexityCounter objects.
-   */
-  private ComplexityCounter collection;
-  /**
-   * Represents the threshold of the qualification.
-   */
-  private float threshold;
+public final class ComplexityQualifier extends Qualifier<ComplexityCounter> {
 
   /**
    * Default constructor.
    *
    * @param complexity threshold for the complexity
-   * @param threshold for evaluation
+   * @param threshold  for evaluation
    */
   public ComplexityQualifier(final int complexity, final float threshold) {
-    this.collection = new ComplexityCounter(complexity);
-    this.threshold = threshold;
-  }
-
-  /**
-   * Returns the collector object.
-   *
-   * @return ComplexityCounter object
-   */
-  public ComplexityCounter collection() {
-    return collection;
+    super(threshold, new ComplexityCounter(complexity));
   }
 
   @Override
   public boolean isAvailable() {
-    return collection.getDenominator() > 0;
+    return get(ComplexityCounter.class).getDenominator() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection().getDenominator();
-    int numerator = collection().getNumerator();
+    int denominator = get(ComplexityCounter.class).getDenominator();
+    int numerator = get(ComplexityCounter.class).getNumerator();
     if (denominator == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) <= threshold;
+    return ((float) numerator / (float) denominator) <= getThreshold();
   }
 
   @Override
   public void visit(final ComplexityList objects) {
-    objects.accept(collection);
+    objects.accept(get(ComplexityCounter.class));
   }
 }

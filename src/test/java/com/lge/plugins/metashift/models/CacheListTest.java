@@ -24,12 +24,19 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.io.*;
-import java.util.*;
-import org.apache.commons.io.*;
-import org.junit.*;
-import org.junit.rules.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Unit tests for the CacheList class.
@@ -37,12 +44,13 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CacheListTest {
+
   @Rule
-  public TemporaryFolder folder = new TemporaryFolder();
+  public final TemporaryFolder folder = new TemporaryFolder();
   private CacheList objects;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     objects = new CacheList();
   }
 
@@ -53,19 +61,13 @@ public class CacheListTest {
     return file;
   }
 
-  private void assertValues(CacheData object, String recipe, String signature, boolean available) {
-    assertEquals(recipe, object.getRecipe());
-    assertEquals(signature, object.getSignature());
-    assertEquals(available, object.isAvailable());
-  }
-
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertEquals(0, objects.size());
   }
 
   @Test
-  public void testAddingData() throws Exception {
+  public void testAddingData() {
     CacheData first = new SharedStateCacheData("A", "X:do_compile", true);
     CacheData second = new PremirrorCacheData("A", "Y", false);
     objects.add(second);
@@ -75,14 +77,14 @@ public class CacheListTest {
   }
 
   @Test
-  public void testCreateSetWithUnknownPath() throws Exception {
+  public void testCreateSetWithUnknownPath() {
     objects = CacheList.create("A", new File(folder.getRoot(), "unknown"));
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateSetWithMalformedFile() throws Exception {
-    List<String> data = Arrays.asList("{ \"Premirror\": { }, \"Shared State\": { } }");
+    List<String> data = Collections.singletonList("{ \"Premirror\": { }, \"Shared State\": { } }");
     File file = createTempFile("report/A/caches.json", data);
     objects = CacheList.create("A", file.getParentFile());
   }
@@ -120,8 +122,8 @@ public class CacheListTest {
   @Test
   public void testCreateSetWithCompoundData() throws Exception {
     List<String> data = Arrays.asList(
-      "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
-      "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }");
+        "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
+        "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }");
     File file = createTempFile("report/A/caches.json", data);
     objects = CacheList.create("A", file.getParentFile());
     assertEquals(5, objects.size());

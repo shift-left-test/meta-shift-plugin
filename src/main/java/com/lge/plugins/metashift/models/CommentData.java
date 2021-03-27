@@ -29,35 +29,34 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class CommentData implements Data<CommentData> {
-  /**
-   * Represents the name of the recipe.
-   */
-  private String recipe;
+public final class CommentData extends Data<CommentData> {
+
   /**
    * Represents the name of the file.
    */
-  private String file;
+  private final String file;
+
   /**
    * Represents the number of lines.
    */
-  private int lines;
+  private final int lines;
+
   /**
-   * Reprents the number of comment lines.
+   * Represents the number of comment lines.
    */
-  private int commentLines;
+  private final int commentLines;
 
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param file name
-   * @param lines the number of lines
+   * @param recipe       name
+   * @param file         name
+   * @param lines        the number of lines
    * @param commentLines the number of comment lines
    */
   public CommentData(final String recipe, final String file,
-                     final int lines, final int commentLines) {
-    this.recipe = recipe;
+      final int lines, final int commentLines) {
+    super(recipe);
     this.file = file;
     this.lines = lines;
     this.commentLines = commentLines;
@@ -66,15 +65,12 @@ public final class CommentData implements Data<CommentData> {
   @Override
   public int compareTo(final CommentData other) {
     int compared;
-    compared = recipe.compareTo(other.recipe);
+    compared = getRecipe().compareTo(other.getRecipe());
     if (compared != 0) {
       return compared;
     }
     compared = file.compareTo(other.file);
-    if (compared != 0) {
-      return compared;
-    }
-    return 0;
+    return compared;
   }
 
   @Override
@@ -89,13 +85,10 @@ public final class CommentData implements Data<CommentData> {
       return false;
     }
     CommentData other = (CommentData) object;
-    if (!recipe.equals(other.recipe)) {
+    if (!getRecipe().equals(other.getRecipe())) {
       return false;
     }
-    if (!file.equals(other.file)) {
-      return false;
-    }
-    return true;
+    return file.equals(other.file);
   }
 
   @Override
@@ -103,14 +96,9 @@ public final class CommentData implements Data<CommentData> {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + getRecipe().hashCode();
     hashCode = prime * hashCode + file.hashCode();
     return hashCode;
-  }
-
-  @Override
-  public String getRecipe() {
-    return recipe;
   }
 
   /**

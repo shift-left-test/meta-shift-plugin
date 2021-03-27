@@ -24,28 +24,14 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.models.CodeViolationList;
-import com.lge.plugins.metashift.models.InfoCodeViolationData;
-import com.lge.plugins.metashift.models.MajorCodeViolationData;
-import com.lge.plugins.metashift.models.MinorCodeViolationData;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Evaluates the level of code violations.
  *
  * @author Sung Gon Kim
  */
-public final class CodeViolationQualifier extends Visitor implements Qualifier {
-  /**
-   * Represents the collectino of CodeViolationCounter objects.
-   */
-  private Map<Class<? extends CodeViolationData>, CodeViolationCounter> collection;
-  /**
-   * Represents the threshold of the qualificiation.
-   */
-  private float threshold;
+public final class CodeViolationQualifier extends Qualifier<CodeViolationCounter> {
 
   /**
    * Default constructor.
@@ -53,43 +39,29 @@ public final class CodeViolationQualifier extends Visitor implements Qualifier {
    * @param threshold for evaluation
    */
   public CodeViolationQualifier(final float threshold) {
-    collection = new HashMap<>();
-    collection.put(MajorCodeViolationData.class,
-                   new CodeViolationCounter(MajorCodeViolationData.class));
-    collection.put(MinorCodeViolationData.class,
-                   new CodeViolationCounter(MinorCodeViolationData.class));
-    collection.put(InfoCodeViolationData.class,
-                   new CodeViolationCounter(InfoCodeViolationData.class));
-    this.threshold = threshold;
-  }
-
-  /**
-   * Returns the relevant collector object based on the given type.
-   *
-   * @param clazz of the object type to return
-   * @return CodeViolationCounter object
-   */
-  public CodeViolationCounter collection(final Class<? extends CodeViolationData> clazz) {
-    return collection.get(clazz);
+    super(threshold,
+        new MajorCodeViolationCounter(),
+        new MinorCodeViolationCounter(),
+        new InfoCodeViolationCounter());
   }
 
   @Override
   public boolean isAvailable() {
-    return collection(MajorCodeViolationData.class).getDenominator() > 0;
+    return get(MajorCodeViolationCounter.class).getDenominator() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection(MajorCodeViolationData.class).getDenominator();
-    int numerator = collection(MajorCodeViolationData.class).getNumerator();
+    int denominator = get(MajorCodeViolationCounter.class).getDenominator();
+    int numerator = get(MajorCodeViolationCounter.class).getNumerator();
     if (denominator == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) <= threshold;
+    return ((float) numerator / (float) denominator) <= getThreshold();
   }
 
   @Override
   public void visit(final CodeViolationList objects) {
-    collection.values().stream().forEach(collector -> objects.accept(collector));
+    getCollection().values().forEach(objects::accept);
   }
 }

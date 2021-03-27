@@ -24,10 +24,15 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.KilledMutationTestData;
+import com.lge.plugins.metashift.models.MutationTestList;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.SurvivedMutationTestData;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the MutationTestQualifier class.
@@ -35,13 +40,14 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class MutationTestQualifierTest {
+
   private MutationTestQualifier qualifier;
   private MutationTestList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     qualifier = new MutationTestQualifier(0.5f);
     set = new MutationTestList();
     recipe = new Recipe("A-B-C");
@@ -51,23 +57,23 @@ public class MutationTestQualifierTest {
   private void assertValues(boolean available, boolean qualified, float killed, float survived) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
-    assertEquals(killed, qualifier.collection(KilledMutationTestData.class).getRatio(), 0.1f);
-    assertEquals(survived, qualifier.collection(SurvivedMutationTestData.class).getRatio(), 0.1f);
+    assertEquals(killed, qualifier.get(KilledMutationTestCounter.class).getRatio(), 0.1f);
+    assertEquals(survived, qualifier.get(SurvivedMutationTestCounter.class).getRatio(), 0.1f);
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
-  public void testSetWithoutQualified() throws Exception {
+  public void testSetWithoutQualified() {
     set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
@@ -76,7 +82,7 @@ public class MutationTestQualifierTest {
   }
 
   @Test
-  public void testSetWithQualified() throws Exception {
+  public void testSetWithQualified() {
     set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
     set.accept(qualifier);
@@ -84,13 +90,13 @@ public class MutationTestQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutQualified() throws Exception {
+  public void testRecipeWithoutQualified() {
     set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
@@ -100,7 +106,7 @@ public class MutationTestQualifierTest {
   }
 
   @Test
-  public void testRecipeWithQualified() throws Exception {
+  public void testRecipeWithQualified() {
     set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe.set(set);
@@ -109,13 +115,13 @@ public class MutationTestQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithoutQualified() throws Exception {
+  public void testRecipeListWithoutQualified() {
     set = new MutationTestList();
     set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
@@ -137,7 +143,7 @@ public class MutationTestQualifierTest {
   }
 
   @Test
-  public void testRecipeListWithQualified() throws Exception {
+  public void testRecipeListWithQualified() {
     set = new MutationTestList();
     set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
     set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));

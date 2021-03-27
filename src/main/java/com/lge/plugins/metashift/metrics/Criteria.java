@@ -30,46 +30,57 @@ package com.lge.plugins.metashift.metrics;
  * @author Sung Gon Kim
  */
 public final class Criteria {
+
   /**
-   * Represents the threshold for the cache availabilty.
+   * Represents the threshold for the cache availability.
    */
   private float cacheThreshold;
+
   /**
    * Represents the threshold for the code violations.
    */
   private float codeViolationThreshold;
+
   /**
    * Represents the threshold for the comments.
    */
   private float commentThreshold;
+
   /**
    * Represents the level of the complexity.
    */
   private int complexityLevel;
+
   /**
    * Represents the threshold for the complexity.
    */
   private float complexityThreshold;
+
   /**
    * Represents the threshold for the coverage.
    */
   private float coverageThreshold;
+
   /**
    * Represents the threshold for the duplications.
    */
   private float duplicationThreshold;
+
   /**
    * Represents the threshold for the mutation test.
    */
   private float mutationTestThreshold;
+
   /**
    * Represents the overall threshold.
    */
   private float overallThreshold;
+
   /**
    * Represents the threshold for the recipe violations.
    */
   private float recipeViolationThreshold;
+
   /**
    * Represents the threshold for the test.
    */
@@ -85,29 +96,29 @@ public final class Criteria {
   /**
    * Default constructor.
    *
-   * @param overallThreshold overall threshold
-   * @param cacheThreshold cache availability threshold
+   * @param overallThreshold         overall threshold
+   * @param cacheThreshold           cache availability threshold
    * @param recipeViolationThreshold recipe violation threshold
-   * @param commentThreshold comment threshold
-   * @param codeViolationThreshold code violation threshold
-   * @param complexityLevel complexity level
-   * @param complexityThreshold complexity threshold
-   * @param duplicationThreshold duplication threshold
-   * @param testThreshold test threshold
-   * @param coverageThreshold coverage threshold
-   * @param mutationTestThreshold mutation test threshold
+   * @param commentThreshold         comment threshold
+   * @param codeViolationThreshold   code violation threshold
+   * @param complexityLevel          complexity level
+   * @param complexityThreshold      complexity threshold
+   * @param duplicationThreshold     duplication threshold
+   * @param testThreshold            test threshold
+   * @param coverageThreshold        coverage threshold
+   * @param mutationTestThreshold    mutation test threshold
    */
   public Criteria(final float overallThreshold,
-                  final float cacheThreshold,
-                  final float recipeViolationThreshold,
-                  final float commentThreshold,
-                  final float codeViolationThreshold,
-                  final int complexityLevel,
-                  final float complexityThreshold,
-                  final float duplicationThreshold,
-                  final float testThreshold,
-                  final float coverageThreshold,
-                  final float mutationTestThreshold) {
+      final float cacheThreshold,
+      final float recipeViolationThreshold,
+      final float commentThreshold,
+      final float codeViolationThreshold,
+      final int complexityLevel,
+      final float complexityThreshold,
+      final float duplicationThreshold,
+      final float testThreshold,
+      final float coverageThreshold,
+      final float mutationTestThreshold) {
     this.overallThreshold = overallThreshold;
     this.cacheThreshold = cacheThreshold;
     this.recipeViolationThreshold = recipeViolationThreshold;
@@ -131,7 +142,7 @@ public final class Criteria {
   }
 
   /**
-   * Sets the cahce availability threshold.
+   * Sets the cache availability threshold.
    *
    * @param threshold for the cache availability
    */
@@ -275,7 +286,7 @@ public final class Criteria {
   }
 
   /**
-   * Sets the overal threshold.
+   * Sets the overall threshold.
    *
    * @param threshold for the project
    */

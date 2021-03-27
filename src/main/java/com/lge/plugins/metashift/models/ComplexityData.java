@@ -29,35 +29,34 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class ComplexityData implements Data<ComplexityData> {
-  /**
-   * Represents the name of the recipe.
-   */
-  private String recipe;
+public final class ComplexityData extends Data<ComplexityData> {
+
   /**
    * Represents the name of the file.
    */
-  private String file;
+  private final String file;
+
   /**
-   * Represents the name of the funcion.
+   * Represents the name of the function.
    */
-  private String function;
+  private final String function;
+
   /**
    * Represents the complexity value.
    */
-  private int value;
+  private final int value;
 
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param file name
+   * @param recipe   name
+   * @param file     name
    * @param function name
-   * @param value of the complexity
+   * @param value    of the complexity
    */
   public ComplexityData(final String recipe, final String file, final String function,
-                        final int value) {
-    this.recipe = recipe;
+      final int value) {
+    super(recipe);
     this.file = file;
     this.function = function;
     this.value = value;
@@ -66,7 +65,7 @@ public final class ComplexityData implements Data<ComplexityData> {
   @Override
   public int compareTo(final ComplexityData other) {
     int compared;
-    compared = recipe.compareTo(other.recipe);
+    compared = getRecipe().compareTo(other.getRecipe());
     if (compared != 0) {
       return compared;
     }
@@ -75,10 +74,7 @@ public final class ComplexityData implements Data<ComplexityData> {
       return compared;
     }
     compared = function.compareTo(other.function);
-    if (compared != 0) {
-      return compared;
-    }
-    return 0;
+    return compared;
   }
 
   @Override
@@ -93,16 +89,13 @@ public final class ComplexityData implements Data<ComplexityData> {
       return false;
     }
     ComplexityData other = (ComplexityData) object;
-    if (!recipe.equals(other.recipe)) {
+    if (!getRecipe().equals(other.getRecipe())) {
       return false;
     }
     if (!file.equals(other.file)) {
       return false;
     }
-    if (!function.equals(other.function)) {
-      return false;
-    }
-    return true;
+    return function.equals(other.function);
   }
 
   @Override
@@ -110,15 +103,10 @@ public final class ComplexityData implements Data<ComplexityData> {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + getRecipe().hashCode();
     hashCode = prime * hashCode + file.hashCode();
     hashCode = prime * hashCode + function.hashCode();
     return hashCode;
-  }
-
-  @Override
-  public String getRecipe() {
-    return recipe;
   }
 
   /**

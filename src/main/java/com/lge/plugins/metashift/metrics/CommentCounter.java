@@ -32,11 +32,13 @@ import com.lge.plugins.metashift.models.CommentList;
  *
  * @author Sung Gon Kim
  */
-public final class CommentCounter extends Visitor implements Counter {
+public final class CommentCounter implements Countable {
+
   /**
    * Represents the denominator.
    */
   private int denominator;
+
   /**
    * Represents the numerator.
    */

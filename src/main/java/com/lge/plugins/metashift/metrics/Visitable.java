@@ -37,17 +37,18 @@ import com.lge.plugins.metashift.models.SizeList;
 import com.lge.plugins.metashift.models.TestList;
 
 /**
- * A base visitor class which provides access to various containers.
+ * A base visitor interface which provides access to various containers.
  *
  * @author Sung Gon Kim
  */
-public class Visitor {
+public interface Visitable {
+
   /**
    * Visits the Recipe object.
    *
    * @param object to visit
    */
-  public void visit(final Recipe object) {
+  default void visit(final Recipe object) {
     object.forEach((k, v) -> v.accept(this));
   }
 
@@ -56,7 +57,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(final RecipeList object) {
+  default void visit(final RecipeList object) {
     object.forEach(recipe -> recipe.accept(this));
   }
 
@@ -65,7 +66,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(final CacheList object) {
+  default void visit(final CacheList object) {
   }
 
   /**
@@ -73,7 +74,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(final SizeList object) {
+  default void visit(final SizeList object) {
   }
 
   /**
@@ -81,7 +82,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(final CommentList object) {
+  default void visit(final CommentList object) {
   }
 
   /**
@@ -89,7 +90,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(final RecipeViolationList object) {
+  default void visit(final RecipeViolationList object) {
   }
 
   /**
@@ -97,7 +98,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(final CodeViolationList object) {
+  default void visit(final CodeViolationList object) {
   }
 
   /**
@@ -105,7 +106,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(final ComplexityList object) {
+  default void visit(final ComplexityList object) {
   }
 
   /**
@@ -113,7 +114,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(final DuplicationList object) {
+  default void visit(final DuplicationList object) {
   }
 
   /**
@@ -121,7 +122,7 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(final TestList object) {
+  default void visit(final TestList object) {
   }
 
   /**
@@ -129,6 +130,6 @@ public class Visitor {
    *
    * @param object to visit
    */
-  public void visit(final MutationTestList object) {
+  default void visit(final MutationTestList object) {
   }
 }

@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.metrics.Visitor;
+import com.lge.plugins.metashift.metrics.Visitable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -36,15 +36,12 @@ import java.util.regex.Pattern;
  *
  * @author Sung Gon Kim
  */
-public final class Recipe implements Data<Recipe>, Acceptor {
-  /**
-   * Represents the name of the recipe.
-   */
-  private String recipe;
+public final class Recipe extends Data<Recipe> implements Acceptable {
+
   /**
    * Represents the data set mapper.
    */
-  private Map<Class<?>, DataList<?>> collection;
+  private final Map<Class<?>, DataList<?>> collection;
 
   /**
    * Default constructor.
@@ -53,14 +50,14 @@ public final class Recipe implements Data<Recipe>, Acceptor {
    * @throws IllegalArgumentException if the recipe name is malformed
    */
   public Recipe(final String recipe) {
+    super(recipe);
+
     String regexp = "^(?<recipe>[\\w-+]+)(?:-)(?<version>[\\w.+]+)(?:-)(?<revision>[\\w.+]+)$";
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(recipe);
     if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid recipe name: " + recipe);
     }
-
-    this.recipe = recipe;
 
     collection = new HashMap<>();
     collection.put(CacheList.class, new CacheList());
@@ -70,8 +67,6 @@ public final class Recipe implements Data<Recipe>, Acceptor {
     collection.put(ComplexityList.class, new ComplexityList());
     collection.put(DuplicationList.class, new DuplicationList());
     collection.put(TestList.class, new TestList());
-    // TODO(sunggon82.kim): CoverageList required
-    // collection.put(CoverageList.class, new CoverageList());
     collection.put(MutationTestList.class, new MutationTestList());
   }
 
@@ -87,7 +82,7 @@ public final class Recipe implements Data<Recipe>, Acceptor {
   /**
    * Set the given container object to the collection.
    *
-   * @param <T> the class type
+   * @param <T>    the class type
    * @param object to store
    */
   public <T extends DataList<?>> void set(final T object) {
@@ -97,27 +92,24 @@ public final class Recipe implements Data<Recipe>, Acceptor {
   /**
    * Return the relevant container object from the collection.
    *
-   * @param <T> the class type
+   * @param <T>   the class type
    * @param clazz the name of the class
    * @return container object
    */
-  public <T extends DataList<?>> T collection(final Class<T> clazz) {
+  public <T extends DataList<?>> T get(final Class<T> clazz) {
     return clazz.cast(collection.get(clazz));
   }
 
   @Override
-  public void accept(final Visitor visitor) {
+  public void accept(final Visitable visitor) {
     visitor.visit(this);
   }
 
   @Override
   public int compareTo(final Recipe other) {
     int compared;
-    compared = recipe.compareTo(other.recipe);
-    if (compared != 0) {
-      return compared;
-    }
-    return 0;
+    compared = getRecipe().compareTo(other.getRecipe());
+    return compared;
   }
 
   @Override
@@ -132,15 +124,7 @@ public final class Recipe implements Data<Recipe>, Acceptor {
       return false;
     }
     Recipe other = (Recipe) object;
-    if (!recipe.equals(other.recipe)) {
-      return false;
-    }
-    return true;
-  }
-
-  @Override
-  public String getRecipe() {
-    return recipe;
+    return getRecipe().equals(other.getRecipe());
   }
 
   @Override
@@ -148,7 +132,7 @@ public final class Recipe implements Data<Recipe>, Acceptor {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + getRecipe().hashCode();
     return hashCode;
   }
 }

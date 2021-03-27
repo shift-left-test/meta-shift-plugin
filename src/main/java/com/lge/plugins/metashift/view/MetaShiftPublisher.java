@@ -33,7 +33,6 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
-import java.io.IOException;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -58,6 +57,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
    */
   @Extension
   public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+
     /**
      * Default constructor.
      */
@@ -85,8 +85,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   }
 
   @Override
-  public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
-      throws InterruptedException, IOException {
+  public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
     run.addAction(new MetaShiftBuildAction());
   }
 }

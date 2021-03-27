@@ -24,23 +24,66 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Qualifier interface.
+ * Qualifier class.
  *
  * @author Sung Gon Kim
  */
-public interface Qualifier {
-  /**
-   * Returns whether the metric is availabile.
-   *
-   * @return true if the metric is available, false otherwise
-   */
-  boolean isAvailable();
+public abstract class Qualifier<T> implements Qualifiable, Visitable {
 
   /**
-   * Returns whether the evaluation of the metric meets the criteria.
-   *
-   * @return true if the metric meets the criteria, false otherwise
+   * Represents the collection of objects.
    */
-  boolean isQualified();
+  private final Map<Class<?>, T> collection;
+
+  /**
+   * Represents the threshold of the qualification.
+   */
+  private final float threshold;
+
+  /**
+   * Default constructor.
+   *
+   * @param threshold for qualification
+   * @param args of initialization list
+   */
+  @SafeVarargs
+  public Qualifier(final float threshold, T... args) {
+    this.threshold = threshold;
+    collection = new HashMap<>();
+    for (T arg : args) {
+      collection.put(arg.getClass(), arg);
+    }
+  }
+
+  /**
+   * Returns the relevant object from the collection.
+   *
+   * @param clazz the name of the class
+   * @return relevant object
+   */
+  public final T get(final Class<? extends T> clazz) {
+    return clazz.cast(collection.get(clazz));
+  }
+
+  /**
+   * Returns the collection.
+   *
+   * @return collection object
+   */
+  public final Map<Class<?>, T> getCollection() {
+    return collection;
+  }
+
+  /**
+   * Returns the threshold.
+   *
+   * @return threshold value
+   */
+  public final float getThreshold() {
+    return threshold;
+  }
 }

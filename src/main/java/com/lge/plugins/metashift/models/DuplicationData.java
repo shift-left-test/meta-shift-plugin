@@ -29,35 +29,34 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public final class DuplicationData implements Data<DuplicationData> {
-  /**
-   * Represents the name of the recipe.
-   */
-  private String recipe;
+public final class DuplicationData extends Data<DuplicationData> {
+
   /**
    * Represents the name of the file.
    */
-  private String file;
+  private final String file;
+
   /**
    * Represents the number of lines.
    */
-  private int lines;
+  private final int lines;
+
   /**
    * Represents the number of duplicated lines.
    */
-  private int duplicatedLines;
+  private final int duplicatedLines;
 
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param file name
-   * @param lines the number of lines
+   * @param recipe          name
+   * @param file            name
+   * @param lines           the number of lines
    * @param duplicatedLines the number of duplicated lines
    */
   public DuplicationData(final String recipe, final String file,
-                         final int lines, final int duplicatedLines) {
-    this.recipe = recipe;
+      final int lines, final int duplicatedLines) {
+    super(recipe);
     this.file = file;
     this.lines = lines;
     this.duplicatedLines = duplicatedLines;
@@ -66,15 +65,12 @@ public final class DuplicationData implements Data<DuplicationData> {
   @Override
   public int compareTo(final DuplicationData other) {
     int compared;
-    compared = recipe.compareTo(other.recipe);
+    compared = getRecipe().compareTo(other.getRecipe());
     if (compared != 0) {
       return compared;
     }
     compared = file.compareTo(other.file);
-    if (compared != 0) {
-      return compared;
-    }
-    return 0;
+    return compared;
   }
 
   @Override
@@ -89,13 +85,10 @@ public final class DuplicationData implements Data<DuplicationData> {
       return false;
     }
     DuplicationData other = (DuplicationData) object;
-    if (!recipe.equals(other.recipe)) {
+    if (!getRecipe().equals(other.getRecipe())) {
       return false;
     }
-    if (!file.equals(other.file)) {
-      return false;
-    }
-    return true;
+    return file.equals(other.file);
   }
 
   @Override
@@ -103,14 +96,9 @@ public final class DuplicationData implements Data<DuplicationData> {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + getRecipe().hashCode();
     hashCode = prime * hashCode + file.hashCode();
     return hashCode;
-  }
-
-  @Override
-  public String getRecipe() {
-    return recipe;
   }
 
   /**

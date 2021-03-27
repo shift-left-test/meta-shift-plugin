@@ -24,35 +24,19 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.KilledMutationTestData;
+
 /**
- * Provides an interface to count data.
+ * Represents the killed mutation test counter.
  *
  * @author Sung Gon Kim
  */
-public interface Counter {
-  /**
-   * Returns the denominator of the metric.
-   *
-   * @return denominator
-   */
-  int getDenominator();
+public class KilledMutationTestCounter extends MutationTestCounter {
 
   /**
-   * Returns the numerator of the metric.
-   *
-   * @return numerator
+   * Default constructor.
    */
-  int getNumerator();
-
-  /**
-   * Returns the calculated ratio of the metric or
-   * zero if the denominator is zero.
-   *
-   * @return ratio
-   */
-  default float getRatio() {
-    int denominator = getDenominator();
-    int numerator = getNumerator();
-    return denominator > 0 ? (float) numerator / (float) denominator : 0.0f;
+  public KilledMutationTestCounter() {
+    super(KilledMutationTestData.class);
   }
 }

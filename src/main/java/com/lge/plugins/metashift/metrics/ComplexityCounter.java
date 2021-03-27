@@ -31,19 +31,22 @@ import com.lge.plugins.metashift.models.ComplexityList;
  *
  * @author Sung Gon Kim
  */
-public final class ComplexityCounter extends Visitor implements Counter {
+public final class ComplexityCounter implements Countable {
+
   /**
    * Represents the denominator.
    */
   private int denominator;
+
   /**
    * Represents the numerator.
    */
   private int numerator;
+
   /**
    * Represents the threshold.
    */
-  private int threshold;
+  private final int threshold;
 
   /**
    * Default constructor.

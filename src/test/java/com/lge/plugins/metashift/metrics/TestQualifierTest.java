@@ -24,10 +24,17 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.ErrorTestData;
+import com.lge.plugins.metashift.models.FailedTestData;
+import com.lge.plugins.metashift.models.PassedTestData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.SkippedTestData;
+import com.lge.plugins.metashift.models.TestList;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the TestQualifier class.
@@ -35,13 +42,14 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class TestQualifierTest {
+
   private TestQualifier qualifier;
   private TestList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     qualifier = new TestQualifier(0.5f);
     set = new TestList();
     recipe = new Recipe("A-B-C");
@@ -49,28 +57,28 @@ public class TestQualifierTest {
   }
 
   private void assertValues(boolean available, boolean qualified,
-                            float passed, float failed, float error, float skipped) {
+      float passed, float failed, float error, float skipped) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
-    assertEquals(passed, qualifier.collection(PassedTestData.class).getRatio(), 0.1f);
-    assertEquals(failed, qualifier.collection(FailedTestData.class).getRatio(), 0.1f);
-    assertEquals(error, qualifier.collection(ErrorTestData.class).getRatio(), 0.1f);
-    assertEquals(skipped, qualifier.collection(SkippedTestData.class).getRatio(), 0.1f);
+    assertEquals(passed, qualifier.get(PassedTestCounter.class).getRatio(), 0.1f);
+    assertEquals(failed, qualifier.get(FailedTestCounter.class).getRatio(), 0.1f);
+    assertEquals(error, qualifier.get(ErrorTestCounter.class).getRatio(), 0.1f);
+    assertEquals(skipped, qualifier.get(SkippedTestCounter.class).getRatio(), 0.1f);
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(false, false, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testSetWithoutQualified() throws Exception {
+  public void testSetWithoutQualified() {
     set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
     set.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
@@ -80,7 +88,7 @@ public class TestQualifierTest {
   }
 
   @Test
-  public void testSetWithQualified() throws Exception {
+  public void testSetWithQualified() {
     set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
     set.accept(qualifier);
@@ -88,13 +96,13 @@ public class TestQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutQualified() throws Exception {
+  public void testRecipeWithoutQualified() {
     set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
     set.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
@@ -105,7 +113,7 @@ public class TestQualifierTest {
   }
 
   @Test
-  public void testRecipeWithQualified() throws Exception {
+  public void testRecipeWithQualified() {
     set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
     recipe.set(set);
@@ -114,13 +122,13 @@ public class TestQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithoutQualified() throws Exception {
+  public void testRecipeListWithoutQualified() {
     set = new TestList();
     set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
@@ -140,7 +148,7 @@ public class TestQualifierTest {
   }
 
   @Test
-  public void testRecipeListWithQualified() throws Exception {
+  public void testRecipeListWithQualified() {
     set = new TestList();
     set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));

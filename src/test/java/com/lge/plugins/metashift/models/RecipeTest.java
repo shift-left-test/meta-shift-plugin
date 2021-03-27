@@ -24,9 +24,16 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the Recipe class.
@@ -34,38 +41,39 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class RecipeTest {
+
   private Recipe origin;
   private Recipe same;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     origin = new Recipe("cmake-project-1.0.0-r0");
     same = new Recipe("cmake-project-1.0.0-r0");
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertEquals("cmake-project-1.0.0-r0", origin.getRecipe());
   }
 
-  @Test(expected=IllegalArgumentException.class)
-  public void testInitWithEmptyString() throws Exception {
+  @Test(expected = IllegalArgumentException.class)
+  public void testInitWithEmptyString() {
     new Recipe("");
   }
 
-  @Test(expected=IllegalArgumentException.class)
-  public void testInitWithInsufficientFullname() throws Exception {
+  @Test(expected = IllegalArgumentException.class)
+  public void testInitWithInsufficientFullname() {
     new Recipe("cmake-project");
   }
 
   @Test
-  public void testInitWithComplexFullname() throws Exception {
+  public void testInitWithComplexFullname() {
     Recipe recipe = new Recipe("qtbase+-native-5.15.2+gitAUTOINC+40143c189b-r+1.0");
     assertEquals("qtbase+-native-5.15.2+gitAUTOINC+40143c189b-r+1.0", recipe.getRecipe());
   }
 
   @Test
-  public void testEquality() throws Exception {
+  public void testEquality() {
     assertEquals(origin, origin);
     assertEquals(origin, same);
     assertNotEquals(origin, new Recipe("qmake5-project-1.0.0-r0"));
@@ -74,7 +82,7 @@ public class RecipeTest {
   }
 
   @Test
-  public void testHashCode() throws Exception {
+  public void testHashCode() {
     Recipe different = new Recipe("qmake5-project-1.0.0-r0");
     assertEquals(origin.hashCode(), origin.hashCode());
     assertEquals(origin.hashCode(), same.hashCode());
@@ -82,7 +90,7 @@ public class RecipeTest {
   }
 
   @Test
-  public void testComparable() throws Exception {
+  public void testComparable() {
     List<Recipe> expected = new ArrayList<>();
     expected.add(new Recipe("A-2.0.0-r3"));
     expected.add(new Recipe("A-3.0.0-r2"));
@@ -98,7 +106,7 @@ public class RecipeTest {
   }
 
   @Test
-  public void testDuplicates() throws Exception {
+  public void testDuplicates() {
     Set<Recipe> recipes = new HashSet<>();
     recipes.add(origin);
     recipes.add(same);

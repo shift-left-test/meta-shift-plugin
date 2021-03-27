@@ -32,23 +32,28 @@ import com.lge.plugins.metashift.models.SizeList;
  *
  * @author Sung Gon Kim
  */
-public final class SizeCounter extends Visitor {
+public final class SizeCounter implements Visitable {
+
   /**
    * Represents the sum of the number of classes.
    */
   private int classes;
+
   /**
    * Represents the sum of the number of files.
    */
   private int files;
+
   /**
    * Represents the sum of the number of functions.
    */
   private int functions;
+
   /**
    * Represents the sum of the number of lines.
    */
   private int lines;
+
   /**
    * Represents the sum of the number of recipes.
    */

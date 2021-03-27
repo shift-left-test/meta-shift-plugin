@@ -24,27 +24,14 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.KilledMutationTestData;
-import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.MutationTestList;
-import com.lge.plugins.metashift.models.SurvivedMutationTestData;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Evaluates the level of mutation testing.
  *
  * @author Sung Gon Kim
  */
-public final class MutationTestQualifier extends Visitor implements Qualifier {
-  /**
-   * Represents the collection of MutationTestCounter objects.
-   */
-  private Map<Class<? extends MutationTestData>, MutationTestCounter> collection;
-  /**
-   * Represents the threshold of the qualification.
-   */
-  private float threshold;
+public final class MutationTestQualifier extends Qualifier<MutationTestCounter> {
 
   /**
    * Default constructor.
@@ -52,41 +39,29 @@ public final class MutationTestQualifier extends Visitor implements Qualifier {
    * @param threshold for evaluation
    */
   public MutationTestQualifier(final float threshold) {
-    collection = new HashMap<>();
-    collection.put(KilledMutationTestData.class,
-                   new MutationTestCounter(KilledMutationTestData.class));
-    collection.put(SurvivedMutationTestData.class,
-                   new MutationTestCounter(SurvivedMutationTestData.class));
-    this.threshold = threshold;
-  }
-
-  /**
-   * Returns the relevant collector object based on the given type.
-   *
-   * @param clazz of the object type to return
-   * @return MutationTestCounter object
-   */
-  public MutationTestCounter collection(final Class<? extends MutationTestData> clazz) {
-    return collection.get(clazz);
+    super(threshold,
+        new KilledMutationTestCounter(),
+        new SurvivedMutationTestCounter(),
+        new SkippedMutationTestCounter());
   }
 
   @Override
   public boolean isAvailable() {
-    return collection(KilledMutationTestData.class).getDenominator() > 0;
+    return get(KilledMutationTestCounter.class).getDenominator() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection(KilledMutationTestData.class).getDenominator();
-    int numerator = collection(KilledMutationTestData.class).getNumerator();
+    int denominator = get(KilledMutationTestCounter.class).getDenominator();
+    int numerator = get(KilledMutationTestCounter.class).getNumerator();
     if (denominator == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) >= threshold;
+    return ((float) numerator / (float) denominator) >= getThreshold();
   }
 
   @Override
   public void visit(MutationTestList objects) {
-    collection.values().stream().forEach(collector -> objects.accept(collector));
+    getCollection().values().forEach(objects::accept);
   }
 }

@@ -24,8 +24,10 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the Criteria class.
@@ -33,24 +35,25 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CriteriaTest {
+
   private Criteria criteria;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     criteria = new Criteria();
   }
 
   private void assertValues(float overallThreshold,
-                            float cacheThreshold,
-                            float recipeViolationThreshold,
-                            float commentThreshold,
-                            float codeViolationThreshold,
-                            int complexityLevel,
-                            float complexityThreshold,
-                            float duplicationThreshold,
-                            float testThreshold,
-                            float coverageThreshold,
-                            float mutationTestThreshold) {
+      float cacheThreshold,
+      float recipeViolationThreshold,
+      float commentThreshold,
+      float codeViolationThreshold,
+      int complexityLevel,
+      float complexityThreshold,
+      float duplicationThreshold,
+      float testThreshold,
+      float coverageThreshold,
+      float mutationTestThreshold) {
     assertEquals(overallThreshold, criteria.getOverallThreshold(), 0.1f);
     assertEquals(cacheThreshold, criteria.getCacheThreshold(), 0.1f);
     assertEquals(recipeViolationThreshold, criteria.getRecipeViolationThreshold(), 0.1f);
@@ -65,12 +68,12 @@ public class CriteriaTest {
   }
 
   @Test
-  public void testInitData() throws Exception {
+  public void testInitData() {
     assertValues(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testSetData() throws Exception {
+  public void testSetData() {
     criteria.setOverallThreshold(0.1f);
     criteria.setCacheThreshold(0.2f);
     criteria.setRecipeViolationThreshold(0.3f);

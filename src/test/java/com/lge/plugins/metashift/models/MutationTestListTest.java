@@ -24,8 +24,10 @@
 
 package com.lge.plugins.metashift.models;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the MutationTestList class.
@@ -33,20 +35,21 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class MutationTestListTest {
+
   private MutationTestList objects;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     objects = new MutationTestList();
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertEquals(0, objects.size());
   }
 
   @Test
-  public void testAddingData() throws Exception {
+  public void testAddingData() {
     MutationTestData first = new KilledMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC");
     MutationTestData second = new KilledMutationTestData("B", "b.file", "C", "f()", 1, "AOR", "TC");
     objects.add(second);

@@ -24,10 +24,16 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.DuplicationData;
+import com.lge.plugins.metashift.models.DuplicationList;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the DuplicationCounter class.
@@ -35,13 +41,14 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class DuplicationCounterTest {
+
   private DuplicationCounter collector;
   private DuplicationList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     collector = new DuplicationCounter();
     set = new DuplicationList();
     recipe = new Recipe("A-B-C");
@@ -55,18 +62,18 @@ public class DuplicationCounterTest {
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testSetWithCompoundData() throws Exception {
+  public void testSetWithCompoundData() {
     set.add(new DuplicationData("A", "a.file", 10, 5));
     set.add(new DuplicationData("A", "b.file", 10, 5));
     set.accept(collector);
@@ -74,7 +81,7 @@ public class DuplicationCounterTest {
   }
 
   @Test
-  public void testMultipleSets() throws Exception {
+  public void testMultipleSets() {
     List<DuplicationList> group = new ArrayList<>();
 
     set = new DuplicationList();
@@ -92,13 +99,13 @@ public class DuplicationCounterTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeWithData() throws Exception {
+  public void testRecipeWithData() {
     set.add(new DuplicationData("A", "a.file", 10, 5));
     set.add(new DuplicationData("A", "b.file", 10, 5));
     recipe.set(set);
@@ -107,13 +114,13 @@ public class DuplicationCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithCompoundData() throws Exception {
+  public void testRecipeListWithCompoundData() {
     set = new DuplicationList();
     set.add(new DuplicationData("A", "a.file", 10, 5));
     set.add(new DuplicationData("A", "b.file", 10, 5));

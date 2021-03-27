@@ -24,10 +24,16 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.ComplexityData;
+import com.lge.plugins.metashift.models.ComplexityList;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the ComplexityCounter class.
@@ -35,13 +41,14 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class ComplexityCounterTest {
+
   private ComplexityCounter collector;
   private ComplexityList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     collector = new ComplexityCounter(10);
     set = new ComplexityList();
     recipe = new Recipe("A-B-C");
@@ -55,18 +62,18 @@ public class ComplexityCounterTest {
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testSetWithoutMatched() throws Exception {
+  public void testSetWithoutMatched() {
     set.add(new ComplexityData("A", "a.file", "f()", 1));
     set.add(new ComplexityData("A", "a.file", "g()", 9));
     set.accept(collector);
@@ -74,14 +81,14 @@ public class ComplexityCounterTest {
   }
 
   @Test
-  public void testSetWithMatched() throws Exception {
+  public void testSetWithMatched() {
     set.add(new ComplexityData("A", "a.file", "h()", 10));
     set.accept(collector);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
-  public void testSetWithCompoundData() throws Exception {
+  public void testSetWithCompoundData() {
     set.add(new ComplexityData("A", "a.file", "f()", 1));
     set.add(new ComplexityData("A", "a.file", "g()", 9));
     set.add(new ComplexityData("A", "a.file", "h()", 10));
@@ -90,7 +97,7 @@ public class ComplexityCounterTest {
   }
 
   @Test
-  public void testMultipleSets() throws Exception {
+  public void testMultipleSets() {
     List<ComplexityList> group = new ArrayList<>();
 
     set = new ComplexityList();
@@ -110,13 +117,13 @@ public class ComplexityCounterTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutMatched() throws Exception {
+  public void testRecipeWithoutMatched() {
     set.add(new ComplexityData("A", "a.file", "g()", 9));
     recipe.set(set);
     recipe.accept(collector);
@@ -124,7 +131,7 @@ public class ComplexityCounterTest {
   }
 
   @Test
-  public void testRecipeWithMatched() throws Exception {
+  public void testRecipeWithMatched() {
     set.add(new ComplexityData("A", "a.file", "g()", 10));
     recipe.set(set);
     recipe.accept(collector);
@@ -132,13 +139,13 @@ public class ComplexityCounterTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(collector);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithCompoundData() throws Exception {
+  public void testRecipeListWithCompoundData() {
     set = new ComplexityList();
     set.add(new ComplexityData("A", "a.file", "f()", 1));
     set.add(new ComplexityData("A", "a.file", "g()", 9));

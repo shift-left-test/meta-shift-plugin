@@ -32,15 +32,18 @@ import com.lge.plugins.metashift.models.CacheList;
  *
  * @author Sung Gon Kim
  */
-public final class CacheCounter extends Visitor implements Counter {
+public abstract class CacheCounter implements Countable {
+
   /**
    * Represents the class type.
    */
-  private Class<? extends CacheData> clazz;
+  private final Class<? extends CacheData> clazz;
+
   /**
-   * Represents the demoniator.
+   * Represents the denominator.
    */
   private int denominator;
+
   /**
    * Represents the numerator.
    */

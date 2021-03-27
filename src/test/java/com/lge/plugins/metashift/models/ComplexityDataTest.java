@@ -24,9 +24,13 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.junit.Test;
 
 /**
  * Unit tests for the ComplexityData class.
@@ -34,11 +38,12 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class ComplexityDataTest {
-  private ComplexityData origin = new ComplexityData("A", "a.file", "f()", 1);
-  private ComplexityData same = new ComplexityData("A", "a.file", "f()", 1);
+
+  private final ComplexityData origin = new ComplexityData("A", "a.file", "f()", 1);
+  private final ComplexityData same = new ComplexityData("A", "a.file", "f()", 1);
 
   @Test
-  public void testInitData() throws Exception {
+  public void testInitData() {
     assertEquals("A", origin.getRecipe());
     assertEquals("a.file", origin.getFile());
     assertEquals("f()", origin.getFunction());
@@ -46,7 +51,7 @@ public class ComplexityDataTest {
   }
 
   @Test
-  public void testEquality() throws Exception {
+  public void testEquality() {
     assertNotEquals(origin, null);
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
@@ -58,7 +63,7 @@ public class ComplexityDataTest {
   }
 
   @Test
-  public void testHashCode() throws Exception {
+  public void testHashCode() {
     assertEquals(origin.hashCode(), origin.hashCode());
     assertEquals(origin.hashCode(), same.hashCode());
     assertNotEquals(origin.hashCode(), new ComplexityData("B", "a.file", "f()", 1).hashCode());
@@ -68,7 +73,7 @@ public class ComplexityDataTest {
   }
 
   @Test
-  public void testComparable() throws Exception {
+  public void testComparable() {
     List<ComplexityData> expected = new ArrayList<>();
     expected.add(new ComplexityData("A", "a.file", "f()", 1));
     expected.add(new ComplexityData("A", "a.file", "g()", 1));

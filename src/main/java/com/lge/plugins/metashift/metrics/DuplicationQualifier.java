@@ -31,15 +31,7 @@ import com.lge.plugins.metashift.models.DuplicationList;
  *
  * @author Sung Gon Kim
  */
-public final class DuplicationQualifier extends Visitor implements Qualifier {
-  /**
-   * Represents the collectino of DuplicationCounter objects.
-   */
-  private DuplicationCounter collection;
-  /**
-   * Represents the threshold of the qualification.
-   */
-  private float threshold;
+public final class DuplicationQualifier extends Qualifier<DuplicationCounter> {
 
   /**
    * Default constructor.
@@ -47,36 +39,26 @@ public final class DuplicationQualifier extends Visitor implements Qualifier {
    * @param threshold for evaluation
    */
   public DuplicationQualifier(final float threshold) {
-    this.collection = new DuplicationCounter();
-    this.threshold = threshold;
-  }
-
-  /**
-   * Returns the collector object.
-   *
-   * @return DuplicationCounter object
-   */
-  public DuplicationCounter collection() {
-    return collection;
+    super(threshold, new DuplicationCounter());
   }
 
   @Override
   public boolean isAvailable() {
-    return collection.getDenominator() > 0;
+    return get(DuplicationCounter.class).getDenominator() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection.getDenominator();
-    int numerator = collection.getNumerator();
+    int denominator = get(DuplicationCounter.class).getDenominator();
+    int numerator = get(DuplicationCounter.class).getNumerator();
     if (denominator == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) <= threshold;
+    return ((float) numerator / (float) denominator) <= getThreshold();
   }
 
   @Override
   public void visit(final DuplicationList objects) {
-    objects.accept(collection);
+    objects.accept(get(DuplicationCounter.class));
   }
 }

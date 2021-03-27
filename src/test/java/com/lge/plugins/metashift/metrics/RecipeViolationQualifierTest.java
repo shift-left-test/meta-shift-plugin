@@ -24,10 +24,16 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.InfoRecipeViolationData;
+import com.lge.plugins.metashift.models.MajorRecipeViolationData;
+import com.lge.plugins.metashift.models.MinorRecipeViolationData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.RecipeViolationList;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the RecipeViolationQualifier class.
@@ -35,47 +41,49 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class RecipeViolationQualifierTest {
+
   private RecipeViolationQualifier qualifier;
   private RecipeViolationList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     qualifier = new RecipeViolationQualifier(0.5f);
     set = new RecipeViolationList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
 
-  private void assertValues(boolean available, boolean qualified, float major, float minor, float info) {
+  private void assertValues(boolean available, boolean qualified, float major, float minor,
+      float info) {
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
-    assertEquals(major, qualifier.collection(MajorRecipeViolationData.class).getRatio(), 0.1f);
-    assertEquals(minor, qualifier.collection(MinorRecipeViolationData.class).getRatio(), 0.1f);
-    assertEquals(info, qualifier.collection(InfoRecipeViolationData.class).getRatio(), 0.1f);
+    assertEquals(major, qualifier.get(MajorRecipeViolationCounter.class).getRatio(), 0.1f);
+    assertEquals(minor, qualifier.get(MinorRecipeViolationCounter.class).getRatio(), 0.1f);
+    assertEquals(info, qualifier.get(InfoRecipeViolationCounter.class).getRatio(), 0.1f);
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testSetWithoutQualified() throws Exception {
+  public void testSetWithoutQualified() {
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     set.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testSetWithQualified() throws Exception {
+  public void testSetWithQualified() {
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
@@ -84,13 +92,13 @@ public class RecipeViolationQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipe() throws Exception {
+  public void testEmptyRecipe() {
     recipe.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeWithoutQualified() throws Exception {
+  public void testRecipeWithoutQualified() {
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     recipe.set(set);
     recipe.accept(qualifier);
@@ -98,7 +106,7 @@ public class RecipeViolationQualifierTest {
   }
 
   @Test
-  public void testRecipeWithQualified() throws Exception {
+  public void testRecipeWithQualified() {
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
@@ -108,13 +116,13 @@ public class RecipeViolationQualifierTest {
   }
 
   @Test
-  public void testEmptyRecipeList() throws Exception {
+  public void testEmptyRecipeList() {
     recipes.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
-  public void testRecipeListWithoutQualified() throws Exception {
+  public void testRecipeListWithoutQualified() {
     set = new RecipeViolationList();
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     set.add(new MajorRecipeViolationData("A", "a.file", 2, "major", "major", "major"));
@@ -135,7 +143,7 @@ public class RecipeViolationQualifierTest {
   }
 
   @Test
-  public void testRecipeListWithQualified() throws Exception {
+  public void testRecipeListWithQualified() {
     set = new RecipeViolationList();
     set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));

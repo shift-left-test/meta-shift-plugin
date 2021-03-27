@@ -30,21 +30,22 @@ package com.lge.plugins.metashift.models;
  * @author Sung Gon Kim
  */
 public final class SurvivedMutationTestData extends MutationTestData {
+
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param file name
-   * @param mutatedClass the mutated class
+   * @param recipe        name
+   * @param file          name
+   * @param mutatedClass  the mutated class
    * @param mutatedMethod the mutated method
-   * @param line the line number
-   * @param mutator the mutation operator
-   * @param killingTest the test that kills the mutant
+   * @param line          the line number
+   * @param mutator       the mutation operator
+   * @param killingTest   the test that kills the mutant
    */
   public SurvivedMutationTestData(final String recipe, final String file,
-                                  final String mutatedClass, final String mutatedMethod,
-                                  final int line, final String mutator,
-                                  final String killingTest) {
+      final String mutatedClass, final String mutatedMethod,
+      final int line, final String mutator,
+      final String killingTest) {
     super(recipe, file, mutatedClass, mutatedMethod, line, mutator, killingTest);
   }
 }

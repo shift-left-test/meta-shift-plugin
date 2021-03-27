@@ -24,29 +24,14 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.ErrorTestData;
-import com.lge.plugins.metashift.models.FailedTestData;
-import com.lge.plugins.metashift.models.PassedTestData;
-import com.lge.plugins.metashift.models.SkippedTestData;
-import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.models.TestList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Evaluates the level of testing.
  *
  * @author Sung Gon Kim
  */
-public final class TestQualifier extends Visitor implements Qualifier {
-  /**
-   * Represents the collection of TestCounter objects.
-   */
-  private Map<Class<? extends TestData>, TestCounter> collection;
-  /**
-   * Represents the threshold of the qualification.
-   */
-  private float threshold;
+public final class TestQualifier extends Qualifier<TestCounter> {
 
   /**
    * Default constructor.
@@ -54,41 +39,30 @@ public final class TestQualifier extends Visitor implements Qualifier {
    * @param threshold for evaluation
    */
   public TestQualifier(final float threshold) {
-    collection = new HashMap<>();
-    collection.put(PassedTestData.class, new TestCounter(PassedTestData.class));
-    collection.put(FailedTestData.class, new TestCounter(FailedTestData.class));
-    collection.put(ErrorTestData.class, new TestCounter(ErrorTestData.class));
-    collection.put(SkippedTestData.class, new TestCounter(SkippedTestData.class));
-    this.threshold = threshold;
-  }
-
-  /**
-   * Returns the relevant collector object based on the given type.
-   *
-   * @param clazz of the object type to return
-   * @return TestCounter object
-   */
-  public TestCounter collection(final Class<? extends TestData> clazz) {
-    return collection.get(clazz);
+    super(threshold,
+        new PassedTestCounter(),
+        new FailedTestCounter(),
+        new ErrorTestCounter(),
+        new SkippedTestCounter());
   }
 
   @Override
   public boolean isAvailable() {
-    return collection(PassedTestData.class).getDenominator() > 0;
+    return get(PassedTestCounter.class).getDenominator() > 0;
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = collection(PassedTestData.class).getDenominator();
-    int numerator = collection(PassedTestData.class).getNumerator();
+    int denominator = get(PassedTestCounter.class).getDenominator();
+    int numerator = get(PassedTestCounter.class).getNumerator();
     if (denominator == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) >= threshold;
+    return ((float) numerator / (float) denominator) >= getThreshold();
   }
 
   @Override
   public void visit(final TestList objects) {
-    collection.values().stream().forEach(collector -> objects.accept(collector));
+    getCollection().values().forEach(objects::accept);
   }
 }

@@ -24,10 +24,13 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.SizeList;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.junit.Test;
 
 /**
  * Unit tests for the SizeData class.
@@ -35,11 +38,12 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class SizeDataTest {
-  private SizeData origin = new SizeData("A", "a.file", 100, 50, 10);
-  private SizeData same = new SizeData("A", "a.file", 3, 2, 1);
+
+  private final SizeData origin = new SizeData("A", "a.file", 100, 50, 10);
+  private final SizeData same = new SizeData("A", "a.file", 3, 2, 1);
 
   @Test
-  public void testInitData() throws Exception {
+  public void testInitData() {
     assertEquals("A", origin.getRecipe());
     assertEquals("a.file", origin.getFile());
     assertEquals(100, origin.getLines());
@@ -48,7 +52,7 @@ public class SizeDataTest {
   }
 
   @Test
-  public void testEquality() throws Exception {
+  public void testEquality() {
     assertNotEquals(origin, null);
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
@@ -59,7 +63,7 @@ public class SizeDataTest {
   }
 
   @Test
-  public void testHashCode() throws Exception {
+  public void testHashCode() {
     assertEquals(origin.hashCode(), same.hashCode());
     assertNotEquals(origin.hashCode(), new SizeData("B", "a.file", 100, 50, 10).hashCode());
     assertNotEquals(origin.hashCode(), new SizeData("A", "b.file", 100, 50, 10).hashCode());
@@ -69,7 +73,7 @@ public class SizeDataTest {
   }
 
   @Test
-  public void testComparable() throws Exception {
+  public void testComparable() {
     List<SizeData> expected = new ArrayList<>();
     expected.add(new SizeData("A", "a.file", 3, 2, 1));
     expected.add(new SizeData("A", "b.file", 3, 2, 1));

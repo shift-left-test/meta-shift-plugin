@@ -29,35 +29,34 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public abstract class TestData implements Data<TestData> {
-  /**
-   * Represents the name of the recipe.
-   */
-  private String recipe;
+public abstract class TestData extends Data<TestData> {
+
   /**
    * Represents the name of the test suite.
    */
-  private String suite;
+  private final String suite;
+
   /**
    * Represents the name of the test.
    */
-  private String name;
+  private final String name;
+
   /**
    * Represents the message of the test.
    */
-  private String message;
+  private final String message;
 
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param suite name
-   * @param name of the test
+   * @param recipe  name
+   * @param suite   name
+   * @param name    of the test
    * @param message of the test
    */
   public TestData(final String recipe, final String suite, final String name,
-                  final String message) {
-    this.recipe = recipe;
+      final String message) {
+    super(recipe);
     this.suite = suite;
     this.name = name;
     this.message = message;
@@ -66,7 +65,7 @@ public abstract class TestData implements Data<TestData> {
   @Override
   public final int compareTo(final TestData other) {
     int compared;
-    compared = recipe.compareTo(other.recipe);
+    compared = getRecipe().compareTo(other.getRecipe());
     if (compared != 0) {
       return compared;
     }
@@ -75,10 +74,7 @@ public abstract class TestData implements Data<TestData> {
       return compared;
     }
     compared = name.compareTo(other.name);
-    if (compared != 0) {
-      return compared;
-    }
-    return 0;
+    return compared;
   }
 
   @Override
@@ -93,16 +89,13 @@ public abstract class TestData implements Data<TestData> {
       return false;
     }
     TestData other = (TestData) object;
-    if (!recipe.equals(other.recipe)) {
+    if (!getRecipe().equals(other.getRecipe())) {
       return false;
     }
     if (!suite.equals(other.suite)) {
       return false;
     }
-    if (!name.equals(other.name)) {
-      return false;
-    }
-    return true;
+    return name.equals(other.name);
   }
 
   @Override
@@ -110,15 +103,10 @@ public abstract class TestData implements Data<TestData> {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + getRecipe().hashCode();
     hashCode = prime * hashCode + suite.hashCode();
     hashCode = prime * hashCode + name.hashCode();
     return hashCode;
-  }
-
-  @Override
-  public final String getRecipe() {
-    return recipe;
   }
 
   /**

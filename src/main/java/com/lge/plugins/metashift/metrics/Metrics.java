@@ -32,71 +32,39 @@ import com.lge.plugins.metashift.models.DuplicationList;
 import com.lge.plugins.metashift.models.MutationTestList;
 import com.lge.plugins.metashift.models.RecipeViolationList;
 import com.lge.plugins.metashift.models.TestList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Represents a set of metrics.
  *
  * @author Sung Gon Kim
  */
-public final class Metrics extends Visitor implements Counter, Qualifier {
-  /**
-   * Represents the collection of quality metrics.
-   */
-  private Map<Class<? extends Qualifier>, Qualifier> collection;
-  /**
-   * Represents the threshold of the qualification.
-   */
-  private float threshold;
+public final class Metrics extends Qualifier<Qualifier<?>> implements Countable {
 
   /**
    * Default constructor.
    */
   public Metrics(final Criteria criteria) {
-    collection = new HashMap<>();
-    collection.put(CacheQualifier.class,
-                   new CacheQualifier(criteria.getCacheThreshold()));
-    collection.put(RecipeViolationQualifier.class,
-                   new RecipeViolationQualifier(criteria.getRecipeViolationThreshold()));
-    collection.put(CommentQualifier.class,
-                   new CommentQualifier(criteria.getCommentThreshold()));
-    collection.put(CodeViolationQualifier.class,
-                   new CodeViolationQualifier(criteria.getCodeViolationThreshold()));
-    collection.put(ComplexityQualifier.class,
-                   new ComplexityQualifier(criteria.getComplexityLevel(),
-                                           criteria.getComplexityThreshold()));
-    // TODO(sunggon82.kim): CoverageQualifer required
-    // collection.put(CoverageQualifier.class,
-    //               new CoverageQualifier(criteria.getCoverageThreshold()));
-    collection.put(DuplicationQualifier.class,
-                   new DuplicationQualifier(criteria.getDuplicationThreshold()));
-    collection.put(TestQualifier.class,
-                   new TestQualifier(criteria.getTestThreshold()));
-    collection.put(MutationTestQualifier.class,
-                   new MutationTestQualifier(criteria.getMutationTestThreshold()));
-    this.threshold = criteria.getOverallThreshold();
-  }
-
-  /**
-   * Returns the relevent Qualifier object based on the given class type.
-   *
-   * @param clazz of the object type to return
-   * @return Qualifier object
-   */
-  public Qualifier collection(final Class<? extends Qualifier> clazz) {
-    return collection.get(clazz);
+    super(criteria.getOverallThreshold(),
+        new CacheQualifier(criteria.getCacheThreshold()),
+        new RecipeViolationQualifier(criteria.getRecipeViolationThreshold()),
+        new CommentQualifier(criteria.getCommentThreshold()),
+        new CodeViolationQualifier(criteria.getCodeViolationThreshold()),
+        new ComplexityQualifier(criteria.getComplexityLevel(),
+            criteria.getComplexityThreshold()),
+        new DuplicationQualifier(criteria.getDuplicationThreshold()),
+        new TestQualifier(criteria.getTestThreshold()),
+        new MutationTestQualifier(criteria.getMutationTestThreshold()));
   }
 
   @Override
   public int getDenominator() {
-    return (int) collection.values().stream()
-        .filter(o -> o.isAvailable()).count();
+    return (int) getCollection().values().stream()
+        .filter(Qualifiable::isAvailable).count();
   }
 
   @Override
   public int getNumerator() {
-    return (int) collection.values().stream()
+    return (int) getCollection().values().stream()
         .filter(o -> o.isAvailable() && o.isQualified()).count();
   }
 
@@ -110,46 +78,46 @@ public final class Metrics extends Visitor implements Counter, Qualifier {
     if (getDenominator() == 0) {
       return false;
     }
-    return ((float) getNumerator() / (float) getDenominator()) >= threshold;
+    return ((float) getNumerator() / (float) getDenominator()) >= getThreshold();
   }
 
   @Override
   public void visit(final CacheList object) {
-    object.accept((CacheQualifier) collection.get(CacheQualifier.class));
+    object.accept(get(CacheQualifier.class));
   }
 
   @Override
   public void visit(final CommentList object) {
-    object.accept((CommentQualifier) collection.get(CommentQualifier.class));
+    object.accept(get(CommentQualifier.class));
   }
 
   @Override
   public void visit(final RecipeViolationList object) {
-    object.accept((RecipeViolationQualifier) collection.get(RecipeViolationQualifier.class));
+    object.accept(get(RecipeViolationQualifier.class));
   }
 
   @Override
   public void visit(final CodeViolationList object) {
-    object.accept((CodeViolationQualifier) collection.get(CodeViolationQualifier.class));
+    object.accept(get(CodeViolationQualifier.class));
   }
 
   @Override
   public void visit(final ComplexityList object) {
-    object.accept((ComplexityQualifier) collection.get(ComplexityQualifier.class));
+    object.accept(get(ComplexityQualifier.class));
   }
 
   @Override
   public void visit(final DuplicationList object) {
-    object.accept((DuplicationQualifier) collection.get(DuplicationQualifier.class));
+    object.accept(get(DuplicationQualifier.class));
   }
 
   @Override
   public void visit(final TestList object) {
-    object.accept((TestQualifier) collection.get(TestQualifier.class));
+    object.accept(get(TestQualifier.class));
   }
 
   @Override
   public void visit(final MutationTestList object) {
-    object.accept((MutationTestQualifier) collection.get(MutationTestQualifier.class));
+    object.accept(get(MutationTestQualifier.class));
   }
 }

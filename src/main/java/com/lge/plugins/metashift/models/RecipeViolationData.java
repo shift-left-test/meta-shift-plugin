@@ -29,47 +29,48 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public abstract class RecipeViolationData implements Data<RecipeViolationData> {
-  /**
-   * Represents the name of the recipe.
-   */
-  private String recipe;
+public abstract class RecipeViolationData extends Data<RecipeViolationData> {
+
   /**
    * Represents the name of the file.
    */
-  private String file;
+  private final String file;
+
   /**
    * Represents the line number.
    */
-  private int line;
+  private final int line;
+
   /**
    * Represents the violation rule.
    */
-  private String rule;
+  private final String rule;
+
   /**
    * Represents the description of the violation.
    */
-  private String description;
+  private final String description;
+
   /**
    * Represents the severity of the violation.
    */
-  private String severity;
+  private final String severity;
 
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param file name
-   * @param line number
-   * @param rule name
+   * @param recipe      name
+   * @param file        name
+   * @param line        number
+   * @param rule        name
    * @param description of the recipe violation
-   * @param severity of the recipe violation
+   * @param severity    of the recipe violation
    */
   public RecipeViolationData(final String recipe, final String file,
-                             final int line, final String rule,
-                             final String description,
-                             final String severity) {
-    this.recipe = recipe;
+      final int line, final String rule,
+      final String description,
+      final String severity) {
+    super(recipe);
     this.file = file;
     this.line = line;
     this.rule = rule;
@@ -80,7 +81,7 @@ public abstract class RecipeViolationData implements Data<RecipeViolationData> {
   @Override
   public final int compareTo(final RecipeViolationData other) {
     int compared;
-    compared = recipe.compareTo(other.recipe);
+    compared = getRecipe().compareTo(other.getRecipe());
     if (compared != 0) {
       return compared;
     }
@@ -93,10 +94,7 @@ public abstract class RecipeViolationData implements Data<RecipeViolationData> {
       return compared;
     }
     compared = rule.compareTo(other.rule);
-    if (compared != 0) {
-      return compared;
-    }
-    return 0;
+    return compared;
   }
 
   @Override
@@ -111,7 +109,7 @@ public abstract class RecipeViolationData implements Data<RecipeViolationData> {
       return false;
     }
     RecipeViolationData other = (RecipeViolationData) object;
-    if (!recipe.equals(other.recipe)) {
+    if (!getRecipe().equals(other.getRecipe())) {
       return false;
     }
     if (!file.equals(other.file)) {
@@ -120,10 +118,7 @@ public abstract class RecipeViolationData implements Data<RecipeViolationData> {
     if (line != other.line) {
       return false;
     }
-    if (!rule.equals(other.rule)) {
-      return false;
-    }
-    return true;
+    return rule.equals(other.rule);
   }
 
   @Override
@@ -131,16 +126,11 @@ public abstract class RecipeViolationData implements Data<RecipeViolationData> {
     final int prime = 31;
     int hashCode = 1;
     hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + recipe.hashCode();
+    hashCode = prime * hashCode + getRecipe().hashCode();
     hashCode = prime * hashCode + file.hashCode();
     hashCode = prime * hashCode + line;
     hashCode = prime * hashCode + rule.hashCode();
     return hashCode;
-  }
-
-  @Override
-  public final String getRecipe() {
-    return recipe;
   }
 
   /**

@@ -34,6 +34,7 @@ import org.kohsuke.stapler.export.ExportedBean;
  */
 @ExportedBean
 public class MetaShiftBuildAction extends Actionable implements RunAction2 {
+
   private transient Run<?, ?> run;
 
   @Override
@@ -56,7 +57,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
   public void onAttached(Run<?, ?> run) {
     this.run = run;
   }
-  
+
   @Override
   public void onLoad(Run<?, ?> run) {
     this.run = run;
@@ -68,9 +69,9 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
   }
 
   /**
-   * Returns the run object which generaged this action.
+   * Returns the run object which generated this action.
    *
-   * @return  Run class
+   * @return Run class
    */
   public Run<?, ?> getRun() {
     return run;

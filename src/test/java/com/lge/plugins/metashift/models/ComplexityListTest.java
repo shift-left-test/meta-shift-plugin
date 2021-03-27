@@ -24,8 +24,10 @@
 
 package com.lge.plugins.metashift.models;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the ComplexityList class.
@@ -33,20 +35,21 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class ComplexityListTest {
+
   private ComplexityList objects;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     objects = new ComplexityList();
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertEquals(0, objects.size());
   }
 
   @Test
-  public void testAddingData() throws Exception {
+  public void testAddingData() {
     ComplexityData first = new ComplexityData("A", "a.file", "f()", 1);
     ComplexityData second = new ComplexityData("B", "b.file", "g()", 1);
     objects.add(second);

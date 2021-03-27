@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.metrics.Visitor;
+import com.lge.plugins.metashift.metrics.Visitable;
 
 /**
  * Represents a set of Recipe objects.
@@ -32,8 +32,9 @@ import com.lge.plugins.metashift.metrics.Visitor;
  * @author Sung Gon Kim
  */
 public final class RecipeList extends DataList<Recipe> {
+
   @Override
-  public void accept(final Visitor visitor) {
+  public void accept(final Visitable visitor) {
     visitor.visit(this);
   }
 }

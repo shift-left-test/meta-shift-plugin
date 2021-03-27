@@ -24,10 +24,14 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.*;
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.SizeData;
+import com.lge.plugins.metashift.models.SizeList;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the SizeCounter class.
@@ -35,13 +39,14 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class SizeCounterTest {
+
   private SizeCounter collector;
   private SizeList set;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     collector = new SizeCounter();
     set = new SizeList();
     recipe = new Recipe("A-B-C");
@@ -57,18 +62,18 @@ public class SizeCounterTest {
   }
 
   @Test
-  public void testInitialState() throws Exception {
+  public void testInitialState() {
     assertValues(0, 0, 0, 0, 0);
   }
 
   @Test
-  public void testEmptySet() throws Exception {
+  public void testEmptySet() {
     set.accept(collector);
     assertValues(0, 0, 0, 0, 0);
   }
 
   @Test
-  public void testSetWithData() throws Exception {
+  public void testSetWithData() {
     set.add(new SizeData("A", "a.file", 3, 2, 1));
     set.add(new SizeData("A", "b.file", 6, 4, 2));
     set.accept(collector);
@@ -76,7 +81,7 @@ public class SizeCounterTest {
   }
 
   @Test
-  public void testRecipeWithData() throws Exception {
+  public void testRecipeWithData() {
     set.add(new SizeData("A", "a.file", 3, 2, 1));
     set.add(new SizeData("A", "b.file", 6, 4, 2));
     recipe.set(set);
@@ -85,7 +90,7 @@ public class SizeCounterTest {
   }
 
   @Test
-  public void testRecipeListWithCompoundData() throws Exception {
+  public void testRecipeListWithCompoundData() {
     recipe = new Recipe("A-1.0.0-r0");
     set = new SizeList();
     set.add(new SizeData("A", "a.file", 3, 2, 1));

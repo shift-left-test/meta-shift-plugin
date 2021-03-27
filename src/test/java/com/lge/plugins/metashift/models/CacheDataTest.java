@@ -24,9 +24,14 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.util.*;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.junit.Test;
 
 /**
  * Unit tests for the CacheData class.
@@ -34,18 +39,19 @@ import static org.junit.Assert.*;
  * @author Sung Gon Kim
  */
 public class CacheDataTest {
-  private CacheData origin = new PremirrorCacheData("A", "X", true);
-  private CacheData same = new PremirrorCacheData("A", "X", true);
+
+  private final CacheData origin = new PremirrorCacheData("A", "X", true);
+  private final CacheData same = new PremirrorCacheData("A", "X", true);
 
   @Test
-  public void testInitData() throws Exception {
+  public void testInitData() {
     assertEquals("A", origin.getRecipe());
     assertEquals("X", origin.getSignature());
     assertTrue(origin.isAvailable());
   }
 
   @Test
-  public void testEquality() throws Exception {
+  public void testEquality() {
     assertNotEquals(origin, null);
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
@@ -57,7 +63,7 @@ public class CacheDataTest {
   }
 
   @Test
-  public void testHashCode() throws Exception {
+  public void testHashCode() {
     assertEquals(origin.hashCode(), same.hashCode());
     assertNotEquals(origin.hashCode(), new PremirrorCacheData("B", "X", true).hashCode());
     assertNotEquals(origin.hashCode(), new PremirrorCacheData("A", "Y", true).hashCode());
@@ -66,7 +72,7 @@ public class CacheDataTest {
   }
 
   @Test
-  public void testComparable() throws Exception {
+  public void testComparable() {
     List<CacheData> expected = new ArrayList<>();
     expected.add(new SharedStateCacheData("A", "X:do_compile", true));
     expected.add(new SharedStateCacheData("A", "X:do_fetch", true));

@@ -30,20 +30,21 @@ package com.lge.plugins.metashift.models;
  * @author Sung Gon Kim
  */
 public final class MajorRecipeViolationData extends RecipeViolationData {
+
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @param file name
-   * @param line number
-   * @param rule name
+   * @param recipe      name
+   * @param file        name
+   * @param line        number
+   * @param rule        name
    * @param description of the recipe violation
-   * @param severity of the recipe violation
+   * @param severity    of the recipe violation
    */
   public MajorRecipeViolationData(final String recipe, final String file,
-                                  final int line, final String rule,
-                                  final String description,
-                                  final String severity) {
+      final int line, final String rule,
+      final String description,
+      final String severity) {
     super(recipe, file, line, rule, description, severity);
   }
 }
