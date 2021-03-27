@@ -44,23 +44,23 @@ import org.junit.Test;
  */
 public class CodeViolationCounterTest {
 
-  private CodeViolationCounter collector;
-  private CodeViolationList set;
+  private CodeViolationCounter counter;
+  private CodeViolationList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
-    collector = new MajorCodeViolationCounter();
-    set = new CodeViolationList();
+    counter = new MajorCodeViolationCounter();
+    list = new CodeViolationList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
-    assertEquals(denominator, collector.getDenominator());
-    assertEquals(numerator, collector.getNumerator());
-    assertEquals(ratio, collector.getRatio(), 0.1f);
+    assertEquals(denominator, counter.getDenominator());
+    assertEquals(numerator, counter.getNumerator());
+    assertEquals(ratio, counter.getRatio(), 0.1f);
   }
 
   @Test
@@ -70,31 +70,31 @@ public class CodeViolationCounterTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(collector);
+    list.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testSetWithoutMatched() {
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.accept(collector);
+    list.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    list.accept(counter);
     assertValues(2, 0, 0.0f);
   }
 
   @Test
   public void testSetWithMatched() {
-    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
-    set.accept(collector);
+    list.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    list.accept(counter);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testSetWithCompoundData() {
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
-    set.accept(collector);
+    list.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    list.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    list.accept(counter);
     assertValues(3, 1, 0.3f);
   }
 
@@ -102,72 +102,72 @@ public class CodeViolationCounterTest {
   public void testMultipleSets() {
     List<CodeViolationList> group = new ArrayList<>();
 
-    set = new CodeViolationList();
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
-    group.add(set);
+    list = new CodeViolationList();
+    list.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    list.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    group.add(list);
 
-    set = new CodeViolationList();
-    set.add(new MinorCodeViolationData("B", "b.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("B", "b.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("B", "b.file", 3, 3, "r", "m", "d", "E", "t"));
-    group.add(set);
+    list = new CodeViolationList();
+    list.add(new MinorCodeViolationData("B", "b.file", 1, 1, "r", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("B", "b.file", 2, 2, "r", "m", "d", "E", "t"));
+    list.add(new MajorCodeViolationData("B", "b.file", 3, 3, "r", "m", "d", "E", "t"));
+    group.add(list);
 
-    group.forEach(o -> o.accept(collector));
+    group.forEach(o -> o.accept(counter));
     assertValues(6, 2, 0.3f);
   }
 
   @Test
   public void testEmptyRecipe() {
-    recipe.accept(collector);
+    recipe.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithoutMatched() {
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
-    recipe.set(set);
-    recipe.accept(collector);
+    list.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    recipe.set(list);
+    recipe.accept(counter);
     assertValues(2, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithMatched() {
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
-    recipe.set(set);
-    recipe.accept(collector);
+    list.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    list.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    recipe.set(list);
+    recipe.accept(counter);
     assertValues(3, 1, 0.3f);
   }
 
   @Test
   public void testEmptyRecipeList() {
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeListWithCompoundData() {
-    set = new CodeViolationList();
-    set.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
+    list = new CodeViolationList();
+    list.add(new MinorCodeViolationData("A", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("A", "a.file", 2, 2, "r", "m", "d", "E", "t"));
+    list.add(new MajorCodeViolationData("A", "a.file", 3, 3, "r", "m", "d", "E", "t"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new CodeViolationList();
-    set.add(new MinorCodeViolationData("B", "b.file", 1, 1, "r", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("B", "b.file", 2, 2, "r", "m", "d", "E", "t"));
-    set.add(new MajorCodeViolationData("B", "b.file", 3, 3, "r", "m", "d", "E", "t"));
+    list = new CodeViolationList();
+    list.add(new MinorCodeViolationData("B", "b.file", 1, 1, "r", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("B", "b.file", 2, 2, "r", "m", "d", "E", "t"));
+    list.add(new MajorCodeViolationData("B", "b.file", 3, 3, "r", "m", "d", "E", "t"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(6, 2, 0.3f);
   }
 }

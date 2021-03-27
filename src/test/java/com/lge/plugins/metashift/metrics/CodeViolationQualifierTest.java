@@ -43,14 +43,14 @@ import org.junit.Test;
 public class CodeViolationQualifierTest {
 
   private CodeViolationQualifier qualifier;
-  private CodeViolationList set;
+  private CodeViolationList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
     qualifier = new CodeViolationQualifier(0.5f);
-    set = new CodeViolationList();
+    list = new CodeViolationList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
@@ -71,23 +71,23 @@ public class CodeViolationQualifierTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(qualifier);
+    list.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testSetWithoutQualified() {
-    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    set.accept(qualifier);
+    list.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testSetWithQualified() {
-    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    set.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
-    set.accept(qualifier);
+    list.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list.accept(qualifier);
     assertValues(true, true, 0.3f, 0.3f, 0.3f);
   }
 
@@ -99,18 +99,18 @@ public class CodeViolationQualifierTest {
 
   @Test
   public void testRecipeWithoutQualified() {
-    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    recipe.set(set);
+    list.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testRecipeWithQualified() {
-    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    set.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
-    recipe.set(set);
+    list.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, true, 0.3f, 0.3f, 0.3f);
   }
@@ -123,16 +123,16 @@ public class CodeViolationQualifierTest {
 
   @Test
   public void testRecipeListWithoutQualified() {
-    set = new CodeViolationList();
-    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list = new CodeViolationList();
+    list.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new CodeViolationList();
-    set.add(new MajorCodeViolationData("B", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list = new CodeViolationList();
+    list.add(new MajorCodeViolationData("B", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);
@@ -141,20 +141,20 @@ public class CodeViolationQualifierTest {
 
   @Test
   public void testRecipeListWithQualified() {
-    set = new CodeViolationList();
-    set.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    set.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list = new CodeViolationList();
+    list.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new CodeViolationList();
-    set.add(new MajorCodeViolationData("B", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    set.add(new MinorCodeViolationData("B", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
-    set.add(new InfoCodeViolationData("B", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list = new CodeViolationList();
+    list.add(new MajorCodeViolationData("B", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list.add(new MinorCodeViolationData("B", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    list.add(new InfoCodeViolationData("B", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);

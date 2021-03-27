@@ -40,25 +40,25 @@ import org.junit.Test;
  */
 public class SizeCounterTest {
 
-  private SizeCounter collector;
-  private SizeList set;
+  private SizeCounter counter;
+  private SizeList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
-    collector = new SizeCounter();
-    set = new SizeList();
+    counter = new SizeCounter();
+    list = new SizeList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
 
   private void assertValues(int recipes, int files, int lines, int functions, int classes) {
-    assertEquals(recipes, collector.getRecipes());
-    assertEquals(files, collector.getFiles());
-    assertEquals(lines, collector.getLines());
-    assertEquals(functions, collector.getFunctions());
-    assertEquals(classes, collector.getClasses());
+    assertEquals(recipes, counter.getRecipes());
+    assertEquals(files, counter.getFiles());
+    assertEquals(lines, counter.getLines());
+    assertEquals(functions, counter.getFunctions());
+    assertEquals(classes, counter.getClasses());
   }
 
   @Test
@@ -68,42 +68,42 @@ public class SizeCounterTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(collector);
+    list.accept(counter);
     assertValues(0, 0, 0, 0, 0);
   }
 
   @Test
   public void testSetWithData() {
-    set.add(new SizeData("A", "a.file", 3, 2, 1));
-    set.add(new SizeData("A", "b.file", 6, 4, 2));
-    set.accept(collector);
+    list.add(new SizeData("A", "a.file", 3, 2, 1));
+    list.add(new SizeData("A", "b.file", 6, 4, 2));
+    list.accept(counter);
     assertValues(1, 2, 9, 6, 3);
   }
 
   @Test
   public void testRecipeWithData() {
-    set.add(new SizeData("A", "a.file", 3, 2, 1));
-    set.add(new SizeData("A", "b.file", 6, 4, 2));
-    recipe.set(set);
-    recipe.accept(collector);
+    list.add(new SizeData("A", "a.file", 3, 2, 1));
+    list.add(new SizeData("A", "b.file", 6, 4, 2));
+    recipe.set(list);
+    recipe.accept(counter);
     assertValues(1, 2, 9, 6, 3);
   }
 
   @Test
   public void testRecipeListWithCompoundData() {
     recipe = new Recipe("A-1.0.0-r0");
-    set = new SizeList();
-    set.add(new SizeData("A", "a.file", 3, 2, 1));
-    recipe.set(set);
+    list = new SizeList();
+    list.add(new SizeData("A", "a.file", 3, 2, 1));
+    recipe.set(list);
     recipes.add(recipe);
 
     recipe = new Recipe("B-1.0.0-r0");
-    set = new SizeList();
-    set.add(new SizeData("B", "b.file", 6, 4, 2));
-    recipe.set(set);
+    list = new SizeList();
+    list.add(new SizeData("B", "b.file", 6, 4, 2));
+    recipe.set(list);
     recipes.add(recipe);
 
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(2, 2, 9, 6, 3);
   }
 }

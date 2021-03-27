@@ -43,14 +43,14 @@ import org.junit.Test;
 public class RecipeViolationQualifierTest {
 
   private RecipeViolationQualifier qualifier;
-  private RecipeViolationList set;
+  private RecipeViolationList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
     qualifier = new RecipeViolationQualifier(0.5f);
-    set = new RecipeViolationList();
+    list = new RecipeViolationList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
@@ -71,23 +71,23 @@ public class RecipeViolationQualifierTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(qualifier);
+    list.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testSetWithoutQualified() {
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    set.accept(qualifier);
+    list.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    list.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testSetWithQualified() {
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
-    set.accept(qualifier);
+    list.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    list.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    list.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    list.accept(qualifier);
     assertValues(true, true, 0.3f, 0.3f, 0.3f);
   }
 
@@ -99,18 +99,18 @@ public class RecipeViolationQualifierTest {
 
   @Test
   public void testRecipeWithoutQualified() {
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    recipe.set(set);
+    list.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testRecipeWithQualified() {
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
-    recipe.set(set);
+    list.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    list.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    list.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, true, 0.3f, 0.3f, 0.3f);
   }
@@ -123,19 +123,19 @@ public class RecipeViolationQualifierTest {
 
   @Test
   public void testRecipeListWithoutQualified() {
-    set = new RecipeViolationList();
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    set.add(new MajorRecipeViolationData("A", "a.file", 2, "major", "major", "major"));
-    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    list = new RecipeViolationList();
+    list.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    list.add(new MajorRecipeViolationData("A", "a.file", 2, "major", "major", "major"));
+    list.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new RecipeViolationList();
-    set.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
-    set.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
+    list = new RecipeViolationList();
+    list.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
+    list.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);
@@ -144,20 +144,20 @@ public class RecipeViolationQualifierTest {
 
   @Test
   public void testRecipeListWithQualified() {
-    set = new RecipeViolationList();
-    set.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    set.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    set.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    list = new RecipeViolationList();
+    list.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    list.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    list.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new RecipeViolationList();
-    set.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
-    set.add(new MinorRecipeViolationData("B", "b.file", 1, "minor", "minor", "minor"));
-    set.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
+    list = new RecipeViolationList();
+    list.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
+    list.add(new MinorRecipeViolationData("B", "b.file", 1, "minor", "minor", "minor"));
+    list.add(new InfoRecipeViolationData("B", "b.file", 1, "info", "info", "info"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);

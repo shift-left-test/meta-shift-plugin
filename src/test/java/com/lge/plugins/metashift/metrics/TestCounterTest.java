@@ -45,23 +45,23 @@ import org.junit.Test;
  */
 public class TestCounterTest {
 
-  private TestCounter collector;
-  private TestList set;
+  private TestCounter counter;
+  private TestList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
-    collector = new PassedTestCounter();
-    set = new TestList();
+    counter = new PassedTestCounter();
+    list = new TestList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
-    assertEquals(denominator, collector.getDenominator());
-    assertEquals(numerator, collector.getNumerator());
-    assertEquals(ratio, collector.getRatio(), 0.1f);
+    assertEquals(denominator, counter.getDenominator());
+    assertEquals(numerator, counter.getNumerator());
+    assertEquals(ratio, counter.getRatio(), 0.1f);
   }
 
   @Test
@@ -71,33 +71,33 @@ public class TestCounterTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(collector);
+    list.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testSetWithoutMatched() {
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
-    set.accept(collector);
+    list.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
+    list.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
+    list.accept(counter);
     assertValues(3, 0, 0.0f);
   }
 
   @Test
   public void testSetWithMatched() {
-    set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
-    set.accept(collector);
+    list.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
+    list.accept(counter);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testSetWithCompoundData() {
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
-    set.accept(collector);
+    list.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
+    list.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
+    list.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
+    list.accept(counter);
     assertValues(4, 1, 0.25f);
   }
 
@@ -105,78 +105,78 @@ public class TestCounterTest {
   public void testMultipleSets() {
     List<TestList> group = new ArrayList<>();
 
-    set = new TestList();
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
-    group.add(set);
+    list = new TestList();
+    list.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
+    list.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
+    list.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
+    group.add(list);
 
-    set = new TestList();
-    set.add(new FailedTestData("B", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("B", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("B", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("B", "a.suite", "d.tc", "msg"));
-    group.add(set);
+    list = new TestList();
+    list.add(new FailedTestData("B", "a.suite", "a.tc", "msg"));
+    list.add(new ErrorTestData("B", "a.suite", "b.tc", "msg"));
+    list.add(new SkippedTestData("B", "a.suite", "c.tc", "msg"));
+    list.add(new PassedTestData("B", "a.suite", "d.tc", "msg"));
+    group.add(list);
 
-    group.forEach(o -> o.accept(collector));
+    group.forEach(o -> o.accept(counter));
     assertValues(8, 2, 0.25f);
   }
 
   @Test
   public void testEmptyRecipe() {
-    recipe.accept(collector);
+    recipe.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithoutMatched() {
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
-    recipe.set(set);
-    recipe.accept(collector);
+    list.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
+    list.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
+    recipe.set(list);
+    recipe.accept(counter);
     assertValues(3, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithMatched() {
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
-    recipe.set(set);
-    recipe.accept(collector);
+    list.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
+    list.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
+    list.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
+    recipe.set(list);
+    recipe.accept(counter);
     assertValues(4, 1, 0.25f);
   }
 
   @Test
   public void testEmptyRecipeList() {
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeListWithCompoundData() {
-    set = new TestList();
-    set.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
+    list = new TestList();
+    list.add(new FailedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new ErrorTestData("A", "a.suite", "b.tc", "msg"));
+    list.add(new SkippedTestData("A", "a.suite", "c.tc", "msg"));
+    list.add(new PassedTestData("A", "a.suite", "d.tc", "msg"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new TestList();
-    set.add(new FailedTestData("B", "a.suite", "a.tc", "msg"));
-    set.add(new ErrorTestData("B", "a.suite", "b.tc", "msg"));
-    set.add(new SkippedTestData("B", "a.suite", "c.tc", "msg"));
-    set.add(new PassedTestData("B", "a.suite", "d.tc", "msg"));
+    list = new TestList();
+    list.add(new FailedTestData("B", "a.suite", "a.tc", "msg"));
+    list.add(new ErrorTestData("B", "a.suite", "b.tc", "msg"));
+    list.add(new SkippedTestData("B", "a.suite", "c.tc", "msg"));
+    list.add(new PassedTestData("B", "a.suite", "d.tc", "msg"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(8, 2, 0.25f);
   }
 }

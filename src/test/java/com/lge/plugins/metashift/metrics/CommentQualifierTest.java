@@ -41,14 +41,14 @@ import org.junit.Test;
 public class CommentQualifierTest {
 
   private CommentQualifier qualifier;
-  private CommentList set;
+  private CommentList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
     qualifier = new CommentQualifier(0.5f);
-    set = new CommentList();
+    list = new CommentList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
@@ -66,23 +66,23 @@ public class CommentQualifierTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(qualifier);
+    list.accept(qualifier);
     assertValues(false, false, 0.0f);
   }
 
   @Test
   public void testSetWithoutQualified() {
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 10, 0));
-    set.accept(qualifier);
+    list.add(new CommentData("A", "a.file", 10, 5));
+    list.add(new CommentData("A", "b.file", 10, 0));
+    list.accept(qualifier);
     assertValues(true, false, 0.25f);
   }
 
   @Test
   public void testSetWithQualified() {
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 10, 5));
-    set.accept(qualifier);
+    list.add(new CommentData("A", "a.file", 10, 5));
+    list.add(new CommentData("A", "b.file", 10, 5));
+    list.accept(qualifier);
     assertValues(true, true, 0.5f);
   }
 
@@ -94,18 +94,18 @@ public class CommentQualifierTest {
 
   @Test
   public void testRecipeWithoutQualified() {
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 10, 0));
-    recipe.set(set);
+    list.add(new CommentData("A", "a.file", 10, 5));
+    list.add(new CommentData("A", "b.file", 10, 0));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, false, 0.25f);
   }
 
   @Test
   public void testRecipeWithQualified() {
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 10, 5));
-    recipe.set(set);
+    list.add(new CommentData("A", "a.file", 10, 5));
+    list.add(new CommentData("A", "b.file", 10, 5));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, true, 0.5f);
   }
@@ -118,18 +118,18 @@ public class CommentQualifierTest {
 
   @Test
   public void testRecipeListWithoutQualified() {
-    set = new CommentList();
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 10, 0));
+    list = new CommentList();
+    list.add(new CommentData("A", "a.file", 10, 5));
+    list.add(new CommentData("A", "b.file", 10, 0));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new CommentList();
-    set.add(new CommentData("B", "a.file", 10, 5));
-    set.add(new CommentData("B", "b.file", 10, 0));
+    list = new CommentList();
+    list.add(new CommentData("B", "a.file", 10, 5));
+    list.add(new CommentData("B", "b.file", 10, 0));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);
@@ -138,18 +138,18 @@ public class CommentQualifierTest {
 
   @Test
   public void testRecipeListWithQualified() {
-    set = new CommentList();
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 10, 5));
+    list = new CommentList();
+    list.add(new CommentData("A", "a.file", 10, 5));
+    list.add(new CommentData("A", "b.file", 10, 5));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new CommentList();
-    set.add(new CommentData("B", "a.file", 10, 5));
-    set.add(new CommentData("B", "b.file", 10, 5));
+    list = new CommentList();
+    list.add(new CommentData("B", "a.file", 10, 5));
+    list.add(new CommentData("B", "b.file", 10, 5));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);

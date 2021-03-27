@@ -42,14 +42,14 @@ import org.junit.Test;
 public class MutationTestQualifierTest {
 
   private MutationTestQualifier qualifier;
-  private MutationTestList set;
+  private MutationTestList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
     qualifier = new MutationTestQualifier(0.5f);
-    set = new MutationTestList();
+    list = new MutationTestList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
@@ -68,24 +68,24 @@ public class MutationTestQualifierTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(qualifier);
+    list.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
   public void testSetWithoutQualified() {
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
-    set.accept(qualifier);
+    list.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
+    list.accept(qualifier);
     assertValues(true, false, 0.33f, 0.66f);
   }
 
   @Test
   public void testSetWithQualified() {
-    set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
-    set.accept(qualifier);
+    list.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
+    list.accept(qualifier);
     assertValues(true, true, 0.5f, 0.5f);
   }
 
@@ -97,19 +97,19 @@ public class MutationTestQualifierTest {
 
   @Test
   public void testRecipeWithoutQualified() {
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.set(set);
+    list.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, false, 0.33f, 0.66f);
   }
 
   @Test
   public void testRecipeWithQualified() {
-    set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.set(set);
+    list.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, true, 0.5f, 0.5f);
   }
@@ -122,20 +122,20 @@ public class MutationTestQualifierTest {
 
   @Test
   public void testRecipeListWithoutQualified() {
-    set = new MutationTestList();
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
+    list = new MutationTestList();
+    list.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new MutationTestList();
-    set.add(new SurvivedMutationTestData("B", "a.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new SurvivedMutationTestData("B", "b.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new KilledMutationTestData("B", "c.file", "C", "f()", 1, "AOR", "TC"));
+    list = new MutationTestList();
+    list.add(new SurvivedMutationTestData("B", "a.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new SurvivedMutationTestData("B", "b.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new KilledMutationTestData("B", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);
@@ -144,18 +144,18 @@ public class MutationTestQualifierTest {
 
   @Test
   public void testRecipeListWithQualified() {
-    set = new MutationTestList();
-    set.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
+    list = new MutationTestList();
+    list.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new MutationTestList();
-    set.add(new SurvivedMutationTestData("B", "b.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new KilledMutationTestData("B", "c.file", "C", "f()", 1, "AOR", "TC"));
+    list = new MutationTestList();
+    list.add(new SurvivedMutationTestData("B", "b.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new KilledMutationTestData("B", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);

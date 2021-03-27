@@ -43,23 +43,23 @@ import org.junit.Test;
  */
 public class CacheCounterTest {
 
-  private CacheCounter collector;
-  private CacheList set;
+  private CacheCounter counter;
+  private CacheList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
-    collector = new SharedStateCacheCounter();
-    set = new CacheList();
+    counter = new SharedStateCacheCounter();
+    list = new CacheList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
-    assertEquals(denominator, collector.getDenominator());
-    assertEquals(numerator, collector.getNumerator());
-    assertEquals(ratio, collector.getRatio(), 0.1f);
+    assertEquals(denominator, counter.getDenominator());
+    assertEquals(numerator, counter.getNumerator());
+    assertEquals(ratio, counter.getRatio(), 0.1f);
   }
 
   @Test
@@ -69,31 +69,31 @@ public class CacheCounterTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(collector);
+    list.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testSetWithoutMatched() {
-    set.add(new PremirrorCacheData("A", "do_fetch", true));
-    set.accept(collector);
+    list.add(new PremirrorCacheData("A", "do_fetch", true));
+    list.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testSetWithMatched() {
-    set.add(new SharedStateCacheData("A", "do_fetch", true));
-    set.accept(collector);
+    list.add(new SharedStateCacheData("A", "do_fetch", true));
+    list.accept(counter);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testSetWithCompoundData() {
-    set.add(new SharedStateCacheData("A", "do_fetch", true));
-    set.add(new SharedStateCacheData("A", "do_compile", false));
-    set.add(new PremirrorCacheData("A", "do_fetch", true));
-    set.add(new PremirrorCacheData("A", "do_compile", false));
-    set.accept(collector);
+    list.add(new SharedStateCacheData("A", "do_fetch", true));
+    list.add(new SharedStateCacheData("A", "do_compile", false));
+    list.add(new PremirrorCacheData("A", "do_fetch", true));
+    list.add(new PremirrorCacheData("A", "do_compile", false));
+    list.accept(counter);
     assertValues(2, 1, 0.5f);
   }
 
@@ -101,64 +101,64 @@ public class CacheCounterTest {
   public void testMultipleSets() {
     List<CacheList> group = new ArrayList<>();
 
-    set = new CacheList();
-    set.add(new SharedStateCacheData("A", "do_test", true));
-    set.add(new SharedStateCacheData("A", "do_fetch", false));
-    group.add(set);
+    list = new CacheList();
+    list.add(new SharedStateCacheData("A", "do_test", true));
+    list.add(new SharedStateCacheData("A", "do_fetch", false));
+    group.add(list);
 
-    set = new CacheList();
-    set.add(new SharedStateCacheData("B", "do_test", true));
-    set.add(new SharedStateCacheData("B", "do_fetch", false));
-    group.add(set);
+    list = new CacheList();
+    list.add(new SharedStateCacheData("B", "do_test", true));
+    list.add(new SharedStateCacheData("B", "do_fetch", false));
+    group.add(list);
 
-    group.forEach(o -> o.accept(collector));
+    group.forEach(o -> o.accept(counter));
     assertValues(4, 2, 0.5f);
   }
 
   @Test
   public void testEmptyRecipe() {
-    recipe.accept(collector);
+    recipe.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithoutMatched() {
-    set.add(new PremirrorCacheData("A", "do_fetch", true));
-    recipe.set(set);
-    recipe.accept(collector);
+    list.add(new PremirrorCacheData("A", "do_fetch", true));
+    recipe.set(list);
+    recipe.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithMatched() {
-    set.add(new SharedStateCacheData("A", "do_fetch", true));
+    list.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-B-C");
-    recipe.set(set);
-    recipe.accept(collector);
+    recipe.set(list);
+    recipe.accept(counter);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testEmptyRecipeList() {
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeListWithCompoundData() {
-    set = new CacheList();
-    set.add(new SharedStateCacheData("A", "do_fetch", true));
+    list = new CacheList();
+    list.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new CacheList();
-    set.add(new SharedStateCacheData("B", "do_fetch", true));
+    list = new CacheList();
+    list.add(new SharedStateCacheData("B", "do_fetch", true));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(2, 2, 1.0f);
   }
 }

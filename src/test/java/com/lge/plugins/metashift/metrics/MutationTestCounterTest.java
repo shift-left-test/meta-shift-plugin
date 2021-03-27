@@ -43,23 +43,23 @@ import org.junit.Test;
  */
 public class MutationTestCounterTest {
 
-  private MutationTestCounter collector;
-  private MutationTestList set;
+  private MutationTestCounter counter;
+  private MutationTestList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
-    collector = new KilledMutationTestCounter();
-    set = new MutationTestList();
+    counter = new KilledMutationTestCounter();
+    list = new MutationTestList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
-    assertEquals(denominator, collector.getDenominator());
-    assertEquals(numerator, collector.getNumerator());
-    assertEquals(ratio, collector.getRatio(), 0.1f);
+    assertEquals(denominator, counter.getDenominator());
+    assertEquals(numerator, counter.getNumerator());
+    assertEquals(ratio, counter.getRatio(), 0.1f);
   }
 
   @Test
@@ -69,29 +69,29 @@ public class MutationTestCounterTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(collector);
+    list.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testSetWithoutMatched() {
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    set.accept(collector);
+    list.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    list.accept(counter);
     assertValues(1, 0, 0.0f);
   }
 
   @Test
   public void testSetWithMatched() {
-    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
-    set.accept(collector);
+    list.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    list.accept(counter);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testSetWithCompoundData() {
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
-    set.accept(collector);
+    list.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    list.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    list.accept(counter);
     assertValues(2, 1, 0.5f);
   }
 
@@ -99,61 +99,61 @@ public class MutationTestCounterTest {
   public void testMultipleSets() {
     List<MutationTestList> group = new ArrayList<>();
 
-    set = new MutationTestList();
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    group.add(set);
+    list = new MutationTestList();
+    list.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    group.add(list);
 
-    set = new MutationTestList();
-    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
-    group.add(set);
+    list = new MutationTestList();
+    list.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    group.add(list);
 
-    group.forEach(o -> o.accept(collector));
+    group.forEach(o -> o.accept(counter));
     assertValues(2, 1, 0.5f);
   }
 
   @Test
   public void testEmptyRecipe() {
-    recipe.accept(collector);
+    recipe.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithoutMatched() {
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.set(set);
-    recipe.accept(collector);
+    list.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.set(list);
+    recipe.accept(counter);
     assertValues(1, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithMatched() {
-    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
-    recipe.set(set);
-    recipe.accept(collector);
+    list.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    recipe.set(list);
+    recipe.accept(counter);
     assertValues(1, 1, 1.0f);
   }
 
   @Test
   public void testEmptyRecipeList() {
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeListWithCompoundData() {
-    set = new MutationTestList();
-    set.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    list = new MutationTestList();
+    list.add(new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new MutationTestList();
-    set.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
+    list = new MutationTestList();
+    list.add(new KilledMutationTestData("A", "a.file", "C", "f()", 2, "AOR", "TC"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(2, 1, 0.5f);
   }
 }

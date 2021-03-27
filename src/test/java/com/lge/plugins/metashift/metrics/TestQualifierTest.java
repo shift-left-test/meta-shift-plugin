@@ -44,14 +44,14 @@ import org.junit.Test;
 public class TestQualifierTest {
 
   private TestQualifier qualifier;
-  private TestList set;
+  private TestList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
     qualifier = new TestQualifier(0.5f);
-    set = new TestList();
+    list = new TestList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
@@ -73,25 +73,25 @@ public class TestQualifierTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(qualifier);
+    list.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testSetWithoutQualified() {
-    set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
-    set.add(new SkippedTestData("A", "d.suite", "c.tc", "msg"));
-    set.accept(qualifier);
+    list.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
+    list.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
+    list.add(new SkippedTestData("A", "d.suite", "c.tc", "msg"));
+    list.accept(qualifier);
     assertValues(true, false, 0.25f, 0.25f, 0.25f, 0.25f);
   }
 
   @Test
   public void testSetWithQualified() {
-    set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
-    set.accept(qualifier);
+    list.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
+    list.accept(qualifier);
     assertValues(true, true, 0.5f, 0.5f, 0.0f, 0.0f);
   }
 
@@ -103,20 +103,20 @@ public class TestQualifierTest {
 
   @Test
   public void testRecipeWithoutQualified() {
-    set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
-    set.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
-    set.add(new SkippedTestData("A", "d.suite", "c.tc", "msg"));
-    recipe.set(set);
+    list.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
+    list.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
+    list.add(new SkippedTestData("A", "d.suite", "c.tc", "msg"));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, false, 0.25f, 0.25f, 0.25f, 0.25f);
   }
 
   @Test
   public void testRecipeWithQualified() {
-    set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
-    recipe.set(set);
+    list.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, true, 0.5f, 0.5f, 0.0f, 0.0f);
   }
@@ -129,18 +129,18 @@ public class TestQualifierTest {
 
   @Test
   public void testRecipeListWithoutQualified() {
-    set = new TestList();
-    set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
+    list = new TestList();
+    list.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new TestList();
-    set.add(new ErrorTestData("B", "a.suite", "c.tc", "msg"));
-    set.add(new SkippedTestData("B", "d.suite", "c.tc", "msg"));
+    list = new TestList();
+    list.add(new ErrorTestData("B", "a.suite", "c.tc", "msg"));
+    list.add(new SkippedTestData("B", "d.suite", "c.tc", "msg"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);
@@ -149,18 +149,18 @@ public class TestQualifierTest {
 
   @Test
   public void testRecipeListWithQualified() {
-    set = new TestList();
-    set.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    set.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
+    list = new TestList();
+    list.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    list.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new TestList();
-    set.add(new PassedTestData("B", "a.suite", "a.tc", "msg"));
-    set.add(new FailedTestData("B", "a.suite", "b.tc", "msg"));
+    list = new TestList();
+    list.add(new PassedTestData("B", "a.suite", "a.tc", "msg"));
+    list.add(new FailedTestData("B", "a.suite", "b.tc", "msg"));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);

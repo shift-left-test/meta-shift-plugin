@@ -42,23 +42,23 @@ import org.junit.Test;
  */
 public class CommentCounterTest {
 
-  private CommentCounter collector;
-  private CommentList set;
+  private CommentCounter counter;
+  private CommentList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
-    collector = new CommentCounter();
-    set = new CommentList();
+    counter = new CommentCounter();
+    list = new CommentList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
 
   private void assertValues(int denominator, int numerator, float ratio) {
-    assertEquals(denominator, collector.getDenominator());
-    assertEquals(numerator, collector.getNumerator());
-    assertEquals(ratio, collector.getRatio(), 0.1f);
+    assertEquals(denominator, counter.getDenominator());
+    assertEquals(numerator, counter.getNumerator());
+    assertEquals(ratio, counter.getRatio(), 0.1f);
   }
 
   @Test
@@ -68,15 +68,15 @@ public class CommentCounterTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(collector);
+    list.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testSetWithCompoundData() {
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 20, 10));
-    set.accept(collector);
+    list.add(new CommentData("A", "a.file", 10, 5));
+    list.add(new CommentData("A", "b.file", 20, 10));
+    list.accept(counter);
     assertValues(30, 15, 0.5f);
   }
 
@@ -84,58 +84,58 @@ public class CommentCounterTest {
   public void testMultipleSets() {
     List<CommentList> group = new ArrayList<>();
 
-    set = new CommentList();
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 20, 10));
-    group.add(set);
+    list = new CommentList();
+    list.add(new CommentData("A", "a.file", 10, 5));
+    list.add(new CommentData("A", "b.file", 20, 10));
+    group.add(list);
 
-    set = new CommentList();
-    set.add(new CommentData("B", "a.file", 10, 5));
-    set.add(new CommentData("B", "b.file", 20, 10));
-    group.add(set);
+    list = new CommentList();
+    list.add(new CommentData("B", "a.file", 10, 5));
+    list.add(new CommentData("B", "b.file", 20, 10));
+    group.add(list);
 
-    group.forEach(o -> o.accept(collector));
+    group.forEach(o -> o.accept(counter));
     assertValues(60, 30, 0.5f);
   }
 
   @Test
   public void testEmptyRecipe() {
-    recipe.accept(collector);
+    recipe.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeWithData() {
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 20, 10));
-    recipe.set(set);
-    recipe.accept(collector);
+    list.add(new CommentData("A", "a.file", 10, 5));
+    list.add(new CommentData("A", "b.file", 20, 10));
+    recipe.set(list);
+    recipe.accept(counter);
     assertValues(30, 15, 0.5f);
   }
 
   @Test
   public void testEmptyRecipeList() {
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(0, 0, 0.0f);
   }
 
   @Test
   public void testRecipeListWithCompoundData() {
-    set = new CommentList();
-    set.add(new CommentData("A", "a.file", 10, 5));
-    set.add(new CommentData("A", "b.file", 20, 10));
+    list = new CommentList();
+    list.add(new CommentData("A", "a.file", 10, 5));
+    list.add(new CommentData("A", "b.file", 20, 10));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new CommentList();
-    set.add(new CommentData("B", "a.file", 10, 5));
-    set.add(new CommentData("B", "b.file", 20, 10));
+    list = new CommentList();
+    list.add(new CommentData("B", "a.file", 10, 5));
+    list.add(new CommentData("B", "b.file", 20, 10));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    recipes.accept(collector);
+    recipes.accept(counter);
     assertValues(60, 30, 0.5f);
   }
 }

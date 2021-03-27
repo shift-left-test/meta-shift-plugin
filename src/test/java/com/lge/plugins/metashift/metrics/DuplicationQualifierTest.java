@@ -41,14 +41,14 @@ import org.junit.Test;
 public class DuplicationQualifierTest {
 
   private DuplicationQualifier qualifier;
-  private DuplicationList set;
+  private DuplicationList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
     qualifier = new DuplicationQualifier(0.5f);
-    set = new DuplicationList();
+    list = new DuplicationList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
@@ -66,29 +66,29 @@ public class DuplicationQualifierTest {
 
   @Test
   public void testEmptySet() {
-    set.accept(qualifier);
+    list.accept(qualifier);
     assertValues(false, false, 0.0f);
   }
 
   @Test
   public void testSetWithoutQualified() {
-    set.add(new DuplicationData("A", "a.file", 10, 6));
-    set.accept(qualifier);
+    list.add(new DuplicationData("A", "a.file", 10, 6));
+    list.accept(qualifier);
     assertValues(true, false, 0.6f);
   }
 
   @Test
   public void testSetWithQualified() {
-    set.add(new DuplicationData("A", "b.file", 10, 4));
-    set.accept(qualifier);
+    list.add(new DuplicationData("A", "b.file", 10, 4));
+    list.accept(qualifier);
     assertValues(true, true, 0.5f);
   }
 
   @Test
   public void testSetWithCompoundData() {
-    set.add(new DuplicationData("A", "a.file", 10, 6));
-    set.add(new DuplicationData("A", "b.file", 10, 4));
-    set.accept(qualifier);
+    list.add(new DuplicationData("A", "a.file", 10, 6));
+    list.add(new DuplicationData("A", "b.file", 10, 4));
+    list.accept(qualifier);
     assertValues(true, true, 0.5f);
   }
 
@@ -100,16 +100,16 @@ public class DuplicationQualifierTest {
 
   @Test
   public void testRecipeWithoutQualified() {
-    set.add(new DuplicationData("A", "a.file", 10, 6));
-    recipe.set(set);
+    list.add(new DuplicationData("A", "a.file", 10, 6));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, false, 0.6f);
   }
 
   @Test
   public void testRecipeWithQualified() {
-    set.add(new DuplicationData("A", "b.file", 10, 4));
-    recipe.set(set);
+    list.add(new DuplicationData("A", "b.file", 10, 4));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, true, 0.5f);
   }
@@ -122,18 +122,18 @@ public class DuplicationQualifierTest {
 
   @Test
   public void testRecipeListWithoutQualified() {
-    set = new DuplicationList();
-    set.add(new DuplicationData("A", "a.file", 10, 10));
-    set.add(new DuplicationData("A", "b.file", 10, 5));
+    list = new DuplicationList();
+    list.add(new DuplicationData("A", "a.file", 10, 10));
+    list.add(new DuplicationData("A", "b.file", 10, 5));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new DuplicationList();
-    set.add(new DuplicationData("B", "a.file", 10, 10));
-    set.add(new DuplicationData("B", "b.file", 10, 5));
+    list = new DuplicationList();
+    list.add(new DuplicationData("B", "a.file", 10, 10));
+    list.add(new DuplicationData("B", "b.file", 10, 5));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);
@@ -142,18 +142,18 @@ public class DuplicationQualifierTest {
 
   @Test
   public void testRecipeListWithQualified() {
-    set = new DuplicationList();
-    set.add(new DuplicationData("A", "a.file", 10, 5));
-    set.add(new DuplicationData("A", "b.file", 10, 0));
+    list = new DuplicationList();
+    list.add(new DuplicationData("A", "a.file", 10, 5));
+    list.add(new DuplicationData("A", "b.file", 10, 0));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new DuplicationList();
-    set.add(new DuplicationData("B", "a.file", 10, 5));
-    set.add(new DuplicationData("B", "b.file", 10, 0));
+    list = new DuplicationList();
+    list.add(new DuplicationData("B", "a.file", 10, 5));
+    list.add(new DuplicationData("B", "b.file", 10, 0));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);

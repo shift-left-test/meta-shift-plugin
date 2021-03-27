@@ -42,14 +42,14 @@ import org.junit.Test;
 public class CacheQualifierTest {
 
   private CacheQualifier qualifier;
-  private CacheList set;
+  private CacheList list;
   private Recipe recipe;
   private RecipeList recipes;
 
   @Before
   public void setUp() {
     qualifier = new CacheQualifier(0.5f);
-    set = new CacheList();
+    list = new CacheList();
     recipe = new Recipe("A-B-C");
     recipes = new RecipeList();
   }
@@ -69,59 +69,59 @@ public class CacheQualifierTest {
 
   @Test
   public void testEmptyCacheList() {
-    set.accept(qualifier);
+    list.accept(qualifier);
     assertValues(false, false, 0.0f, 0.0f);
   }
 
   @Test
   public void testPremirrorOnlyCacheWhichNotQualified() {
-    set.add(new PremirrorCacheData("A", "do_A", true));
-    set.add(new PremirrorCacheData("A", "do_B", false));
-    set.add(new PremirrorCacheData("A", "do_C", false));
-    set.accept(qualifier);
+    list.add(new PremirrorCacheData("A", "do_A", true));
+    list.add(new PremirrorCacheData("A", "do_B", false));
+    list.add(new PremirrorCacheData("A", "do_C", false));
+    list.accept(qualifier);
     assertValues(true, false, 0.3f, 0.0f);
   }
 
   @Test
   public void testPremirrorOnlyCacheWhichQualified() {
-    set.add(new PremirrorCacheData("A", "do_A", true));
-    set.add(new PremirrorCacheData("A", "do_B", false));
-    set.accept(qualifier);
+    list.add(new PremirrorCacheData("A", "do_A", true));
+    list.add(new PremirrorCacheData("A", "do_B", false));
+    list.accept(qualifier);
     assertValues(true, true, 0.5f, 0.0f);
   }
 
   @Test
   public void testSharedStateOnlyCacheWhichNotQualified() {
-    set.add(new SharedStateCacheData("A", "do_A", true));
-    set.add(new SharedStateCacheData("A", "do_B", false));
-    set.add(new SharedStateCacheData("A", "do_C", false));
-    set.accept(qualifier);
+    list.add(new SharedStateCacheData("A", "do_A", true));
+    list.add(new SharedStateCacheData("A", "do_B", false));
+    list.add(new SharedStateCacheData("A", "do_C", false));
+    list.accept(qualifier);
     assertValues(true, false, 0.0f, 0.3f);
   }
 
   @Test
   public void testSharedStateOnlyCacheWhichQualified() {
-    set.add(new SharedStateCacheData("A", "do_A", true));
-    set.add(new SharedStateCacheData("A", "do_B", false));
-    set.accept(qualifier);
+    list.add(new SharedStateCacheData("A", "do_A", true));
+    list.add(new SharedStateCacheData("A", "do_B", false));
+    list.accept(qualifier);
     assertValues(true, true, 0.0f, 0.5f);
   }
 
   @Test
   public void testMixedCacheWhichNotQualified() {
-    set.add(new PremirrorCacheData("A", "do_A", true));
-    set.add(new SharedStateCacheData("A", "do_B", false));
-    set.add(new SharedStateCacheData("A", "do_C", false));
-    set.accept(qualifier);
+    list.add(new PremirrorCacheData("A", "do_A", true));
+    list.add(new SharedStateCacheData("A", "do_B", false));
+    list.add(new SharedStateCacheData("A", "do_C", false));
+    list.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f);
   }
 
   @Test
   public void testMixedCacheWhichQualified() {
-    set.add(new PremirrorCacheData("A", "do_A", true));
-    set.add(new SharedStateCacheData("A", "do_B", true));
-    set.add(new SharedStateCacheData("A", "do_C", false));
-    set.accept(qualifier);
+    list.add(new PremirrorCacheData("A", "do_A", true));
+    list.add(new SharedStateCacheData("A", "do_B", true));
+    list.add(new SharedStateCacheData("A", "do_C", false));
+    list.accept(qualifier);
     assertValues(true, true, 1.0f, 0.5f);
   }
 
@@ -133,21 +133,21 @@ public class CacheQualifierTest {
 
   @Test
   public void testRecipeWithMixedCacheWhichNotQualified() {
-    set.add(new PremirrorCacheData("A", "do_A", true));
-    set.add(new SharedStateCacheData("A", "do_B", false));
-    set.add(new SharedStateCacheData("A", "do_C", false));
-    recipe.set(set);
+    list.add(new PremirrorCacheData("A", "do_A", true));
+    list.add(new SharedStateCacheData("A", "do_B", false));
+    list.add(new SharedStateCacheData("A", "do_C", false));
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, false, 1.0f, 0.0f);
   }
 
   @Test
   public void testRecipeWithMixedCacheWhichQualified() {
-    set.add(new PremirrorCacheData("A", "do_A", true));
-    set.add(new SharedStateCacheData("A", "do_B", true));
-    set.add(new SharedStateCacheData("A", "do_C", false));
+    list.add(new PremirrorCacheData("A", "do_A", true));
+    list.add(new SharedStateCacheData("A", "do_B", true));
+    list.add(new SharedStateCacheData("A", "do_C", false));
     recipe = new Recipe("A-B-C");
-    recipe.set(set);
+    recipe.set(list);
     recipe.accept(qualifier);
     assertValues(true, true, 1.0f, 0.5f);
   }
@@ -160,18 +160,18 @@ public class CacheQualifierTest {
 
   @Test
   public void testRecipeListWithCompoundCacheListWhichQualified() {
-    set = new CacheList();
-    set.add(new PremirrorCacheData("A", "do_packagedata", true));
-    set.add(new SharedStateCacheData("A", "do_fetch", true));
+    list = new CacheList();
+    list.add(new PremirrorCacheData("A", "do_packagedata", true));
+    list.add(new SharedStateCacheData("A", "do_fetch", true));
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
-    set = new CacheList();
-    set.add(new PremirrorCacheData("B", "do_packagedata", true));
-    set.add(new SharedStateCacheData("B", "do_fetch", true));
+    list = new CacheList();
+    list.add(new PremirrorCacheData("B", "do_packagedata", true));
+    list.add(new SharedStateCacheData("B", "do_fetch", true));
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.set(set);
+    recipe.set(list);
     recipes.add(recipe);
 
     recipes.accept(qualifier);
