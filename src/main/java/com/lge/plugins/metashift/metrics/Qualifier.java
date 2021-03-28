@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public abstract class Qualifier<T> implements Qualifiable, Visitable {
+public abstract class Qualifier<T> implements Visitable {
 
   /**
    * Represents the collection of objects.
@@ -48,7 +48,7 @@ public abstract class Qualifier<T> implements Qualifiable, Visitable {
    * Default constructor.
    *
    * @param threshold for qualification
-   * @param args of initialization list
+   * @param args      of initialization list
    */
   @SafeVarargs
   public Qualifier(final float threshold, T... args) {
@@ -86,4 +86,18 @@ public abstract class Qualifier<T> implements Qualifiable, Visitable {
   public final float getThreshold() {
     return threshold;
   }
+
+  /**
+   * Returns whether the metric is available.
+   *
+   * @return true if the metric is available, false otherwise
+   */
+  public abstract boolean isAvailable();
+
+  /**
+   * Returns whether the evaluation of the metric meets the criteria.
+   *
+   * @return true if the metric meets the criteria, false otherwise
+   */
+  public abstract boolean isQualified();
 }

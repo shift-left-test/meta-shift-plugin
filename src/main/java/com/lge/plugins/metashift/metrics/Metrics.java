@@ -59,7 +59,7 @@ public final class Metrics extends Qualifier<Qualifier<?>> implements Countable 
   @Override
   public int getDenominator() {
     return (int) getCollection().values().stream()
-        .filter(Qualifiable::isAvailable).count();
+        .filter(Qualifier::isAvailable).count();
   }
 
   @Override
