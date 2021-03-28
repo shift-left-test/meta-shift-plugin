@@ -41,6 +41,7 @@ pipeline {
             junit "**/target/surefire-reports/*.xml"
             jacoco()
             pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0, mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+            cleanWs disableDeferredWipeout: true
         }
     }
 }
