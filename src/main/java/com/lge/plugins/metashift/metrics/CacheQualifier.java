@@ -43,19 +43,21 @@ public final class CacheQualifier extends Qualifier<CacheCounter> {
   }
 
   @Override
-  public boolean isAvailable() {
-    return getCollection().values().stream().mapToInt(CacheCounter::getDenominator).sum() > 0;
+  public int getDenominator() {
+    return getCollection().values().stream().mapToInt(CacheCounter::getDenominator).sum();
+  }
+
+  @Override
+  public int getNumerator() {
+    return getCollection().values().stream().mapToInt(CacheCounter::getNumerator).sum();
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = getCollection().values().stream().mapToInt(CacheCounter::getDenominator)
-        .sum();
-    int numerator = getCollection().values().stream().mapToInt(CacheCounter::getNumerator).sum();
-    if (denominator == 0) {
+    if (getDenominator() == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) >= getThreshold();
+    return ((float) getNumerator() / (float) getDenominator()) >= getThreshold();
   }
 
   @Override

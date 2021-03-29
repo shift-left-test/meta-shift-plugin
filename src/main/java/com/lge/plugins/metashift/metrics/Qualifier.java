@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public abstract class Qualifier<T> implements Visitable {
+public abstract class Qualifier<T> implements Countable {
 
   /**
    * Represents the collection of objects.
@@ -92,7 +92,9 @@ public abstract class Qualifier<T> implements Visitable {
    *
    * @return true if the metric is available, false otherwise
    */
-  public abstract boolean isAvailable();
+  public final boolean isAvailable() {
+    return getDenominator() > 0;
+  }
 
   /**
    * Returns whether the evaluation of the metric meets the criteria.

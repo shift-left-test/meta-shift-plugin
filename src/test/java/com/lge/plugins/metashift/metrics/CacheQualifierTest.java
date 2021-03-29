@@ -54,8 +54,11 @@ public class CacheQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(boolean available, boolean qualified, float premirror,
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified,
+      float premirror,
       float sharedState) {
+    assertEquals(denominator, qualifier.getDenominator());
+    assertEquals(numerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
     assertEquals(premirror, qualifier.get(PremirrorCacheCounter.class).getRatio(), 0.1f);
@@ -64,13 +67,13 @@ public class CacheQualifierTest {
 
   @Test
   public void testInitialState() {
-    assertValues(false, false, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f);
   }
 
   @Test
   public void testEmptyCacheList() {
     list.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f);
   }
 
   @Test
@@ -79,7 +82,7 @@ public class CacheQualifierTest {
     list.add(new PremirrorCacheData("A", "do_B", false));
     list.add(new PremirrorCacheData("A", "do_C", false));
     list.accept(qualifier);
-    assertValues(true, false, 0.3f, 0.0f);
+    assertValues(3, 1, true, false, 0.3f, 0.0f);
   }
 
   @Test
@@ -87,7 +90,7 @@ public class CacheQualifierTest {
     list.add(new PremirrorCacheData("A", "do_A", true));
     list.add(new PremirrorCacheData("A", "do_B", false));
     list.accept(qualifier);
-    assertValues(true, true, 0.5f, 0.0f);
+    assertValues(2, 1, true, true, 0.5f, 0.0f);
   }
 
   @Test
@@ -96,7 +99,7 @@ public class CacheQualifierTest {
     list.add(new SharedStateCacheData("A", "do_B", false));
     list.add(new SharedStateCacheData("A", "do_C", false));
     list.accept(qualifier);
-    assertValues(true, false, 0.0f, 0.3f);
+    assertValues(3, 1, true, false, 0.0f, 0.3f);
   }
 
   @Test
@@ -104,7 +107,7 @@ public class CacheQualifierTest {
     list.add(new SharedStateCacheData("A", "do_A", true));
     list.add(new SharedStateCacheData("A", "do_B", false));
     list.accept(qualifier);
-    assertValues(true, true, 0.0f, 0.5f);
+    assertValues(2, 1, true, true, 0.0f, 0.5f);
   }
 
   @Test
@@ -113,7 +116,7 @@ public class CacheQualifierTest {
     list.add(new SharedStateCacheData("A", "do_B", false));
     list.add(new SharedStateCacheData("A", "do_C", false));
     list.accept(qualifier);
-    assertValues(true, false, 1.0f, 0.0f);
+    assertValues(3, 1, true, false, 1.0f, 0.0f);
   }
 
   @Test
@@ -122,13 +125,13 @@ public class CacheQualifierTest {
     list.add(new SharedStateCacheData("A", "do_B", true));
     list.add(new SharedStateCacheData("A", "do_C", false));
     list.accept(qualifier);
-    assertValues(true, true, 1.0f, 0.5f);
+    assertValues(3, 2, true, true, 1.0f, 0.5f);
   }
 
   @Test
   public void testEmptyRecipe() {
     recipe.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f);
   }
 
   @Test
@@ -138,7 +141,7 @@ public class CacheQualifierTest {
     list.add(new SharedStateCacheData("A", "do_C", false));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, false, 1.0f, 0.0f);
+    assertValues(3, 1, true, false, 1.0f, 0.0f);
   }
 
   @Test
@@ -149,13 +152,13 @@ public class CacheQualifierTest {
     recipe = new Recipe("A-B-C");
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, true, 1.0f, 0.5f);
+    assertValues(3, 2, true, true, 1.0f, 0.5f);
   }
 
   @Test
   public void testEmptyRecipeList() {
     recipes.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f);
   }
 
   @Test
@@ -175,6 +178,6 @@ public class CacheQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, true, 1.0f, 1.0f);
+    assertValues(4, 4, true, true, 1.0f, 1.0f);
   }
 }

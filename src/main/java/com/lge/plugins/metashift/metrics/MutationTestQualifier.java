@@ -46,18 +46,21 @@ public final class MutationTestQualifier extends Qualifier<MutationTestCounter> 
   }
 
   @Override
-  public boolean isAvailable() {
-    return get(KilledMutationTestCounter.class).getDenominator() > 0;
+  public int getDenominator() {
+    return get(KilledMutationTestCounter.class).getDenominator();
+  }
+
+  @Override
+  public int getNumerator() {
+    return get(KilledMutationTestCounter.class).getNumerator();
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = get(KilledMutationTestCounter.class).getDenominator();
-    int numerator = get(KilledMutationTestCounter.class).getNumerator();
-    if (denominator == 0) {
+    if (getDenominator() == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) >= getThreshold();
+    return ((float) getNumerator() / (float) getDenominator()) >= getThreshold();
   }
 
   @Override

@@ -56,8 +56,10 @@ public class TestQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(boolean available, boolean qualified,
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified,
       float passed, float failed, float error, float skipped) {
+    assertEquals(denominator, qualifier.getDenominator());
+    assertEquals(numerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
     assertEquals(passed, qualifier.get(PassedTestCounter.class).getRatio(), 0.1f);
@@ -68,13 +70,13 @@ public class TestQualifierTest {
 
   @Test
   public void testInitialState() {
-    assertValues(false, false, 0.0f, 0.0f, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testEmptySet() {
     list.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
@@ -84,21 +86,22 @@ public class TestQualifierTest {
     list.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
     list.add(new SkippedTestData("A", "d.suite", "c.tc", "msg"));
     list.accept(qualifier);
-    assertValues(true, false, 0.25f, 0.25f, 0.25f, 0.25f);
+    assertValues(4, 1, true, false, 0.25f, 0.25f, 0.25f, 0.25f);
   }
 
   @Test
   public void testSetWithQualified() {
+
     list.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
     list.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
     list.accept(qualifier);
-    assertValues(true, true, 0.5f, 0.5f, 0.0f, 0.0f);
+    assertValues(2, 1, true, true, 0.5f, 0.5f, 0.0f, 0.0f);
   }
 
   @Test
   public void testEmptyRecipe() {
     recipe.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
@@ -109,7 +112,7 @@ public class TestQualifierTest {
     list.add(new SkippedTestData("A", "d.suite", "c.tc", "msg"));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, false, 0.25f, 0.25f, 0.25f, 0.25f);
+    assertValues(4, 1, true, false, 0.25f, 0.25f, 0.25f, 0.25f);
   }
 
   @Test
@@ -118,13 +121,13 @@ public class TestQualifierTest {
     list.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, true, 0.5f, 0.5f, 0.0f, 0.0f);
+    assertValues(2, 1, true, true, 0.5f, 0.5f, 0.0f, 0.0f);
   }
 
   @Test
   public void testEmptyRecipeList() {
     recipes.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
@@ -144,7 +147,7 @@ public class TestQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, false, 0.25f, 0.25f, 0.25f, 0.25f);
+    assertValues(4, 1, true, false, 0.25f, 0.25f, 0.25f, 0.25f);
   }
 
   @Test
@@ -164,6 +167,6 @@ public class TestQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, true, 0.5f, 0.5f, 0.0f, 0.0f);
+    assertValues(4, 2, true, true, 0.5f, 0.5f, 0.0f, 0.0f);
   }
 }

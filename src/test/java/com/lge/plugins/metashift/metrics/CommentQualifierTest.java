@@ -53,7 +53,9 @@ public class CommentQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(boolean available, boolean qualified, float ratio) {
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified, float ratio) {
+    assertEquals(denominator, qualifier.getDenominator());
+    assertEquals(numerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
     assertEquals(ratio, qualifier.get(CommentCounter.class).getRatio(), 0.1f);
@@ -61,13 +63,13 @@ public class CommentQualifierTest {
 
   @Test
   public void testInitialState() {
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0,false, false, 0.0f);
   }
 
   @Test
   public void testEmptySet() {
     list.accept(qualifier);
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
@@ -75,7 +77,7 @@ public class CommentQualifierTest {
     list.add(new CommentData("A", "a.file", 10, 5));
     list.add(new CommentData("A", "b.file", 10, 0));
     list.accept(qualifier);
-    assertValues(true, false, 0.25f);
+    assertValues(20, 5, true, false, 0.25f);
   }
 
   @Test
@@ -83,13 +85,13 @@ public class CommentQualifierTest {
     list.add(new CommentData("A", "a.file", 10, 5));
     list.add(new CommentData("A", "b.file", 10, 5));
     list.accept(qualifier);
-    assertValues(true, true, 0.5f);
+    assertValues(20, 10, true, true, 0.5f);
   }
 
   @Test
   public void testEmptyRecipe() {
     recipe.accept(qualifier);
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
@@ -98,7 +100,7 @@ public class CommentQualifierTest {
     list.add(new CommentData("A", "b.file", 10, 0));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, false, 0.25f);
+    assertValues(20, 5, true, false, 0.25f);
   }
 
   @Test
@@ -107,13 +109,13 @@ public class CommentQualifierTest {
     list.add(new CommentData("A", "b.file", 10, 5));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, true, 0.5f);
+    assertValues(20, 10, true, true, 0.5f);
   }
 
   @Test
   public void testEmptyRecipeList() {
     recipes.accept(qualifier);
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
@@ -133,7 +135,7 @@ public class CommentQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, false, 0.25f);
+    assertValues(40, 10, true, false, 0.25f);
   }
 
   @Test
@@ -153,6 +155,6 @@ public class CommentQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, true, 0.5f);
+    assertValues(40, 20, true, true, 0.5f);
   }
 }

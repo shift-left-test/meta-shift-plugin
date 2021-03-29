@@ -53,7 +53,9 @@ public class ComplexityQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(boolean available, boolean qualified, float ratio) {
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified, float ratio) {
+    assertEquals(denominator, qualifier.getDenominator());
+    assertEquals(numerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
     assertEquals(ratio, qualifier.get(ComplexityCounter.class).getRatio(), 0.1f);
@@ -61,27 +63,27 @@ public class ComplexityQualifierTest {
 
   @Test
   public void testInitialState() {
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
   public void testEmptySet() {
     list.accept(qualifier);
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
   public void testSetWithoutQualified() {
     list.add(new ComplexityData("A", "a.file", "f()", 5));
     list.accept(qualifier);
-    assertValues(true, false, 1.0f);
+    assertValues(1, 1, true, false, 1.0f);
   }
 
   @Test
   public void testSetWithQualified() {
     list.add(new ComplexityData("A", "a.file", "g()", 4));
     list.accept(qualifier);
-    assertValues(true, true, 0.0f);
+    assertValues(1, 0, true, true, 0.0f);
   }
 
   @Test
@@ -89,13 +91,13 @@ public class ComplexityQualifierTest {
     list.add(new ComplexityData("A", "a.file", "f()", 5));
     list.add(new ComplexityData("A", "a.file", "g()", 4));
     list.accept(qualifier);
-    assertValues(true, true, 0.5f);
+    assertValues(2, 1, true, true, 0.5f);
   }
 
   @Test
   public void testEmptyRecipe() {
     recipe.accept(qualifier);
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
@@ -103,7 +105,7 @@ public class ComplexityQualifierTest {
     list.add(new ComplexityData("A", "a.file", "f()", 5));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, false, 1.0f);
+    assertValues(1, 1, true, false, 1.0f);
   }
 
   @Test
@@ -111,13 +113,13 @@ public class ComplexityQualifierTest {
     list.add(new ComplexityData("A", "a.file", "g()", 4));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, true, 0.0f);
+    assertValues(1, 0, true, true, 0.0f);
   }
 
   @Test
   public void testEmptyRecipeList() {
     recipes.accept(qualifier);
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
@@ -135,7 +137,7 @@ public class ComplexityQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, false, 1.0f);
+    assertValues(2, 2, true, false, 1.0f);
   }
 
   @Test
@@ -153,6 +155,6 @@ public class ComplexityQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, true, 0.0f);
+    assertValues(2, 0, true, true, 0.0f);
   }
 }

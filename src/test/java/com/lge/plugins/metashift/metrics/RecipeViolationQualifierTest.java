@@ -55,8 +55,10 @@ public class RecipeViolationQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(boolean available, boolean qualified, float major, float minor,
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified, float major, float minor,
       float info) {
+    assertEquals(denominator, qualifier.getDenominator());
+    assertEquals(numerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
     assertEquals(major, qualifier.get(MajorRecipeViolationCounter.class).getRatio(), 0.1f);
@@ -66,20 +68,20 @@ public class RecipeViolationQualifierTest {
 
   @Test
   public void testInitialState() {
-    assertValues(false, false, 0.0f, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testEmptySet() {
     list.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
   public void testSetWithoutQualified() {
     list.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     list.accept(qualifier);
-    assertValues(true, false, 1.0f, 0.0f, 0.0f);
+    assertValues(1, 1, true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test
@@ -88,13 +90,13 @@ public class RecipeViolationQualifierTest {
     list.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
     list.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     list.accept(qualifier);
-    assertValues(true, true, 0.3f, 0.3f, 0.3f);
+    assertValues(3, 1, true, true, 0.3f, 0.3f, 0.3f);
   }
 
   @Test
   public void testEmptyRecipe() {
     recipe.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
@@ -102,7 +104,7 @@ public class RecipeViolationQualifierTest {
     list.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, false, 1.0f, 0.0f, 0.0f);
+    assertValues(1, 1, true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test
@@ -112,13 +114,13 @@ public class RecipeViolationQualifierTest {
     list.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, true, 0.3f, 0.3f, 0.3f);
+    assertValues(3, 1, true, true, 0.3f, 0.3f, 0.3f);
   }
 
   @Test
   public void testEmptyRecipeList() {
     recipes.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f, 0.0f);
   }
 
   @Test
@@ -139,7 +141,7 @@ public class RecipeViolationQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, false, 0.6f, 0.2f, 0.2f);
+    assertValues(5, 3, true, false, 0.6f, 0.2f, 0.2f);
   }
 
   @Test
@@ -161,6 +163,6 @@ public class RecipeViolationQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, true, 0.3f, 0.3f, 0.3f);
+    assertValues(6, 2, true, true, 0.3f, 0.3f, 0.3f);
   }
 }

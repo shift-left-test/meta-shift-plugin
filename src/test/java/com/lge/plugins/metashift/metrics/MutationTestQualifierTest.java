@@ -54,7 +54,9 @@ public class MutationTestQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(boolean available, boolean qualified, float killed, float survived) {
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified, float killed, float survived) {
+    assertEquals(denominator, qualifier.getDenominator());
+    assertEquals(numerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
     assertEquals(killed, qualifier.get(KilledMutationTestCounter.class).getRatio(), 0.1f);
@@ -63,13 +65,13 @@ public class MutationTestQualifierTest {
 
   @Test
   public void testInitialState() {
-    assertValues(false, false, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f);
   }
 
   @Test
   public void testEmptySet() {
     list.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f);
   }
 
   @Test
@@ -78,7 +80,7 @@ public class MutationTestQualifierTest {
     list.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
     list.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
     list.accept(qualifier);
-    assertValues(true, false, 0.33f, 0.66f);
+    assertValues(3, 1, true, false, 0.33f, 0.66f);
   }
 
   @Test
@@ -86,13 +88,13 @@ public class MutationTestQualifierTest {
     list.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
     list.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
     list.accept(qualifier);
-    assertValues(true, true, 0.5f, 0.5f);
+    assertValues(2, 1, true, true, 0.5f, 0.5f);
   }
 
   @Test
   public void testEmptyRecipe() {
     recipe.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f);
   }
 
   @Test
@@ -102,7 +104,7 @@ public class MutationTestQualifierTest {
     list.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, false, 0.33f, 0.66f);
+    assertValues(3, 1, true, false, 0.33f, 0.66f);
   }
 
   @Test
@@ -111,13 +113,13 @@ public class MutationTestQualifierTest {
     list.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, true, 0.5f, 0.5f);
+    assertValues(2, 1, true, true, 0.5f, 0.5f);
   }
 
   @Test
   public void testEmptyRecipeList() {
     recipes.accept(qualifier);
-    assertValues(false, false, 0.0f, 0.0f);
+    assertValues(0, 0, false, false, 0.0f, 0.0f);
   }
 
   @Test
@@ -139,7 +141,7 @@ public class MutationTestQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, false, 0.33f, 0.66f);
+    assertValues(6, 2, true, false, 0.33f, 0.66f);
   }
 
   @Test
@@ -159,6 +161,6 @@ public class MutationTestQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, true, 0.5f, 0.5f);
+    assertValues(4, 2, true, true, 0.5f, 0.5f);
   }
 }

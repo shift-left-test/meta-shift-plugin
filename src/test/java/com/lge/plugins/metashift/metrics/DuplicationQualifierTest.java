@@ -53,7 +53,9 @@ public class DuplicationQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(boolean available, boolean qualified, float ratio) {
+  private void assertValues(int denominator, int numnerator, boolean available, boolean qualified, float ratio) {
+    assertEquals(denominator, qualifier.getDenominator());
+    assertEquals(numnerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());
     assertEquals(qualified, qualifier.isQualified());
     assertEquals(ratio, qualifier.get(DuplicationCounter.class).getRatio(), 0.1f);
@@ -61,27 +63,27 @@ public class DuplicationQualifierTest {
 
   @Test
   public void testInitialState() {
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
   public void testEmptySet() {
     list.accept(qualifier);
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
   public void testSetWithoutQualified() {
     list.add(new DuplicationData("A", "a.file", 10, 6));
     list.accept(qualifier);
-    assertValues(true, false, 0.6f);
+    assertValues(10, 6, true, false, 0.6f);
   }
 
   @Test
   public void testSetWithQualified() {
     list.add(new DuplicationData("A", "b.file", 10, 4));
     list.accept(qualifier);
-    assertValues(true, true, 0.5f);
+    assertValues(10, 4, true, true, 0.5f);
   }
 
   @Test
@@ -89,13 +91,13 @@ public class DuplicationQualifierTest {
     list.add(new DuplicationData("A", "a.file", 10, 6));
     list.add(new DuplicationData("A", "b.file", 10, 4));
     list.accept(qualifier);
-    assertValues(true, true, 0.5f);
+    assertValues(20, 10, true, true, 0.5f);
   }
 
   @Test
   public void testEmptyRecipe() {
     recipe.accept(qualifier);
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
@@ -103,7 +105,7 @@ public class DuplicationQualifierTest {
     list.add(new DuplicationData("A", "a.file", 10, 6));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, false, 0.6f);
+    assertValues(10, 6, true, false, 0.6f);
   }
 
   @Test
@@ -111,13 +113,13 @@ public class DuplicationQualifierTest {
     list.add(new DuplicationData("A", "b.file", 10, 4));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(true, true, 0.5f);
+    assertValues(10, 4, true, true, 0.5f);
   }
 
   @Test
   public void testEmptyRecipeList() {
     recipes.accept(qualifier);
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
@@ -137,7 +139,7 @@ public class DuplicationQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, false, 0.75f);
+    assertValues(40, 30, true, false, 0.75f);
   }
 
   @Test
@@ -157,6 +159,6 @@ public class DuplicationQualifierTest {
     recipes.add(recipe);
 
     recipes.accept(qualifier);
-    assertValues(true, true, 0.25f);
+    assertValues(40, 10, true, true, 0.25f);
   }
 }

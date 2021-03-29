@@ -73,7 +73,10 @@ public class MetricsTest {
     recipes.add(recipe);
   }
 
-  private void assertValues(boolean available, boolean qualified, float ratio) {
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified,
+      float ratio) {
+    assertEquals(denominator, metrics.getDenominator());
+    assertEquals(numerator, metrics.getNumerator());
     assertEquals(available, metrics.isAvailable());
     assertEquals(qualified, metrics.isQualified());
     assertEquals(ratio, metrics.getRatio(), 0.1f);
@@ -81,28 +84,28 @@ public class MetricsTest {
 
   @Test
   public void testInitialState() {
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
   public void testWithEmptyRecipes() {
     RecipeList recipes = new RecipeList();
     recipes.accept(metrics);
-    assertValues(false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test
   public void testRecipesWithoutQualifiedCacheData() {
     recipe.get(CacheList.class).add(new PremirrorCacheData("A-B-C", "X", false));
     recipes.accept(metrics);
-    assertValues(true, false, 0.0f);
+    assertValues(1, 0, true, false, 0.0f);
   }
 
   @Test
   public void testRecipesWithQualifiedCacheData() {
     recipe.get(CacheList.class).add(new PremirrorCacheData("A-B-C", "X", true));
     recipes.accept(metrics);
-    assertValues(true, true, 1.0f);
+    assertValues(1, 1, true, true, 1.0f);
   }
 
   @Test
@@ -110,7 +113,7 @@ public class MetricsTest {
     recipe.get(RecipeViolationList.class).add(
         new MajorRecipeViolationData("A-B-C", "a.file", 1, "e", "e", "e"));
     recipes.accept(metrics);
-    assertValues(true, false, 0.0f);
+    assertValues(1, 0, true, false, 0.0f);
   }
 
   @Test
@@ -118,21 +121,21 @@ public class MetricsTest {
     recipe.get(RecipeViolationList.class).add(
         new MinorRecipeViolationData("A-B-C", "a.file", 1, "e", "e", "e"));
     recipes.accept(metrics);
-    assertValues(true, true, 1.0f);
+    assertValues(1, 1, true, true, 1.0f);
   }
 
   @Test
   public void testRecipesWithoutQualifiedCommentData() {
     recipe.get(CommentList.class).add(new CommentData("A-B-C", "a.file", 10, 0));
     recipes.accept(metrics);
-    assertValues(true, false, 0.0f);
+    assertValues(1, 0, true, false, 0.0f);
   }
 
   @Test
   public void testRecipesWithQualifiedCommentData() {
     recipe.get(CommentList.class).add(new CommentData("A-B-C", "a.file", 10, 5));
     recipes.accept(metrics);
-    assertValues(true, true, 1.0f);
+    assertValues(1, 1, true, true, 1.0f);
   }
 
   @Test
@@ -140,7 +143,7 @@ public class MetricsTest {
     recipe.get(CodeViolationList.class).add(
         new MajorCodeViolationData("A-B-C", "a.file", 1, 2, "r", "m", "d", "E", "t"));
     recipes.accept(metrics);
-    assertValues(true, false, 0.0f);
+    assertValues(1, 0, true, false, 0.0f);
   }
 
   @Test
@@ -148,7 +151,7 @@ public class MetricsTest {
     recipe.get(CodeViolationList.class).add(
         new MinorCodeViolationData("A-B-C", "a.file", 1, 2, "r", "m", "d", "E", "t"));
     recipes.accept(metrics);
-    assertValues(true, true, 1.0f);
+    assertValues(1, 1, true, true, 1.0f);
   }
 
   @Test
@@ -156,7 +159,7 @@ public class MetricsTest {
     recipe.get(ComplexityList.class).add(
         new ComplexityData("A-B-C", "a.file", "f()", 10));
     recipes.accept(metrics);
-    assertValues(true, false, 0.0f);
+    assertValues(1, 0, true, false, 0.0f);
   }
 
   @Test
@@ -164,7 +167,7 @@ public class MetricsTest {
     recipe.get(ComplexityList.class).add(
         new ComplexityData("A-B-C", "a.file", "f()", 0));
     recipes.accept(metrics);
-    assertValues(true, true, 1.0f);
+    assertValues(1, 1, true, true, 1.0f);
   }
 
   @Test
@@ -172,7 +175,7 @@ public class MetricsTest {
     recipe.get(DuplicationList.class).add(
         new DuplicationData("A-B-C", "a.file", 10, 10));
     recipes.accept(metrics);
-    assertValues(true, false, 0.0f);
+    assertValues(1, 0, true, false, 0.0f);
   }
 
   @Test
@@ -180,7 +183,7 @@ public class MetricsTest {
     recipe.get(DuplicationList.class).add(
         new DuplicationData("A-B-C", "a.file", 10, 0));
     recipes.accept(metrics);
-    assertValues(true, true, 1.0f);
+    assertValues(1, 1, true, true, 1.0f);
   }
 
   @Test
@@ -188,7 +191,7 @@ public class MetricsTest {
     recipe.get(TestList.class).add(
         new FailedTestData("A-B-C", "a.suite", "a.tc", "msg"));
     recipes.accept(metrics);
-    assertValues(true, false, 0.0f);
+    assertValues(1, 0, true, false, 0.0f);
   }
 
   @Test
@@ -196,7 +199,7 @@ public class MetricsTest {
     recipe.get(TestList.class).add(
         new PassedTestData("A-B-C", "a.suite", "a.tc", "msg"));
     recipes.accept(metrics);
-    assertValues(true, true, 1.0f);
+    assertValues(1, 1, true, true, 1.0f);
   }
 
   @Test
@@ -204,7 +207,7 @@ public class MetricsTest {
     recipe.get(MutationTestList.class).add(
         new SurvivedMutationTestData("A-B-C", "a.file", "C", "f()", 1, "AOR", "TC"));
     recipes.accept(metrics);
-    assertValues(true, false, 0.0f);
+    assertValues(1, 0, true, false, 0.0f);
   }
 
   @Test
@@ -212,7 +215,7 @@ public class MetricsTest {
     recipe.get(MutationTestList.class).add(
         new KilledMutationTestData("A-B-C", "a.file", "C", "f()", 1, "AOR", "TC"));
     recipes.accept(metrics);
-    assertValues(true, true, 1.0f);
+    assertValues(1, 1, true, true, 1.0f);
   }
 
   @Test
@@ -229,7 +232,7 @@ public class MetricsTest {
     assertFalse(metrics.get(CacheQualifier.class).isQualified());
     assertFalse(metrics.get(RecipeViolationQualifier.class).isQualified());
     assertTrue(metrics.get(CommentQualifier.class).isQualified());
-    assertValues(true, false, 0.3f);
+    assertValues(3, 1, true, false, 0.3f);
   }
 
   @Test
@@ -248,6 +251,6 @@ public class MetricsTest {
     assertFalse(metrics.get(CodeViolationQualifier.class).isQualified());
     assertTrue(metrics.get(ComplexityQualifier.class).isQualified());
     assertTrue(metrics.get(DuplicationQualifier.class).isQualified());
-    assertValues(true, true, 0.6f);
+    assertValues(3, 2, true, true, 0.6f);
   }
 }

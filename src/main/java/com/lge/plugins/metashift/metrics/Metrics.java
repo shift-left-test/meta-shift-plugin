@@ -69,11 +69,6 @@ public final class Metrics extends Qualifier<Qualifier<?>> implements Countable 
   }
 
   @Override
-  public boolean isAvailable() {
-    return getDenominator() > 0;
-  }
-
-  @Override
   public boolean isQualified() {
     if (getDenominator() == 0) {
       return false;

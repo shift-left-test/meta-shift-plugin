@@ -47,22 +47,26 @@ public final class TestQualifier extends Qualifier<TestCounter> {
   }
 
   @Override
-  public boolean isAvailable() {
-    return get(PassedTestCounter.class).getDenominator() > 0;
+  public int getDenominator() {
+    return get(PassedTestCounter.class).getDenominator();
+  }
+
+  @Override
+  public int getNumerator() {
+    return get(PassedTestCounter.class).getNumerator();
   }
 
   @Override
   public boolean isQualified() {
-    int denominator = get(PassedTestCounter.class).getDenominator();
-    int numerator = get(PassedTestCounter.class).getNumerator();
-    if (denominator == 0) {
+    if (getDenominator() == 0) {
       return false;
     }
-    return ((float) numerator / (float) denominator) >= getThreshold();
+    return ((float) getNumerator() / (float) getDenominator()) >= getThreshold();
   }
 
   @Override
   public void visit(final TestList objects) {
     getCollection().values().forEach(objects::accept);
   }
+
 }
