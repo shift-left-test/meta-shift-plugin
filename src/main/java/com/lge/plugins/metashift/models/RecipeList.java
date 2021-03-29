@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.metrics.Visitable;
+import java.io.File;
 
 /**
  * Represents a set of Recipe objects.
@@ -32,6 +33,29 @@ import com.lge.plugins.metashift.metrics.Visitable;
  * @author Sung Gon Kim
  */
 public final class RecipeList extends DataList<Recipe> {
+
+  /**
+   * Create a list of recipes using the given report directory.
+   *
+   * @param path to directory
+   * @throws IllegalArgumentException if the path is invalid
+   */
+  public static RecipeList create(File path) throws IllegalArgumentException {
+    if (!path.exists()) {
+      throw new IllegalArgumentException("Directory not found: " + path);
+    }
+    if (!path.isDirectory()) {
+      throw new IllegalArgumentException("Not a directory: " + path);
+    }
+    RecipeList recipes = new RecipeList();
+    File[] directories = path.listFiles(File::isDirectory);
+    if (directories != null) {
+      for (File directory : directories) {
+        recipes.add(Recipe.create(directory));
+      }
+    }
+    return recipes;
+  }
 
   @Override
   public void accept(final Visitable visitor) {

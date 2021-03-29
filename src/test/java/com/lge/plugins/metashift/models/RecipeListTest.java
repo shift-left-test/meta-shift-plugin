@@ -26,8 +26,13 @@ package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Unit tests for the RecipeList class
@@ -36,6 +41,8 @@ import org.junit.Test;
  */
 public class RecipeListTest {
 
+  @Rule
+  public final TemporaryFolder folder = new TemporaryFolder();
   private RecipeList recipes;
 
   @Before
@@ -56,5 +63,32 @@ public class RecipeListTest {
     recipes.add(first);
     assertEquals(2, recipes.size());
     assertEquals(first, recipes.get(1));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateRecipeListWithUnknownPath() {
+    RecipeList.create(new File(folder.getRoot(), "unknown"));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateRecipeListWithoutDirectory() throws IOException {
+    RecipeList.create(folder.newFile());
+  }
+
+  @Test
+  public void testCreateRecipeListWithEmptyReportDirectory() throws IOException {
+    File report = folder.newFolder("report");
+    recipes = RecipeList.create(report);
+    assertEquals(0, recipes.size());
+  }
+
+  @Test
+  public void testCreateRecipeListWithMultipleDirectories() throws IOException {
+    File report = folder.newFolder("report");
+    FileUtils.forceMkdir(new File(report, "cmake-project-1.0.0-r0"));
+    FileUtils.forceMkdir(new File(report, "qmake5-project-1.0.0-r0"));
+    FileUtils.forceMkdir(new File(report, "autotools-1.0.0-r0"));
+    recipes = RecipeList.create(report);
+    assertEquals(3, recipes.size());
   }
 }

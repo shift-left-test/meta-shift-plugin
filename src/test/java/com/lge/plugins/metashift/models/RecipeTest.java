@@ -26,7 +26,6 @@ package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +34,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,7 +49,6 @@ public class RecipeTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
-  private Recipe recipe;
   private Recipe origin;
   private Recipe same;
 
@@ -140,8 +139,8 @@ public class RecipeTest {
   public void testCreateRecipeWithEmptyRecipeDirectory() throws IOException {
     File report = folder.newFolder("report");
     File directory = new File(report, "cmake-project-1.0.0-r0");
-    assertTrue(directory.mkdirs());
-    recipe = Recipe.create(directory);
+    FileUtils.forceMkdir(directory);
+    Recipe recipe = Recipe.create(directory);
     assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
     assertEquals(0, recipe.get(SizeList.class).size());
     assertEquals(0, recipe.get(CacheList.class).size());
