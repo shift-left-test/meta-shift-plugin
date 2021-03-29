@@ -26,14 +26,19 @@ package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Unit tests for the Recipe class.
@@ -42,6 +47,9 @@ import org.junit.Test;
  */
 public class RecipeTest {
 
+  @Rule
+  public final TemporaryFolder folder = new TemporaryFolder();
+  private Recipe recipe;
   private Recipe origin;
   private Recipe same;
 
@@ -111,5 +119,33 @@ public class RecipeTest {
     recipes.add(origin);
     recipes.add(same);
     assertEquals(1, recipes.size());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateRecipeWithUnknownPath() {
+    Recipe.create(new File(folder.getRoot(), "unknown"));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateRecipeWithoutDirectory() throws IOException {
+    Recipe.create(folder.newFile());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateRecipeWithMalformedDirectoryName() throws IOException {
+    Recipe.create(folder.newFolder("report", "ABC"));
+  }
+
+  @Test
+  public void testCreateRecipeWithEmptyRecipeDirectory() throws IOException {
+    File report = folder.newFolder("report");
+    File directory = new File(report, "cmake-project-1.0.0-r0");
+    assertTrue(directory.mkdirs());
+    recipe = Recipe.create(directory);
+    assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
+    assertEquals(0, recipe.get(SizeList.class).size());
+    assertEquals(0, recipe.get(CacheList.class).size());
+    assertEquals(0, recipe.get(CommentList.class).size());
+    assertEquals(0, recipe.get(DuplicationList.class).size());
   }
 }
