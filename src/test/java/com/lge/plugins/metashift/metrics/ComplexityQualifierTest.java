@@ -53,7 +53,8 @@ public class ComplexityQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(int denominator, int numerator, boolean available, boolean qualified, float ratio) {
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified,
+      float ratio) {
     assertEquals(denominator, qualifier.getDenominator());
     assertEquals(numerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());

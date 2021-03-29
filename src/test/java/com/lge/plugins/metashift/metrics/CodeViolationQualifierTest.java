@@ -55,7 +55,8 @@ public class CodeViolationQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(int denominator, int numerator, boolean available, boolean qualified, float major, float minor,
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified,
+      float major, float minor,
       float info) {
     assertEquals(denominator, qualifier.getDenominator());
     assertEquals(numerator, qualifier.getNumerator());
@@ -104,7 +105,7 @@ public class CodeViolationQualifierTest {
     list.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe.set(list);
     recipe.accept(qualifier);
-    assertValues(1, 1,true, false, 1.0f, 0.0f, 0.0f);
+    assertValues(1, 1, true, false, 1.0f, 0.0f, 0.0f);
   }
 
   @Test

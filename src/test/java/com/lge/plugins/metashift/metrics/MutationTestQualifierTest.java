@@ -54,7 +54,8 @@ public class MutationTestQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(int denominator, int numerator, boolean available, boolean qualified, float killed, float survived) {
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified,
+      float killed, float survived) {
     assertEquals(denominator, qualifier.getDenominator());
     assertEquals(numerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());

@@ -88,7 +88,7 @@ public class SizeListTest {
 
   @Test
   public void testCreateSetWithUnknownPath() {
-    objects = SizeList.create("A", new File(folder.getRoot(), "unknown"));
+    objects = SizeList.create(new File(folder.getRoot(), "unknown"));
     assertEquals(0, objects.size());
   }
 
@@ -100,14 +100,14 @@ public class SizeListTest {
         "    \"file\": \"a.file\",",
         "  }");
     File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = SizeList.create("A", file.getParentFile().getParentFile());
+    objects = SizeList.create(file.getParentFile().getParentFile());
   }
 
   @Test
   public void testCreateSetWithEmptyData() throws Exception {
     List<String> data = Collections.singletonList("{ \"size\": [] }");
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = SizeList.create("A", file.getParentFile().getParentFile());
+    File file = createTempFile("report/B/checkcode/sage_report.json", data);
+    objects = SizeList.create(file.getParentFile().getParentFile());
     assertEquals(0, objects.size());
   }
 
@@ -125,13 +125,13 @@ public class SizeListTest {
         "    \"classes\": 6",
         "  } ",
         "] }");
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+    File file = createTempFile("report/C/checkcode/sage_report.json", data);
 
-    objects = SizeList.create("A", file.getParentFile().getParentFile());
+    objects = SizeList.create(file.getParentFile().getParentFile());
     assertEquals(1, objects.size());
 
     SizeData object = objects.iterator().next();
-    assertValues(object, "A", "a.file", 20, 15, 6);
+    assertValues(object, "C", "a.file", 20, 15, 6);
   }
 
   @Test
@@ -150,13 +150,13 @@ public class SizeListTest {
         "  \"functions\": 20,",
         "  \"classes\": 10",
         "} ] }");
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+    File file = createTempFile("report/D/checkcode/sage_report.json", data);
 
-    objects = SizeList.create("A", file.getParentFile().getParentFile());
+    objects = SizeList.create(file.getParentFile().getParentFile());
     assertEquals(2, objects.size());
 
     Iterator<SizeData> iterator = objects.iterator();
-    assertValues(iterator.next(), "A", "a.file", 10, 10, 5);
-    assertValues(iterator.next(), "A", "b.file", 20, 20, 10);
+    assertValues(iterator.next(), "D", "a.file", 10, 10, 5);
+    assertValues(iterator.next(), "D", "b.file", 20, 20, 10);
   }
 }

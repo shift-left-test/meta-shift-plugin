@@ -53,7 +53,8 @@ public class CommentQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(int denominator, int numerator, boolean available, boolean qualified, float ratio) {
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified,
+      float ratio) {
     assertEquals(denominator, qualifier.getDenominator());
     assertEquals(numerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());
@@ -63,7 +64,7 @@ public class CommentQualifierTest {
 
   @Test
   public void testInitialState() {
-    assertValues(0, 0,false, false, 0.0f);
+    assertValues(0, 0, false, false, 0.0f);
   }
 
   @Test

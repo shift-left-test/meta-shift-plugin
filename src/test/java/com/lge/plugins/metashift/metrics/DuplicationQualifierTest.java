@@ -53,7 +53,8 @@ public class DuplicationQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(int denominator, int numnerator, boolean available, boolean qualified, float ratio) {
+  private void assertValues(int denominator, int numnerator, boolean available, boolean qualified,
+      float ratio) {
     assertEquals(denominator, qualifier.getDenominator());
     assertEquals(numnerator, qualifier.getNumerator());
     assertEquals(available, qualifier.isAvailable());

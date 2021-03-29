@@ -51,27 +51,28 @@ public final class CacheList extends DataList<CacheData> {
   /**
    * Create a set of objects by parsing a report file from the given path.
    *
-   * @param recipe name
-   * @param path   to the report directory
-   * @return a set of objects
+   * @param path to the report directory
+   * @return a list of objects
+   * @throws IllegalArgumentException if failed to parse report files
    */
-  public static CacheList create(final String recipe, final File path) {
+  public static CacheList create(final File path) throws IllegalArgumentException {
+    CacheList list = new CacheList();
+    String recipe = path.getName();
     File report = FileUtils.getFile(path, "caches.json");
-    CacheList set = new CacheList();
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));
       JSONObject json = JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
       for (Object o : json.getJSONObject("Premirror").getJSONArray("Found")) {
-        set.add(new PremirrorCacheData(recipe, (String) o, true));
+        list.add(new PremirrorCacheData(recipe, (String) o, true));
       }
       for (Object o : json.getJSONObject("Premirror").getJSONArray("Missed")) {
-        set.add(new PremirrorCacheData(recipe, (String) o, false));
+        list.add(new PremirrorCacheData(recipe, (String) o, false));
       }
       for (Object o : json.getJSONObject("Shared State").getJSONArray("Found")) {
-        set.add(new SharedStateCacheData(recipe, (String) o, true));
+        list.add(new SharedStateCacheData(recipe, (String) o, true));
       }
       for (Object o : json.getJSONObject("Shared State").getJSONArray("Missed")) {
-        set.add(new SharedStateCacheData(recipe, (String) o, false));
+        list.add(new SharedStateCacheData(recipe, (String) o, false));
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -79,6 +80,6 @@ public final class CacheList extends DataList<CacheData> {
       e.printStackTrace();
       throw new IllegalArgumentException("Failed to parse: " + report);
     }
-    return set;
+    return list;
   }
 }

@@ -55,7 +55,8 @@ public class RecipeViolationQualifierTest {
     recipes = new RecipeList();
   }
 
-  private void assertValues(int denominator, int numerator, boolean available, boolean qualified, float major, float minor,
+  private void assertValues(int denominator, int numerator, boolean available, boolean qualified,
+      float major, float minor,
       float info) {
     assertEquals(denominator, qualifier.getDenominator());
     assertEquals(numerator, qualifier.getNumerator());

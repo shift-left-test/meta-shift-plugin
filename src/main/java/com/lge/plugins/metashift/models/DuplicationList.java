@@ -51,18 +51,19 @@ public final class DuplicationList extends DataList<DuplicationData> {
   /**
    * Create a set of objects by parsing a report file from the given path.
    *
-   * @param recipe name
-   * @param path   to the report directory
-   * @return a set of objects
+   * @param path to the report directory
+   * @return a list of objects
+   * @throws IllegalArgumentException if failed to parse report files
    */
-  public static DuplicationList create(final String recipe, final File path) {
+  public static DuplicationList create(final File path) throws IllegalArgumentException {
+    DuplicationList list = new DuplicationList();
+    String recipe = path.getName();
     File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
-    DuplicationList set = new DuplicationList();
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));
       JSONObject json = JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
       for (Object o : json.getJSONArray("size")) {
-        set.add(new DuplicationData(recipe,
+        list.add(new DuplicationData(recipe,
             ((JSONObject) o).getString("file"),
             ((JSONObject) o).getInt("total_lines"),
             ((JSONObject) o).getInt("duplicated_lines")));
@@ -73,6 +74,6 @@ public final class DuplicationList extends DataList<DuplicationData> {
       e.printStackTrace();
       throw new IllegalArgumentException("Failed to parse: " + report);
     }
-    return set;
+    return list;
   }
 }

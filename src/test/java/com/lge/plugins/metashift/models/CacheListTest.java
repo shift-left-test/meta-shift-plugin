@@ -78,7 +78,7 @@ public class CacheListTest {
 
   @Test
   public void testCreateSetWithUnknownPath() {
-    objects = CacheList.create("A", new File(folder.getRoot(), "unknown"));
+    objects = CacheList.create(new File(folder.getRoot(), "unknown"));
     assertEquals(0, objects.size());
   }
 
@@ -86,7 +86,7 @@ public class CacheListTest {
   public void testCreateSetWithMalformedFile() throws Exception {
     List<String> data = Collections.singletonList("{ \"Premirror\": { }, \"Shared State\": { } }");
     File file = createTempFile("report/A/caches.json", data);
-    objects = CacheList.create("A", file.getParentFile());
+    objects = CacheList.create(file.getParentFile());
   }
 
   @Test
@@ -94,8 +94,8 @@ public class CacheListTest {
     List<String> data = Arrays.asList(
         "{ \"Premirror\": { \"Found\": [], \"Missed\": [] },",
         "  \"Shared State\": { \"Found\": [], \"Missed\": [] } }");
-    File file = createTempFile("report/A/caches.json", data);
-    objects = CacheList.create("A", file.getParentFile());
+    File file = createTempFile("report/B/caches.json", data);
+    objects = CacheList.create(file.getParentFile());
     assertEquals(0, objects.size());
   }
 
@@ -104,8 +104,8 @@ public class CacheListTest {
     List<String> data = Arrays.asList(
         "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
         "  \"Shared State\": { \"Found\": [], \"Missed\": [] } }");
-    File file = createTempFile("report/A/caches.json", data);
-    objects = CacheList.create("A", file.getParentFile());
+    File file = createTempFile("report/C/caches.json", data);
+    objects = CacheList.create(file.getParentFile());
     assertEquals(3, objects.size());
   }
 
@@ -114,18 +114,18 @@ public class CacheListTest {
     List<String> data = Arrays.asList(
         "{ \"Premirror\": { \"Found\": [], \"Missed\": [] },",
         "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }");
-    File file = createTempFile("report/A/caches.json", data);
-    objects = CacheList.create("A", file.getParentFile());
+    File file = createTempFile("report/D/caches.json", data);
+    objects = CacheList.create(file.getParentFile());
     assertEquals(2, objects.size());
   }
 
   @Test
-  public void testCreateSetWithCompoundData() throws Exception {
+  public void testCreateSetWithMultipleData() throws Exception {
     List<String> data = Arrays.asList(
         "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
         "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }");
-    File file = createTempFile("report/A/caches.json", data);
-    objects = CacheList.create("A", file.getParentFile());
+    File file = createTempFile("report/E/caches.json", data);
+    objects = CacheList.create(file.getParentFile());
     assertEquals(5, objects.size());
   }
 }

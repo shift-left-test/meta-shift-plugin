@@ -51,18 +51,19 @@ public final class SizeList extends DataList<SizeData> {
   /**
    * Create a set of objects by parsing a report file from the given path.
    *
-   * @param recipe name
-   * @param path   to the report directory
-   * @return a set of objects
+   * @param path to the report directory
+   * @return a list of objects
+   * @throws IllegalArgumentException if failed to parse report files
    */
-  public static SizeList create(final String recipe, final File path) {
+  public static SizeList create(final File path) throws IllegalArgumentException {
+    SizeList list = new SizeList();
+    String recipe = path.getName();
     File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
-    SizeList set = new SizeList();
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));
       JSONObject json = JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
       for (Object o : json.getJSONArray("size")) {
-        set.add(new SizeData(recipe,
+        list.add(new SizeData(recipe,
             ((JSONObject) o).getString("file"),
             ((JSONObject) o).getInt("total_lines"),
             ((JSONObject) o).getInt("functions"),
@@ -74,6 +75,6 @@ public final class SizeList extends DataList<SizeData> {
       e.printStackTrace();
       throw new IllegalArgumentException("Failed to parse: " + report);
     }
-    return set;
+    return list;
   }
 }
