@@ -67,13 +67,25 @@ public class SizeCounterTest {
   }
 
   @Test
-  public void testEmptySet() {
+  public void testEmptyList() {
     list.accept(counter);
     assertValues(0, 0, 0, 0, 0);
   }
 
   @Test
-  public void testSetWithData() {
+  public void testEmptyRecipe() {
+    recipe.accept(counter);
+    assertValues(0, 0, 0, 0, 0);
+  }
+
+  @Test
+  public void testEmptyRecipeList() {
+    recipes.accept(counter);
+    assertValues(0, 0, 0, 0, 0);
+  }
+
+  @Test
+  public void testListWithData() {
     list.add(new SizeData("A", "a.file", 3, 2, 1));
     list.add(new SizeData("A", "b.file", 6, 4, 2));
     list.accept(counter);

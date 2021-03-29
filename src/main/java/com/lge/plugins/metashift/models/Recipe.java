@@ -62,6 +62,7 @@ public final class Recipe extends Data<Recipe> implements Acceptable {
     collection = new HashMap<>();
     collection.put(CacheList.class, new CacheList());
     collection.put(RecipeViolationList.class, new RecipeViolationList());
+    collection.put(SizeList.class, new SizeList());
     collection.put(CommentList.class, new CommentList());
     collection.put(CodeViolationList.class, new CodeViolationList());
     collection.put(ComplexityList.class, new ComplexityList());
