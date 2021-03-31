@@ -1,0 +1,78 @@
+h1 {
+    margin-top: 30px;
+}
+
+h2 {
+    margin-top: 30px;
+}
+
+h3 {
+    margin-top: 10px;
+}
+
+.overview-text {
+    font-size: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+.measurement-group-title {
+    width: 100%;
+}
+
+.measurement-group.badge {
+    margin-left: 50px;
+}
+
+.measurement-card {
+    height: 300px;
+    padding: 10px;
+}
+
+.measurement-row {
+    font-size: 14px;
+}
+
+.description-text {
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+}
+
+.value-pass {
+    font-size: 35px;
+    color: rgb(123, 255, 0)
+}
+.value-fail {
+    font-size: 35px;
+    color: rgb(206, 14, 0)
+}
+.value-detail {
+    font-size: 30px;
+}
+
+.circle {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    font-size: 50px;
+    color: #fff;
+    text-align: center;
+}
+
+.circle-small {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 50%;
+    font-size: 30px;
+    color: #fff;
+    text-align: center;
+}
+
+.recipes-table {
+    width: 100%;
+    border-width: 2px;
+    border-color: blue;
+}

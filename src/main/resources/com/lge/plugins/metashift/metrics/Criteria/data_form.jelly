@@ -1,0 +1,41 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:section title="Build Performance">
+        <f:entry title="Cache Threshold" field="cacheThreshold">
+            <f:textbox default="80.0" value="${it.cacheThreshold}"/>
+        </f:entry>
+        <f:entry title="Recipe Violation Threshold" field="recipeViolationThreshold">
+            <f:textbox default="80.0" value="${it.recipeViolationThreshold}"/>
+        </f:entry>
+    </f:section>
+    <f:section title="Code Quality">
+        <f:entry title="Comment Threshold" field="commentThreshold">
+            <f:textbox default="80.0" value="${it.commentThreshold}"/>
+        </f:entry>
+        <f:entry title="Code Violation Threshold" field="codeViolationThreshold">
+            <f:textbox default="80.0" value="${it.codeViolationThreshold}"/>
+        </f:entry>
+        <f:entry title="Complexity Level" field="complexityLevel">
+            <f:textbox default="2" value="${it.complexityLevel}"/>
+        </f:entry>
+        <f:entry title="Complexity Threshold" field="complexityThreshold">
+            <f:textbox default="80.0" value="${it.complexityThreshold}"/>
+        </f:entry>
+        <f:entry title="Duplication Threshold" field="duplicationThreshold">
+            <f:textbox default="80.0" value="${it.duplicationThreshold}"/>
+        </f:entry>
+        <f:entry title="Test Threshold" field="testThreshold">
+            <f:textbox default="80.0" value="${it.testThreshold}"/>
+        </f:entry>
+        <f:entry title="Coverage Threshold" field="coverageThreshold">
+            <f:textbox default="80.0" value="${it.coverageThreshold}"/>
+        </f:entry>
+        <f:entry title="Mutation Test Threshold" field="mutationTestThreshold">
+            <f:textbox default="80.0" value="${it.mutationTestThreshold}"/>
+        </f:entry>
+        <f:entry title="Overall Threshold" field="overallThreshold">
+            <f:textbox default="80.0" value="${it.overallThreshold}"/>
+        </f:entry>
+    </f:section>
+</j:jelly>

@@ -1,6 +1,67 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" 
-xmlns:s="/lib/sample">
-    <h2>MetaShift TBD...</h2>
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:bs="/bootstrap"
+xmlns:ms="/metashift">
+    <st:adjunct includes="com.lge.plugins.metashift.view.style"/>
+    <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+    <h2>MetaShift Summary
+        <j:choose>
+            <j:when test="${it.metrics.qualified}">
+                <span class="measurement-group badge badge-success ">Passed</span>
+            </j:when>
+            <j:otherwise>
+                <span class="measurement-group badge badge-danger ">Failed</span>
+            </j:otherwise>
+        </j:choose>
+    </h2>
+    <div class="row">
+        <div class="col-3">
+            <!-- overview -->
+            <div class="row">
+                <h3>Overview</h3>
+            </div>
+            <div>
+                <div class="col-12">
+                    <p class="overview-text">Recipes: ${it.sizeCounter.recipes}</p>
+                    <p class="overview-text">Lines: ${it.sizeCounter.lines}</p>
+                    <p class="overview-text">Functions: ${it.sizeCounter.functions}</p>
+                    <p class="overview-text">Classes: ${it.sizeCounter.classes}</p>
+                    <p class="overview-text">Files: ${it.sizeCounter.files}</p>
+                </div>
+            </div>  
+        </div>
+        <!-- metric card -->
+        <div class="col-6">
+            <!-- build performance -->
+            <div class="row">
+                <h3>Build Preformance</h3>
+            </div>
+            <div class="row">
+                <ms:measurement-row title="Cache Availability"
+                qualifier="${it.cacheQualifier}" counter="${it.cacheCounter}" />
+                <ms:measurement-row title="Violations"
+                qualifier="${it.recipeViolationQualifier}" counter="${it.recipeViolationCounter}" />
+            </div>
+            <!-- code quality -->
+            <div class="row">
+                <h3>Code Quality</h3>
+            </div>
+            <div class="row">
+                <ms:measurement-row title="Comments"
+                qualifier="${it.commentQualifier}" counter="${it.commentCounter}" />
+                <ms:measurement-row title="Violations"
+                qualifier="${it.codeViolationQualifier}" counter="${it.codeViolationCounter}" />
+                <ms:measurement-row title="Complexity"
+                qualifier="${it.complexityQualifier}" counter="${it.complexityCounter}" />
+                <ms:measurement-row title="Duplications"
+                qualifier="${it.duplicationQualifier}" counter="${it.duplicationCounter}" />
+                <ms:measurement-row title="Testing"
+                qualifier="${it.testQualifier}" counter="${it.testCounter}" />
+                <ms:measurement-row title="Coverage"
+                qualifier="${it.coverageQualifier}" counter="${it.coverageCounter}" />
+                <ms:measurement-row title="Mutation Score"
+                qualifier="${it.mutationTestQualifier}" counter="${it.mutationTestCounter}" />
+            </div>
+        </div>
+    </div>
 </j:jelly>

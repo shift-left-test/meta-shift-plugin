@@ -1,0 +1,29 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:sc="/metashift/charts">
+<st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+    <j:new var="h" className="hudson.Functions" />
+    <j:set var="id" value="${h.generateId()}"/>
+    <div class="col-4 measurement-row">
+        <b>${title}</b>
+    </div>
+    <div class="col-8 measurement-row">
+        <j:choose>
+            <j:when test="${qualifier.qualified}">
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: ${counter.ratio * 100}%">
+                    ${counter.numerator}/${counter.denominator}
+                    </div>
+                </div>
+            </j:when>
+            <j:otherwise>
+                <div class="progress">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: ${counter.ratio * 100}%">
+                    ${counter.numerator}/${counter.denominator}
+                    </div>
+                </div>
+            </j:otherwise>
+        </j:choose>
+    </div>
+        
+    
+</j:jelly>

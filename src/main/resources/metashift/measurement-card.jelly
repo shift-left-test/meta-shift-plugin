@@ -1,0 +1,43 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:sc="/metashift/charts">
+
+    <j:new var="h" className="hudson.Functions" />
+    <j:set var="id" value="${h.generateId()}"/>
+
+    <div class="card measurement-card">
+        <h3><a href="${detail_url}">${title}</a>
+            <j:choose>
+                <j:when test="${qualifier.qualified}">
+                    <span class="bg-success float-right circle"></span>
+                </j:when>
+                <j:otherwise>
+                    <span class="bg-danger float-right circle"></span>
+                </j:otherwise>
+            </j:choose>
+        </h3>
+        <!--
+        <j:choose>
+            <j:when test="${model.chartType == 'bar'}">
+                <sc:bar-chart id="${id}" model="${model.chartData}" isPercentage="${model.isPercentage}"/>
+            </j:when>
+            <j:when test="${model.chartType == 'doughnut'}">
+                <sc:doughnut-chart id="${id}" model="${model.chartData}" isPercentage="${model.isPercentage}"/>
+            </j:when>
+        </j:choose>
+        -->
+        <p>
+            <j:choose>
+                <j:when test="${qualifier.qualified}">
+                    <span class="value-pass">${counter.ratio * 100}%</span>
+                </j:when>
+                <j:otherwise>
+                    <span class="value-fail">${counter.ratio * 100}%</span>
+                </j:otherwise>
+            </j:choose>
+            <span class="value-detail">
+                ${counter.numerator}/${counter.denominator}
+            </span>
+        </p>
+    </div>
+
+</j:jelly>

@@ -1,0 +1,7 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+  <j:new var="h" className="hudson.Functions" />
+  ${h.initPageVariables(context)}
+  <link rel="stylesheet" href="${resURL}/plugin/metashift/css/metashift.css" type="text/css"/> 
+</j:jelly>
