@@ -31,6 +31,7 @@ import com.lge.plugins.metashift.models.ComplexityList;
 import com.lge.plugins.metashift.models.DuplicationList;
 import com.lge.plugins.metashift.models.MutationTestList;
 import com.lge.plugins.metashift.models.RecipeViolationList;
+import com.lge.plugins.metashift.models.SizeList;
 import com.lge.plugins.metashift.models.TestList;
 
 /**
@@ -47,6 +48,7 @@ public final class Metrics extends Qualifier<Qualifier<?>> implements Countable 
     super(criteria.getOverallThreshold(),
         new CacheQualifier(criteria.getCacheThreshold()),
         new RecipeViolationQualifier(criteria.getRecipeViolationThreshold()),
+        new SizeQualifier(),
         new CommentQualifier(criteria.getCommentThreshold()),
         new CodeViolationQualifier(criteria.getCodeViolationThreshold()),
         new ComplexityQualifier(criteria.getComplexityLevel(),
@@ -79,6 +81,11 @@ public final class Metrics extends Qualifier<Qualifier<?>> implements Countable 
   @Override
   public void visit(final CacheList object) {
     object.accept(get(CacheQualifier.class));
+  }
+
+  @Override
+  public void visit(final SizeList object) {
+    object.accept(get(SizeQualifier.class));
   }
 
   @Override

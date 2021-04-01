@@ -48,6 +48,8 @@ import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeList;
 import com.lge.plugins.metashift.models.RecipeViolationList;
+import com.lge.plugins.metashift.models.SizeData;
+import com.lge.plugins.metashift.models.SizeList;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
 import com.lge.plugins.metashift.models.TestList;
 import org.junit.Before;
@@ -122,6 +124,19 @@ public class MetricsTest {
         new MinorRecipeViolationData("A-B-C", "a.file", 1, "e", "e", "e"));
     recipes.accept(metrics);
     assertValues(1, 1, true, true, 1.0f);
+  }
+
+  @Test
+  public void testRecipesWithSizeData() {
+    recipe.get(SizeList.class).add(new SizeData("A", "a.file", 100, 50, 10));
+    recipes.accept(metrics);
+    assertValues(0, 0, false, false, 0.0f);
+    SizeQualifier sizeQualifier = (SizeQualifier) metrics.get(SizeQualifier.class);
+    assertEquals(1, sizeQualifier.getRecipes());
+    assertEquals(1, sizeQualifier.getFiles());
+    assertEquals(100, sizeQualifier.getLines());
+    assertEquals(50, sizeQualifier.getFunctions());
+    assertEquals(10, sizeQualifier.getClasses());
   }
 
   @Test
