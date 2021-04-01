@@ -4,11 +4,11 @@
 
 # Features
 <!--- List of features and bugfixes included -->
-*  
-*  
-*  
+*
+*
+*
 
 
 /label ~enhancement
-/label ~bug
+/label ~bugfix
 /assign @sunggon82.kim
