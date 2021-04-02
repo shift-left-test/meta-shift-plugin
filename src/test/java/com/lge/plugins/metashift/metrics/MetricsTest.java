@@ -24,10 +24,6 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import com.lge.plugins.metashift.models.CacheList;
 import com.lge.plugins.metashift.models.CodeViolationList;
 import com.lge.plugins.metashift.models.CommentData;
@@ -52,8 +48,13 @@ import com.lge.plugins.metashift.models.SizeData;
 import com.lge.plugins.metashift.models.SizeList;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
 import com.lge.plugins.metashift.models.TestList;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for the Metrics class.
@@ -172,7 +173,7 @@ public class MetricsTest {
   @Test
   public void testRecipesWithoutQualifiedComplexityData() {
     recipe.get(ComplexityList.class).add(
-        new ComplexityData("A-B-C", "a.file", "f()", 10));
+        new ComplexityData("A-B-C", "a.file", "f()", 5, 10, 10));
     recipes.accept(metrics);
     assertValues(1, 0, true, false, 0.0f);
   }
@@ -180,7 +181,7 @@ public class MetricsTest {
   @Test
   public void testRecipesWithQualifiedComplexityData() {
     recipe.get(ComplexityList.class).add(
-        new ComplexityData("A-B-C", "a.file", "f()", 0));
+        new ComplexityData("A-B-C", "a.file", "f()", 5, 10, 0));
     recipes.accept(metrics);
     assertValues(1, 1, true, true, 1.0f);
   }
@@ -258,7 +259,7 @@ public class MetricsTest {
 
     // Qualified
     recipe.get(ComplexityList.class).add(
-        new ComplexityData("A-B-C", "a.file", "f()", 0));
+        new ComplexityData("A-B-C", "a.file", "f()", 5, 10, 0));
     recipe.get(DuplicationList.class).add(
         new DuplicationData("A-B-C", "a.file", 10, 0));
 

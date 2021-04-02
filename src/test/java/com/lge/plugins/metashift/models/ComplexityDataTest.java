@@ -24,13 +24,14 @@
 
 package com.lge.plugins.metashift.models;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Unit tests for the ComplexityData class.
@@ -39,8 +40,8 @@ import org.junit.Test;
  */
 public class ComplexityDataTest {
 
-  private final ComplexityData origin = new ComplexityData("A", "a.file", "f()", 1);
-  private final ComplexityData same = new ComplexityData("A", "a.file", "f()", 1);
+  private final ComplexityData origin = new ComplexityData("A", "a.file", "f()", 5, 10, 1);
+  private final ComplexityData same = new ComplexityData("A", "a.file", "f()", 5, 10, 1);
 
   @Test
   public void testInitData() {
@@ -56,35 +57,38 @@ public class ComplexityDataTest {
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new ComplexityData("B", "a.file", "f()", 1));
-    assertNotEquals(origin, new ComplexityData("A", "b.file", "f()", 1));
-    assertNotEquals(origin, new ComplexityData("A", "a.file", "x()", 1));
-    assertEquals(origin, new ComplexityData("A", "a.file", "f()", 2));
+    assertNotEquals(origin, new ComplexityData("B", "a.file", "f()", 5, 10, 1));
+    assertNotEquals(origin, new ComplexityData("A", "b.file", "f()", 5, 10, 1));
+    assertNotEquals(origin, new ComplexityData("A", "a.file", "x()", 5, 10, 1));
+    assertEquals(origin, new ComplexityData("A", "a.file", "f()", 5, 10, 2));
   }
 
   @Test
   public void testHashCode() {
     assertEquals(origin.hashCode(), origin.hashCode());
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new ComplexityData("B", "a.file", "f()", 1).hashCode());
-    assertNotEquals(origin.hashCode(), new ComplexityData("A", "b.file", "f()", 1).hashCode());
-    assertNotEquals(origin.hashCode(), new ComplexityData("A", "a.file", "x()", 1).hashCode());
-    assertEquals(origin.hashCode(), new ComplexityData("A", "a.file", "f()", 2).hashCode());
+    assertNotEquals(origin.hashCode(),
+        new ComplexityData("B", "a.file", "f()", 5, 10, 1).hashCode());
+    assertNotEquals(origin.hashCode(),
+        new ComplexityData("A", "b.file", "f()", 5, 10, 1).hashCode());
+    assertNotEquals(origin.hashCode(),
+        new ComplexityData("A", "a.file", "x()", 5, 10, 1).hashCode());
+    assertEquals(origin.hashCode(), new ComplexityData("A", "a.file", "f()", 5, 10, 2).hashCode());
   }
 
   @Test
   public void testComparable() {
     List<ComplexityData> expected = new ArrayList<>();
-    expected.add(new ComplexityData("A", "a.file", "f()", 1));
-    expected.add(new ComplexityData("A", "a.file", "g()", 1));
-    expected.add(new ComplexityData("A", "b.file", "g()", 1));
-    expected.add(new ComplexityData("B", "b.file", "g()", 1));
+    expected.add(new ComplexityData("A", "a.file", "f()", 5, 10, 1));
+    expected.add(new ComplexityData("A", "a.file", "g()", 5, 10, 1));
+    expected.add(new ComplexityData("A", "b.file", "g()", 5, 10, 1));
+    expected.add(new ComplexityData("B", "b.file", "g()", 5, 10, 1));
 
     List<ComplexityData> actual = new ArrayList<>();
-    actual.add(new ComplexityData("B", "b.file", "g()", 1));
-    actual.add(new ComplexityData("A", "b.file", "g()", 1));
-    actual.add(new ComplexityData("A", "a.file", "g()", 1));
-    actual.add(new ComplexityData("A", "a.file", "f()", 1));
+    actual.add(new ComplexityData("B", "b.file", "g()", 5, 10, 1));
+    actual.add(new ComplexityData("A", "b.file", "g()", 5, 10, 1));
+    actual.add(new ComplexityData("A", "a.file", "g()", 5, 10, 1));
+    actual.add(new ComplexityData("A", "a.file", "f()", 5, 10, 1));
 
     Collections.sort(actual);
     assertEquals(expected, actual);

@@ -24,14 +24,15 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import static org.junit.Assert.assertEquals;
-
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.ComplexityList;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeList;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit tests for the ComplexityQualifier class.
@@ -75,22 +76,22 @@ public class ComplexityQualifierTest {
 
   @Test
   public void testSetWithoutQualified() {
-    list.add(new ComplexityData("A", "a.file", "f()", 5));
+    list.add(new ComplexityData("A", "a.file", "f()", 5, 10, 5));
     list.accept(qualifier);
     assertValues(1, 1, true, false, 1.0f);
   }
 
   @Test
   public void testSetWithQualified() {
-    list.add(new ComplexityData("A", "a.file", "g()", 4));
+    list.add(new ComplexityData("A", "a.file", "g()", 5, 10, 4));
     list.accept(qualifier);
     assertValues(1, 0, true, true, 0.0f);
   }
 
   @Test
   public void testSetWithCompoundData() {
-    list.add(new ComplexityData("A", "a.file", "f()", 5));
-    list.add(new ComplexityData("A", "a.file", "g()", 4));
+    list.add(new ComplexityData("A", "a.file", "f()", 5, 10, 5));
+    list.add(new ComplexityData("A", "a.file", "g()", 5, 10, 4));
     list.accept(qualifier);
     assertValues(2, 1, true, true, 0.5f);
   }
@@ -103,7 +104,7 @@ public class ComplexityQualifierTest {
 
   @Test
   public void testRecipeWithoutQualified() {
-    list.add(new ComplexityData("A", "a.file", "f()", 5));
+    list.add(new ComplexityData("A", "a.file", "f()", 5, 10, 5));
     recipe.set(list);
     recipe.accept(qualifier);
     assertValues(1, 1, true, false, 1.0f);
@@ -111,7 +112,7 @@ public class ComplexityQualifierTest {
 
   @Test
   public void testRecipeWithQualified() {
-    list.add(new ComplexityData("A", "a.file", "g()", 4));
+    list.add(new ComplexityData("A", "a.file", "g()", 5, 10, 4));
     recipe.set(list);
     recipe.accept(qualifier);
     assertValues(1, 0, true, true, 0.0f);
@@ -126,13 +127,13 @@ public class ComplexityQualifierTest {
   @Test
   public void testRecipeListWithoutQualified() {
     list = new ComplexityList();
-    list.add(new ComplexityData("A", "a.file", "f()", 5));
+    list.add(new ComplexityData("A", "a.file", "f()", 5, 10, 5));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(list);
     recipes.add(recipe);
 
     list = new ComplexityList();
-    list.add(new ComplexityData("B", "a.file", "g()", 5));
+    list.add(new ComplexityData("B", "a.file", "g()", 5, 10, 5));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(list);
     recipes.add(recipe);
@@ -144,13 +145,13 @@ public class ComplexityQualifierTest {
   @Test
   public void testRecipeListWithQualified() {
     list = new ComplexityList();
-    list.add(new ComplexityData("A", "a.file", "f()", 1));
+    list.add(new ComplexityData("A", "a.file", "f()", 5, 10, 1));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(list);
     recipes.add(recipe);
 
     list = new ComplexityList();
-    list.add(new ComplexityData("B", "a.file", "g()", 1));
+    list.add(new ComplexityData("B", "a.file", "g()", 5, 10, 1));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(list);
     recipes.add(recipe);
