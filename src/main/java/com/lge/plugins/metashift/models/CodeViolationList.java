@@ -26,12 +26,83 @@ package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.metrics.Visitable;
 
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Represents a set of CodeViolationData objects.
  *
  * @author Sung Gon Kim
  */
 public final class CodeViolationList extends DataList<CodeViolationData> {
+
+  /**
+   * Creates an instance using the given data.
+   *
+   * @param recipe name
+   * @param object data to parse
+   * @return a CodeViolationData object
+   */
+  private CodeViolationData createInstance(final String recipe, final JSONObject object) {
+    String file = object.getString("file");
+    int line = object.getInt("line");
+    int column = object.getInt("column");
+    String rule = object.getString("rule");
+    String message = object.getString("message");
+    String description = object.getString("description");
+    String severity = object.getString("severity");
+    String level = object.getString("level");
+    String tool = object.getString("tool");
+    switch (level) {
+      case "major":
+        return new MajorCodeViolationData(recipe, file, line, column, rule, message, description,
+            severity, tool);
+      case "minor":
+        return new MinorCodeViolationData(recipe, file, line, column, rule, message, description,
+            severity, tool);
+      case "info":
+        return new InfoCodeViolationData(recipe, file, line, column, rule, message, description,
+            severity, tool);
+      default:
+        throw new JSONException("Unknown level value: " + level);
+    }
+  }
+
+  /**
+   * Create a set of objects by parsing a report file from the given path.
+   *
+   * @param path to the report directory
+   * @return a list of objects
+   * @throws IllegalArgumentException if failed to parse report files
+   */
+  public static CodeViolationList create(File path) throws IllegalArgumentException {
+    CodeViolationList list = new CodeViolationList();
+    String recipe = path.getName();
+    File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
+    try {
+      InputStream is = new BufferedInputStream(new FileInputStream(report));
+      JSONObject json = JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
+      for (Object o : json.getJSONArray("violations")) {
+        list.add(list.createInstance(recipe, (JSONObject) o));
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
+      throw new IllegalArgumentException("Failed to parse: " + report);
+    }
+    return list;
+  }
 
   @Override
   public void accept(final Visitable visitor) {
