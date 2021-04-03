@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -42,6 +43,33 @@ import org.apache.commons.io.IOUtils;
  * @author Sung Gon Kim
  */
 public final class CodeViolationList extends DataList<CodeViolationData> {
+
+  /**
+   * Create a set of objects by parsing a report file from the given path.
+   *
+   * @param path to the report directory
+   * @return a list of objects
+   * @throws IllegalArgumentException if failed to parse report files
+   */
+  public static CodeViolationList create(File path) throws IllegalArgumentException {
+    CodeViolationList list = new CodeViolationList();
+    String recipe = path.getName();
+    File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
+    try {
+      InputStream is = new BufferedInputStream(new FileInputStream(report));
+      JSONObject json = JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
+      for (Object o : json.getJSONArray("violations")) {
+        list.add(list.createInstance(recipe, (JSONObject) o));
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
+      throw new IllegalArgumentException("Failed to parse: " + report);
+    }
+    Collections.sort(list);
+    return list;
+  }
 
   /**
    * Creates an instance using the given data.
@@ -73,32 +101,6 @@ public final class CodeViolationList extends DataList<CodeViolationData> {
       default:
         throw new JSONException("Unknown level value: " + level);
     }
-  }
-
-  /**
-   * Create a set of objects by parsing a report file from the given path.
-   *
-   * @param path to the report directory
-   * @return a list of objects
-   * @throws IllegalArgumentException if failed to parse report files
-   */
-  public static CodeViolationList create(File path) throws IllegalArgumentException {
-    CodeViolationList list = new CodeViolationList();
-    String recipe = path.getName();
-    File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
-    try {
-      InputStream is = new BufferedInputStream(new FileInputStream(report));
-      JSONObject json = JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
-      for (Object o : json.getJSONArray("violations")) {
-        list.add(list.createInstance(recipe, (JSONObject) o));
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (JSONException e) {
-      e.printStackTrace();
-      throw new IllegalArgumentException("Failed to parse: " + report);
-    }
-    return list;
   }
 
   @Override

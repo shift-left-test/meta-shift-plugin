@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -90,6 +91,7 @@ public final class RecipeViolationList extends DataList<RecipeViolationData> {
       e.printStackTrace();
       throw new IllegalArgumentException("Failed to parse: " + report);
     }
+    Collections.sort(list);
     return list;
   }
 

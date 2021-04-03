@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -42,11 +43,6 @@ import org.apache.commons.io.IOUtils;
  * @author Sung Gon Kim
  */
 public final class DuplicationList extends DataList<DuplicationData> {
-
-  @Override
-  public void accept(final Visitable visitor) {
-    visitor.visit(this);
-  }
 
   /**
    * Create a set of objects by parsing a report file from the given path.
@@ -74,6 +70,12 @@ public final class DuplicationList extends DataList<DuplicationData> {
       e.printStackTrace();
       throw new IllegalArgumentException("Failed to parse: " + report);
     }
+    Collections.sort(list);
     return list;
+  }
+
+  @Override
+  public void accept(final Visitable visitor) {
+    visitor.visit(this);
   }
 }

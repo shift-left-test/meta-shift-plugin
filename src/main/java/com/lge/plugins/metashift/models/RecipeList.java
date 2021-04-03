@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.metrics.Visitable;
 import java.io.File;
+import java.util.Collections;
 
 /**
  * Represents a set of Recipe objects.
@@ -54,6 +55,7 @@ public final class RecipeList extends DataList<Recipe> {
         recipes.add(Recipe.create(directory));
       }
     }
+    Collections.sort(recipes);
     return recipes;
   }
 
