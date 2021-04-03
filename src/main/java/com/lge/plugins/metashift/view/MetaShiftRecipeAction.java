@@ -55,6 +55,7 @@ import org.kohsuke.stapler.export.ExportedBean;
  */
 @ExportedBean
 public class MetaShiftRecipeAction extends Actionable implements Action {
+
   MetaShiftBuildAction parent;
 
   @Exported(visibility = 999)
@@ -105,7 +106,7 @@ public class MetaShiftRecipeAction extends Actionable implements Action {
   }
 
   /// api for front-end
-  public SizeCounter getSizeCounter()  {
+  public SizeCounter getSizeCounter() {
     return this.sizeCounter;
   }
 

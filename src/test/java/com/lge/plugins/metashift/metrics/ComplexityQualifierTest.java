@@ -24,15 +24,14 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import static org.junit.Assert.assertEquals;
+
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.ComplexityList;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeList;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Unit tests for the ComplexityQualifier class.

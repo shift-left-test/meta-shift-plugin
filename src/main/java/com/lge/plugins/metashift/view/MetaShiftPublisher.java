@@ -84,8 +84,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   /**
    * Plugin descriptor class.
    * <p>
-   * Symbol "metashift" is annotated for pipeline job simple usage.
-   * pipeline script example below.
+   * Symbol "metashift" is annotated for pipeline job simple usage. pipeline script example below.
    * metashift reportRoot:'report_test/report',  localCriteria: null
    * </p>
    */
@@ -94,7 +93,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
     private Criteria criteria;
-    
+
     /**
      * Default constructor.
      */
@@ -142,7 +141,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
     // load recipe list.
     final RecipeList recipes = RecipeList.create(
-      new File(new FilePath(workspace, this.reportRoot).toURI()));
+        new File(new FilePath(workspace, this.reportRoot).toURI()));
 
     // front-end TEST dataset.
     // TODO: delete when testable data set prepared.
@@ -150,8 +149,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     myRecipe.get(SizeList.class).add(new SizeData("A-B-C", "a.file", 100, 50, 20));
     myRecipe.get(CommentList.class).add(new CommentData("A-B-C", "a.file", 100, 30));
     myRecipe.get(CodeViolationList.class).add(
-      new MajorCodeViolationData("A-B-C", "a.file", 1, 1,
-        "test_rule", "test", "test description", "FATAL", "cppcheck"));
+        new MajorCodeViolationData("A-B-C", "a.file", 1, 1,
+            "test_rule", "test", "test description", "FATAL", "cppcheck"));
     recipes.add(myRecipe);
 
     // load criteria.

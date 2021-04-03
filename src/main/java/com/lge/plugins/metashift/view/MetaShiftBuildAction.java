@@ -141,7 +141,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
   }
 
   /// api for front-end
-  public SizeCounter getSizeCounter()  {
+  public SizeCounter getSizeCounter() {
     return this.sizeCounter;
   }
 

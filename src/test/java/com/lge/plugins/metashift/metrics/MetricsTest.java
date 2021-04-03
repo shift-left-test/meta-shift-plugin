@@ -24,6 +24,10 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import com.lge.plugins.metashift.models.CacheList;
 import com.lge.plugins.metashift.models.CodeViolationList;
 import com.lge.plugins.metashift.models.CommentData;
@@ -48,13 +52,8 @@ import com.lge.plugins.metashift.models.SizeData;
 import com.lge.plugins.metashift.models.SizeList;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
 import com.lge.plugins.metashift.models.TestList;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for the Metrics class.

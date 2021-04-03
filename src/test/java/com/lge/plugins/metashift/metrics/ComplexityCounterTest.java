@@ -75,7 +75,7 @@ public class ComplexityCounterTest {
   @Test
   public void testSetWithoutMatched() {
     list.add(new ComplexityData("A", "a.file", "f()", 5, 10, 1));
-    list.add(new ComplexityData("A", "a.file", "g()",5, 10,  9));
+    list.add(new ComplexityData("A", "a.file", "g()", 5, 10, 9));
     list.accept(counter);
     assertValues(2, 0, 0.0f);
   }
@@ -90,7 +90,7 @@ public class ComplexityCounterTest {
   @Test
   public void testSetWithCompoundData() {
     list.add(new ComplexityData("A", "a.file", "f()", 5, 10, 1));
-    list.add(new ComplexityData("A", "a.file", "g()",5, 10,  9));
+    list.add(new ComplexityData("A", "a.file", "g()", 5, 10, 9));
     list.add(new ComplexityData("A", "a.file", "h()", 5, 10, 10));
     list.accept(counter);
     assertValues(3, 1, 0.3f);
@@ -109,7 +109,7 @@ public class ComplexityCounterTest {
     list = new ComplexityList();
     list.add(new ComplexityData("B", "a.file", "f()", 5, 10, 1));
     list.add(new ComplexityData("B", "a.file", "g()", 5, 10, 9));
-    list.add(new ComplexityData("B", "a.file", "h()",5, 10, 10));
+    list.add(new ComplexityData("B", "a.file", "h()", 5, 10, 10));
     group.add(list);
 
     group.forEach(o -> o.accept(counter));
@@ -124,7 +124,7 @@ public class ComplexityCounterTest {
 
   @Test
   public void testRecipeWithoutMatched() {
-    list.add(new ComplexityData("A", "a.file", "g()",5, 10,  9));
+    list.add(new ComplexityData("A", "a.file", "g()", 5, 10, 9));
     recipe.set(list);
     recipe.accept(counter);
     assertValues(1, 0, 0.0f);
@@ -147,8 +147,8 @@ public class ComplexityCounterTest {
   @Test
   public void testRecipeListWithCompoundData() {
     list = new ComplexityList();
-    list.add(new ComplexityData("A", "a.file", "f()",5, 10,  1));
-    list.add(new ComplexityData("A", "a.file", "g()",5, 10,  9));
+    list.add(new ComplexityData("A", "a.file", "f()", 5, 10, 1));
+    list.add(new ComplexityData("A", "a.file", "g()", 5, 10, 9));
     list.add(new ComplexityData("A", "a.file", "h()", 5, 10, 10));
     recipe = new Recipe("A-1.0.0-r0");
     recipe.set(list);
@@ -156,7 +156,7 @@ public class ComplexityCounterTest {
 
     list = new ComplexityList();
     list.add(new ComplexityData("B", "a.file", "f()", 5, 10, 1));
-    list.add(new ComplexityData("B", "a.file", "g()",5, 10,  9));
+    list.add(new ComplexityData("B", "a.file", "g()", 5, 10, 9));
     list.add(new ComplexityData("B", "a.file", "h()", 5, 10, 10));
     recipe = new Recipe("B-1.0.0-r0");
     recipe.set(list);
