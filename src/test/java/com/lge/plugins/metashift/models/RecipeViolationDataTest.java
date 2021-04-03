@@ -111,14 +111,16 @@ public class RecipeViolationDataTest {
   public void testComparable() {
     List<RecipeViolationData> expected = new ArrayList<>();
     expected.add(new MajorRecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error"));
-    expected.add(new MajorRecipeViolationData("A", "a.file", 2, "rule1", "rule1_info", "error"));
-    expected.add(new MajorRecipeViolationData("A", "b.file", 1, "rule1", "rule1_info", "error"));
-    expected.add(new MajorRecipeViolationData("B", "a.file", 1, "rule1", "rule1_info", "error"));
+    expected.add(new MajorRecipeViolationData("A", "a.file", 1, "rule2", "rule1_info", "error"));
+    expected.add(new MajorRecipeViolationData("A", "a.file", 2, "rule2", "rule1_info", "error"));
+    expected.add(new MajorRecipeViolationData("A", "b.file", 2, "rule2", "rule1_info", "error"));
+    expected.add(new MajorRecipeViolationData("B", "b.file", 2, "rule2", "rule1_info", "error"));
 
     List<RecipeViolationData> actual = new ArrayList<>();
-    actual.add(new MajorRecipeViolationData("B", "a.file", 1, "rule1", "rule1_info", "error"));
-    actual.add(new MajorRecipeViolationData("A", "b.file", 1, "rule1", "rule1_info", "error"));
-    actual.add(new MajorRecipeViolationData("A", "a.file", 2, "rule1", "rule1_info", "error"));
+    actual.add(new MajorRecipeViolationData("B", "b.file", 2, "rule2", "rule1_info", "error"));
+    actual.add(new MajorRecipeViolationData("A", "b.file", 2, "rule2", "rule1_info", "error"));
+    actual.add(new MajorRecipeViolationData("A", "a.file", 2, "rule2", "rule1_info", "error"));
+    actual.add(new MajorRecipeViolationData("A", "a.file", 1, "rule2", "rule1_info", "error"));
     actual.add(new MajorRecipeViolationData("A", "a.file", 1, "rule1", "rule1_info", "error"));
 
     Collections.sort(actual);

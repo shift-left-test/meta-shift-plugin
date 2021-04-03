@@ -75,9 +75,10 @@ public final class FileFinder {
    * @return a list of all matching file names
    */
   public String[] find(final File path) {
+    String[] files = new String[0];
     try {
       if (StringUtils.isBlank(includes)) {
-        return new String[0];
+        return files;
       }
       FileSet fileSet = new FileSet();
       Project antProject = new Project();
@@ -92,9 +93,10 @@ public final class FileFinder {
       if (StringUtils.isNotBlank(excludes)) {
         fileSet.setExcludes(excludes);
       }
-      return fileSet.getDirectoryScanner(antProject).getIncludedFiles();
+      files = fileSet.getDirectoryScanner(antProject).getIncludedFiles();
     } catch (BuildException e) {
-      return new String[0];
+      e.printStackTrace();
     }
+    return files;
   }
 }

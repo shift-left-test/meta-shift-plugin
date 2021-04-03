@@ -59,6 +59,18 @@ public class FileFinderTest {
   }
 
   @Test
+  public void testFindWithMalformedIncludePattern() {
+    finder = new FileFinder("!");
+    assertEquals(0, finder.find(folder.getRoot()).length);
+  }
+
+  @Test
+  public void testFindWithMalformedExcludePattern() {
+    finder = new FileFinder("**/report*.json", "!");
+    assertEquals(0, finder.find(folder.getRoot()).length);
+  }
+
+  @Test
   public void testFindWithoutMatchingPattern() {
     finder = new FileFinder("**/report*.json");
     assertEquals(0, finder.find(folder.getRoot()).length);

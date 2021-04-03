@@ -63,6 +63,7 @@ public class MutationTestDataTest {
     assertEquals(origin, same);
     assertNotEquals(origin,
         new SurvivedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    assertNotEquals(origin, new SkippedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
     assertNotEquals(origin, new KilledMutationTestData("B", "a.file", "C", "f()", 1, "AOR", "TC"));
     assertNotEquals(origin, new KilledMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
     assertNotEquals(origin, new KilledMutationTestData("A", "a.file", "D", "f()", 1, "AOR", "TC"));

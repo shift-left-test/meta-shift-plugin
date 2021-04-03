@@ -82,6 +82,13 @@ public class RecipeListTest {
     assertEquals(0, recipes.size());
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateRecipeListWithInvalidDirectories() throws IOException {
+    File report = folder.newFolder("report");
+    FileUtils.forceMkdir(new File(report, "invalid"));
+    RecipeList.create(report);
+  }
+
   @Test
   public void testCreateRecipeListWithMultipleDirectories() throws IOException {
     File report = folder.newFolder("report");

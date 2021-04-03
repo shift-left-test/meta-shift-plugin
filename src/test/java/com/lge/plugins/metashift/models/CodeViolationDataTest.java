@@ -133,8 +133,10 @@ public class CodeViolationDataTest {
     expected.add(new MajorCodeViolationData("A", "b.file", 2, 1, "A", "", "", "", ""));
     expected.add(new MajorCodeViolationData("A", "b.file", 2, 2, "A", "", "", "", ""));
     expected.add(new MajorCodeViolationData("A", "b.file", 2, 2, "B", "", "", "", ""));
+    expected.add(new MajorCodeViolationData("B", "b.file", 2, 2, "B", "", "", "", ""));
 
     List<CodeViolationData> actual = new ArrayList<>();
+    actual.add(new MajorCodeViolationData("B", "b.file", 2, 2, "B", "", "", "", ""));
     actual.add(new MajorCodeViolationData("A", "b.file", 2, 2, "B", "", "", "", ""));
     actual.add(new MajorCodeViolationData("A", "b.file", 2, 2, "A", "", "", "", ""));
     actual.add(new MajorCodeViolationData("A", "b.file", 2, 1, "A", "", "", "", ""));

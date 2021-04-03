@@ -83,6 +83,8 @@ public class RecipeTest {
   public void testEquality() {
     assertEquals(origin, origin);
     assertEquals(origin, same);
+    assertNotEquals(origin, null);
+    assertNotEquals(origin, new Object());
     assertNotEquals(origin, new Recipe("qmake5-project-1.0.0-r0"));
     assertNotEquals(origin, new Recipe("cmake-project-1.1.1-r0"));
     assertNotEquals(origin, new Recipe("cmake-project-1.0.0-r1"));

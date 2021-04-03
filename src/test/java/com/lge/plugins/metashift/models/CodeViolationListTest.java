@@ -114,6 +114,27 @@ public class CodeViolationListTest {
     objects = CodeViolationList.create(file.getParentFile().getParentFile());
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateWithUnknownLevelType() throws Exception {
+    List<String> data = Arrays.asList(
+        "{ \"violations\": [",
+        "  {",
+        "    \"file\": \"a.file\",",
+        "    \"line\": 1,",
+        "    \"column\": 100,",
+        "    \"rule\": \"NPE\",",
+        "    \"message\": \"NPE_message\",",
+        "    \"description\": \"NPE_desc\",",
+        "    \"severity\": \"error\",",
+        "    \"level\": \"???\",",
+        "    \"tool\": \"cppcheck\"",
+        "  }",
+        "] }"
+    );
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+    objects = CodeViolationList.create(file.getParentFile().getParentFile());
+  }
+
   @Test
   public void testCreateWithEmptyData() throws Exception {
     List<String> data = Collections.singletonList("{ \"violations\": [ ] }");

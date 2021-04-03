@@ -116,6 +116,23 @@ public class RecipeViolationListTest {
     objects = RecipeViolationList.create(file.getParentFile().getParentFile());
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateWithUnknownSeverityType() throws Exception {
+    List<String> data =
+        Arrays.asList(
+            "{ \"issues\": [ ",
+            "  {",
+            "    \"file\": \"a.file\",",
+            "    \"line\": 1,",
+            "    \"rule\": \"bbclassextend\",",
+            "    \"severity\": \"???\",",
+            "    \"description\": \"bbclassextend error\"",
+            "  }",
+            "] }");
+    File file = createTempFile("report/A/checkrecipe/recipe_violations.json", data);
+    objects = RecipeViolationList.create(file.getParentFile().getParentFile());
+  }
+
   @Test
   public void testCreateListWithEmptyData() throws Exception {
     List<String> data = Collections.singletonList("{ \"issues\": [] }");
