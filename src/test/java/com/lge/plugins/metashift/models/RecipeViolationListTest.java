@@ -101,6 +101,20 @@ public class RecipeViolationListTest {
     assertEquals(0, objects.size());
   }
 
+  @Test
+  public void testCreateWithNoFile() throws Exception {
+    File file = folder.newFolder("report/A/checkrecipe");
+    objects = RecipeViolationList.create(file.getParentFile());
+    assertEquals(0, objects.size());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateWithMalformedData() throws Exception {
+    List<String> data = Collections.singletonList("{ {");
+    File file = createTempFile("report/A/checkrecipe/recipe_violations.json", data);
+    objects = RecipeViolationList.create(file.getParentFile().getParentFile());
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void testCreateListWithMalformedFile() throws Exception {
     List<String> data =
@@ -136,7 +150,7 @@ public class RecipeViolationListTest {
   @Test
   public void testCreateListWithEmptyData() throws Exception {
     List<String> data = Collections.singletonList("{ \"issues\": [] }");
-    File file = createTempFile("report/B/checkcode/sage_report.json", data);
+    File file = createTempFile("report/B/checkrecipe/recipe_violations.json", data);
     objects = RecipeViolationList.create(file.getParentFile().getParentFile());
     assertEquals(0, objects.size());
   }

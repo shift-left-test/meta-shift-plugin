@@ -98,8 +98,22 @@ public class CodeViolationListTest {
     assertEquals(0, objects.size());
   }
 
+  @Test
+  public void testCreateWithNoFile() throws Exception {
+    File file = folder.newFolder("report/A/checkcode");
+    objects = CodeViolationList.create(file.getParentFile());
+    assertEquals(0, objects.size());
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
+    List<String> data = Collections.singletonList("{ {");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+    objects = CodeViolationList.create(file.getParentFile().getParentFile());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateWithInsufficientData() throws Exception {
     List<String> data = Arrays.asList(
         "{ \"violations\": [",
         "  {",

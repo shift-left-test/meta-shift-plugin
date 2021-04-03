@@ -54,7 +54,7 @@ public final class CacheList extends DataList<CacheData> {
   public static CacheList create(final File path) throws IllegalArgumentException {
     CacheList list = new CacheList();
     String recipe = path.getName();
-    File report = FileUtils.getFile(path, "caches.json");
+    File report = FileUtils.getFile(path, "checkcache", "caches.json");
     try {
       InputStream is = new BufferedInputStream(new FileInputStream(report));
       JSONObject json = JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));

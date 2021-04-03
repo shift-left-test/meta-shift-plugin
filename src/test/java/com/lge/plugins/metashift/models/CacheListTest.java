@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -82,11 +83,25 @@ public class CacheListTest {
     assertEquals(0, objects.size());
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testCreateSetWithMalformedFile() throws Exception {
-    List<String> data = Collections.singletonList("{ \"Premirror\": { }, \"Shared State\": { } }");
-    File file = createTempFile("report/A/caches.json", data);
+  @Test
+  public void testCreateWithNoFile() throws IOException {
+    File file = folder.newFolder("report/A/checkcache");
     objects = CacheList.create(file.getParentFile());
+    assertEquals(0, objects.size());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateWithMalformedData() throws Exception {
+    List<String> data = Collections.singletonList("{ {");
+    File file = createTempFile("path/A/checkcache/caches.json", data);
+    objects = CacheList.create(file.getParentFile().getParentFile());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateSetWithInsufficientData() throws Exception {
+    List<String> data = Collections.singletonList("{ \"Premirror\": { }, \"Shared State\": { } }");
+    File file = createTempFile("report/A/checkcache/caches.json", data);
+    objects = CacheList.create(file.getParentFile().getParentFile());
   }
 
   @Test
@@ -94,8 +109,8 @@ public class CacheListTest {
     List<String> data = Arrays.asList(
         "{ \"Premirror\": { \"Found\": [], \"Missed\": [] },",
         "  \"Shared State\": { \"Found\": [], \"Missed\": [] } }");
-    File file = createTempFile("report/B/caches.json", data);
-    objects = CacheList.create(file.getParentFile());
+    File file = createTempFile("report/B/checkcache/caches.json", data);
+    objects = CacheList.create(file.getParentFile().getParentFile());
     assertEquals(0, objects.size());
   }
 
@@ -104,8 +119,8 @@ public class CacheListTest {
     List<String> data = Arrays.asList(
         "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
         "  \"Shared State\": { \"Found\": [], \"Missed\": [] } }");
-    File file = createTempFile("report/C/caches.json", data);
-    objects = CacheList.create(file.getParentFile());
+    File file = createTempFile("report/C/checkcache/caches.json", data);
+    objects = CacheList.create(file.getParentFile().getParentFile());
     assertEquals(3, objects.size());
   }
 
@@ -114,8 +129,8 @@ public class CacheListTest {
     List<String> data = Arrays.asList(
         "{ \"Premirror\": { \"Found\": [], \"Missed\": [] },",
         "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }");
-    File file = createTempFile("report/D/caches.json", data);
-    objects = CacheList.create(file.getParentFile());
+    File file = createTempFile("report/D/checkcache/caches.json", data);
+    objects = CacheList.create(file.getParentFile().getParentFile());
     assertEquals(2, objects.size());
   }
 
@@ -124,8 +139,8 @@ public class CacheListTest {
     List<String> data = Arrays.asList(
         "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
         "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }");
-    File file = createTempFile("report/E/caches.json", data);
-    objects = CacheList.create(file.getParentFile());
+    File file = createTempFile("report/E/checkcache/caches.json", data);
+    objects = CacheList.create(file.getParentFile().getParentFile());
     assertEquals(5, objects.size());
   }
 }

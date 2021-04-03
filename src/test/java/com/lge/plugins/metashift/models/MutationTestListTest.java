@@ -27,7 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -96,7 +95,7 @@ public class MutationTestListTest {
   }
 
   @Test
-  public void testCreateWithNoFile() throws IOException {
+  public void testCreateWithNoFile() throws Exception {
     File file = folder.newFolder("report/A/checktest");
     objects = MutationTestList.create(file.getParentFile());
     assertEquals(0, objects.size());

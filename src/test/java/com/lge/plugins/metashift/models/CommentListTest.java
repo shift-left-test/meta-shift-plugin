@@ -91,8 +91,22 @@ public class CommentListTest {
     assertEquals(0, objects.size());
   }
 
+  @Test
+  public void testCreateWithNoFile() throws Exception {
+    File file = folder.newFolder("report/A/checkcode");
+    objects = CommentList.create(file.getParentFile());
+    assertEquals(0, objects.size());
+  }
+
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateSetWithMalformedFile() throws Exception {
+  public void testCreateWithMalformedData() throws Exception {
+    List<String> data = Collections.singletonList("{ {");
+    File file = createTempFile("report/A/checkcode/sage_report.json", data);
+    objects = CommentList.create(file.getParentFile().getParentFile());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateSetWithInsufficientData() throws Exception {
     List<String> data = Arrays.asList(
         "{ \"size\": [ ",
         "  {",
