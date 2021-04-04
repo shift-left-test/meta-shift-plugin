@@ -28,12 +28,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,18 +42,15 @@ public class CacheListTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
+  private TemporaryFileUtils utils;
+  private StringBuilder builder;
   private CacheList objects;
 
   @Before
   public void setUp() {
+    utils = new TemporaryFileUtils(folder, '\'', '"');
+    builder = new StringBuilder();
     objects = new CacheList();
-  }
-
-  private File createTempFile(String path, Collection<String> lines) throws Exception {
-    File directory = folder.newFolder(FilenameUtils.getPath(path));
-    File file = new File(directory, FilenameUtils.getName(path));
-    FileUtils.writeLines(file, lines);
-    return file;
   }
 
   @Test
@@ -78,69 +69,87 @@ public class CacheListTest {
   }
 
   @Test
-  public void testCreateSetWithUnknownPath() {
-    objects = CacheList.create(new File(folder.getRoot(), "unknown"));
+  public void testCreateWithUnknownPath() {
+    objects = CacheList.create(utils.getPath("unknown"));
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithNoFile() throws IOException {
-    File file = folder.newFolder("report/A/checkcache");
-    objects = CacheList.create(file.getParentFile());
+    File directory = utils.createDirectory("report", "A", "checkcache").getParentFile();
+    objects = CacheList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    List<String> data = Collections.singletonList("{ {");
-    File file = createTempFile("path/A/checkcache/caches.json", data);
-    objects = CacheList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder.append("{ {");
+    utils.writeLines(builder, directory, "checkcache", "caches.json");
+    CacheList.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateSetWithInsufficientData() throws Exception {
-    List<String> data = Collections.singletonList("{ \"Premirror\": { }, \"Shared State\": { } }");
-    File file = createTempFile("report/A/checkcache/caches.json", data);
-    objects = CacheList.create(file.getParentFile().getParentFile());
+  public void testCreateWithInsufficientData() throws Exception {
+    File directory = utils.createDirectory("report", "A");
+    builder
+        .append("{")
+        .append("  'Premirror': { },")
+        .append("  'Shared State': { }")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcache", "caches.json");
+    CacheList.create(directory);
   }
 
   @Test
-  public void testCreateSetWithEmptyData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"Premirror\": { \"Found\": [], \"Missed\": [] },",
-        "  \"Shared State\": { \"Found\": [], \"Missed\": [] } }");
-    File file = createTempFile("report/B/checkcache/caches.json", data);
-    objects = CacheList.create(file.getParentFile().getParentFile());
+  public void testCreateWithEmptyData() throws Exception {
+    File directory = utils.createDirectory("report", "B");
+    builder
+        .append("{")
+        .append("  'Premirror': { 'Found': [], 'Missed': [] },")
+        .append("  'Shared State': { 'Found': [], 'Missed': [] }")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcache", "caches.json");
+    objects = CacheList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test
-  public void testCreateSetWithPremirrorData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
-        "  \"Shared State\": { \"Found\": [], \"Missed\": [] } }");
-    File file = createTempFile("report/C/checkcache/caches.json", data);
-    objects = CacheList.create(file.getParentFile().getParentFile());
+  public void testCreateWithPremirrorData() throws Exception {
+    File directory = utils.createDirectory("report", "C");
+    builder
+        .append("{")
+        .append("  'Premirror': { 'Found': ['A', 'B'], 'Missed': ['C'] },")
+        .append("  'Shared State': { 'Found': [], 'Missed': [] }")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcache", "caches.json");
+    objects = CacheList.create(directory);
     assertEquals(3, objects.size());
   }
 
   @Test
-  public void testCreateSetWithSharedStateData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"Premirror\": { \"Found\": [], \"Missed\": [] },",
-        "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }");
-    File file = createTempFile("report/D/checkcache/caches.json", data);
-    objects = CacheList.create(file.getParentFile().getParentFile());
+  public void testCreateWithSharedStateData() throws Exception {
+    File directory = utils.createDirectory("report", "D");
+    builder
+        .append("{")
+        .append("  'Premirror': { 'Found': [], 'Missed': [] },")
+        .append("  'Shared State': { 'Found': ['D:do_X'], 'Missed': ['E:do_X'] }")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcache", "caches.json");
+    objects = CacheList.create(directory);
     assertEquals(2, objects.size());
   }
 
   @Test
-  public void testCreateSetWithMultipleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"Premirror\": { \"Found\": [\"A\", \"B\"], \"Missed\": [\"C\"] },",
-        "  \"Shared State\": { \"Found\": [\"D:do_X\"], \"Missed\": [\"E:do_X\"] } }");
-    File file = createTempFile("report/E/checkcache/caches.json", data);
-    objects = CacheList.create(file.getParentFile().getParentFile());
+  public void testCreateWithMultipleData() throws Exception {
+    File directory = utils.createDirectory("report", "E");
+    builder
+        .append("{")
+        .append("  'Premirror': { 'Found': ['A', 'B'], 'Missed': ['C'] },")
+        .append("  'Shared State': { 'Found': ['D:do_X'], 'Missed': ['E:do_X'] }")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcache", "caches.json");
+    objects = CacheList.create(directory);
     assertEquals(5, objects.size());
   }
 }

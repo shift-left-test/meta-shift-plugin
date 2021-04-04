@@ -27,13 +27,7 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,18 +42,15 @@ public class MutationTestListTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
+  private TemporaryFileUtils utils;
+  private StringBuilder builder;
   private MutationTestList objects;
 
   @Before
   public void setUp() {
+    utils = new TemporaryFileUtils(folder, '\'', '"');
+    builder = new StringBuilder();
     objects = new MutationTestList();
-  }
-
-  private File createTempFile(String path, Collection<String> lines) throws Exception {
-    File directory = folder.newFolder(FilenameUtils.getPath(path));
-    File file = new File(directory, FilenameUtils.getName(path));
-    FileUtils.writeLines(file, lines);
-    return file;
   }
 
   private void assertValues(MutationTestData object, String recipe, String file,
@@ -90,118 +81,113 @@ public class MutationTestListTest {
 
   @Test
   public void testCreateWithUnknownPath() {
-    objects = MutationTestList.create(new File(folder.getRoot(), "unknown"));
+    objects = MutationTestList.create(utils.getPath("unknown"));
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File file = folder.newFolder("report/A/checktest");
-    objects = MutationTestList.create(file.getParentFile());
+    File directory = utils.createDirectory("report", "A", "checktest").getParentFile();
+    objects = MutationTestList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedFile() throws Exception {
-    List<String> data = Arrays.asList(
-        "<mutation",
-        "mutation/>"
-    );
-    File file = createTempFile("report/A/checktest/mutations.xml", data);
-    objects = MutationTestList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder.append("<mutation>");
+    utils.writeLines(builder, directory, "checktest", "mutations.xml");
+    MutationTestList.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInsufficientData() throws Exception {
-    List<String> data = Arrays.asList(
-        "<mutations>",
-        "  <mutation detected=\"true\">",
-        "    <sourceFile>a.cpp</sourceFile>",
-        "  </mutation>",
-        "</mutations>"
-    );
-    File file = createTempFile("report/A/checktest/mutations.xml", data);
-    objects = MutationTestList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder
+        .append("<mutations>")
+        .append("  <mutation detected='true'>")
+        .append("    <sourceFilePath>a.cpp</sourceFilePath>")
+        .append("  </mutation>")
+        .append("</mutations>");
+    utils.writeLines(builder, directory, "checktest", "mutations.xml");
+    MutationTestList.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithEmptyFile() throws Exception {
-    List<String> data = Collections.singletonList("");
-    File file = createTempFile("report/B/checktest/mutations.xml", data);
-    objects = MutationTestList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder.append(" ");
+    utils.writeLines(builder, directory, "checktest", "mutations.xml");
+    MutationTestList.create(directory);
   }
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
-    List<String> data = Arrays.asList(
-        "<mutations>",
-        "</mutations>"
-    );
-    File file = createTempFile("report/B/checktest/mutations.xml", data);
-    objects = MutationTestList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "B");
+    builder.append("<mutations></mutations>");
+    utils.writeLines(builder, directory, "checktest", "mutations.xml");
+    objects = MutationTestList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithSingleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "<mutations>",
-        "  <mutation detected=\"true\">",
-        "    <sourceFile>a.file</sourceFile>",
-        "    <sourceFilePath>path/to/a.file</sourceFilePath>",
-        "    <mutatedClass>A</mutatedClass>",
-        "    <mutatedMethod>func1</mutatedMethod>",
-        "    <lineNumber>1</lineNumber>",
-        "    <mutator>AOR</mutator>",
-        "    <killingTest>test1</killingTest>",
-        "  </mutation>",
-        "</mutations>"
-    );
-    File file = createTempFile("report/C/checktest/mutations.xml", data);
-
-    objects = MutationTestList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "C");
+    builder
+        .append("<mutations>")
+        .append("  <mutation detected='true'>")
+        .append("    <sourceFile>a.file</sourceFile>")
+        .append("    <sourceFilePath>path/to/a.file</sourceFilePath>")
+        .append("    <mutatedClass>A</mutatedClass>")
+        .append("    <mutatedMethod>func1</mutatedMethod>")
+        .append("    <lineNumber>1</lineNumber>")
+        .append("    <mutator>AOR</mutator>")
+        .append("    <killingTest>test1</killingTest>")
+        .append("  </mutation>")
+        .append("</mutations>");
+    utils.writeLines(builder, directory, "checktest", "mutations.xml");
+    objects = MutationTestList.create(directory);
     assertEquals(1, objects.size());
 
-    MutationTestData object = objects.iterator().next();
-    assertValues(object, "C", "path/to/a.file", "A", "func1", 1, "AOR", "test1");
+    Iterator<MutationTestData> iterator = objects.iterator();
+    assertValues(iterator.next(), "C", "path/to/a.file", "A", "func1", 1, "AOR", "test1");
   }
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "<mutations>",
-        "  <mutation detected=\"true\">",
-        "    <sourceFile>a.file</sourceFile>",
-        "    <sourceFilePath>path/to/a.file</sourceFilePath>",
-        "    <mutatedClass>A</mutatedClass>",
-        "    <mutatedMethod>func1</mutatedMethod>",
-        "    <lineNumber>1</lineNumber>",
-        "    <mutator>AOR</mutator>",
-        "    <killingTest>test1</killingTest>",
-        "  </mutation>",
-        "  <mutation detected=\"false\">",
-        "    <sourceFile>b.file</sourceFile>",
-        "    <sourceFilePath>path/to/b.file</sourceFilePath>",
-        "    <mutatedClass>B</mutatedClass>",
-        "    <mutatedMethod>func2</mutatedMethod>",
-        "    <lineNumber>2</lineNumber>",
-        "    <mutator>BOR</mutator>",
-        "    <killingTest>test2</killingTest>",
-        "  </mutation>",
-        "  <mutation detected=\"skipped\">",
-        "    <sourceFile>c.file</sourceFile>",
-        "    <sourceFilePath>path/to/c.file</sourceFilePath>",
-        "    <mutatedClass>C</mutatedClass>",
-        "    <mutatedMethod>func3</mutatedMethod>",
-        "    <lineNumber>3</lineNumber>",
-        "    <mutator>COR</mutator>",
-        "    <killingTest>test3</killingTest>",
-        "  </mutation>",
-        "</mutations>"
-    );
-    File file = createTempFile("report/D/checktest/mutations.xml", data);
-
-    objects = MutationTestList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "D");
+    builder
+        .append("<mutations>")
+        .append("  <mutation detected='true'>")
+        .append("    <sourceFile>a.file</sourceFile>")
+        .append("    <sourceFilePath>path/to/a.file</sourceFilePath>")
+        .append("    <mutatedClass>A</mutatedClass>")
+        .append("    <mutatedMethod>func1</mutatedMethod>")
+        .append("    <lineNumber>1</lineNumber>")
+        .append("    <mutator>AOR</mutator>")
+        .append("    <killingTest>test1</killingTest>")
+        .append("  </mutation>")
+        .append("  <mutation detected='false'>")
+        .append("    <sourceFile>b.file</sourceFile>")
+        .append("    <sourceFilePath>path/to/b.file</sourceFilePath>")
+        .append("    <mutatedClass>B</mutatedClass>")
+        .append("    <mutatedMethod>func2</mutatedMethod>")
+        .append("    <lineNumber>2</lineNumber>")
+        .append("    <mutator>BOR</mutator>")
+        .append("    <killingTest>test2</killingTest>")
+        .append("  </mutation>")
+        .append("  <mutation detected='skipped'>")
+        .append("    <sourceFile>c.file</sourceFile>")
+        .append("    <sourceFilePath>path/to/c.file</sourceFilePath>")
+        .append("    <mutatedClass>C</mutatedClass>")
+        .append("    <mutatedMethod>func3</mutatedMethod>")
+        .append("    <lineNumber>3</lineNumber>")
+        .append("    <mutator>COR</mutator>")
+        .append("    <killingTest>test3</killingTest>")
+        .append("  </mutation>")
+        .append("</mutations>");
+    utils.writeLines(builder, directory, "checktest", "mutations.xml");
+    objects = MutationTestList.create(directory);
     assertEquals(3, objects.size());
 
     Iterator<MutationTestData> iterator = objects.iterator();

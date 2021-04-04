@@ -27,13 +27,7 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,28 +42,19 @@ public class RecipeViolationListTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
+  private TemporaryFileUtils utils;
+  private StringBuilder builder;
   private RecipeViolationList objects;
 
   @Before
   public void setUp() {
+    utils = new TemporaryFileUtils(folder, '\'', '"');
+    builder = new StringBuilder();
     objects = new RecipeViolationList();
   }
 
-  private File createTempFile(String path, Collection<String> lines) throws Exception {
-    File directory = folder.newFolder(FilenameUtils.getPath(path));
-    File file = new File(directory, FilenameUtils.getName(path));
-    FileUtils.writeLines(file, lines);
-    return file;
-  }
-
-  private void assertValues(
-      RecipeViolationData object,
-      String recipe,
-      String file,
-      int line,
-      String rule,
-      String severity,
-      String description) {
+  private void assertValues(RecipeViolationData object, String recipe, String file, int line,
+      String rule, String severity, String description) {
     assertEquals(recipe, object.getRecipe());
     assertEquals(file, object.getFile());
     assertEquals(line, object.getLine());
@@ -97,121 +82,119 @@ public class RecipeViolationListTest {
 
   @Test
   public void testCreateListWithUnknownPath() {
-    objects = RecipeViolationList.create(new File(folder.getRoot(), "unknown"));
+    objects = RecipeViolationList.create(utils.getPath("unknown"));
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File file = folder.newFolder("report/A/checkrecipe");
-    objects = RecipeViolationList.create(file.getParentFile());
+    File directory = utils.createDirectory("report", "A", "checkrecipe").getParentFile();
+    objects = RecipeViolationList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    List<String> data = Collections.singletonList("{ {");
-    File file = createTempFile("report/A/checkrecipe/recipe_violations.json", data);
-    objects = RecipeViolationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder.append("{ {");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    RecipeViolationList.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateListWithMalformedFile() throws Exception {
-    List<String> data =
-        Arrays.asList(
-            "{ \"issues\": [",
-            "  {",
-            "    \"file\": \"a.bb\", ",
-            "    \"line\": 1, ",
-            "    \"severity\": \"info\" ",
-            "  }",
-            "] }");
-    File file = createTempFile("report/A/checkrecipe/recipe_violations.json", data);
-    objects = RecipeViolationList.create(file.getParentFile().getParentFile());
+  public void testCreateWithMalformedFile() throws Exception {
+    File directory = utils.createDirectory("report", "A");
+    builder.append("{ 'issues': [ { 'file': 'a.bb', 'line': 1, 'severity': 'info' } ] }");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    RecipeViolationList.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithUnknownSeverityType() throws Exception {
-    List<String> data =
-        Arrays.asList(
-            "{ \"issues\": [ ",
-            "  {",
-            "    \"file\": \"a.file\",",
-            "    \"line\": 1,",
-            "    \"rule\": \"bbclassextend\",",
-            "    \"severity\": \"???\",",
-            "    \"description\": \"bbclassextend error\"",
-            "  }",
-            "] }");
-    File file = createTempFile("report/A/checkrecipe/recipe_violations.json", data);
-    objects = RecipeViolationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder
+        .append("{")
+        .append("  'issues': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'line': 1,")
+        .append("      'rule': 'checksum',")
+        .append("      'severity': '???',")
+        .append("      'description': 'checksum error'")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    RecipeViolationList.create(directory);
   }
 
   @Test
-  public void testCreateListWithEmptyData() throws Exception {
-    List<String> data = Collections.singletonList("{ \"issues\": [] }");
-    File file = createTempFile("report/B/checkrecipe/recipe_violations.json", data);
-    objects = RecipeViolationList.create(file.getParentFile().getParentFile());
+  public void testCreateWithEmptyData() throws Exception {
+    File directory = utils.createDirectory("report", "B");
+    builder.append("{ 'issues': [ ] }");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    objects = RecipeViolationList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithSingleData() throws Exception {
-    List<String> data =
-        Arrays.asList(
-            "{ \"issues\": [ ",
-            "  {",
-            "    \"file\": \"a.file\",",
-            "    \"line\": 1,",
-            "    \"rule\": \"bbclassextend\",",
-            "    \"severity\": \"error\",",
-            "    \"description\": \"bbclassextend error\"",
-            "  }",
-            "] }");
-    File file = createTempFile("report/C/checkrecipe/recipe_violations.json", data);
-
-    objects = RecipeViolationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "C");
+    builder
+        .append("{")
+        .append("  'issues': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'line': 1,")
+        .append("      'rule': 'checksum',")
+        .append("      'severity': 'error',")
+        .append("      'description': 'checksum error'")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    objects = RecipeViolationList.create(directory);
     assertEquals(1, objects.size());
 
-    RecipeViolationData object = objects.iterator().next();
-    assertValues(object, "C", "a.file", 1, "bbclassextend", "error", "bbclassextend error");
+    Iterator<RecipeViolationData> iterator = objects.iterator();
+    assertValues(iterator.next(), "C", "a.file", 1, "checksum", "error", "checksum error");
   }
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    List<String> data =
-        Arrays.asList(
-            "{ \"issues\": [ ",
-            "  {",
-            "    \"file\": \"a.file\",",
-            "    \"line\": 1,",
-            "    \"rule\": \"bbclassextend\",",
-            "    \"severity\": \"error\",",
-            "    \"description\": \"bbclassextend error\"",
-            "  },",
-            "  {",
-            "    \"file\": \"b.file\",",
-            "    \"line\": 2,",
-            "    \"rule\": \"indent\",",
-            "    \"severity\": \"warning\",",
-            "    \"description\": \"indent warning\"",
-            "  },",
-            "  {",
-            "    \"file\": \"c.file\",",
-            "    \"line\": 3,",
-            "    \"rule\": \"typo\",",
-            "    \"severity\": \"info\",",
-            "    \"description\": \"typo info\"",
-            "  }",
-            "] }");
-    File file = createTempFile("report/D/checkrecipe/recipe_violations.json", data);
-
-    objects = RecipeViolationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "D");
+    builder
+        .append("{")
+        .append("  'issues': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'line': 1,")
+        .append("      'rule': 'checksum',")
+        .append("      'severity': 'error',")
+        .append("      'description': 'checksum error'")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'b.file',")
+        .append("      'line': 2,")
+        .append("      'rule': 'indent',")
+        .append("      'severity': 'warning',")
+        .append("      'description': 'indent warning'")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'c.file',")
+        .append("      'line': 3,")
+        .append("      'rule': 'typo',")
+        .append("      'severity': 'info',")
+        .append("      'description': 'typo info'")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    objects = RecipeViolationList.create(directory);
     assertEquals(3, objects.size());
 
     Iterator<RecipeViolationData> iterator = objects.iterator();
-    assertValues(
-        iterator.next(), "D", "a.file", 1, "bbclassextend", "error", "bbclassextend error");
+    assertValues(iterator.next(), "D", "a.file", 1, "checksum", "error", "checksum error");
     assertValues(iterator.next(), "D", "b.file", 2, "indent", "warning", "indent warning");
     assertValues(iterator.next(), "D", "c.file", 3, "typo", "info", "typo info");
   }

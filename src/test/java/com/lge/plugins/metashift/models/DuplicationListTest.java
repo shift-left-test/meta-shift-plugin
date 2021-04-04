@@ -27,13 +27,7 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,18 +42,15 @@ public class DuplicationListTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
+  private TemporaryFileUtils utils;
+  private StringBuilder builder;
   private DuplicationList objects;
 
   @Before
   public void setUp() {
+    utils = new TemporaryFileUtils(folder, '\'', '"');
+    builder = new StringBuilder();
     objects = new DuplicationList();
-  }
-
-  private File createTempFile(String path, Collection<String> lines) throws Exception {
-    File directory = folder.newFolder(FilenameUtils.getPath(path));
-    File file = new File(directory, FilenameUtils.getName(path));
-    FileUtils.writeLines(file, lines);
-    return file;
   }
 
   private void assertValues(DuplicationData object, String recipe, String file,
@@ -81,61 +72,58 @@ public class DuplicationListTest {
   }
 
   @Test
-  public void testCreateSetWithUnknownPath() {
-    objects = DuplicationList.create(new File(folder.getRoot(), "unknown"));
+  public void testCreateWithUnknownPath() {
+    objects = DuplicationList.create(utils.getPath("unknown"));
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File file = folder.newFolder("report/A/checkcode");
-    objects = DuplicationList.create(file.getParentFile());
+    File directory = utils.createDirectory("report", "A", "checkcode").getParentFile();
+    objects = DuplicationList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    List<String> data = Collections.singletonList("{ {");
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = DuplicationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder.append("{ {");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    DuplicationList.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateSetWithInsufficientFile() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"size\": [ ",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "  }");
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = DuplicationList.create(file.getParentFile().getParentFile());
+  public void testCreateWithInsufficientData() throws Exception {
+    File directory = utils.createDirectory("report", "A");
+    builder.append("{ 'size': [ { 'file': 'a.file' } ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    DuplicationList.create(directory);
   }
 
   @Test
-  public void testCreateSetWithEmptyData() throws Exception {
-    List<String> data = Collections.singletonList("{ \"size\": [] }");
-    File file = createTempFile("report/B/checkcode/sage_report.json", data);
-    objects = DuplicationList.create(file.getParentFile().getParentFile());
+  public void testCreateWithEmptyData() throws Exception {
+    File directory = utils.createDirectory("report", "B");
+    builder.append("{ 'size': [ ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = DuplicationList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test
-  public void testCreateSetWithSingleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"size\": [ ",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"total_lines\": 20,",
-        "    \"code_lines\": 1,",
-        "    \"comment_lines\": 5,",
-        "    \"duplicated_lines\": 2,",
-        "    \"functions\": 15,",
-        "    \"classes\": 6",
-        "  } ",
-        "] }");
-    File file = createTempFile("report/C/checkcode/sage_report.json", data);
-
-    objects = DuplicationList.create(file.getParentFile().getParentFile());
+  public void testCreateWithSingleData() throws Exception {
+    File directory = utils.createDirectory("report", "C");
+    builder
+        .append("{")
+        .append("  'size': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'total_lines': 20,")
+        .append("      'duplicated_lines': 2")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = DuplicationList.create(directory);
     assertEquals(1, objects.size());
 
     DuplicationData object = objects.iterator().next();
@@ -143,22 +131,25 @@ public class DuplicationListTest {
   }
 
   @Test
-  public void testCreateSetWithMultipleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"size\": [ ",
-        "{",
-        "  \"file\": \"a.file\",",
-        "  \"total_lines\": 10,",
-        "  \"duplicated_lines\": 5,",
-        "},",
-        "{",
-        "  \"file\": \"b.file\",",
-        "  \"total_lines\": 20,",
-        "  \"duplicated_lines\": 5,",
-        "} ] }");
-    File file = createTempFile("report/D/checkcode/sage_report.json", data);
-
-    objects = DuplicationList.create(file.getParentFile().getParentFile());
+  public void testCreateWithMultipleData() throws Exception {
+    File directory = utils.createDirectory("report", "D");
+    builder
+        .append("{")
+        .append("  'size': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'total_lines': 10,")
+        .append("      'duplicated_lines': 5")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'b.file',")
+        .append("      'total_lines': 20,")
+        .append("      'duplicated_lines': 5")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = DuplicationList.create(directory);
     assertEquals(2, objects.size());
 
     Iterator<DuplicationData> iterator = objects.iterator();

@@ -27,13 +27,7 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,18 +42,15 @@ public class ComplexityListTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
+  private TemporaryFileUtils utils;
+  private StringBuilder builder;
   private ComplexityList objects;
 
   @Before
   public void setUp() {
+    utils = new TemporaryFileUtils(folder, '\'', '"');
+    builder = new StringBuilder();
     objects = new ComplexityList();
-  }
-
-  private File createTempFile(String path, Collection<String> lines) throws Exception {
-    File directory = folder.newFolder(FilenameUtils.getPath(path));
-    File file = new File(directory, FilenameUtils.getName(path));
-    FileUtils.writeLines(file, lines);
-    return file;
   }
 
   private void assertValues(ComplexityData object, String recipe, String file, String function,
@@ -89,135 +80,133 @@ public class ComplexityListTest {
 
   @Test
   public void testCreateWithUnknownPath() {
-    objects = ComplexityList.create(new File(folder.getRoot(), "unknown"));
+    objects = ComplexityList.create(utils.getPath("unknown"));
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File file = folder.newFolder("report/A/checkcode");
-    objects = ComplexityList.create(file.getParentFile());
+    File directory = utils.createDirectory("report", "A", "checkcode").getParentFile();
+    objects = ComplexityList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    List<String> data = Collections.singletonList("{ {");
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = ComplexityList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder.append("{ {");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    ComplexityList.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInsufficientData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"complexity\": [",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"function\": \"func1()\",",
-        "    \"value\": 1",
-        "  }",
-        "] }"
-    );
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = ComplexityList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder.append("{ 'complexity': [ { 'file': 'a.file' } ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    ComplexityList.create(directory);
   }
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
-    List<String> data = Collections.singletonList("{ \"complexity\": [ ] }");
-    File file = createTempFile("report/B/checkcode/sage_report.json", data);
-    objects = ComplexityList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "B");
+    builder.append("{ 'complexity': [ ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = ComplexityList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithSingleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"complexity\": [",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"function\": \"func1()\",",
-        "    \"start\": 5,",
-        "    \"end\": 10,",
-        "    \"value\": 1",
-        "  }",
-        "] }"
-    );
-    File file = createTempFile("report/C/checkcode/sage_report.json", data);
-
-    objects = ComplexityList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "C");
+    builder
+        .append("{")
+        .append("  'complexity': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'function': 'func1()',")
+        .append("      'start': 5,")
+        .append("      'end': 10,")
+        .append("      'value': 1")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = ComplexityList.create(directory);
     assertEquals(1, objects.size());
 
-    ComplexityData object = objects.iterator().next();
-    assertValues(object, "C", "a.file", "func1()", 5, 10, 1);
+    Iterator<ComplexityData> iterator = objects.iterator();
+    assertValues(iterator.next(), "C", "a.file", "func1()", 5, 10, 1);
   }
 
   @Test
   public void testCreateWithDuplicatedData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"complexity\": [",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"function\": \"func1()\",",
-        "    \"start\": 5,",
-        "    \"end\": 10,",
-        "    \"value\": 1",
-        "  },",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"function\": \"func1()\",",
-        "    \"start\": 15,",
-        "    \"end\": 20,",
-        "    \"value\": 3",
-        "  },",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"function\": \"func1()\",",
-        "    \"start\": 25,",
-        "    \"end\": 30,",
-        "    \"value\": 7",
-        "  }",
-        "] }"
-    );
-    File file = createTempFile("report/D/checkcode/sage_report.json", data);
-
-    objects = ComplexityList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "D");
+    builder
+        .append("{")
+        .append("  'complexity': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'function': 'func1()',")
+        .append("      'start': 5,")
+        .append("      'end': 10,")
+        .append("      'value': 1")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'function': 'func1()',")
+        .append("      'start': 15,")
+        .append("      'end': 20,")
+        .append("      'value': 3")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'function': 'func1()',")
+        .append("      'start': 25,")
+        .append("      'end': 30,")
+        .append("      'value': 7")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = ComplexityList.create(directory);
     assertEquals(1, objects.size());
 
-    ComplexityData object = objects.iterator().next();
-    assertValues(object, "D", "a.file", "func1()", 25, 30, 7);
+    Iterator<ComplexityData> iterator = objects.iterator();
+    assertValues(iterator.next(), "D", "a.file", "func1()", 25, 30, 7);
   }
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"complexity\": [",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"function\": \"func1()\",",
-        "    \"start\": 5,",
-        "    \"end\": 10,",
-        "    \"value\": 1",
-        "  },",
-        "  {",
-        "    \"file\": \"b.file\",",
-        "    \"function\": \"func2()\",",
-        "    \"start\": 15,",
-        "    \"end\": 20,",
-        "    \"value\": 3",
-        "  },",
-        "  {",
-        "    \"file\": \"c.file\",",
-        "    \"function\": \"func3()\",",
-        "    \"start\": 25,",
-        "    \"end\": 30,",
-        "    \"value\": 7",
-        "  }",
-        "] }"
-    );
-    File file = createTempFile("report/E/checkcode/sage_report.json", data);
-
-    objects = ComplexityList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "E");
+    builder
+        .append("{")
+        .append("  'complexity': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'function': 'func1()',")
+        .append("      'start': 5,")
+        .append("      'end': 10,")
+        .append("      'value': 1")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'b.file',")
+        .append("      'function': 'func2()',")
+        .append("      'start': 15,")
+        .append("      'end': 20,")
+        .append("      'value': 3")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'c.file',")
+        .append("      'function': 'func3()',")
+        .append("      'start': 25,")
+        .append("      'end': 30,")
+        .append("      'value': 7")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = ComplexityList.create(directory);
     assertEquals(3, objects.size());
 
     Iterator<ComplexityData> iterator = objects.iterator();

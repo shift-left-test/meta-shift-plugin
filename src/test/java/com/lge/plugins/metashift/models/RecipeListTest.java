@@ -66,31 +66,31 @@ public class RecipeListTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeListWithUnknownPath() {
+  public void testCreateWithUnknownPath() {
     RecipeList.create(new File(folder.getRoot(), "unknown"));
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeListWithoutDirectory() throws IOException {
+  public void testCreateWithoutDirectory() throws IOException {
     RecipeList.create(folder.newFile());
   }
 
   @Test
-  public void testCreateRecipeListWithEmptyReportDirectory() throws IOException {
+  public void testCreateWithEmptyReportDirectory() throws IOException {
     File report = folder.newFolder("report");
     recipes = RecipeList.create(report);
     assertEquals(0, recipes.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeListWithInvalidDirectories() throws IOException {
+  public void testCreateWithInvalidDirectories() throws IOException {
     File report = folder.newFolder("report");
     FileUtils.forceMkdir(new File(report, "invalid"));
     RecipeList.create(report);
   }
 
   @Test
-  public void testCreateRecipeListWithMultipleDirectories() throws IOException {
+  public void testCreateWithMultipleDirectories() throws IOException {
     File report = folder.newFolder("report");
     FileUtils.forceMkdir(new File(report, "cmake-project-1.0.0-r0"));
     FileUtils.forceMkdir(new File(report, "qmake5-project-1.0.0-r0"));

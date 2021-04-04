@@ -27,13 +27,7 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,18 +42,15 @@ public class CodeViolationListTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
+  private TemporaryFileUtils utils;
+  private StringBuilder builder;
   private CodeViolationList objects;
 
   @Before
   public void setUp() {
+    utils = new TemporaryFileUtils(folder, '\'', '"');
+    builder = new StringBuilder();
     objects = new CodeViolationList();
-  }
-
-  private File createTempFile(String path, Collection<String> lines) throws Exception {
-    File directory = folder.newFolder(FilenameUtils.getPath(path));
-    File file = new File(directory, FilenameUtils.getName(path));
-    FileUtils.writeLines(file, lines);
-    return file;
   }
 
   private void assertValues(CodeViolationData object, String recipe, String file, int line,
@@ -94,138 +85,141 @@ public class CodeViolationListTest {
 
   @Test
   public void testCreateWithUnknownPath() {
-    objects = CodeViolationList.create(new File(folder.getRoot(), "unknown"));
+    objects = CodeViolationList.create(utils.getPath("unknown"));
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File file = folder.newFolder("report/A/checkcode");
-    objects = CodeViolationList.create(file.getParentFile());
+    File directory = utils.createDirectory("report", "A", "checkcode").getParentFile();
+    objects = CodeViolationList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    List<String> data = Collections.singletonList("{ {");
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = CodeViolationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder.append("{ {");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    CodeViolationList.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInsufficientData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"violations\": [",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"line\": 1,",
-        "    \"column\": 100,",
-        "    \"rule\": \"syntax\",",
-        "  }",
-        "] }"
-    );
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = CodeViolationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder
+        .append("{")
+        .append("  'violations': [")
+        .append("    { 'file': 'a.file', 'line': 1, 'column': 100, 'rule': 'syntax' }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    CodeViolationList.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithUnknownLevelType() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"violations\": [",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"line\": 1,",
-        "    \"column\": 100,",
-        "    \"rule\": \"NPE\",",
-        "    \"message\": \"NPE_message\",",
-        "    \"description\": \"NPE_desc\",",
-        "    \"severity\": \"error\",",
-        "    \"level\": \"???\",",
-        "    \"tool\": \"cppcheck\"",
-        "  }",
-        "] }"
-    );
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = CodeViolationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder
+        .append("{")
+        .append("  'violations': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'line': 1,")
+        .append("      'column': 100,")
+        .append("      'rule': 'NPE',")
+        .append("      'message': 'NPE_message',")
+        .append("      'description': 'NPE_desc',")
+        .append("      'severity': 'error',")
+        .append("      'level': '???',")
+        .append("      'tool': 'cppcheck'")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    CodeViolationList.create(directory);
   }
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
-    List<String> data = Collections.singletonList("{ \"violations\": [ ] }");
-    File file = createTempFile("report/B/checkcode/sage_report.json", data);
-    objects = CodeViolationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "B");
+    builder.append("{ 'violations': [ ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = CodeViolationList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithSingleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"violations\": [",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"line\": 1,",
-        "    \"column\": 100,",
-        "    \"rule\": \"NPE\",",
-        "    \"message\": \"NPE_message\",",
-        "    \"description\": \"NPE_desc\",",
-        "    \"severity\": \"error\",",
-        "    \"level\": \"major\",",
-        "    \"tool\": \"cppcheck\"",
-        "  }",
-        "] }"
-    );
-    File file = createTempFile("report/C/checkcode/sage_report.json", data);
-
-    objects = CodeViolationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "C");
+    builder
+        .append("{")
+        .append("  'violations': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'line': 1,")
+        .append("      'column': 100,")
+        .append("      'rule': 'NPE',")
+        .append("      'message': 'NPE_message',")
+        .append("      'description': 'NPE_desc',")
+        .append("      'severity': 'error',")
+        .append("      'level': 'major',")
+        .append("      'tool': 'cppcheck'")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = CodeViolationList.create(directory);
     assertEquals(1, objects.size());
 
-    CodeViolationData object = objects.iterator().next();
-    assertValues(object, "C", "a.file", 1, 100, "NPE", "NPE_message", "NPE_desc", "error",
+    Iterator<CodeViolationData> iterator = objects.iterator();
+    assertValues(iterator.next(), "C", "a.file", 1, 100, "NPE", "NPE_message", "NPE_desc", "error",
         "cppcheck");
   }
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"violations\": [",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"line\": 1,",
-        "    \"column\": 100,",
-        "    \"rule\": \"NPE\",",
-        "    \"message\": \"NPE_message\",",
-        "    \"description\": \"NPE_desc\",",
-        "    \"severity\": \"error\",",
-        "    \"level\": \"major\",",
-        "    \"tool\": \"cppcheck\"",
-        "  },",
-        "  {",
-        "    \"file\": \"b.file\",",
-        "    \"line\": 2,",
-        "    \"column\": 200,",
-        "    \"rule\": \"cast\",",
-        "    \"message\": \"cast_message\",",
-        "    \"description\": \"cast_desc\",",
-        "    \"severity\": \"warning\",",
-        "    \"level\": \"minor\",",
-        "    \"tool\": \"cpplint\"",
-        "  },",
-        "  {",
-        "    \"file\": \"c.file\",",
-        "    \"line\": 3,",
-        "    \"column\": 300,",
-        "    \"rule\": \"typo\",",
-        "    \"message\": \"typo_message\",",
-        "    \"description\": \"typo_desc\",",
-        "    \"severity\": \"note\",",
-        "    \"level\": \"info\",",
-        "    \"tool\": \"clang-tidy\"",
-        "  }",
-        "] }"
-    );
-    File file = createTempFile("report/D/checkcode/sage_report.json", data);
-
-    objects = CodeViolationList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "D");
+    builder
+        .append("{")
+        .append("  'violations': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'line': 1,")
+        .append("      'column': 100,")
+        .append("      'rule': 'NPE',")
+        .append("      'message': 'NPE_message',")
+        .append("      'description': 'NPE_desc',")
+        .append("      'severity': 'error',")
+        .append("      'level': 'major',")
+        .append("      'tool': 'cppcheck'")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'b.file',")
+        .append("      'line': 2,")
+        .append("      'column': 200,")
+        .append("      'rule': 'cast',")
+        .append("      'message': 'cast_message',")
+        .append("      'description': 'cast_desc',")
+        .append("      'severity': 'warning',")
+        .append("      'level': 'minor',")
+        .append("      'tool': 'cpplint'")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'c.file',")
+        .append("      'line': 3,")
+        .append("      'column': 300,")
+        .append("      'rule': 'typo',")
+        .append("      'message': 'typo_message',")
+        .append("      'description': 'typo_desc',")
+        .append("      'severity': 'note',")
+        .append("      'level': 'info',")
+        .append("      'tool': 'clang-tidy'")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = CodeViolationList.create(directory);
     assertEquals(3, objects.size());
 
     Iterator<CodeViolationData> iterator = objects.iterator();

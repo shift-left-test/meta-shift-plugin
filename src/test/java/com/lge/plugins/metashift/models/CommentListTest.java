@@ -27,13 +27,7 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,18 +42,15 @@ public class CommentListTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
+  private TemporaryFileUtils utils;
+  private StringBuilder builder;
   private CommentList objects;
 
   @Before
   public void setUp() {
+    utils = new TemporaryFileUtils(folder, '\'', '"');
+    builder = new StringBuilder();
     objects = new CommentList();
-  }
-
-  private File createTempFile(String path, Collection<String> lines) throws Exception {
-    File directory = folder.newFolder(FilenameUtils.getPath(path));
-    File file = new File(directory, FilenameUtils.getName(path));
-    FileUtils.writeLines(file, lines);
-    return file;
   }
 
   private void assertValues(CommentData object, String recipe, String file,
@@ -87,83 +78,92 @@ public class CommentListTest {
 
   @Test
   public void testCreateSetWithUnknownPath() {
-    objects = CommentList.create(new File(folder.getRoot(), "unknown"));
+    objects = CommentList.create(utils.getPath("unknown"));
     assertEquals(0, objects.size());
   }
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File file = folder.newFolder("report/A/checkcode");
-    objects = CommentList.create(file.getParentFile());
+    File directory = utils.createDirectory("report", "A", "checkcode").getParentFile();
+    objects = CommentList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    List<String> data = Collections.singletonList("{ {");
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = CommentList.create(file.getParentFile().getParentFile());
+    File directory = utils.createDirectory("report", "A");
+    builder.append("{ {");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    CommentList.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateSetWithInsufficientData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"size\": [ ",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "  }");
-    File file = createTempFile("report/A/checkcode/sage_report.json", data);
-    objects = CommentList.create(file.getParentFile().getParentFile());
+  public void testCreateWithInsufficientData() throws Exception {
+    File directory = utils.createDirectory("report", "A");
+    builder
+        .append("{")
+        .append("  'size': [")
+        .append("    { 'file': 'a.file' }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    CommentList.create(directory);
   }
 
   @Test
-  public void testCreateSetWithEmptyData() throws Exception {
-    List<String> data = Collections.singletonList("{ \"size\": [] }");
-    File file = createTempFile("report/B/checkcode/sage_report.json", data);
-    objects = CommentList.create(file.getParentFile().getParentFile());
+  public void testCreateWithEmptyData() throws Exception {
+    File directory = utils.createDirectory("report", "B");
+    builder.append("{ 'size': [ ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = CommentList.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test
-  public void testCreateSetWithSingleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"size\": [ ",
-        "  {",
-        "    \"file\": \"a.file\",",
-        "    \"total_lines\": 20,",
-        "    \"code_lines\": 1,",
-        "    \"comment_lines\": 5,",
-        "    \"duplicated_lines\": 2,",
-        "    \"functions\": 15,",
-        "    \"classes\": 6",
-        "  } ",
-        "] }");
-    File file = createTempFile("report/C/checkcode/sage_report.json", data);
-
-    objects = CommentList.create(file.getParentFile().getParentFile());
+  public void testCreateWithSingleData() throws Exception {
+    File directory = utils.createDirectory("report", "C");
+    builder
+        .append("{")
+        .append("  'size': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'total_lines': 20,")
+        .append("      'code_lines': 1,")
+        .append("      'comment_lines': 5,")
+        .append("      'duplicated_lines': 2,")
+        .append("      'functions': 15,")
+        .append("      'classes': 6")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = CommentList.create(directory);
     assertEquals(1, objects.size());
 
-    CommentData object = objects.iterator().next();
-    assertValues(object, "C", "a.file", 20, 5);
+    Iterator<CommentData> iterator = objects.iterator();
+    assertValues(iterator.next(), "C", "a.file", 20, 5);
   }
 
   @Test
-  public void testCreateSetWithMultipleData() throws Exception {
-    List<String> data = Arrays.asList(
-        "{ \"size\": [ ",
-        "{",
-        "  \"file\": \"a.file\",",
-        "  \"total_lines\": 10,",
-        "  \"comment_lines\": 5,",
-        "},",
-        "{",
-        "  \"file\": \"b.file\",",
-        "  \"total_lines\": 20,",
-        "  \"comment_lines\": 3,",
-        "} ] }");
-    File file = createTempFile("report/D/checkcode/sage_report.json", data);
-
-    objects = CommentList.create(file.getParentFile().getParentFile());
+  public void testCreateWithMultipleData() throws Exception {
+    File directory = utils.createDirectory("report", "D");
+    builder
+        .append("{")
+        .append("  'size': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'total_lines': 10,")
+        .append("      'comment_lines': 5")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'b.file',")
+        .append("      'total_lines': 20,")
+        .append("      'comment_lines': 3")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    objects = CommentList.create(directory);
     assertEquals(2, objects.size());
 
     Iterator<CommentData> iterator = objects.iterator();
