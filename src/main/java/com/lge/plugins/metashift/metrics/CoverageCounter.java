@@ -49,6 +49,11 @@ public abstract class CoverageCounter implements Countable {
    */
   private int numerator;
 
+  /**
+   * Default constructor.
+   *
+   * @param clazz the class type
+   */
   public CoverageCounter(final Class<? extends CoverageData> clazz) {
     this.clazz = clazz;
     this.denominator = 0;
