@@ -161,4 +161,22 @@ public class CacheCounterTest {
     recipes.accept(counter);
     assertValues(2, 2, 1.0f);
   }
+
+  @Test
+  public void testRecipeListWithDuplicates() {
+    list = new CacheList();
+    list.add(new SharedStateCacheData("X", "do_package", true));
+    recipe = new Recipe("A-1.0.0-r0");
+    recipe.set(list);
+    recipes.add(recipe);
+
+    list = new CacheList();
+    list.add(new SharedStateCacheData("X", "do_package", true));
+    recipe = new Recipe("B-1.0.0-r0");
+    recipe.set(list);
+    recipes.add(recipe);
+
+    recipes.accept(counter);
+    assertValues(1, 1, 1.0f);
+  }
 }

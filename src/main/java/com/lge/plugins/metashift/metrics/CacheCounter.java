@@ -26,6 +26,9 @@ package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.CacheData;
 import com.lge.plugins.metashift.models.CacheList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Collects the cache availability information from the given data sets.
@@ -35,19 +38,14 @@ import com.lge.plugins.metashift.models.CacheList;
 public abstract class CacheCounter implements Countable {
 
   /**
+   * Represents the unique set of cache objects.
+   */
+  private Set<CacheData> caches;
+
+  /**
    * Represents the class type.
    */
   private final Class<? extends CacheData> clazz;
-
-  /**
-   * Represents the denominator.
-   */
-  private int denominator;
-
-  /**
-   * Represents the numerator.
-   */
-  private int numerator;
 
   /**
    * Default constructor.
@@ -55,30 +53,23 @@ public abstract class CacheCounter implements Countable {
    * @param clazz the class type
    */
   public CacheCounter(final Class<? extends CacheData> clazz) {
+    this.caches = new HashSet<>();
     this.clazz = clazz;
-    this.denominator = 0;
-    this.numerator = 0;
   }
 
   @Override
   public int getDenominator() {
-    return denominator;
+    return caches.size();
   }
 
   @Override
   public int getNumerator() {
-    return numerator;
+    return Long.valueOf(caches.stream().filter(CacheData::isAvailable).count()).intValue();
   }
 
   @Override
-  public void visit(final CacheList caches) {
-    denominator += caches
-        .stream()
-        .filter(o -> o.getClass() == clazz)
-        .count();
-    numerator += caches
-        .stream()
-        .filter(o -> o.getClass() == clazz && o.isAvailable())
-        .count();
+  public void visit(final CacheList objects) {
+    caches.addAll(objects.stream().filter(o -> o.getClass() == clazz)
+        .collect(Collectors.toList()));
   }
 }

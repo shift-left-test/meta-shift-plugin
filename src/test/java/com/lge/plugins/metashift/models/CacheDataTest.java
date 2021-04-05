@@ -56,6 +56,7 @@ public class CacheDataTest {
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
+    assertNotEquals(origin,  new SharedStateCacheData("A", "X", true));
     assertNotEquals(origin, new PremirrorCacheData("B", "X", true));
     assertNotEquals(origin, new PremirrorCacheData("A", "Y", true));
     assertNotEquals(origin, new PremirrorCacheData("A", "X", false));
@@ -65,6 +66,7 @@ public class CacheDataTest {
   @Test
   public void testHashCode() {
     assertEquals(origin.hashCode(), same.hashCode());
+    assertNotEquals(origin.hashCode(),  new SharedStateCacheData("A", "X", true).hashCode());
     assertNotEquals(origin.hashCode(), new PremirrorCacheData("B", "X", true).hashCode());
     assertNotEquals(origin.hashCode(), new PremirrorCacheData("A", "Y", true).hashCode());
     assertEquals(origin.hashCode(), new PremirrorCacheData("A", "X", false).hashCode());
