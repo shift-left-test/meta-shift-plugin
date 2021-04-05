@@ -79,6 +79,8 @@ public final class Recipe extends Data<Recipe> implements Acceptable {
     collection.put(ComplexityList.class, new ComplexityList());
     collection.put(DuplicationList.class, new DuplicationList());
     collection.put(TestList.class, new TestList());
+    // TODO(sunggon82.kim): Need to implement
+    // collection.put(CoverageList.class, new CoverageList());
     collection.put(MutationTestList.class, new MutationTestList());
   }
 
@@ -96,10 +98,17 @@ public final class Recipe extends Data<Recipe> implements Acceptable {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
     Recipe recipe = new Recipe(path);
-    recipe.set(SizeList.create(path));
     recipe.set(CacheList.create(path));
+    recipe.set(RecipeViolationList.create(path));
+    recipe.set(SizeList.create(path));
     recipe.set(CommentList.create(path));
+    recipe.set(CodeViolationList.create(path));
+    recipe.set(ComplexityList.create(path));
     recipe.set(DuplicationList.create(path));
+    recipe.set(TestList.create(path));
+    // TODO(sunggon82.kim): Need to implement
+    // recipe.set(CoverageList.create(path));
+    recipe.set(MutationTestList.create(path));
     return recipe;
   }
 

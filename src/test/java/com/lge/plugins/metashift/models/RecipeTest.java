@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,11 +48,15 @@ public class RecipeTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
+  private TemporaryFileUtils utils;
+  private StringBuilder builder;
   private Recipe origin;
   private Recipe same;
 
   @Before
   public void setUp() {
+    utils = new TemporaryFileUtils(folder, '\'', '"');
+    builder = new StringBuilder();
     origin = new Recipe("cmake-project-1.0.0-r0");
     same = new Recipe("cmake-project-1.0.0-r0");
   }
@@ -124,7 +127,7 @@ public class RecipeTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateRecipeWithUnknownPath() {
-    Recipe.create(new File(folder.getRoot(), "unknown"));
+    Recipe.create(utils.getPath("unknown"));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -134,19 +137,24 @@ public class RecipeTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateRecipeWithMalformedDirectoryName() throws IOException {
-    Recipe.create(folder.newFolder("report", "ABC"));
+    Recipe.create(utils.createDirectory("report", "ABC"));
   }
 
   @Test
   public void testCreateRecipeWithEmptyRecipeDirectory() throws IOException {
-    File report = folder.newFolder("report");
-    File directory = new File(report, "cmake-project-1.0.0-r0");
-    FileUtils.forceMkdir(directory);
+    File directory = utils.createDirectory("report", "cmake-project-1.0.0-r0");
     Recipe recipe = Recipe.create(directory);
     assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
-    assertEquals(0, recipe.get(SizeList.class).size());
     assertEquals(0, recipe.get(CacheList.class).size());
+    assertEquals(0, recipe.get(RecipeViolationList.class).size());
+    assertEquals(0, recipe.get(SizeList.class).size());
     assertEquals(0, recipe.get(CommentList.class).size());
+    assertEquals(0, recipe.get(CodeViolationList.class).size());
+    assertEquals(0, recipe.get(ComplexityList.class).size());
     assertEquals(0, recipe.get(DuplicationList.class).size());
+    assertEquals(0, recipe.get(TestList.class).size());
+    // TODO(sunggon82.kim): Need to implement
+    // assertEquals(0, recipe.get(CoverageList.class).size());
+    assertEquals(0, recipe.get(MutationTestList.class).size());
   }
 }
