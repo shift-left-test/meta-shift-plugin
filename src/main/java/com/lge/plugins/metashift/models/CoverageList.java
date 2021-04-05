@@ -31,7 +31,7 @@ import com.lge.plugins.metashift.metrics.Visitable;
  *
  * @author Sung Gon Kim
  */
-public class CoverageList extends DataList<CoverageData> {
+public final class CoverageList extends DataList<CoverageData> {
 
   @Override
   public void accept(Visitable visitor) {

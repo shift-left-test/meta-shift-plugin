@@ -47,98 +47,98 @@ public interface Visitable {
   /**
    * Visits the Recipe object.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final Recipe object) {
-    object.forEach((k, v) -> v.accept(this));
+  default void visit(final Recipe objects) {
+    objects.forEach((k, v) -> v.accept(this));
   }
 
   /**
    * Visits the RecipeList object.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final RecipeList object) {
-    object.forEach(recipe -> recipe.accept(this));
+  default void visit(final RecipeList objects) {
+    objects.forEach(recipe -> recipe.accept(this));
   }
 
   /**
    * visits the CacheList object.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final CacheList object) {
+  default void visit(final CacheList objects) {
   }
 
   /**
    * Visits the SizeList object.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final SizeList object) {
+  default void visit(final SizeList objects) {
   }
 
   /**
    * Visits the CommentList object.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final CommentList object) {
+  default void visit(final CommentList objects) {
   }
 
   /**
    * Visits the RecipeViolationList object.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final RecipeViolationList object) {
+  default void visit(final RecipeViolationList objects) {
   }
 
   /**
    * Visits the CodeViolationList class.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final CodeViolationList object) {
+  default void visit(final CodeViolationList objects) {
   }
 
   /**
    * Visits the ComplexityList object.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final ComplexityList object) {
+  default void visit(final ComplexityList objects) {
   }
 
   /**
    * Visits the DuplicationList objects.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final DuplicationList object) {
+  default void visit(final DuplicationList objects) {
   }
 
   /**
    * Visits the TestList object.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final TestList object) {
+  default void visit(final TestList objects) {
   }
 
   /**
    * Visits the CoverageList object.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final CoverageList object) {
+  default void visit(final CoverageList objects) {
   }
 
   /**
    * Visits the MutationTestList object.
    *
-   * @param object to visit
+   * @param objects to visit
    */
-  default void visit(final MutationTestList object) {
+  default void visit(final MutationTestList objects) {
   }
 }

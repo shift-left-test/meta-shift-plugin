@@ -29,7 +29,7 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public class StatementCoverageData extends CoverageData {
+public final class StatementCoverageData extends CoverageData {
 
   /**
    * Default constructor.

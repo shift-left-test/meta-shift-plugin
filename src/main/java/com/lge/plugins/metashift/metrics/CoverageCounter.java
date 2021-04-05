@@ -22,30 +22,52 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics;
+
+import com.lge.plugins.metashift.models.CoverageData;
+import com.lge.plugins.metashift.models.CoverageList;
 
 /**
- * Represents the skipped mutation test data.
+ * Collects the coverage information from the given data structures.
  *
  * @author Sung Gon Kim
  */
-public final class SkippedMutationTestData extends MutationTestData {
+public abstract class CoverageCounter implements Countable {
 
   /**
-   * Default constructor.
-   *
-   * @param recipe        name
-   * @param file          name
-   * @param mutatedClass  the mutated class
-   * @param mutatedMethod the mutated method
-   * @param line          the line number
-   * @param mutator       the mutation operator
-   * @param killingTest   the test that kills the mutant
+   * Represents the class type.
    */
-  public SkippedMutationTestData(String recipe, String file,
-      String mutatedClass, String mutatedMethod,
-      int line, String mutator,
-      String killingTest) {
-    super(recipe, file, mutatedClass, mutatedMethod, line, mutator, killingTest);
+  private final Class<? extends CoverageData> clazz;
+
+  /**
+   * Represents the denominator.
+   */
+  private int denominator;
+
+  /**
+   * Represents the numerator.
+   */
+  private int numerator;
+
+  public CoverageCounter(final Class<? extends CoverageData> clazz) {
+    this.clazz = clazz;
+    this.denominator = 0;
+    this.numerator = 0;
+  }
+
+  @Override
+  public int getDenominator() {
+    return denominator;
+  }
+
+  @Override
+  public int getNumerator() {
+    return numerator;
+  }
+
+  @Override
+  public void visit(CoverageList objects) {
+    denominator += objects.stream().filter(o -> o.getClass() == clazz).count();
+    numerator += objects.stream().filter(o -> o.getClass() == clazz && o.isCovered()).count();
   }
 }

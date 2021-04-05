@@ -22,30 +22,21 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics;
+
+import com.lge.plugins.metashift.models.BranchCoverageData;
 
 /**
- * Represents the skipped mutation test data.
+ * Represents the branch coverage counter.
  *
  * @author Sung Gon Kim
  */
-public final class SkippedMutationTestData extends MutationTestData {
+public class BranchCoverageCounter extends CoverageCounter {
 
   /**
    * Default constructor.
-   *
-   * @param recipe        name
-   * @param file          name
-   * @param mutatedClass  the mutated class
-   * @param mutatedMethod the mutated method
-   * @param line          the line number
-   * @param mutator       the mutation operator
-   * @param killingTest   the test that kills the mutant
    */
-  public SkippedMutationTestData(String recipe, String file,
-      String mutatedClass, String mutatedMethod,
-      int line, String mutator,
-      String killingTest) {
-    super(recipe, file, mutatedClass, mutatedMethod, line, mutator, killingTest);
+  public BranchCoverageCounter() {
+    super(BranchCoverageData.class);
   }
 }
