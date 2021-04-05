@@ -40,12 +40,22 @@ public abstract class CacheCounter implements Countable {
   /**
    * Represents the unique set of cache objects.
    */
-  private Set<CacheData> caches;
+  private transient Set<CacheData> caches;
 
   /**
    * Represents the class type.
    */
   private final Class<? extends CacheData> clazz;
+
+  /**
+   * Represents the denominator.
+   */
+  private int denominator;
+
+  /**
+   * Represents the numerator.
+   */
+  private int numerator;
 
   /**
    * Default constructor.
@@ -55,21 +65,25 @@ public abstract class CacheCounter implements Countable {
   public CacheCounter(final Class<? extends CacheData> clazz) {
     this.caches = new HashSet<>();
     this.clazz = clazz;
+    this.denominator = 0;
+    this.numerator = 0;
   }
 
   @Override
   public int getDenominator() {
-    return caches.size();
+    return denominator;
   }
 
   @Override
   public int getNumerator() {
-    return Long.valueOf(caches.stream().filter(CacheData::isAvailable).count()).intValue();
+    return numerator;
   }
 
   @Override
   public void visit(final CacheList objects) {
     caches.addAll(objects.stream().filter(o -> o.getClass() == clazz)
         .collect(Collectors.toList()));
+    denominator = caches.size();
+    numerator = Long.valueOf(caches.stream().filter(CacheData::isAvailable).count()).intValue();
   }
 }
