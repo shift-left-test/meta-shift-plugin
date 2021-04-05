@@ -152,7 +152,7 @@ public final class TestList extends DataList<TestData> {
       }
       String message = ((Element) node).getAttribute("message");
       String status = ((Element) node).getTagName();
-      switch (status) {
+      switch (status.toLowerCase()) {
         case "failure":
           return new FailedTestData(recipe, suite, name, message);
         case "error":

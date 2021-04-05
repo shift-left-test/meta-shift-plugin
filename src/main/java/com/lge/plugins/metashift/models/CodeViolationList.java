@@ -88,7 +88,7 @@ public final class CodeViolationList extends DataList<CodeViolationData> {
     String severity = object.getString("severity");
     String level = object.getString("level");
     String tool = object.getString("tool");
-    switch (level) {
+    switch (level.toLowerCase()) {
       case "major":
         return new MajorCodeViolationData(recipe, file, line, column, rule, message, description,
             severity, tool);

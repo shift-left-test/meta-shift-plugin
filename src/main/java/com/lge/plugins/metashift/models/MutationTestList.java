@@ -74,7 +74,7 @@ public final class MutationTestList extends DataList<MutationTestData> {
     int line = Integer.parseInt(getTextContent(element, "lineNumber"));
     String mutator = getTextContent(element, "mutator");
     String killingTest = getTextContent(element, "killingTest");
-    switch (detected) {
+    switch (detected.toLowerCase()) {
       case "true":
         return new KilledMutationTestData(recipe, file, mutatedClass, mutatedMethod, line, mutator,
             killingTest);

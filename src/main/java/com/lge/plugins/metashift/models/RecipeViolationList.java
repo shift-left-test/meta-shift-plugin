@@ -57,7 +57,7 @@ public final class RecipeViolationList extends DataList<RecipeViolationData> {
     String rule = object.getString("rule");
     String description = object.getString("description");
     String severity = object.getString("severity");
-    switch (severity) {
+    switch (severity.toLowerCase()) {
       case "error":
         return new MajorRecipeViolationData(recipe, file, line, rule, description, severity);
       case "warning":
