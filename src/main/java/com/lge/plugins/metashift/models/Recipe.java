@@ -79,8 +79,7 @@ public final class Recipe extends Data<Recipe> implements Acceptable {
     collection.put(ComplexityList.class, new ComplexityList());
     collection.put(DuplicationList.class, new DuplicationList());
     collection.put(TestList.class, new TestList());
-    // TODO(sunggon82.kim): Need to implement
-    // collection.put(CoverageList.class, new CoverageList());
+    collection.put(CoverageList.class, new CoverageList());
     collection.put(MutationTestList.class, new MutationTestList());
   }
 

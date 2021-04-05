@@ -153,8 +153,7 @@ public class RecipeTest {
     assertEquals(0, recipe.get(ComplexityList.class).size());
     assertEquals(0, recipe.get(DuplicationList.class).size());
     assertEquals(0, recipe.get(TestList.class).size());
-    // TODO(sunggon82.kim): Need to implement
-    // assertEquals(0, recipe.get(CoverageList.class).size());
+    assertEquals(0, recipe.get(CoverageList.class).size());
     assertEquals(0, recipe.get(MutationTestList.class).size());
   }
 }

@@ -28,6 +28,7 @@ import com.lge.plugins.metashift.models.CacheList;
 import com.lge.plugins.metashift.models.CodeViolationList;
 import com.lge.plugins.metashift.models.CommentList;
 import com.lge.plugins.metashift.models.ComplexityList;
+import com.lge.plugins.metashift.models.CoverageList;
 import com.lge.plugins.metashift.models.DuplicationList;
 import com.lge.plugins.metashift.models.MutationTestList;
 import com.lge.plugins.metashift.models.Recipe;
@@ -123,6 +124,14 @@ public interface Visitable {
    * @param object to visit
    */
   default void visit(final TestList object) {
+  }
+
+  /**
+   * Visits the CoverageList object.
+   *
+   * @param object to visit
+   */
+  default void visit(final CoverageList object) {
   }
 
   /**
