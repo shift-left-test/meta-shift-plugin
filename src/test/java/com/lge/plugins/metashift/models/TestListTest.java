@@ -113,6 +113,21 @@ public class TestListTest {
     objects = TestList.create(directory);
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateWithInvalidData() throws Exception {
+    File directory = utils.createDirectory("report", "A");
+    builder
+        .append("<testsuites>")
+        .append("  <testsuite name='A'>")
+        .append("    <testcase name='test1'>")
+        .append("      <invalid message='invalid'/>")
+        .append("    </testcase>")
+        .append("  </testsuite>")
+        .append("</testsuites>");
+    utils.writeLines(builder, directory, "test", "1.xml");
+    TestList.create(directory);
+  }
+
   @Test
   public void testCreateWithSingleData() throws Exception {
     File directory = utils.createDirectory("report", "C");

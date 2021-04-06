@@ -22,48 +22,45 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.models.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.FileUtils;
-import org.junit.rules.TemporaryFolder;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
- * A utility class for managing temporary files.
+ * A simple XML parser.
  *
  * @author Sung Gon Kim
  */
-public class TemporaryFileUtils {
+public class SimpleXMLParser {
 
-  private final TemporaryFolder folder;
-  private final char from;
-  private final char to;
+  private final Document document;
 
-  public TemporaryFileUtils(final TemporaryFolder folder, final char from, final char to) {
-    this.folder = folder;
-    this.from = from;
-    this.to = to;
+  /**
+   * Default constructor.
+   *
+   * @param file path to the xml file
+   */
+  public SimpleXMLParser(final File file)
+      throws ParserConfigurationException, IOException, SAXException {
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+    document = builder.parse(file);
+    document.getDocumentElement().normalize();
   }
 
-  public File getPath(final String... names) {
-    return FileUtils.getFile(folder.getRoot(), names);
-  }
-
-  public File createDirectory(final String... names) throws IOException {
-    File directory = FileUtils.getFile(folder.getRoot(), names);
-    FileUtils.forceMkdir(directory);
-    return directory;
-  }
-
-  public void writeLines(final StringBuilder builder, final File file) throws IOException {
-    FileUtils.forceMkdirParent(file);
-    FileUtils.write(file, builder.toString().replace(from, to), StandardCharsets.UTF_8);
-  }
-
-  public void writeLines(final StringBuilder builder, final File parent, final String... names)
-      throws IOException {
-    writeLines(builder, FileUtils.getFile(parent, names));
+  /**
+   * Finds all tag objects matched by the given name.
+   *
+   * @param name of the tag
+   * @return tag objects
+   */
+  public TagList findAllByName(final String name) {
+    return new TagList(document.getElementsByTagName(name));
   }
 }

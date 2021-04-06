@@ -25,19 +25,14 @@
 package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.metrics.Visitable;
+import com.lge.plugins.metashift.models.xml.SimpleXMLParser;
+import com.lge.plugins.metashift.models.xml.Tag;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.FileUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -92,66 +87,32 @@ public final class TestList extends DataList<TestData> {
    */
   private static Collection<? extends TestData> parseFile(final String recipe, final File file)
       throws ParserConfigurationException, IOException, SAXException {
-    Collection<TestData> list = new ArrayList<>();
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder = factory.newDocumentBuilder();
-    Document document = builder.parse(file);
-    document.getDocumentElement().normalize();
-    NodeList nodes = document.getElementsByTagName("testsuite");
-    for (int i = 0; i < nodes.getLength(); i++) {
-      Node node = nodes.item(i);
-      if (node.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) node;
-        String suite = element.getAttribute("name");
-        list.addAll(createTestDataList(recipe, suite, element));
+    TestList list = new TestList();
+
+    SimpleXMLParser parser = new SimpleXMLParser(file);
+    for (Tag testsuite : parser.findAllByName("testsuite")) {
+      String suite = testsuite.getAttribute("name");
+      for (Tag testcase : testsuite.findAllByName("testcase")) {
+        list.add(createInstance(recipe, suite, testcase));
       }
     }
     return list;
   }
 
   /**
-   * Create a list of test data.
+   * Create a test data instance using the given tag.
    *
-   * @param recipe  name
-   * @param suite   name
-   * @param element to parse
-   * @return a list of test data
-   */
-  private static Collection<? extends TestData> createTestDataList(final String recipe,
-      final String suite, final Element element) {
-    Collection<TestData> list = new ArrayList<>();
-    NodeList nodes = element.getElementsByTagName("testcase");
-    for (int i = 0; i < nodes.getLength(); i++) {
-      Node node = nodes.item(i);
-      if (node.getNodeType() == Node.ELEMENT_NODE) {
-        list.add(createTestData(recipe, suite, (Element) node));
-      }
-    }
-    return list;
-  }
-
-  /**
-   * Creates the test data object.
-   *
-   * @param recipe  name
-   * @param suite   name
-   * @param element to parse
+   * @param recipe   name
+   * @param suite    name
+   * @param testcase object
    * @return a test data object
    */
-  private static TestData createTestData(final String recipe, final String suite,
-      final Element element) {
-    String name = element.getAttribute("name");
-    if (!element.hasChildNodes()) {
-      return new PassedTestData(recipe, suite, name, "");
-    }
-    NodeList nodeList = element.getChildNodes();
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node node = nodeList.item(i);
-      if (node.getNodeType() != Node.ELEMENT_NODE) {
-        continue;
-      }
-      String message = ((Element) node).getAttribute("message");
-      String status = ((Element) node).getTagName();
+  private static TestData createInstance(final String recipe, final String suite,
+      final Tag testcase) {
+    String name = testcase.getAttribute("name");
+    for (Tag tag : testcase.getChildNodes()) {
+      String message = tag.getAttribute("message");
+      String status = tag.getTagName();
       switch (status.toLowerCase()) {
         case "failure":
           return new FailedTestData(recipe, suite, name, message);
@@ -164,8 +125,7 @@ public final class TestList extends DataList<TestData> {
               String.format("Failed to parse: %s.%s.%s", recipe, suite, name));
       }
     }
-    throw new IllegalArgumentException(
-        String.format("Failed to parse: %s.%s.%s", recipe, suite, name));
+    return new PassedTestData(recipe, suite, name, "");
   }
 
   @Override

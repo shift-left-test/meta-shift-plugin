@@ -25,17 +25,13 @@
 package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.metrics.Visitable;
+import com.lge.plugins.metashift.models.xml.SimpleXMLParser;
+import com.lge.plugins.metashift.models.xml.Tag;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.FileUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -44,36 +40,21 @@ import org.xml.sax.SAXException;
 public final class MutationTestList extends DataList<MutationTestData> {
 
   /**
-   * Return the text content of the tag name of the element.
+   * Parse the tag to create a data object.
    *
-   * @param element object
-   * @param tagName to retrieve
-   * @return text content
-   */
-  private static String getTextContent(final Element element, final String tagName)
-      throws IllegalArgumentException {
-    Node node = element.getElementsByTagName(tagName).item(0);
-    if (node == null) {
-      throw new IllegalArgumentException("Failed to find the tag: " + tagName);
-    }
-    return node.getTextContent();
-  }
-
-  /**
-   * Parse the element to create data object.
-   *
-   * @param recipe  name
-   * @param element to parse
+   * @param recipe name
+   * @param tag    to parse
    * @return an object
    */
-  private static MutationTestData parseElement(final String recipe, final Element element) {
-    String detected = element.getAttribute("detected");
-    String file = getTextContent(element, "sourceFilePath");
-    String mutatedClass = getTextContent(element, "mutatedClass");
-    String mutatedMethod = getTextContent(element, "mutatedMethod");
-    int line = Integer.parseInt(getTextContent(element, "lineNumber"));
-    String mutator = getTextContent(element, "mutator");
-    String killingTest = getTextContent(element, "killingTest");
+  private static MutationTestData createInstance(final String recipe, final Tag tag)
+      throws SAXException {
+    String detected = tag.getAttribute("detected");
+    String file = tag.findByName("sourceFilePath").getTextContent();
+    String mutatedClass = tag.findByName("mutatedClass").getTextContent();
+    String mutatedMethod = tag.findByName("mutatedMethod").getTextContent();
+    int line = Integer.parseInt(tag.findByName("lineNumber").getTextContent());
+    String mutator = tag.findByName("mutator").getTextContent();
+    String killingTest = tag.findByName("killingTest").getTextContent();
     switch (detected.toLowerCase()) {
       case "true":
         return new KilledMutationTestData(recipe, file, mutatedClass, mutatedMethod, line, mutator,
@@ -102,16 +83,9 @@ public final class MutationTestList extends DataList<MutationTestData> {
       return list;
     }
     try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder builder = factory.newDocumentBuilder();
-      Document document = builder.parse(report);
-      document.getDocumentElement().normalize();
-      NodeList nodes = document.getElementsByTagName("mutation");
-      for (int i = 0; i < nodes.getLength(); i++) {
-        Node node = nodes.item(i);
-        if (node.getNodeType() == Node.ELEMENT_NODE) {
-          list.add(parseElement(recipe, (Element) node));
-        }
+      SimpleXMLParser parser = new SimpleXMLParser(report);
+      for (Tag tag : parser.findAllByName("mutation")) {
+        list.add(createInstance(recipe, tag));
       }
     } catch (IOException e) {
       e.printStackTrace();
