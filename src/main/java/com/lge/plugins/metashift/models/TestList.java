@@ -68,7 +68,7 @@ public final class TestList extends DataList<TestData> {
         e.printStackTrace();
       } catch (ParserConfigurationException | SAXException | IndexOutOfBoundsException e) {
         e.printStackTrace();
-        throw new IllegalArgumentException("Failed to parse: " + file);
+        throw new IllegalArgumentException("Failed to parse: " + file, e);
       }
     }
     Collections.sort(list);

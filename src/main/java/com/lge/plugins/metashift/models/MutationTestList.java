@@ -91,7 +91,7 @@ public final class MutationTestList extends DataList<MutationTestData> {
       e.printStackTrace();
     } catch (ParserConfigurationException | SAXException | IndexOutOfBoundsException e) {
       e.printStackTrace();
-      throw new IllegalArgumentException("Failed to parse: " + report);
+      throw new IllegalArgumentException("Failed to parse: " + report, e);
     }
     Collections.sort(list);
     return list;

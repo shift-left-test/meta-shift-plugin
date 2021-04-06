@@ -85,7 +85,7 @@ public final class ComplexityList extends DataList<ComplexityData> {
       e.printStackTrace();
     } catch (JSONException e) {
       e.printStackTrace();
-      throw new IllegalArgumentException("Failed to parse: " + report);
+      throw new IllegalArgumentException("Failed to parse: " + report, e);
     }
     Collections.sort(list);
     return list;

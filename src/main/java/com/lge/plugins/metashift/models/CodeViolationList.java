@@ -65,7 +65,7 @@ public final class CodeViolationList extends DataList<CodeViolationData> {
       e.printStackTrace();
     } catch (JSONException e) {
       e.printStackTrace();
-      throw new IllegalArgumentException("Failed to parse: " + report);
+      throw new IllegalArgumentException("Failed to parse: " + report, e);
     }
     Collections.sort(list);
     return list;
