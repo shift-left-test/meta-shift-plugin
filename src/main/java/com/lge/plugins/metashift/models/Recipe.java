@@ -148,9 +148,7 @@ public final class Recipe extends Data<Recipe> implements Acceptable {
 
   @Override
   public int compareTo(final Recipe other) {
-    int compared;
-    compared = getRecipe().compareTo(other.getRecipe());
-    return compared;
+    return compareEach(getRecipe().compareTo(other.getRecipe()));
   }
 
   @Override
@@ -164,16 +162,11 @@ public final class Recipe extends Data<Recipe> implements Acceptable {
     if (getClass() != object.getClass()) {
       return false;
     }
-    Recipe other = (Recipe) object;
-    return getRecipe().equals(other.getRecipe());
+    return compareTo((Recipe) object) == 0;
   }
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + getRecipe().hashCode();
-    return hashCode;
+    return computeHashCode(getClass(), getRecipe());
   }
 }

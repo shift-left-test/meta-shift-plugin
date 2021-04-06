@@ -37,9 +37,9 @@ import org.junit.rules.TemporaryFolder;
  */
 public class TemporaryFileUtils {
 
-  private TemporaryFolder folder;
-  private char from;
-  private char to;
+  private final TemporaryFolder folder;
+  private final char from;
+  private final char to;
 
   public TemporaryFileUtils(final TemporaryFolder folder, final char from, final char to) {
     this.folder = folder;
@@ -53,12 +53,6 @@ public class TemporaryFileUtils {
 
   public File createDirectory(final String... names) throws IOException {
     File directory = FileUtils.getFile(folder.getRoot(), names);
-    FileUtils.forceMkdir(directory);
-    return directory;
-  }
-
-  public File createDirectory(final File parent, final String... names) throws IOException {
-    File directory = FileUtils.getFile(parent, names);
     FileUtils.forceMkdir(directory);
     return directory;
   }

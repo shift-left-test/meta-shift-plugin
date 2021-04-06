@@ -86,33 +86,15 @@ public abstract class MutationTestData extends Data<MutationTestData> {
 
   @Override
   public final int compareTo(final MutationTestData other) {
-    int compared;
-    compared = getRecipe().compareTo(other.getRecipe());
-    if (compared != 0) {
-      return compared;
-    }
-    compared = file.compareTo(other.file);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = mutatedClass.compareTo(other.mutatedClass);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = mutatedMethod.compareTo(other.mutatedMethod);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = Integer.compare(line, other.line);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = mutator.compareTo(other.mutator);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = killingTest.compareTo(other.killingTest);
-    return compared;
+    return compareEach(
+        getRecipe().compareTo(other.getRecipe()),
+        file.compareTo(other.file),
+        mutatedClass.compareTo(other.mutatedClass),
+        mutatedMethod.compareTo(other.mutatedMethod),
+        Integer.compare(line, other.line),
+        mutator.compareTo(other.mutator),
+        killingTest.compareTo(other.killingTest)
+    );
   }
 
   @Override
@@ -126,41 +108,13 @@ public abstract class MutationTestData extends Data<MutationTestData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    MutationTestData other = (MutationTestData) object;
-    if (!getRecipe().equals(other.getRecipe())) {
-      return false;
-    }
-    if (!file.equals(other.file)) {
-      return false;
-    }
-    if (!mutatedClass.equals(other.mutatedClass)) {
-      return false;
-    }
-    if (!mutatedMethod.equals(other.mutatedMethod)) {
-      return false;
-    }
-    if (line != other.line) {
-      return false;
-    }
-    if (!mutator.equals(other.mutator)) {
-      return false;
-    }
-    return killingTest.equals(other.killingTest);
+    return compareTo((MutationTestData) object) == 0;
   }
 
   @Override
   public final int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + getRecipe().hashCode();
-    hashCode = prime * hashCode + file.hashCode();
-    hashCode = prime * hashCode + mutatedClass.hashCode();
-    hashCode = prime * hashCode + mutatedMethod.hashCode();
-    hashCode = prime * hashCode + line;
-    hashCode = prime * hashCode + mutator.hashCode();
-    hashCode = prime * hashCode + killingTest.hashCode();
-    return hashCode;
+    return computeHashCode(getClass(), getRecipe(), file, mutatedClass, mutatedMethod, line,
+        mutator, killingTest);
   }
 
   /**

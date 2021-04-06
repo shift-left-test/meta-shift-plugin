@@ -78,17 +78,11 @@ public final class ComplexityData extends Data<ComplexityData> {
 
   @Override
   public int compareTo(final ComplexityData other) {
-    int compared;
-    compared = getRecipe().compareTo(other.getRecipe());
-    if (compared != 0) {
-      return compared;
-    }
-    compared = file.compareTo(other.file);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = function.compareTo(other.function);
-    return compared;
+    return compareEach(
+        getRecipe().compareTo(other.getRecipe()),
+        file.compareTo(other.file),
+        function.compareTo(other.function)
+    );
   }
 
   @Override
@@ -102,25 +96,12 @@ public final class ComplexityData extends Data<ComplexityData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    ComplexityData other = (ComplexityData) object;
-    if (!getRecipe().equals(other.getRecipe())) {
-      return false;
-    }
-    if (!file.equals(other.file)) {
-      return false;
-    }
-    return function.equals(other.function);
+    return compareTo((ComplexityData) object) == 0;
   }
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + getRecipe().hashCode();
-    hashCode = prime * hashCode + file.hashCode();
-    hashCode = prime * hashCode + function.hashCode();
-    return hashCode;
+    return computeHashCode(getClass(), getRecipe(), file, function);
   }
 
   /**

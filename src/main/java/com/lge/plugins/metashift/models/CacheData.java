@@ -56,13 +56,10 @@ public abstract class CacheData extends Data<CacheData> {
 
   @Override
   public final int compareTo(final CacheData other) {
-    int compared;
-    compared = getRecipe().compareTo(other.getRecipe());
-    if (compared != 0) {
-      return compared;
-    }
-    compared = signature.compareTo(other.signature);
-    return compared;
+    return compareEach(
+        getRecipe().compareTo(other.getRecipe()),
+        signature.compareTo(other.signature)
+    );
   }
 
   @Override
@@ -76,24 +73,12 @@ public abstract class CacheData extends Data<CacheData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    CacheData other = (CacheData) object;
-    if (!getRecipe().equals(other.getRecipe())) {
-      return false;
-    }
-    if (!signature.equals(other.signature)) {
-      return false;
-    }
-    return available == other.available;
+    return compareTo((CacheData) object) == 0;
   }
 
   @Override
   public final int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + getRecipe().hashCode();
-    hashCode = prime * hashCode + signature.hashCode();
-    return hashCode;
+    return computeHashCode(getClass(), getRecipe(), signature);
   }
 
   /**

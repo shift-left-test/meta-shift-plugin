@@ -102,25 +102,14 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
 
   @Override
   public final int compareTo(final CodeViolationData other) {
-    int compared;
-    compared = getRecipe().compareTo(other.getRecipe());
-    if (compared != 0) {
-      return compared;
-    }
-    compared = file.compareTo(other.file);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = Integer.compare(line, other.line);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = Integer.compare(column, other.column);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = rule.compareTo(other.rule);
-    return compared;
+    return compareEach(
+        getRecipe().compareTo(other.getRecipe()),
+        file.compareTo(other.file),
+        Integer.compare(line, other.line),
+        Integer.compare(column, other.column),
+        rule.compareTo(other.rule),
+        tool.compareTo(other.tool)
+    );
   }
 
   @Override
@@ -134,37 +123,12 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    CodeViolationData other = (CodeViolationData) object;
-    if (!getRecipe().equals(other.getRecipe())) {
-      return false;
-    }
-    if (!file.equals(other.file)) {
-      return false;
-    }
-    if (line != other.line) {
-      return false;
-    }
-    if (column != other.column) {
-      return false;
-    }
-    if (!rule.equals(other.rule)) {
-      return false;
-    }
-    return tool.equals(other.tool);
+    return compareTo((CodeViolationData) object) == 0;
   }
 
   @Override
   public final int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + getRecipe().hashCode();
-    hashCode = prime * hashCode + file.hashCode();
-    hashCode = prime * hashCode + line;
-    hashCode = prime * hashCode + column;
-    hashCode = prime * hashCode + rule.hashCode();
-    hashCode = prime * hashCode + tool.hashCode();
-    return hashCode;
+    return computeHashCode(getClass(), getRecipe(), file, line, column, rule, tool);
   }
 
   /**

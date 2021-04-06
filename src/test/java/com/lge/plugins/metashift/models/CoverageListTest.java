@@ -43,14 +43,9 @@ public class CoverageListTest {
     objects = new CoverageList();
   }
 
-  private void assertValues(CoverageData object, String recipe, String file, String function,
-      int line, int index, boolean covered) {
-    assertEquals(recipe, object.getRecipe());
-    assertEquals(file, object.getFile());
-    assertEquals(function, object.getFunction());
-    assertEquals(line, object.getLine());
-    assertEquals(index, object.getIndex());
-    assertEquals(covered, object.isCovered());
+  @Test
+  public void testInitialState() {
+    assertEquals(0, objects.size());
   }
 
   @Test

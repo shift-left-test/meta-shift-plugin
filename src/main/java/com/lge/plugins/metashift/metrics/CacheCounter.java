@@ -40,7 +40,7 @@ public abstract class CacheCounter implements Countable {
   /**
    * Represents the unique set of cache objects.
    */
-  private transient Set<CacheData> caches;
+  private transient final Set<CacheData> caches;
 
   /**
    * Represents the class type.

@@ -71,13 +71,10 @@ public final class SizeData extends Data<SizeData> {
 
   @Override
   public int compareTo(final SizeData other) {
-    int compared;
-    compared = getRecipe().compareTo(other.getRecipe());
-    if (compared != 0) {
-      return compared;
-    }
-    compared = file.compareTo(other.file);
-    return compared;
+    return compareEach(
+        getRecipe().compareTo(other.getRecipe()),
+        file.compareTo(other.file)
+    );
   }
 
   @Override
@@ -91,21 +88,12 @@ public final class SizeData extends Data<SizeData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    SizeData other = (SizeData) object;
-    if (!getRecipe().equals(other.getRecipe())) {
-      return false;
-    }
-    return file.equals(other.file);
+    return compareTo((SizeData) object) == 0;
   }
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + getRecipe().hashCode();
-    hashCode = prime * hashCode + file.hashCode();
-    return hashCode;
+    return computeHashCode(getClass(), getRecipe(), file);
   }
 
   /**

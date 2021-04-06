@@ -87,55 +87,23 @@ public abstract class CoverageData extends Data<CoverageData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    CoverageData other = (CoverageData) object;
-    if (!getRecipe().equals(other.getRecipe())) {
-      return false;
-    }
-    if (!file.equals(other.file)) {
-      return false;
-    }
-    if (!function.equals(other.function)) {
-      return false;
-    }
-    if (line != other.line) {
-      return false;
-    }
-    return index == other.index;
+    return compareTo((CoverageData) object) == 0;
   }
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + getRecipe().hashCode();
-    hashCode = prime * hashCode + file.hashCode();
-    hashCode = prime * hashCode + function.hashCode();
-    hashCode = prime * hashCode + line;
-    hashCode = prime * hashCode + index;
-    return hashCode;
+    return computeHashCode(getClass(), getRecipe(), file, function, line, index);
   }
 
   @Override
   public int compareTo(final CoverageData other) {
-    int compared;
-    compared = getRecipe().compareTo(other.getRecipe());
-    if (compared != 0) {
-      return compared;
-    }
-    compared = file.compareTo(other.file);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = function.compareTo(other.function);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = Integer.compare(line, other.line);
-    if (compared != 0) {
-      return compared;
-    }
-    return Integer.compare(index, other.index);
+    return compareEach(
+        getRecipe().compareTo(other.getRecipe()),
+        file.compareTo(other.file),
+        function.compareTo(other.function),
+        Integer.compare(line, other.line),
+        Integer.compare(index, other.index)
+    );
   }
 
   /**

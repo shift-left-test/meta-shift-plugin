@@ -59,7 +59,7 @@ public class CacheDataTest {
     assertNotEquals(origin, new SharedStateCacheData("A", "X", true));
     assertNotEquals(origin, new PremirrorCacheData("B", "X", true));
     assertNotEquals(origin, new PremirrorCacheData("A", "Y", true));
-    assertNotEquals(origin, new PremirrorCacheData("A", "X", false));
+    assertEquals(origin, new PremirrorCacheData("A", "X", false));
     assertNotEquals(origin, new SharedStateCacheData("A", "X:do_A", true));
   }
 

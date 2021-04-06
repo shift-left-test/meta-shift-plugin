@@ -64,17 +64,11 @@ public abstract class TestData extends Data<TestData> {
 
   @Override
   public final int compareTo(final TestData other) {
-    int compared;
-    compared = getRecipe().compareTo(other.getRecipe());
-    if (compared != 0) {
-      return compared;
-    }
-    compared = suite.compareTo(other.suite);
-    if (compared != 0) {
-      return compared;
-    }
-    compared = name.compareTo(other.name);
-    return compared;
+    return compareEach(
+        getRecipe().compareTo(other.getRecipe()),
+        suite.compareTo(other.suite),
+        name.compareTo(other.name)
+    );
   }
 
   @Override
@@ -88,25 +82,12 @@ public abstract class TestData extends Data<TestData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    TestData other = (TestData) object;
-    if (!getRecipe().equals(other.getRecipe())) {
-      return false;
-    }
-    if (!suite.equals(other.suite)) {
-      return false;
-    }
-    return name.equals(other.name);
+    return compareTo((TestData) object) == 0;
   }
 
   @Override
   public final int hashCode() {
-    final int prime = 31;
-    int hashCode = 1;
-    hashCode = prime * hashCode + getClass().hashCode();
-    hashCode = prime * hashCode + getRecipe().hashCode();
-    hashCode = prime * hashCode + suite.hashCode();
-    hashCode = prime * hashCode + name.hashCode();
-    return hashCode;
+    return computeHashCode(getClass(), getRecipe(), suite, name);
   }
 
   /**

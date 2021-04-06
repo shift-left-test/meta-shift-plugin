@@ -49,14 +49,12 @@ public class RecipeTest {
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
-  private StringBuilder builder;
   private Recipe origin;
   private Recipe same;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder, '\'', '"');
-    builder = new StringBuilder();
     origin = new Recipe("cmake-project-1.0.0-r0");
     same = new Recipe("cmake-project-1.0.0-r0");
   }
