@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
  *
  * @author Sung Gon Kim
  */
-public class SimpleXMLParser {
+public class SimpleXmlParser {
 
   private final Document document;
 
@@ -46,7 +46,7 @@ public class SimpleXMLParser {
    *
    * @param file path to the xml file
    */
-  public SimpleXMLParser(final File file)
+  public SimpleXmlParser(final File file)
       throws ParserConfigurationException, IOException, SAXException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
@@ -60,7 +60,7 @@ public class SimpleXMLParser {
    * @param name of the tag
    * @return tag objects
    */
-  public TagList findAllByName(final String name) {
+  public TagList findByName(final String name) {
     return new TagList(document.getElementsByTagName(name));
   }
 }

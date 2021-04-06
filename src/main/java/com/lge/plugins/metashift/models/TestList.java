@@ -25,7 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.metrics.Visitable;
-import com.lge.plugins.metashift.models.xml.SimpleXMLParser;
+import com.lge.plugins.metashift.models.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.models.xml.Tag;
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +66,7 @@ public final class TestList extends DataList<TestData> {
         list.addAll(parseFile(recipe, file));
       } catch (IOException e) {
         e.printStackTrace();
-      } catch (ParserConfigurationException | SAXException e) {
+      } catch (ParserConfigurationException | SAXException | IndexOutOfBoundsException e) {
         e.printStackTrace();
         throw new IllegalArgumentException("Failed to parse: " + file);
       }
@@ -89,10 +89,10 @@ public final class TestList extends DataList<TestData> {
       throws ParserConfigurationException, IOException, SAXException {
     TestList list = new TestList();
 
-    SimpleXMLParser parser = new SimpleXMLParser(file);
-    for (Tag testsuite : parser.findAllByName("testsuite")) {
+    SimpleXmlParser parser = new SimpleXmlParser(file);
+    for (Tag testsuite : parser.findByName("testsuite")) {
       String suite = testsuite.getAttribute("name");
-      for (Tag testcase : testsuite.findAllByName("testcase")) {
+      for (Tag testcase : testsuite.findByName("testcase")) {
         list.add(createInstance(recipe, suite, testcase));
       }
     }

@@ -48,4 +48,22 @@ public class TagList extends ArrayList<Tag> {
       }
     }
   }
+
+  /**
+   * Returns the first tag object of the list.
+   *
+   * @return first tag object
+   */
+  public Tag first() throws IndexOutOfBoundsException {
+    return super.get(0);
+  }
+
+  /**
+   * Returns the last tag object of the list.
+   *
+   * @return last tag object
+   */
+  public Tag last() throws IndexOutOfBoundsException {
+    return super.get(size() - 1);
+  }
 }

@@ -36,11 +36,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the SimpleXMLParser class.
+ * Unit tests for the SimpleXmlParser class.
  *
  * @author Sung Gon Kim
  */
-public class SimpleXMLParserTest {
+public class SimpleXmlParserTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -55,7 +55,7 @@ public class SimpleXMLParserTest {
 
   @Test(expected = FileNotFoundException.class)
   public void testWithUnknownPath() throws Exception {
-    new SimpleXMLParser(utils.getPath("unknown"));
+    new SimpleXmlParser(utils.getPath("unknown"));
   }
 
   @Test
@@ -83,15 +83,15 @@ public class SimpleXMLParserTest {
         .append("</mutations>");
     File file = utils.getPath("mutations.xml");
     utils.writeLines(builder, file);
-    SimpleXMLParser parser = new SimpleXMLParser(file);
+    SimpleXmlParser parser = new SimpleXmlParser(file);
 
     TagList tags;
     Tag tag;
 
-    tags = parser.findAllByName("mutation");
+    tags = parser.findByName("mutation");
     assertEquals(2, tags.size());
 
-    tag = tags.get(0);
+    tag = tags.first();
     assertEquals("mutation", tag.getTagName());
     assertTrue(tag.hasAttribute("detected"));
     assertEquals("true", tag.getAttribute("detected"));
@@ -99,11 +99,11 @@ public class SimpleXMLParserTest {
 
     tags = tag.getChildNodes();
     assertEquals(7, tags.size());
-    assertEquals("sourceFile", tags.get(0).getTagName());
-    assertEquals("a.file", tags.get(0).getTextContent());
+    assertEquals("sourceFile", tags.first().getTagName());
+    assertEquals("a.file", tags.first().getTextContent());
 
-    tags = tag.findAllByName("mutator");
+    tags = tag.findByName("mutator");
     assertEquals(1, tags.size());
-    assertEquals("AOR", tags.get(0).getTextContent());
+    assertEquals("AOR", tags.first().getTextContent());
   }
 }

@@ -26,7 +26,6 @@ package com.lge.plugins.metashift.models.xml;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 /**
  * Represents the tag class.
@@ -55,22 +54,8 @@ public class Tag {
    * @param name of the tag
    * @return tag objects
    */
-  public TagList findAllByName(final String name) {
+  public TagList findByName(final String name) {
     return new TagList(element.getElementsByTagName(name));
-  }
-
-  /**
-   * Finds the first matching tag object.
-   *
-   * @param name to match
-   * @return a first matching tag object
-   * @throws SAXException if no matching tags found
-   */
-  public Tag findByName(final String name) throws SAXException {
-    for (Tag tag : findAllByName(name)) {
-      return tag;
-    }
-    throw new SAXException("Failed to locate the tag: " + name);
   }
 
   /**

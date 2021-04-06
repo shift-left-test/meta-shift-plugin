@@ -25,7 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.metrics.Visitable;
-import com.lge.plugins.metashift.models.xml.SimpleXMLParser;
+import com.lge.plugins.metashift.models.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.models.xml.Tag;
 import java.io.File;
 import java.io.IOException;
@@ -49,12 +49,12 @@ public final class MutationTestList extends DataList<MutationTestData> {
   private static MutationTestData createInstance(final String recipe, final Tag tag)
       throws SAXException {
     String detected = tag.getAttribute("detected");
-    String file = tag.findByName("sourceFilePath").getTextContent();
-    String mutatedClass = tag.findByName("mutatedClass").getTextContent();
-    String mutatedMethod = tag.findByName("mutatedMethod").getTextContent();
-    int line = Integer.parseInt(tag.findByName("lineNumber").getTextContent());
-    String mutator = tag.findByName("mutator").getTextContent();
-    String killingTest = tag.findByName("killingTest").getTextContent();
+    String file = tag.findByName("sourceFilePath").first().getTextContent();
+    String mutatedClass = tag.findByName("mutatedClass").first().getTextContent();
+    String mutatedMethod = tag.findByName("mutatedMethod").first().getTextContent();
+    int line = Integer.parseInt(tag.findByName("lineNumber").first().getTextContent());
+    String mutator = tag.findByName("mutator").first().getTextContent();
+    String killingTest = tag.findByName("killingTest").first().getTextContent();
     switch (detected.toLowerCase()) {
       case "true":
         return new KilledMutationTestData(recipe, file, mutatedClass, mutatedMethod, line, mutator,
@@ -83,13 +83,13 @@ public final class MutationTestList extends DataList<MutationTestData> {
       return list;
     }
     try {
-      SimpleXMLParser parser = new SimpleXMLParser(report);
-      for (Tag tag : parser.findAllByName("mutation")) {
+      SimpleXmlParser parser = new SimpleXmlParser(report);
+      for (Tag tag : parser.findByName("mutation")) {
         list.add(createInstance(recipe, tag));
       }
     } catch (IOException e) {
       e.printStackTrace();
-    } catch (ParserConfigurationException | SAXException e) {
+    } catch (ParserConfigurationException | SAXException | IndexOutOfBoundsException e) {
       e.printStackTrace();
       throw new IllegalArgumentException("Failed to parse: " + report);
     }
