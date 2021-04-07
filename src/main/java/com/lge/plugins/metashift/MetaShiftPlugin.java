@@ -29,6 +29,6 @@ import hudson.Plugin;
 /**
  * MetaShift root plugin class.
  */
-public class MetaShiftPlugin extends Plugin{
+public class MetaShiftPlugin extends Plugin {
 
 }

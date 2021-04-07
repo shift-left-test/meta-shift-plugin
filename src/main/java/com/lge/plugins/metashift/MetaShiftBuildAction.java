@@ -127,7 +127,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
     if (wrapper == null) {
       return "";
     }
-    
+
     return "/plugin/" + wrapper.getShortName() + "/img/meta_shift_first.png";
   }
 
@@ -243,13 +243,10 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * filter class for qualifier json serialization.
    */
   public static class CustomPropertyFilter implements PropertyFilter {
+
     @Override
     public boolean apply(Object source, String name, Object value) {
-      if (name.equals("collection")) {
-        return true;
-      }
-  
-      return false;
+      return name.equals("collection");
     }
   }
 
@@ -301,6 +298,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * trend chart series data class.
    */
   public static class TrendChartSeries {
+
     private String name;
     private String type;
     private List<Float> data;
@@ -339,7 +337,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
     public TrendChartSeries(String name, String type) {
       this.name = name;
       this.type = type;
-      this.data = new ArrayList<Float>();
+      this.data = new ArrayList<>();
     }
   }
 
@@ -360,7 +358,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
     TrendChartSeries seriesCoverage = new TrendChartSeries("Coverage", "line");
     TrendChartSeries seriesMutation = new TrendChartSeries("Mutation", "line");
 
-    List<String> buildNameList = new ArrayList<String>();
+    List<String> buildNameList = new ArrayList<>();
 
     for (AbstractBuild<?, ?> b = (AbstractBuild<?, ?>) this.run;
         b != null; b = b.getPreviousNotFailedBuild()) {
@@ -391,13 +389,13 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
     }
 
     JSONObject model = new JSONObject();
-    model.put("legend", new String [] {
+    model.put("legend", new String[]{
         seriesCache.getName(), seriesRecipeViolation.getName(), seriesComment.getName(),
         seriesCodeViolation.getName(), seriesComplexity.getName(), seriesDuplication.getName(),
         seriesTest.getName(), seriesCoverage.getName(), seriesMutation.getName()
     });
     model.put("builds", buildNameList);
-    model.put("series", new TrendChartSeries[] {
+    model.put("series", new TrendChartSeries[]{
         seriesCache, seriesRecipeViolation, seriesComment, seriesCodeViolation,
         seriesComplexity, seriesDuplication, seriesTest, seriesCoverage, seriesMutation
     });

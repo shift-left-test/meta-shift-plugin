@@ -43,6 +43,7 @@ import java.text.DecimalFormat;
  * Base Action class which has metrics and api.
  */
 public abstract class MetaShiftActionBaseWithMetrics extends Actionable {
+
   private Metrics metrics;
 
   public MetaShiftActionBaseWithMetrics(Criteria criteria) {
@@ -57,7 +58,7 @@ public abstract class MetaShiftActionBaseWithMetrics extends Actionable {
   public SizeQualifier getSizeQualifier() {
     return (SizeQualifier) this.metrics.get(SizeQualifier.class);
   }
-  
+
   public CacheQualifier getCacheQualifier() {
     return (CacheQualifier) this.metrics.get(CacheQualifier.class);
   }
