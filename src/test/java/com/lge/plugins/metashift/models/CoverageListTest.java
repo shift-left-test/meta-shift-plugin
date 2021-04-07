@@ -124,9 +124,10 @@ public class CoverageListTest {
     File directory = utils.createDirectory("report", "B");
     builder
         .append("<class filename='a.cpp'>")
-        .append("  <methods>")
-        .append("    <method name='func1()'/>")
-        .append("  </methods>")
+        .append("  <methods/>")
+        .append("  <lines>")
+        .append("    <line hits='1' number='1'/>")
+        .append("  </lines>")
         .append("</class>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     objects = CoverageList.create(directory);

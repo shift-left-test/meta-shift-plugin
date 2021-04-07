@@ -117,6 +117,7 @@ public class SimpleXmlParserTest {
     assertEquals("A", first.getAttribute("string"));
     assertEquals("", first.getAttribute("empty"));
     assertEquals("0", first.getAttribute("empty", "0"));
+    assertEquals("1", first.getAttribute("unknown", "1"));
     assertTrue(first.hasChildNodes());
     assertEquals("first", first.getChildNodes().first().getTextContent());
 
@@ -127,7 +128,8 @@ public class SimpleXmlParserTest {
     assertEquals("2", second.getAttribute("number"));
     assertEquals("B", second.getAttribute("string"));
     assertEquals("", second.getAttribute("empty"));
-    assertEquals("0", first.getAttribute("empty", "0"));
+    assertEquals("0", second.getAttribute("empty", "0"));
+    assertEquals("1", second.getAttribute("unknown", "1"));
     assertTrue(second.hasChildNodes());
     assertEquals("second", second.getChildNodes().first().getTextContent());
   }

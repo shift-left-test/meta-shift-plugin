@@ -87,16 +87,16 @@ public class Tag {
   /**
    * Returns the attribute value of the tag.
    *
-   * @param name of the attribute
+   * @param name         of the attribute
    * @param defaultValue default value
    * @return attribute value, or default value if null or empty string
    */
   public String getAttribute(final String name, final String defaultValue) {
-    if (element == null) {
+    if (element == null || !element.hasAttribute(name)) {
       return defaultValue;
     }
     String value = element.getAttribute(name);
-    return (value == null || value.isEmpty()) ? defaultValue : value;
+    return value == null || value.isEmpty() ? defaultValue : value;
   }
 
   /**

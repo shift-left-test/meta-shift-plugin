@@ -88,16 +88,19 @@ public final class CoverageList extends DataList<CoverageData> {
   private static CoverageList createInstances(TreeMap<Integer, String> methods, String recipe,
       String filename, Tag line) {
     CoverageList list = new CoverageList();
-    int lineNumber = Integer.parseInt(line.getAttribute("number"));
-    boolean covered = Integer.parseInt(line.getAttribute("hits")) > 0;
+    if (methods.isEmpty()) {
+      return list;
+    }
+    int lineNumber = Integer.parseInt(line.getAttribute("number", "0"));
+    boolean covered = Integer.parseInt(line.getAttribute("hits", "0")) > 0;
     String method = methods.floorEntry(lineNumber).getValue();
     TagList conditions = line.getChildNodes("cond");
     if (conditions.isEmpty()) {
       list.add(new StatementCoverageData(recipe, filename, method, lineNumber, covered));
     } else {
       for (Tag condition : conditions) {
-        int index = Integer.parseInt(condition.getAttribute("branch_number"));
-        covered = Integer.parseInt(condition.getAttribute("hit")) > 0;
+        int index = Integer.parseInt(condition.getAttribute("branch_number", "0"));
+        covered = Integer.parseInt(condition.getAttribute("hit", "0")) > 0;
         list.add(new BranchCoverageData(recipe, filename, method, lineNumber, index, covered));
       }
     }
@@ -116,7 +119,7 @@ public final class CoverageList extends DataList<CoverageData> {
       String method = tag.getAttribute("name");
       TagList lines;
       if ((lines = tag.getChildNodes("line")).size() > 0) {
-        int line = Integer.parseInt(lines.first().getAttribute("number"));
+        int line = Integer.parseInt(lines.first().getAttribute("number", "0"));
         methods.putIfAbsent(line, method);
       }
     }
