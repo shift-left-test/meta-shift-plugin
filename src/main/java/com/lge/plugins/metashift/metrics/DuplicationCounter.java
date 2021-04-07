@@ -32,7 +32,7 @@ import com.lge.plugins.metashift.models.DuplicationList;
  *
  * @author Sung Gon Kim
  */
-public final class DuplicationCounter implements Countable {
+public final class DuplicationCounter extends Counter {
 
   /**
    * Represents the denominator.

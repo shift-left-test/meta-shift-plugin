@@ -96,6 +96,13 @@ public abstract class Qualifier<T> implements Countable {
     return getDenominator() > 0;
   }
 
+  @Override
+  public float getRatio() {
+    int denominator = getDenominator();
+    int numerator = getNumerator();
+    return denominator > 0 ? (float) numerator / (float) denominator : 0.0f;
+  }
+
   /**
    * Returns whether the evaluation of the metric meets the criteria.
    *

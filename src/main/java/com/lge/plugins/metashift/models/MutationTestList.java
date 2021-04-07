@@ -46,8 +46,7 @@ public final class MutationTestList extends DataList<MutationTestData> {
    * @param tag    to parse
    * @return an object
    */
-  private static MutationTestData createInstance(final String recipe, final Tag tag)
-      throws SAXException {
+  private static MutationTestData createInstance(final String recipe, final Tag tag) {
     String detected = tag.getAttribute("detected");
     String file = tag.findByName("sourceFilePath").first().getTextContent();
     String mutatedClass = tag.findByName("mutatedClass").first().getTextContent();

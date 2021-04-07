@@ -32,7 +32,7 @@ import com.lge.plugins.metashift.models.CodeViolationList;
  *
  * @author Sung Gon Kim
  */
-public abstract class CodeViolationCounter implements Countable {
+public abstract class CodeViolationCounter extends Counter {
 
   /**
    * Represents the class type.

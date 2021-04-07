@@ -32,7 +32,7 @@ import com.lge.plugins.metashift.models.TestList;
  *
  * @author Sung Gon Kim
  */
-public abstract class TestCounter implements Countable {
+public abstract class TestCounter extends Counter {
 
   /**
    * Represents the class type.

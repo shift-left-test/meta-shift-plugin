@@ -32,7 +32,7 @@ import com.lge.plugins.metashift.models.CoverageList;
  *
  * @author Sung Gon Kim
  */
-public abstract class CoverageCounter implements Countable {
+public abstract class CoverageCounter extends Counter {
 
   /**
    * Represents the class type.

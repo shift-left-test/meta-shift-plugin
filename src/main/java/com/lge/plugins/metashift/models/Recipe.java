@@ -105,8 +105,7 @@ public final class Recipe extends Data<Recipe> implements Acceptable {
     recipe.set(ComplexityList.create(path));
     recipe.set(DuplicationList.create(path));
     recipe.set(TestList.create(path));
-    // TODO(sunggon82.kim): Need to implement
-    // recipe.set(CoverageList.create(path));
+    recipe.set(CoverageList.create(path));
     recipe.set(MutationTestList.create(path));
     return recipe;
   }

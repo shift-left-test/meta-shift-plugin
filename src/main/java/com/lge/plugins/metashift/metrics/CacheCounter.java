@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  *
  * @author Sung Gon Kim
  */
-public abstract class CacheCounter implements Countable {
+public abstract class CacheCounter extends Counter {
 
   /**
    * Represents the unique set of cache objects.

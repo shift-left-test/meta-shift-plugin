@@ -32,7 +32,7 @@ import com.lge.plugins.metashift.models.MutationTestList;
  *
  * @author Sung Gon Kim
  */
-public abstract class MutationTestCounter implements Countable {
+public abstract class MutationTestCounter extends Counter {
 
   /**
    * Represents the class type.

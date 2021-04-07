@@ -39,7 +39,7 @@ import com.lge.plugins.metashift.models.TestList;
  *
  * @author Sung Gon Kim
  */
-public final class Metrics extends Qualifier<Qualifier<?>> implements Countable {
+public final class Metrics extends Qualifier<Qualifier<?>> {
 
   /**
    * Default constructor.

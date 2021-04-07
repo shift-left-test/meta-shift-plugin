@@ -24,47 +24,17 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.CommentData;
-import com.lge.plugins.metashift.models.CommentList;
-
 /**
- * Collects the comment information from the given data sets.
+ * Represents an abstract counter class.
  *
  * @author Sung Gon Kim
  */
-public final class CommentCounter extends Counter {
-
-  /**
-   * Represents the denominator.
-   */
-  private int denominator;
-
-  /**
-   * Represents the numerator.
-   */
-  private int numerator;
-
-  /**
-   * Default constructor.
-   */
-  public CommentCounter() {
-    this.denominator = 0;
-    this.numerator = 0;
-  }
+public abstract class Counter implements Countable {
 
   @Override
-  public int getDenominator() {
-    return denominator;
-  }
-
-  @Override
-  public int getNumerator() {
-    return numerator;
-  }
-
-  @Override
-  public void visit(final CommentList comments) {
-    denominator += comments.stream().mapToInt(CommentData::getLines).sum();
-    numerator += comments.stream().mapToInt(CommentData::getCommentLines).sum();
+  public float getRatio() {
+    int denominator = getDenominator();
+    int numerator = getNumerator();
+    return denominator > 0 ? (float) numerator / (float) denominator : 0.0f;
   }
 }

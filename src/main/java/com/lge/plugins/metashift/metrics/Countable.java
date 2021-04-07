@@ -50,9 +50,5 @@ public interface Countable extends Visitable {
    *
    * @return ratio
    */
-  default float getRatio() {
-    int denominator = getDenominator();
-    int numerator = getNumerator();
-    return denominator > 0 ? (float) numerator / (float) denominator : 0.0f;
-  }
+  float getRatio();
 }

@@ -31,7 +31,7 @@ import com.lge.plugins.metashift.models.ComplexityList;
  *
  * @author Sung Gon Kim
  */
-public final class ComplexityCounter implements Countable {
+public final class ComplexityCounter extends Counter {
 
   /**
    * Represents the denominator.
