@@ -103,20 +103,6 @@ public class CoverageListTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateWithInsufficientData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
-    builder
-        .append("<class filename='a.cpp'>")
-        .append("  <methods>")
-        .append("    <method name='func1()'>")
-        .append("    </method>")
-        .append("  </methods>")
-        .append("</class>");
-    utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageList.create(directory);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
   public void testCreateWithEmptyFile() throws Exception {
     File directory = utils.createDirectory("report", "A");
     builder.append(" ");
@@ -128,6 +114,20 @@ public class CoverageListTest {
   public void testCreateWithEmptyData() throws Exception {
     File directory = utils.createDirectory("report", "B");
     builder.append("<classes> </classes>");
+    utils.writeLines(builder, directory, "coverage", "coverage.xml");
+    objects = CoverageList.create(directory);
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testCreateWithInsufficientData() throws Exception {
+    File directory = utils.createDirectory("report", "B");
+    builder
+        .append("<class filename='a.cpp'>")
+        .append("  <methods>")
+        .append("    <method name='func1()'/>")
+        .append("  </methods>")
+        .append("</class>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     objects = CoverageList.create(directory);
     assertEquals(0, objects.size());

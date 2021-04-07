@@ -43,6 +43,13 @@ public class SimpleXmlParser {
 
   /**
    * Default constructor.
+   */
+  public SimpleXmlParser() {
+    document = null;
+  }
+
+  /**
+   * Default constructor.
    *
    * @param file path to the xml file
    */
@@ -60,7 +67,7 @@ public class SimpleXmlParser {
    * @param name of the tag
    * @return tag objects
    */
-  public TagList findByName(final String name) {
-    return new TagList(document.getElementsByTagName(name));
+  public TagList getChildNodes(final String name) {
+    return (document == null) ? new TagList() : new TagList(document.getElementsByTagName(name));
   }
 }

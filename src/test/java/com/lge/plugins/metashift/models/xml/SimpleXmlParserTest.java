@@ -25,15 +25,20 @@
 package com.lge.plugins.metashift.models.xml;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.TemporaryFileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * Unit tests for the SimpleXmlParser class.
@@ -46,6 +51,7 @@ public class SimpleXmlParserTest {
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
   private StringBuilder builder;
+  private SimpleXmlParser parser;
 
   @Before
   public void setUp() {
@@ -53,57 +59,76 @@ public class SimpleXmlParserTest {
     builder = new StringBuilder();
   }
 
+  private void prepare() throws IOException, SAXException, ParserConfigurationException {
+    File file = utils.getPath("test.xml");
+    utils.writeLines(builder, file);
+    parser = new SimpleXmlParser(file);
+  }
+
+  @Test
+  public void testInitialState() {
+    parser = new SimpleXmlParser();
+    assertEquals(0, parser.getChildNodes("X").size());
+  }
+
   @Test(expected = FileNotFoundException.class)
   public void testWithUnknownPath() throws Exception {
     new SimpleXmlParser(utils.getPath("unknown"));
   }
 
+  @Test(expected = SAXParseException.class)
+  public void testParserWithMalformedTag() throws Exception {
+    builder.append("</tag>");
+    prepare();
+    parser.getChildNodes("tag");
+  }
+
   @Test
-  public void testParsingXML() throws Exception {
+  public void testParserWithoutMatchingTag() throws Exception {
+    builder.append("<tag></tag>");
+    prepare();
+    TagList tags = parser.getChildNodes("X");
+    assertEquals(0, tags.size());
+    assertEquals("", tags.first().getTagName());
+    assertEquals("", tags.last().getTagName());
+  }
+
+  @Test
+  public void testTagList() throws Exception {
     builder
-        .append("<mutations>")
-        .append("  <mutation detected='true'>")
-        .append("    <sourceFile>a.file</sourceFile>")
-        .append("    <sourceFilePath>path/to/a.file</sourceFilePath>")
-        .append("    <mutatedClass>A</mutatedClass>")
-        .append("    <mutatedMethod>func1</mutatedMethod>")
-        .append("    <lineNumber>1</lineNumber>")
-        .append("    <mutator>AOR</mutator>")
-        .append("    <killingTest>test1</killingTest>")
-        .append("  </mutation>")
-        .append("  <mutation detected='false'>")
-        .append("    <sourceFile>b.file</sourceFile>")
-        .append("    <sourceFilePath>path/to/b.file</sourceFilePath>")
-        .append("    <mutatedClass>B</mutatedClass>")
-        .append("    <mutatedMethod>func2</mutatedMethod>")
-        .append("    <lineNumber>2</lineNumber>")
-        .append("    <mutator>BOR</mutator>")
-        .append("    <killingTest>test2</killingTest>")
-        .append("  </mutation>")
-        .append("</mutations>");
-    File file = utils.getPath("mutations.xml");
-    utils.writeLines(builder, file);
-    SimpleXmlParser parser = new SimpleXmlParser(file);
+        .append("<tags>")
+        .append("  <tag number='1' string='A' empty=''>")
+        .append("    <text>first</text>")
+        .append("  </tag>")
+        .append("  <tag number='2' string='B' empty=''>")
+        .append("    <text>second</text>")
+        .append("  </tag>")
+        .append("</tags>");
+    prepare();
 
-    TagList tags;
-    Tag tag;
-
-    tags = parser.findByName("mutation");
+    TagList tags = parser.getChildNodes("tag");
     assertEquals(2, tags.size());
 
-    tag = tags.first();
-    assertEquals("mutation", tag.getTagName());
-    assertTrue(tag.hasAttribute("detected"));
-    assertEquals("true", tag.getAttribute("detected"));
-    assertTrue(tag.hasChildNodes());
+    Tag first = tags.first();
+    assertEquals("tag", first.getTagName());
+    assertTrue(first.hasAttribute("number"));
+    assertFalse(first.hasAttribute("X"));
+    assertEquals("1", first.getAttribute("number"));
+    assertEquals("A", first.getAttribute("string"));
+    assertEquals("", first.getAttribute("empty"));
+    assertEquals("0", first.getAttribute("empty", "0"));
+    assertTrue(first.hasChildNodes());
+    assertEquals("first", first.getChildNodes().first().getTextContent());
 
-    tags = tag.getChildNodes();
-    assertEquals(7, tags.size());
-    assertEquals("sourceFile", tags.first().getTagName());
-    assertEquals("a.file", tags.first().getTextContent());
-
-    tags = tag.findByName("mutator");
-    assertEquals(1, tags.size());
-    assertEquals("AOR", tags.first().getTextContent());
+    Tag second = tags.last();
+    assertEquals("tag", second.getTagName());
+    assertTrue(second.hasAttribute("number"));
+    assertFalse(second.hasAttribute("X"));
+    assertEquals("2", second.getAttribute("number"));
+    assertEquals("B", second.getAttribute("string"));
+    assertEquals("", second.getAttribute("empty"));
+    assertEquals("0", first.getAttribute("empty", "0"));
+    assertTrue(second.hasChildNodes());
+    assertEquals("second", second.getChildNodes().first().getTextContent());
   }
 }

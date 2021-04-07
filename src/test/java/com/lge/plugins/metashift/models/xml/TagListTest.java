@@ -24,53 +24,23 @@
 
 package com.lge.plugins.metashift.models.xml;
 
-import java.util.ArrayList;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import static net.sf.ezmorph.test.ArrayAssertions.assertEquals;
+
+import org.junit.Test;
 
 /**
- * Represents the list of tags.
+ * Unit tests for the TagList class.
  *
  * @author Sung Gon Kim
  */
-public class TagList extends ArrayList<Tag> {
+public class TagListTest {
 
-  /**
-   * Default constructor.
-   */
-  public TagList() {
-    super();
-  }
+  private final TagList tagList = new TagList();
 
-  /**
-   * Constructs the list with nodes.
-   *
-   * @param nodes to add
-   */
-  public TagList(final NodeList nodes) {
-    for (int i = 0; i < nodes.getLength(); i++) {
-      Node node = nodes.item(i);
-      if (node.getNodeType() == Node.ELEMENT_NODE) {
-        super.add(new Tag(node));
-      }
-    }
-  }
-
-  /**
-   * Returns the first tag object of the list.
-   *
-   * @return first tag object
-   */
-  public Tag first() {
-    return super.isEmpty() ? new Tag() : super.get(0);
-  }
-
-  /**
-   * Returns the last tag object of the list.
-   *
-   * @return last tag object
-   */
-  public Tag last() {
-    return super.isEmpty() ? new Tag() : super.get(size() - 1);
+  @Test
+  public void testEmptyTagList() {
+    assertEquals(0, tagList.size());
+    assertEquals("", tagList.first().getTagName());
+    assertEquals("", tagList.last().getTagName());
   }
 }

@@ -66,7 +66,7 @@ public final class TestList extends DataList<TestData> {
         list.addAll(parseFile(recipe, file));
       } catch (IOException e) {
         e.printStackTrace();
-      } catch (ParserConfigurationException | SAXException | IndexOutOfBoundsException e) {
+      } catch (ParserConfigurationException | SAXException e) {
         e.printStackTrace();
         throw new IllegalArgumentException("Failed to parse: " + file, e);
       }
@@ -90,9 +90,9 @@ public final class TestList extends DataList<TestData> {
     TestList list = new TestList();
 
     SimpleXmlParser parser = new SimpleXmlParser(file);
-    for (Tag testsuite : parser.findByName("testsuite")) {
+    for (Tag testsuite : parser.getChildNodes("testsuite")) {
       String suite = testsuite.getAttribute("name");
-      for (Tag testcase : testsuite.findByName("testcase")) {
+      for (Tag testcase : testsuite.getChildNodes("testcase")) {
         list.add(createInstance(recipe, suite, testcase));
       }
     }

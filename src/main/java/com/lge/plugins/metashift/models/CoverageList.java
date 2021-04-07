@@ -59,16 +59,16 @@ public final class CoverageList extends DataList<CoverageData> {
     }
     try {
       SimpleXmlParser parser = new SimpleXmlParser(report);
-      for (Tag tag : parser.findByName("class")) {
+      for (Tag tag : parser.getChildNodes("class")) {
         String filename = tag.getAttribute("filename");
-        TreeMap<Integer, String> methods = findMethods(tag.findByName("method"));
-        for (Tag line : tag.findByName("lines").last().findByName("line")) {
+        TreeMap<Integer, String> methods = findMethods(tag.getChildNodes("method"));
+        for (Tag line : tag.getChildNodes("lines").last().getChildNodes("line")) {
           list.addAll(createInstances(methods, recipe, filename, line));
         }
       }
     } catch (IOException e) {
       e.printStackTrace();
-    } catch (ParserConfigurationException | SAXException | IndexOutOfBoundsException e) {
+    } catch (ParserConfigurationException | SAXException e) {
       e.printStackTrace();
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     }
@@ -91,7 +91,7 @@ public final class CoverageList extends DataList<CoverageData> {
     int lineNumber = Integer.parseInt(line.getAttribute("number"));
     boolean covered = Integer.parseInt(line.getAttribute("hits")) > 0;
     String method = methods.floorEntry(lineNumber).getValue();
-    TagList conditions = line.findByName("cond");
+    TagList conditions = line.getChildNodes("cond");
     if (conditions.isEmpty()) {
       list.add(new StatementCoverageData(recipe, filename, method, lineNumber, covered));
     } else {
@@ -115,7 +115,7 @@ public final class CoverageList extends DataList<CoverageData> {
     for (Tag tag : tags) {
       String method = tag.getAttribute("name");
       TagList lines;
-      if ((lines = tag.findByName("line")).size() > 0) {
+      if ((lines = tag.getChildNodes("line")).size() > 0) {
         int line = Integer.parseInt(lines.first().getAttribute("number"));
         methods.putIfAbsent(line, method);
       }

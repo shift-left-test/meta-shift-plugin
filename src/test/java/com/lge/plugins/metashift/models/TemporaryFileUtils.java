@@ -57,13 +57,15 @@ public class TemporaryFileUtils {
     return directory;
   }
 
-  public void writeLines(final StringBuilder builder, final File file) throws IOException {
-    FileUtils.forceMkdirParent(file);
-    FileUtils.write(file, builder.toString().replace(from, to), StandardCharsets.UTF_8);
+  public void writeLines(final StringBuilder builder, final File file) {
+    try {
+      FileUtils.forceMkdirParent(file);
+      FileUtils.write(file, builder.toString().replace(from, to), StandardCharsets.UTF_8);
+    } catch (IOException ignored) {
+    }
   }
 
-  public void writeLines(final StringBuilder builder, final File parent, final String... names)
-      throws IOException {
+  public void writeLines(final StringBuilder builder, final File parent, final String... names) {
     writeLines(builder, FileUtils.getFile(parent, names));
   }
 }

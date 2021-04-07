@@ -41,6 +41,13 @@ public class Tag {
 
   /**
    * Default constructor.
+   */
+  public Tag() {
+    this.element = null;
+  }
+
+  /**
+   * Default constructor.
    *
    * @param node to parse
    */
@@ -54,8 +61,8 @@ public class Tag {
    * @param name of the tag
    * @return tag objects
    */
-  public TagList findByName(final String name) {
-    return new TagList(element.getElementsByTagName(name));
+  public TagList getChildNodes(final String name) {
+    return (element == null) ? new TagList() : new TagList(element.getElementsByTagName(name));
   }
 
   /**
@@ -64,17 +71,32 @@ public class Tag {
    * @return list of child nodes
    */
   public TagList getChildNodes() {
-    return new TagList(element.getChildNodes());
+    return (element == null) ? new TagList() : new TagList(element.getChildNodes());
   }
 
   /**
-   * Returns the attribute of the tag.
+   * Returns the attribute value of the tag.
    *
    * @param name of the attribute
    * @return attribute value
    */
   public String getAttribute(final String name) {
-    return element.getAttribute(name);
+    return getAttribute(name, "");
+  }
+
+  /**
+   * Returns the attribute value of the tag.
+   *
+   * @param name of the attribute
+   * @param defaultValue default value
+   * @return attribute value, or default value if null or empty string
+   */
+  public String getAttribute(final String name, final String defaultValue) {
+    if (element == null) {
+      return defaultValue;
+    }
+    String value = element.getAttribute(name);
+    return (value == null || value.isEmpty()) ? defaultValue : value;
   }
 
   /**
@@ -84,7 +106,7 @@ public class Tag {
    * @return true if the attribute exists, false otherwise
    */
   public boolean hasAttribute(final String name) {
-    return element.hasAttribute(name);
+    return element != null && element.hasAttribute(name);
   }
 
   /**
@@ -93,7 +115,7 @@ public class Tag {
    * @return true if the tag has child nodes, false otherwise
    */
   public boolean hasChildNodes() {
-    return element.hasChildNodes();
+    return element != null && element.hasChildNodes();
   }
 
   /**
@@ -102,7 +124,7 @@ public class Tag {
    * @return tag name
    */
   public String getTagName() {
-    return element.getTagName();
+    return (element == null) ? "" : element.getTagName();
   }
 
   /**
@@ -111,6 +133,6 @@ public class Tag {
    * @return text content
    */
   public String getTextContent() {
-    return element.getFirstChild().getTextContent();
+    return (element == null) ? "" : element.getTextContent();
   }
 }
