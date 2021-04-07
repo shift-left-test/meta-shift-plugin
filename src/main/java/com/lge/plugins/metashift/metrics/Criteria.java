@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import org.kohsuke.stapler.DataBoundConstructor;
+
 /**
  * Represents the quality metric criteria.
  *
@@ -108,6 +110,7 @@ public final class Criteria {
    * @param coverageThreshold        coverage threshold
    * @param mutationTestThreshold    mutation test threshold
    */
+  @DataBoundConstructor
   public Criteria(final float overallThreshold,
       final float cacheThreshold,
       final float recipeViolationThreshold,

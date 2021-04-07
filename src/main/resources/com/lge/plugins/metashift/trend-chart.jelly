@@ -1,0 +1,8 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <j:new var="h" className="hudson.Functions" />
+  ${h.initPageVariables(context)}
+
+  <script type="text/javascript" src="${resURL}/plugin/metashift/external/echart-5.0.2/dist/echarts.js" />
+  <script type="text/javascript" src="${resURL}/plugin/metashift/js/trend-chart.js"/>
+</j:jelly>

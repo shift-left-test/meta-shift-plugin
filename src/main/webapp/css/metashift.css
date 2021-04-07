@@ -1,13 +1,14 @@
-h1 {
+.metashift h1 {
     margin-top: 30px;
 }
 
-h2 {
+.metashift h2 {
     margin-top: 30px;
 }
 
-h3 {
+.metashift h3 {
     margin-top: 10px;
+    margin-left: 20px;
 }
 
 .overview-text {
@@ -16,8 +17,35 @@ h3 {
     padding: 0;
 }
 
-.measurement-group-title {
-    width: 100%;
+.overview h4 {
+  text-align: center;
+}
+
+.overview p {
+  text-align: center;
+  font-size: 20px;
+}
+
+.overview .panel {
+  margin: 2px;
+}
+
+.summary .title {
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+}
+
+.summary .ratio {
+  width: 100%;
+  text-align: center;
+  font-size: 30px;
+}
+
+.summary .description {
+  width: 100%;
+  text-align: center;
+  font-size: 15px;
 }
 
 .measurement-group.badge {
@@ -62,17 +90,22 @@ h3 {
 }
 
 .circle-small {
-    width: 20px;
-    height: 20px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-right: 2px;
     line-height: 20px;
     border-radius: 50%;
-    font-size: 30px;
+    font-size: 16px;
     color: #fff;
     text-align: center;
 }
 
-.recipes-table {
-    width: 100%;
-    border-width: 2px;
-    border-color: blue;
+.build-table {
+  width: 100%;
+  padding: 0px;
+  border-spacing: 0px;
+}
+
+.build-table td, .build-table th {
+  border: 1px solid black;
 }

@@ -1,0 +1,73 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:bs="/bootstrap"
+xmlns:ms="/metashift">
+  <st:adjunct includes="com.lge.plugins.metashift.style"/>
+  <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+  <div class="shadow col-12">
+  <div class="row metashift">
+    <h2>MetaShift Summary</h2>
+  </div>
+  <div class="row metashift">
+    <!-- overview -->
+    <h3>Overview</h3>
+  </div>
+  <div class="row metashift overview">
+    <div class="col-2 bg-light shadow-sm panel">
+      <h4>Recipes</h4>
+      <p>${it.sizeQualifier.recipes}</p>
+    </div>
+    <div class="col-2 bg-light shadow-sm panel">
+      <h4>Lines</h4>
+      <p>${it.sizeQualifier.lines}</p>
+    </div>
+    <div class="col-2 bg-light shadow-sm panel">
+      <h4>Functions</h4>
+      <p>${it.sizeQualifier.functions}</p>
+    </div>
+    <div class="col-2 bg-light shadow-sm panel">
+      <h4>Classes</h4>
+      <p>${it.sizeQualifier.classes}</p>
+    </div>
+    <div class="col-2 bg-light shadow-sm panel">
+      <h4>Files</h4>
+      <p>${it.sizeQualifier.files}</p>
+    </div>
+  </div>
+  <div class="row metashift">
+    <h3>Metrics
+      <span class="measurement-group badge ${it.metrics.qualified ? 'badge-success' : 'badge-danger'}">
+        ${it.metrics.qualified ? 'Passed' : 'Failed'}
+      </span>
+    </h3>
+  </div>
+  <div class="row metashift">
+    <h4>Build Performance</h4>
+  </div>
+  <div class="row metashift">
+    <ms:measurement-summary title="Cache Availability"
+      qualifier="${it.cacheQualifier}" />
+    <ms:measurement-summary title="Recipe Violations"
+      qualifier="${it.recipeViolationQualifier}" />
+  </div>
+  <div class="row metashift">
+    <h4>Code Quality</h4>
+  </div>
+  <div class="row metashift">
+    <ms:measurement-summary title="Comments"
+      qualifier="${it.commentQualifier}" />
+    <ms:measurement-summary title="Violations"
+      qualifier="${it.codeViolationQualifier}" />
+    <ms:measurement-summary title="Complexity"
+      qualifier="${it.complexityQualifier}" />
+    <ms:measurement-summary title="Duplications"
+      qualifier="${it.duplicationQualifier}" />
+    <ms:measurement-summary title="Testing"
+      qualifier="${it.testQualifier}" />
+    <ms:measurement-summary title="Coverage"
+      qualifier="${it.coverageQualifier}" />
+    <ms:measurement-summary title="Mutation Score"
+      qualifier="${it.mutationTestQualifier}" />
+  </div>
+  </div>
+</j:jelly>

@@ -1,9 +1,0 @@
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
-    <f:section title="Meta Shift">
-        <f:block name="criteria">
-            <st:include page="data_form.jelly"  it="${instance.criteria}"
-                class="com.lge.plugins.metashift.metrics.Criteria"/>
-        </f:block>
-    </f:section>
-</j:jelly>
