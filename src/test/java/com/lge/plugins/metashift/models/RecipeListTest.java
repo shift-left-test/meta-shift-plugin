@@ -82,6 +82,14 @@ public class RecipeListTest {
     assertEquals(0, recipes.size());
   }
 
+  @Test
+  public void testCreateWithoutSubDirectories() throws IOException {
+    File report = folder.newFolder("report");
+    FileUtils.touch(new File(report, "a.file"));
+    recipes = RecipeList.create(report);
+    assertEquals(0, recipes.size());
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInvalidDirectories() throws IOException {
     File report = folder.newFolder("report");

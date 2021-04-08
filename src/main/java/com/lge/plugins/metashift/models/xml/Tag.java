@@ -96,7 +96,7 @@ public class Tag {
       return defaultValue;
     }
     String value = element.getAttribute(name);
-    return value == null || value.isEmpty() ? defaultValue : value;
+    return value.isEmpty() ? defaultValue : value;
   }
 
   /**

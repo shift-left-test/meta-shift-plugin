@@ -120,7 +120,7 @@ public class CoverageListTest {
   }
 
   @Test
-  public void testCreateWithInsufficientData() throws Exception {
+  public void testCreateWithInsufficientMethodData() throws Exception {
     File directory = utils.createDirectory("report", "B");
     builder
         .append("<class filename='a.cpp'>")
@@ -129,6 +129,49 @@ public class CoverageListTest {
         .append("    <line hits='1' number='1'/>")
         .append("  </lines>")
         .append("</class>");
+    utils.writeLines(builder, directory, "coverage", "coverage.xml");
+    objects = CoverageList.create(directory);
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testCreateWithEmptyLineData() throws Exception {
+    File directory = utils.createDirectory("report", "B");
+    builder
+        .append("<classes>")
+        .append("  <class filename='a.cpp'>")
+        .append("    <methods>")
+        .append("      <method name='func1()'>")
+        .append("        <lines/>")
+        .append("      </method>")
+        .append("    </methods>")
+        .append("    <lines>")
+        .append("      <line branch='false' hits='1' number='2'/>")
+        .append("    </lines>")
+        .append("  </class>")
+        .append("</classes>");
+    utils.writeLines(builder, directory, "coverage", "coverage.xml");
+    objects = CoverageList.create(directory);
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testCreateWithInsufficientLineData() throws Exception {
+    File directory = utils.createDirectory("report", "B");
+    builder
+        .append("<classes>")
+        .append("  <class filename='a.cpp'>")
+        .append("    <methods>")
+        .append("      <method name='func1()'>")
+        .append("        <lines>")
+        .append("          <line number='1'/>")
+        .append("        </lines>")
+        .append("      </method>")
+        .append("    </methods>")
+        .append("    <lines>")
+        .append("    </lines>")
+        .append("  </class>")
+        .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     objects = CoverageList.create(directory);
     assertEquals(0, objects.size());

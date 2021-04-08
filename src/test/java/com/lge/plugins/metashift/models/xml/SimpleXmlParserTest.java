@@ -103,6 +103,7 @@ public class SimpleXmlParserTest {
         .append("  <tag number='2' string='B' empty=''>")
         .append("    <text>second</text>")
         .append("  </tag>")
+        .append("  <extra/>")
         .append("</tags>");
     prepare();
 
@@ -132,5 +133,9 @@ public class SimpleXmlParserTest {
     assertEquals("1", second.getAttribute("unknown", "1"));
     assertTrue(second.hasChildNodes());
     assertEquals("second", second.getChildNodes().first().getTextContent());
+
+    tags = parser.getChildNodes("extra");
+    assertEquals(1, tags.size());
+    assertFalse(tags.first().hasChildNodes());
   }
 }
