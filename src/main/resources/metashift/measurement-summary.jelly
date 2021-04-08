@@ -2,16 +2,33 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:sc="/metashift/charts">
 <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
   <j:new var="h" className="hudson.Functions" />
-  <div class="summary col-2 rounded shadow ${qualifier.qualified ?
-    'bg-success':'bg-danger'} text-white" style="margin: 5px;">
-    <div class="row">
-      <b class="title">${title}</b>
-    </div>
-    <div class="row">
-      <b class="ratio">${it.getFixedFloat('#.##', qualifier.ratio * 100)}%</b>
-    </div>
-    <div class="row">
-      <p class="text-white description"> ${qualifier.numerator} / ${qualifier.denominator} </p>
-    </div>
-  </div>
+  <j:choose>
+    <j:when test="${qualifier.available}">
+      <div class="summary col-2 rounded shadow ${qualifier.qualified ?
+        'bg-success':'bg-danger'} text-white" style="margin: 5px;">
+        <div class="row">
+          <b class="title">${title}</b>
+        </div>
+        <div class="row">
+          <b class="ratio">${it.getFixedFloat('#.##', qualifier.ratio * 100)}%</b>
+        </div>
+        <div class="row">
+          <p class="text-white description"> ${qualifier.numerator} / ${qualifier.denominator} </p>
+        </div>
+      </div>
+    </j:when>
+    <j:otherwise>
+      <div class="summary col-2 rounded shadow bg-secondary text-white" style="margin: 5px;">
+        <div class="row">
+          <b class="title">${title}</b>
+        </div>
+        <div class="row">
+          <b class="ratio">--%</b>
+        </div>
+        <div class="row">
+          <p class="text-white description"> -- / -- </p>
+        </div>
+      </div>
+    </j:otherwise>
+  </j:choose>
 </j:jelly>

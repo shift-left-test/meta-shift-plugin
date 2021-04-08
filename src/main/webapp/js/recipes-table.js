@@ -1,27 +1,34 @@
 function renderRecipesTable(tableDivId, buildAction) {
   function qualifierCellformatter(cell, formatterParams, onRendered) {
 
+    var available = false
     var numerator = "N/A"
     var denominator = "N/A"
     var ratio = 0
     var qualified = "bg-warning"
     
     if (!!cell.getValue()) {
+      available = cell.getValue().available;
       numerator = cell.getValue().numerator;
       denominator = cell.getValue().denominator;
       ratio = cell.getValue().ratio * 100;
       qualified = cell.getValue().qualified ? "bg-success" : "bg-danger";
     }
 
-    return `
-    <div>N:${numerator} D:${denominator}</div>
-    <span class="float-left">${ratio}% </span>
-    <div class="progress">
-      <div class="progress-bar ${qualified}"
-        role="progressbar" style="width: ${ratio}%">
+    if (available) {
+      return `
+      <div>N:${numerator} D:${denominator}</div>
+      <span class="float-left">${ratio.toFixed(2)}% </span>
+      <div class="progress">
+        <div class="progress-bar ${qualified}"
+          role="progressbar" style="width: ${ratio}%">
+        </div>
       </div>
-    </div>
-    `
+      `
+    } else {
+      return `<div>N/A</div>
+      <span class="float-left">N/A</span>`
+    }
   }
 
   function compareCounter(a, b, aRow, bRow, column, dir, sorterParams) {

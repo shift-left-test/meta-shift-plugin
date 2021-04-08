@@ -68,113 +68,239 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               </tr>
               <tr>
                 <th rowspan="2">Build Perf.</th>
-                <th class="${it.cacheQualifier.qualified ? 'text-success' : 'text-danger'}">
-                  Cache Availability
-                </th>
-                <td>${it.cacheQualifier.numerator}</td>
-                <td>${it.cacheQualifier.denominator}</td>
-                <td class="${it.cacheQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                  ${it.getFixedFloat('#.##', it.cacheQualifier.ratio * 100)}%
-                </td>
-                <td>${it.criteria.cacheThreshold}%</td>
-                <td>${it.cachePassedRecipes}</td>
+                <j:choose>
+                  <j:when test="${it.cacheQualifier.available}">
+                    <th class="${it.cacheQualifier.qualified ? 'text-success' : 'text-danger'}">
+                      Cache Availability
+                    </th>
+                    <td>${it.cacheQualifier.numerator}</td>
+                    <td>${it.cacheQualifier.denominator}</td>
+                    <td class="${it.cacheQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.cacheQualifier.ratio * 100)}%
+                    </td>
+                    <td>${it.criteria.cacheThreshold}%</td>
+                    <td>${it.cachePassedRecipes}</td>
+                  </j:when>
+                  <j:otherwise>
+                    <th class="text-muted">
+                      Cache Availability
+                    </th>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                  </j:otherwise>
+                </j:choose>
               </tr>
               <tr>
-                <th class="${it.recipeViolationQualifier.qualified ? 'text-success' : 'text-danger'}">
-                  Recipe Violations
-                </th>
-                <td>${it.recipeViolationQualifier.numerator}</td>
-                <td>${it.recipeViolationQualifier.denominator}</td>
-                <td class="${it.recipeViolationQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                  ${it.getFixedFloat('#.##', it.recipeViolationQualifier.ratio * 100)}%
-                </td>
-                <td>${it.criteria.recipeViolationThreshold}%</td>
-                <td>${it.recipeViolationPassedRecipes}</td>
+                <j:choose>
+                  <j:when test="${it.recipeViolationQualifier.available}">
+                    <th class="${it.recipeViolationQualifier.qualified ? 'text-success' : 'text-danger'}">
+                      Recipe Violations
+                    </th>
+                    <td>${it.recipeViolationQualifier.numerator}</td>
+                    <td>${it.recipeViolationQualifier.denominator}</td>
+                    <td class="${it.recipeViolationQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.recipeViolationQualifier.ratio * 100)}%
+                    </td>
+                    <td>${it.criteria.recipeViolationThreshold}%</td>
+                    <td>${it.recipeViolationPassedRecipes}</td>
+                  </j:when>
+                  <j:otherwise>
+                    <th class="text-muted">
+                      Recipe Violations
+                    </th>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                  </j:otherwise>
+                </j:choose>
               </tr>
               <tr>
                 <th rowspan="7">Code Quality</th>
-                <th class="${it.commentQualifier.qualified ? 'text-success' : 'text-danger'}">
-                  Comments
-                </th>
-                <td>${it.commentQualifier.numerator}</td>
-                <td>${it.commentQualifier.denominator}</td>
-                <td class="${it.commentQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                  ${it.getFixedFloat('#.##', it.commentQualifier.ratio * 100)}%
-                </td>
-                <td>${it.criteria.commentThreshold}%</td>
-                <td>${it.commentPassedRecipes}</td>
+                <j:choose>
+                  <j:when test="${it.commentQualifier.available}">
+                    <th class="${it.commentQualifier.qualified ? 'text-success' : 'text-danger'}">
+                      Comments
+                    </th>
+                    <td>${it.commentQualifier.numerator}</td>
+                    <td>${it.commentQualifier.denominator}</td>
+                    <td class="${it.commentQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.commentQualifier.ratio * 100)}%
+                    </td>
+                    <td>${it.criteria.commentThreshold}%</td>
+                    <td>${it.commentPassedRecipes}</td>
+                  </j:when>
+                  <j:otherwise>
+                    <th class="text-muted">
+                      Comments
+                    </th>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                  </j:otherwise>
+                </j:choose>
               </tr>
               <tr>
-                <th class="${it.codeViolationQualifier.qualified ? 'text-success' : 'text-danger'}">
-                  Code Violations
-                </th>
-                <td>${it.codeViolationQualifier.numerator}</td>
-                <td>${it.codeViolationQualifier.denominator}</td>
-                <td class="${it.codeViolationQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                  ${it.getFixedFloat('#.##', it.codeViolationQualifier.ratio * 100)}%
-                </td>
-                <td>${it.criteria.codeViolationThreshold}%</td>
-                <td>${it.codeViolationPassedRecipes}</td>
+                <j:choose>
+                  <j:when test="${it.codeViolationQualifier.available}">
+                    <th class="${it.codeViolationQualifier.qualified ? 'text-success' : 'text-danger'}">
+                      Code Violations
+                    </th>
+                    <td>${it.codeViolationQualifier.numerator}</td>
+                    <td>${it.codeViolationQualifier.denominator}</td>
+                    <td class="${it.codeViolationQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.codeViolationQualifier.ratio * 100)}%
+                    </td>
+                    <td>${it.criteria.codeViolationThreshold}%</td>
+                    <td>${it.codeViolationPassedRecipes}</td>
+                  </j:when>
+                  <j:otherwise>
+                    <th class="text-muted">
+                      Code Violations
+                    </th>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                  </j:otherwise>
+                </j:choose>
               </tr>
               <tr>
-                <th class="${it.complexityQualifier.qualified ? 'text-success' : 'text-danger'}">
-                  Complexity
-                </th>
-                <td>${it.complexityQualifier.numerator}</td>
-                <td>${it.complexityQualifier.denominator}</td>
-                <td class="${it.complexityQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                  ${it.getFixedFloat('#.##', it.complexityQualifier.ratio * 100)}%
-                </td>
-                <td>${it.criteria.complexityThreshold}%</td>
-                <td>${it.complexityPassedRecipes}</td>
+                <j:choose>
+                  <j:when test="${it.complexityQualifier.available}">
+                    <th class="${it.complexityQualifier.qualified ? 'text-success' : 'text-danger'}">
+                      Complexity
+                    </th>
+                    <td>${it.complexityQualifier.numerator}</td>
+                    <td>${it.complexityQualifier.denominator}</td>
+                    <td class="${it.complexityQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.complexityQualifier.ratio * 100)}%
+                    </td>
+                    <td>${it.criteria.complexityThreshold}%</td>
+                    <td>${it.complexityPassedRecipes}</td>
+                  </j:when>
+                  <j:otherwise>
+                    <th class="text-muted">
+                      Complexity
+                    </th>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                  </j:otherwise>
+                </j:choose>
               </tr>
               <tr>
-                <th class="${it.duplicationQualifier.qualified ? 'text-success' : 'text-danger'}">
-                  Duplications
-                </th>
-                <td>${it.duplicationQualifier.numerator}</td>
-                <td>${it.duplicationQualifier.denominator}</td>
-                <td class="${it.duplicationQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                  ${it.getFixedFloat('#.##', it.duplicationQualifier.ratio * 100)}%
-                </td>
-                <td>${it.criteria.duplicationThreshold}%</td>
-                <td>${it.duplicationPassedRecipes}</td>
+                <j:choose>
+                  <j:when test="${it.duplicationQualifier.available}">
+                    <th class="${it.duplicationQualifier.qualified ? 'text-success' : 'text-danger'}">
+                      Duplications
+                    </th>
+                    <td>${it.duplicationQualifier.numerator}</td>
+                    <td>${it.duplicationQualifier.denominator}</td>
+                    <td class="${it.duplicationQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.duplicationQualifier.ratio * 100)}%
+                    </td>
+                    <td>${it.criteria.duplicationThreshold}%</td>
+                    <td>${it.duplicationPassedRecipes}</td>
+                  </j:when>
+                  <j:otherwise>
+                    <th class="text-muted">
+                      Duplications
+                    </th>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                  </j:otherwise>
+                </j:choose>
               </tr>
               <tr>
-                <th class="${it.testQualifier.qualified ? 'text-success' : 'text-danger'}">
-                  Test
-                </th>
-                <td>${it.testQualifier.numerator}</td>
-                <td>${it.testQualifier.denominator}</td>
-                <td class="${it.testQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                  ${it.getFixedFloat('#.##', it.testQualifier.ratio * 100)}%
-                </td>
-                <td>${it.criteria.testThreshold}%</td>
-                <td>${it.testPassedRecipes}</td>
+                <j:choose>
+                  <j:when test="${it.testQualifier.available}">
+                    <th class="${it.testQualifier.qualified ? 'text-success' : 'text-danger'}">
+                      Test
+                    </th>
+                    <td>${it.testQualifier.numerator}</td>
+                    <td>${it.testQualifier.denominator}</td>
+                    <td class="${it.testQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.testQualifier.ratio * 100)}%
+                    </td>
+                    <td>${it.criteria.testThreshold}%</td>
+                    <td>${it.testPassedRecipes}</td>
+                  </j:when>
+                  <j:otherwise>
+                    <th class="text-muted">
+                      Test
+                    </th>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                  </j:otherwise>
+                </j:choose>
               </tr>
               <tr>
-                <th class="${it.coverageQualifier.qualified ? 'text-success' : 'text-danger'}">
-                  Coverage
-                </th>
-                <td>${it.coverageQualifier.numerator}</td>
-                <td>${it.coverageQualifier.denominator}</td>
-                <td class="${it.coverageQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                  ${it.getFixedFloat('#.##', it.coverageQualifier.ratio * 100)}%
-                </td>
-                <td>${it.criteria.coverageThreshold}%</td>
-                <td>${it.coveragePassedRecipes}</td>
+                <j:choose>
+                  <j:when test="${it.coverageQualifier.available}">
+                    <th class="${it.coverageQualifier.qualified ? 'text-success' : 'text-danger'}">
+                      Coverage
+                    </th>
+                    <td>${it.coverageQualifier.numerator}</td>
+                    <td>${it.coverageQualifier.denominator}</td>
+                    <td class="${it.coverageQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.coverageQualifier.ratio * 100)}%
+                    </td>
+                    <td>${it.criteria.coverageThreshold}%</td>
+                    <td>${it.coveragePassedRecipes}</td>
+                  </j:when>
+                  <j:otherwise>
+                    <th class="text-muted">
+                      Coverage
+                    </th>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                  </j:otherwise>
+                </j:choose>
               </tr>
               <tr>
-                <th class="${it.mutationTestQualifier.qualified ? 'text-success' : 'text-danger'}">
-                  Mutation Test
-                </th>
-                <td>${it.mutationTestQualifier.numerator}</td>
-                <td>${it.mutationTestQualifier.denominator}</td>
-                <td class="${it.mutationTestQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                  ${it.getFixedFloat('#.##', it.mutationTestQualifier.ratio * 100)}%
-                </td>
-                <td>${it.criteria.mutationTestThreshold}%</td>
-                <td>${it.mutationTestPassedRecipes}</td>
+                <j:choose>
+                  <j:when test="${it.cacheQualifier.available}">
+                    <th class="${it.mutationTestQualifier.qualified ? 'text-success' : 'text-danger'}">
+                      Mutation Test
+                    </th>
+                    <td>${it.mutationTestQualifier.numerator}</td>
+                    <td>${it.mutationTestQualifier.denominator}</td>
+                    <td class="${it.mutationTestQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.mutationTestQualifier.ratio * 100)}%
+                    </td>
+                    <td>${it.criteria.mutationTestThreshold}%</td>
+                    <td>${it.mutationTestPassedRecipes}</td>
+                  </j:when>
+                  <j:otherwise>
+                    <th class="text-muted">
+                      Mutation Test
+                    </th>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                    <td class="text-muted">--</td>
+                  </j:otherwise>
+                </j:choose>
               </tr>
             </table>
           </div>
