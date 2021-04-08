@@ -288,7 +288,7 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               </tr>
               <tr>
                 <j:choose>
-                  <j:when test="${it.cacheQualifier.available}">
+                  <j:when test="${it.mutationTestQualifier.available}">
                     <th class="${it.mutationTestQualifier.qualified ? 'text-success' : 'text-danger'}">
                       Mutation Test
                     </th>
