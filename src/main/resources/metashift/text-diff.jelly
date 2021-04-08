@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:sc="/metashift/charts">
+<st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+  <span class="${diff == 0 ? 'text-muted' : (diff > 0 ? 'text-success' : 'text-danger')}">
+    <j:choose>
+      <j:when test="${diff > 0}">
+        (+${diff})
+      </j:when>
+      <j:when test="${diff == 0}">
+      </j:when>
+      <j:otherwise>
+        (${diff})
+      </j:otherwise>
+    </j:choose>
+  </span>
+</j:jelly>

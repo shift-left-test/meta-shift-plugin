@@ -15,23 +15,33 @@ xmlns:ms="/metashift">
   <div class="row metashift overview">
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Recipes</h4>
-      <p>${it.sizeQualifier.recipes}</p>
+      <p>${it.sizeQualifier.recipes}
+        <ms:text-diff diff="${it.recipesDiff}" />
+      </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Lines</h4>
-      <p>${it.sizeQualifier.lines}</p>
+      <p>${it.sizeQualifier.lines}
+        <ms:text-diff diff="${it.linesDiff}" />
+      </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Functions</h4>
-      <p>${it.sizeQualifier.functions}</p>
+      <p>${it.sizeQualifier.functions}
+        <ms:text-diff diff="${it.functionsDiff}" />
+      </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Classes</h4>
-      <p>${it.sizeQualifier.classes}</p>
+      <p>${it.sizeQualifier.classes}
+        <ms:text-diff diff="${it.classesDiff}" />
+      </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Files</h4>
-      <p>${it.sizeQualifier.files}</p>
+      <p>${it.sizeQualifier.files}
+        <ms:text-diff diff="${it.filesDiff}" />
+      </p>
     </div>
   </div>
   <div class="row metashift">

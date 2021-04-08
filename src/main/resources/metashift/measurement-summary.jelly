@@ -23,7 +23,7 @@
           <b class="title">${title}</b>
         </div>
         <div class="row">
-          <b class="ratio">--%</b>
+          <b class="ratio">N/A</b>
         </div>
         <div class="row">
           <p class="text-white description"> -- / -- </p>

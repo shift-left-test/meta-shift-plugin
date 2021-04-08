@@ -402,4 +402,91 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
 
     return model;
   }
+
+  private transient MetaShiftBuildAction previousAction;
+
+  private MetaShiftBuildAction getPreviousBuildAction() {
+    if (previousAction != null) {
+      return previousAction;
+    }
+
+    AbstractBuild<?, ?> build = ((AbstractBuild<?, ?>) this.run)
+        .getPreviousSuccessfulBuild();
+    while (build != null) {
+      if (build.getResult() != Result.FAILURE) {
+        previousAction = build.getAction(MetaShiftBuildAction.class);
+        if (previousAction != null) {
+          return previousAction;
+        }
+      }
+
+      build = build.getPreviousSuccessfulBuild();
+    }
+
+    return null;
+  }
+
+  /**
+   * recipe count diff with previous build.
+   *
+   * @return recipes diff
+   */
+  public int getRecipesDiff() {
+    if (this.getPreviousBuildAction() != null) {
+      return this.getRecipes().size() - this.getPreviousBuildAction().getRecipes().size();
+    }
+    return 0;
+  }
+
+  /**
+   * line count diff with previous build.
+   *
+   * @return lines diff
+   */
+  public int getLinesDiff() {
+    if (this.getPreviousBuildAction() != null) {
+      return this.getSizeQualifier().getLines()
+          - this.getPreviousBuildAction().getSizeQualifier().getLines();
+    }
+    return 0;
+  }
+
+  /**
+   * function count diff with previous build.
+   *
+   * @return functions diff
+   */
+  public int getFunctionsDiff() {
+    if (this.getPreviousBuildAction() != null) {
+      return this.getSizeQualifier().getFunctions()
+          - this.getPreviousBuildAction().getSizeQualifier().getFunctions();
+    }
+    return 0;
+  }
+
+  /**
+   * class count diff with previous build.
+   *
+   * @return classes diff
+   */
+  public int getClassesDiff() {
+    if (this.getPreviousBuildAction() != null) {
+      return this.getSizeQualifier().getClasses()
+          - this.getPreviousBuildAction().getSizeQualifier().getClasses();
+    }
+    return 0;
+  }
+
+  /**
+   * file count diff with previous build.
+   *
+   * @return files diff
+   */
+  public int getFilesDiff() {
+    if (this.getPreviousBuildAction() != null) {
+      return this.getSizeQualifier().getFiles()
+          - this.getPreviousBuildAction().getSizeQualifier().getFiles();
+    }
+    return 0;
+  }
 }
