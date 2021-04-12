@@ -109,6 +109,36 @@ public final class Recipe extends Data<Recipe> implements Acceptable, Collectabl
     }
 
     Recipe recipe = new Recipe(path);
+    for (Object o : CacheList.create(path)) {
+      recipe.add(o);
+    }
+    for (Object o : RecipeViolationList.create(path)) {
+      recipe.add(o);
+    }
+    for (Object o : SizeList.create(path)) {
+      recipe.add(o);
+    }
+    for (Object o : CommentList.create(path)) {
+      recipe.add(o);
+    }
+    for (Object o : CodeViolationList.create(path)) {
+      recipe.add(o);
+    }
+    for (Object o : ComplexityList.create(path)) {
+      recipe.add(o);
+    }
+    for (Object o : DuplicationList.create(path)) {
+      recipe.add(o);
+    }
+    for (Object o : TestList.create(path)) {
+      recipe.add(o);
+    }
+    for (Object o : CoverageList.create(path)) {
+      recipe.add(o);
+    }
+    for (Object o : MutationTestList.create(path)) {
+      recipe.add(o);
+    }
     // TODO(sunggon82.kim): Remove these after refactoring
     recipe.set(CacheList.create(path));
     recipe.set(RecipeViolationList.create(path));
