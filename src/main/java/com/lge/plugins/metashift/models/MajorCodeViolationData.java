@@ -45,7 +45,7 @@ public final class MajorCodeViolationData extends CodeViolationData {
    * @param tool        used for analysis
    */
   public MajorCodeViolationData(final String recipe, final String file,
-      final int line, final int column,
+      final long line, final long column,
       final String rule, final String message,
       final String description,
       final String severity, final String tool) {

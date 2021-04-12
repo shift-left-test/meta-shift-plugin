@@ -119,8 +119,8 @@ public final class SizeCounter implements Visitable {
   public void visit(final SizeList objects) {
     recipes += objects.stream().map(SizeData::getRecipe).distinct().count();
     files += objects.stream().distinct().count();
-    lines += objects.stream().mapToInt(SizeData::getLines).sum();
-    classes += objects.stream().mapToInt(SizeData::getClasses).sum();
-    functions += objects.stream().mapToInt(SizeData::getFunctions).sum();
+    lines += objects.stream().mapToLong(SizeData::getLines).sum();
+    classes += objects.stream().mapToLong(SizeData::getClasses).sum();
+    functions += objects.stream().mapToLong(SizeData::getFunctions).sum();
   }
 }

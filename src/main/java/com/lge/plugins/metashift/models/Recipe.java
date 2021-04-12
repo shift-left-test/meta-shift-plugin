@@ -45,6 +45,7 @@ public final class Recipe extends Data<Recipe> implements Acceptable, Collectabl
   /**
    * Represents the data set mapper.
    */
+  // TODO(sunggon82.kim): Remove this after refactoring
   private final Map<Class<?>, DataList<?>> collection;
 
   /**
@@ -78,6 +79,8 @@ public final class Recipe extends Data<Recipe> implements Acceptable, Collectabl
       throw new IllegalArgumentException("Invalid recipe name: " + recipe);
     }
 
+    objects = new ArrayList<>();
+    // TODO(sunggon82.kim): Remove theses after refactoring
     collection = new HashMap<>();
     collection.put(CacheList.class, new CacheList());
     collection.put(RecipeViolationList.class, new RecipeViolationList());
@@ -89,8 +92,6 @@ public final class Recipe extends Data<Recipe> implements Acceptable, Collectabl
     collection.put(TestList.class, new TestList());
     collection.put(CoverageList.class, new CoverageList());
     collection.put(MutationTestList.class, new MutationTestList());
-
-    objects = new ArrayList<>();
   }
 
   /**
@@ -106,7 +107,9 @@ public final class Recipe extends Data<Recipe> implements Acceptable, Collectabl
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
+
     Recipe recipe = new Recipe(path);
+    // TODO(sunggon82.kim): Remove these after refactoring
     recipe.set(CacheList.create(path));
     recipe.set(RecipeViolationList.create(path));
     recipe.set(SizeList.create(path));
@@ -126,6 +129,7 @@ public final class Recipe extends Data<Recipe> implements Acceptable, Collectabl
    * @param action The action to be performed for each entry
    */
   public void forEach(final BiConsumer<Class<?>, DataList<?>> action) {
+    // TODO(sunggon82.kim): Remove these after refactoring
     collection.forEach(action);
   }
 

@@ -61,9 +61,9 @@ public final class SizeList extends DataList<SizeData> {
       for (Object o : json.getJSONArray("size")) {
         list.add(new SizeData(recipe,
             ((JSONObject) o).getString("file"),
-            ((JSONObject) o).getInt("total_lines"),
-            ((JSONObject) o).getInt("functions"),
-            ((JSONObject) o).getInt("classes")));
+            ((JSONObject) o).getLong("total_lines"),
+            ((JSONObject) o).getLong("functions"),
+            ((JSONObject) o).getLong("classes")));
       }
     } catch (IOException e) {
       e.printStackTrace();

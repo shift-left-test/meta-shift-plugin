@@ -61,7 +61,7 @@ public final class CoverageList extends DataList<CoverageData> {
       SimpleXmlParser parser = new SimpleXmlParser(report);
       for (Tag tag : parser.getChildNodes("class")) {
         String filename = tag.getAttribute("filename");
-        TreeMap<Integer, String> methods = findMethods(tag.getChildNodes("method"));
+        TreeMap<Long, String> methods = findMethods(tag.getChildNodes("method"));
         for (Tag line : tag.getChildNodes("lines").last().getChildNodes("line")) {
           list.addAll(createInstances(methods, recipe, filename, line));
         }
@@ -85,22 +85,22 @@ public final class CoverageList extends DataList<CoverageData> {
    * @param line     number
    * @return a list of coverage objects
    */
-  private static CoverageList createInstances(TreeMap<Integer, String> methods, String recipe,
+  private static CoverageList createInstances(TreeMap<Long, String> methods, String recipe,
       String filename, Tag line) {
     CoverageList list = new CoverageList();
     if (methods.isEmpty()) {
       return list;
     }
-    int lineNumber = Integer.parseInt(line.getAttribute("number", "0"));
-    boolean covered = Integer.parseInt(line.getAttribute("hits", "0")) > 0;
+    long lineNumber = Long.parseLong(line.getAttribute("number", "0"));
+    boolean covered = Long.parseLong(line.getAttribute("hits", "0")) > 0;
     String method = methods.floorEntry(lineNumber).getValue();
     TagList conditions = line.getChildNodes("cond");
     if (conditions.isEmpty()) {
       list.add(new StatementCoverageData(recipe, filename, method, lineNumber, covered));
     } else {
       for (Tag condition : conditions) {
-        int index = Integer.parseInt(condition.getAttribute("branch_number", "0"));
-        covered = Integer.parseInt(condition.getAttribute("hit", "0")) > 0;
+        long index = Long.parseLong(condition.getAttribute("branch_number", "0"));
+        covered = Long.parseLong(condition.getAttribute("hit", "0")) > 0;
         list.add(new BranchCoverageData(recipe, filename, method, lineNumber, index, covered));
       }
     }
@@ -113,13 +113,13 @@ public final class CoverageList extends DataList<CoverageData> {
    * @param tags to parse
    * @return map of line number and method names
    */
-  private static TreeMap<Integer, String> findMethods(TagList tags) {
-    TreeMap<Integer, String> methods = new TreeMap<>();
+  private static TreeMap<Long, String> findMethods(TagList tags) {
+    TreeMap<Long, String> methods = new TreeMap<>();
     for (Tag tag : tags) {
       String method = tag.getAttribute("name");
       TagList lines;
       if ((lines = tag.getChildNodes("line")).size() > 0) {
-        int line = Integer.parseInt(lines.first().getAttribute("number", "0"));
+        long line = Long.parseLong(lines.first().getAttribute("number", "0"));
         methods.putIfAbsent(line, method);
       }
     }

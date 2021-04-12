@@ -39,12 +39,12 @@ public final class CommentData extends Data<CommentData> {
   /**
    * Represents the number of lines.
    */
-  private final int lines;
+  private final long lines;
 
   /**
    * Represents the number of comment lines.
    */
-  private final int commentLines;
+  private final long commentLines;
 
   /**
    * Default constructor.
@@ -55,7 +55,7 @@ public final class CommentData extends Data<CommentData> {
    * @param commentLines the number of comment lines
    */
   public CommentData(final String recipe, final String file,
-      final int lines, final int commentLines) {
+      final long lines, final long commentLines) {
     super(recipe);
     this.file = file;
     this.lines = lines;
@@ -103,7 +103,7 @@ public final class CommentData extends Data<CommentData> {
    *
    * @return the number of lines
    */
-  public int getLines() {
+  public long getLines() {
     return lines;
   }
 
@@ -112,7 +112,7 @@ public final class CommentData extends Data<CommentData> {
    *
    * @return the number of comment lines
    */
-  public int getCommentLines() {
+  public long getCommentLines() {
     return commentLines;
   }
 }

@@ -40,7 +40,7 @@ public final class StatementCoverageData extends CoverageData {
    * @param line     number
    * @param covered  coverage status
    */
-  public StatementCoverageData(String recipe, String file, String function, int line,
+  public StatementCoverageData(String recipe, String file, String function, long line,
       boolean covered) {
     super(recipe, file, function, line, 0, covered);
   }

@@ -54,7 +54,7 @@ public final class ComplexityList extends DataList<ComplexityData> {
    */
   private static ComplexityList removeDuplicates(ComplexityList objects) {
     ComplexityList collected = new ComplexityList();
-    objects.sort(Comparator.comparingInt(ComplexityData::getValue).reversed());
+    objects.sort(Comparator.comparingLong(ComplexityData::getValue).reversed());
     collected.addAll(objects.stream().distinct().collect(Collectors.toList()));
     return collected;
   }
@@ -76,9 +76,9 @@ public final class ComplexityList extends DataList<ComplexityData> {
         list.add(new ComplexityData(recipe,
             ((JSONObject) o).getString("file"),
             ((JSONObject) o).getString("function"),
-            ((JSONObject) o).getInt("start"),
-            ((JSONObject) o).getInt("end"),
-            ((JSONObject) o).getInt("value")));
+            ((JSONObject) o).getLong("start"),
+            ((JSONObject) o).getLong("end"),
+            ((JSONObject) o).getLong("value")));
       }
       list = removeDuplicates(list);
     } catch (IOException e) {

@@ -39,12 +39,12 @@ public final class DuplicationData extends Data<DuplicationData> {
   /**
    * Represents the number of lines.
    */
-  private final int lines;
+  private final long lines;
 
   /**
    * Represents the number of duplicated lines.
    */
-  private final int duplicatedLines;
+  private final long duplicatedLines;
 
   /**
    * Default constructor.
@@ -55,7 +55,7 @@ public final class DuplicationData extends Data<DuplicationData> {
    * @param duplicatedLines the number of duplicated lines
    */
   public DuplicationData(final String recipe, final String file,
-      final int lines, final int duplicatedLines) {
+      final long lines, final long duplicatedLines) {
     super(recipe);
     this.file = file;
     this.lines = lines;
@@ -103,7 +103,7 @@ public final class DuplicationData extends Data<DuplicationData> {
    *
    * @return the number of lines
    */
-  public int getLines() {
+  public long getLines() {
     return lines;
   }
 
@@ -112,7 +112,7 @@ public final class DuplicationData extends Data<DuplicationData> {
    *
    * @return the number of duplicated lines
    */
-  public int getDuplicatedLines() {
+  public long getDuplicatedLines() {
     return duplicatedLines;
   }
 }

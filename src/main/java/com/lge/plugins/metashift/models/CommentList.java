@@ -61,8 +61,8 @@ public final class CommentList extends DataList<CommentData> {
       for (Object o : json.getJSONArray("size")) {
         list.add(new CommentData(recipe,
             ((JSONObject) o).getString("file"),
-            ((JSONObject) o).getInt("total_lines"),
-            ((JSONObject) o).getInt("comment_lines")));
+            ((JSONObject) o).getLong("total_lines"),
+            ((JSONObject) o).getLong("comment_lines")));
       }
     } catch (IOException e) {
       e.printStackTrace();

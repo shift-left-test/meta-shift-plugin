@@ -60,7 +60,7 @@ public final class ComplexityEvaluator extends Evaluator<ComplexityEvaluator> {
   @Override
   protected void parseImpl(Collectable c) {
     List<ComplexityData> objects = c.objects(ComplexityData.class)
-        .sorted(Comparator.comparingInt(ComplexityData::getValue).reversed())
+        .sorted(Comparator.comparingLong(ComplexityData::getValue).reversed())
         .collect(Collectors.toList());
 
     setDenominator(objects.stream().distinct().count());

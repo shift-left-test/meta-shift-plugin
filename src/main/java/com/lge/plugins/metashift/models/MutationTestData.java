@@ -49,7 +49,7 @@ public abstract class MutationTestData extends Data<MutationTestData> {
   /**
    * Represents the line number.
    */
-  private final int line;
+  private final long line;
 
   /**
    * Represents the mutation operator.
@@ -73,7 +73,7 @@ public abstract class MutationTestData extends Data<MutationTestData> {
    * @param killingTest   the test that kills the mutant
    */
   public MutationTestData(final String recipe, final String file, final String mutatedClass,
-      final String mutatedMethod, final int line, final String mutator,
+      final String mutatedMethod, final long line, final String mutator,
       final String killingTest) {
     super(recipe);
     this.file = file;
@@ -91,7 +91,7 @@ public abstract class MutationTestData extends Data<MutationTestData> {
         file.compareTo(other.file),
         mutatedClass.compareTo(other.mutatedClass),
         mutatedMethod.compareTo(other.mutatedMethod),
-        Integer.compare(line, other.line),
+        Long.compare(line, other.line),
         mutator.compareTo(other.mutator),
         killingTest.compareTo(other.killingTest)
     );
@@ -149,7 +149,7 @@ public abstract class MutationTestData extends Data<MutationTestData> {
    *
    * @return line number
    */
-  public final int getLine() {
+  public final long getLine() {
     return line;
   }
 

@@ -39,7 +39,7 @@ public abstract class RecipeViolationData extends Data<RecipeViolationData> {
   /**
    * Represents the line number.
    */
-  private final int line;
+  private final long line;
 
   /**
    * Represents the violation rule.
@@ -67,7 +67,7 @@ public abstract class RecipeViolationData extends Data<RecipeViolationData> {
    * @param severity    of the recipe violation
    */
   public RecipeViolationData(final String recipe, final String file,
-      final int line, final String rule,
+      final long line, final String rule,
       final String description,
       final String severity) {
     super(recipe);
@@ -83,7 +83,7 @@ public abstract class RecipeViolationData extends Data<RecipeViolationData> {
     return compareEach(
         getRecipe().compareTo(other.getRecipe()),
         file.compareTo(other.file),
-        Integer.compare(line, other.line),
+        Long.compare(line, other.line),
         rule.compareTo(other.rule)
     );
   }
@@ -121,7 +121,7 @@ public abstract class RecipeViolationData extends Data<RecipeViolationData> {
    *
    * @return line number
    */
-  public final int getLine() {
+  public final long getLine() {
     return line;
   }
 

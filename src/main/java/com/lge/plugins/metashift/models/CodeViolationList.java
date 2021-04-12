@@ -80,8 +80,8 @@ public final class CodeViolationList extends DataList<CodeViolationData> {
    */
   private CodeViolationData createInstance(final String recipe, final JSONObject object) {
     String file = object.getString("file");
-    int line = object.getInt("line");
-    int column = object.getInt("column");
+    long line = object.getLong("line");
+    long column = object.getLong("column");
     String rule = object.getString("rule");
     String message = object.getString("message");
     String description = object.getString("description");

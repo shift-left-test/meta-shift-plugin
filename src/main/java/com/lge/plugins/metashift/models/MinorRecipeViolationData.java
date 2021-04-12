@@ -42,7 +42,7 @@ public final class MinorRecipeViolationData extends RecipeViolationData {
    * @param severity    of the recipe violation
    */
   public MinorRecipeViolationData(final String recipe, final String file,
-      final int line, final String rule,
+      final long line, final String rule,
       final String description,
       final String severity) {
     super(recipe, file, line, rule, description, severity);

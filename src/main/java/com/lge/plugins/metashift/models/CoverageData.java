@@ -44,12 +44,12 @@ public abstract class CoverageData extends Data<CoverageData> {
   /**
    * Represents the line number.
    */
-  private final int line;
+  private final long line;
 
   /**
    * Represents the coverage item index.
    */
-  private final int index;
+  private final long index;
 
   /**
    * Represents the coverage status.
@@ -66,8 +66,9 @@ public abstract class CoverageData extends Data<CoverageData> {
    * @param index    coverage item index
    * @param covered  coverage status
    */
-  public CoverageData(final String recipe, final String file, final String function, final int line,
-      final int index, final boolean covered) {
+  public CoverageData(final String recipe, final String file, final String function,
+      final long line,
+      final long index, final boolean covered) {
     super(recipe);
     this.file = file;
     this.function = function;
@@ -101,8 +102,8 @@ public abstract class CoverageData extends Data<CoverageData> {
         getRecipe().compareTo(other.getRecipe()),
         file.compareTo(other.file),
         function.compareTo(other.function),
-        Integer.compare(line, other.line),
-        Integer.compare(index, other.index)
+        Long.compare(line, other.line),
+        Long.compare(index, other.index)
     );
   }
 
@@ -129,7 +130,7 @@ public abstract class CoverageData extends Data<CoverageData> {
    *
    * @return line number
    */
-  public int getLine() {
+  public long getLine() {
     return line;
   }
 
@@ -138,7 +139,7 @@ public abstract class CoverageData extends Data<CoverageData> {
    *
    * @return coverage item index
    */
-  public int getIndex() {
+  public long getIndex() {
     return index;
   }
 

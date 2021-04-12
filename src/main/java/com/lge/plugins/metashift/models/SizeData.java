@@ -39,17 +39,17 @@ public final class SizeData extends Data<SizeData> {
   /**
    * Represents the number of lines for the file.
    */
-  private final int lines;
+  private final long lines;
 
   /**
    * Represents the number of functions for the file.
    */
-  private final int functions;
+  private final long functions;
 
   /**
    * Represents the number of classes for the file.
    */
-  private final int classes;
+  private final long classes;
 
   /**
    * Default constructor.
@@ -60,8 +60,8 @@ public final class SizeData extends Data<SizeData> {
    * @param functions the number of functions for the file.
    * @param classes   the number of classes for the file.
    */
-  public SizeData(final String recipe, final String file, final int lines,
-      final int functions, final int classes) {
+  public SizeData(final String recipe, final String file, final long lines,
+      final long functions, final long classes) {
     super(recipe);
     this.file = file;
     this.lines = lines;
@@ -110,7 +110,7 @@ public final class SizeData extends Data<SizeData> {
    *
    * @return lines
    */
-  public int getLines() {
+  public long getLines() {
     return lines;
   }
 
@@ -119,7 +119,7 @@ public final class SizeData extends Data<SizeData> {
    *
    * @return functions
    */
-  public int getFunctions() {
+  public long getFunctions() {
     return functions;
   }
 
@@ -128,7 +128,7 @@ public final class SizeData extends Data<SizeData> {
    *
    * @return classes
    */
-  public int getClasses() {
+  public long getClasses() {
     return classes;
   }
 }

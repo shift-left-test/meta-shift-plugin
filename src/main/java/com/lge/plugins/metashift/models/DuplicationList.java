@@ -61,8 +61,8 @@ public final class DuplicationList extends DataList<DuplicationData> {
       for (Object o : json.getJSONArray("size")) {
         list.add(new DuplicationData(recipe,
             ((JSONObject) o).getString("file"),
-            ((JSONObject) o).getInt("total_lines"),
-            ((JSONObject) o).getInt("duplicated_lines")));
+            ((JSONObject) o).getLong("total_lines"),
+            ((JSONObject) o).getLong("duplicated_lines")));
       }
     } catch (IOException e) {
       e.printStackTrace();

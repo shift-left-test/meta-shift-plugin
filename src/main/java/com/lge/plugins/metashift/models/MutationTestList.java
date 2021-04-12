@@ -51,7 +51,7 @@ public final class MutationTestList extends DataList<MutationTestData> {
     String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
     String mutatedClass = tag.getChildNodes("mutatedClass").first().getTextContent();
     String mutatedMethod = tag.getChildNodes("mutatedMethod").first().getTextContent();
-    int line = Integer.parseInt(tag.getChildNodes("lineNumber").first().getTextContent());
+    long line = Long.parseLong(tag.getChildNodes("lineNumber").first().getTextContent());
     String mutator = tag.getChildNodes("mutator").first().getTextContent();
     String killingTest = tag.getChildNodes("killingTest").first().getTextContent();
     switch (detected.toLowerCase()) {

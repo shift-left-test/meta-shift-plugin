@@ -39,12 +39,12 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
   /**
    * Represents the line number.
    */
-  private final int line;
+  private final long line;
 
   /**
    * Represents the column number.
    */
-  private final int column;
+  private final long column;
 
   /**
    * Represents the rule.
@@ -85,7 +85,7 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
    * @param tool        used for analysis
    */
   public CodeViolationData(final String recipe, final String file,
-      final int line, final int column,
+      final long line, final long column,
       final String rule, final String message,
       final String description,
       final String severity, final String tool) {
@@ -105,8 +105,8 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
     return compareEach(
         getRecipe().compareTo(other.getRecipe()),
         file.compareTo(other.file),
-        Integer.compare(line, other.line),
-        Integer.compare(column, other.column),
+        Long.compare(line, other.line),
+        Long.compare(column, other.column),
         rule.compareTo(other.rule),
         tool.compareTo(other.tool)
     );
@@ -145,7 +145,7 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
    *
    * @return line
    */
-  public final int getLine() {
+  public final long getLine() {
     return line;
   }
 
@@ -154,7 +154,7 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
    *
    * @return column
    */
-  public final int getColumn() {
+  public final long getColumn() {
     return column;
   }
 

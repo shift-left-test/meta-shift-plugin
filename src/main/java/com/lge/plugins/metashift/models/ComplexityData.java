@@ -44,17 +44,17 @@ public final class ComplexityData extends Data<ComplexityData> {
   /**
    * Represents the start line of the region.
    */
-  private final int start;
+  private final long start;
 
   /**
    * Represents the end line of the region.
    */
-  private final int end;
+  private final long end;
 
   /**
    * Represents the complexity value.
    */
-  private final int value;
+  private final long value;
 
   /**
    * Default constructor.
@@ -67,7 +67,7 @@ public final class ComplexityData extends Data<ComplexityData> {
    * @param value    of the complexity
    */
   public ComplexityData(final String recipe, final String file, final String function,
-      final int start, final int end, final int value) {
+      final long start, final long end, final long value) {
     super(recipe);
     this.file = file;
     this.function = function;
@@ -127,7 +127,7 @@ public final class ComplexityData extends Data<ComplexityData> {
    *
    * @return start line
    */
-  public int getStart() {
+  public long getStart() {
     return start;
   }
 
@@ -136,7 +136,7 @@ public final class ComplexityData extends Data<ComplexityData> {
    *
    * @return end line
    */
-  public int getEnd() {
+  public long getEnd() {
     return end;
   }
 
@@ -145,7 +145,7 @@ public final class ComplexityData extends Data<ComplexityData> {
    *
    * @return complexity value
    */
-  public int getValue() {
+  public long getValue() {
     return value;
   }
 }

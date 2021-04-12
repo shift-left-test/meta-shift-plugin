@@ -44,7 +44,7 @@ public final class KilledMutationTestData extends MutationTestData {
    */
   public KilledMutationTestData(final String recipe, final String file,
       final String mutatedClass, final String mutatedMethod,
-      final int line, final String mutator,
+      final long line, final String mutator,
       final String killingTest) {
     super(recipe, file, mutatedClass, mutatedMethod, line, mutator, killingTest);
   }

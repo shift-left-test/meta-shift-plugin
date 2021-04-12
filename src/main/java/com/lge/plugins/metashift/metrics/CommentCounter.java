@@ -64,7 +64,7 @@ public final class CommentCounter extends Counter {
 
   @Override
   public void visit(final CommentList comments) {
-    denominator += comments.stream().mapToInt(CommentData::getLines).sum();
-    numerator += comments.stream().mapToInt(CommentData::getCommentLines).sum();
+    denominator += comments.stream().mapToLong(CommentData::getLines).sum();
+    numerator += comments.stream().mapToLong(CommentData::getCommentLines).sum();
   }
 }

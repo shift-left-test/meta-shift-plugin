@@ -43,48 +43,48 @@ public class CriteriaTest {
     criteria = new Criteria();
   }
 
-  private void assertValues(float overallThreshold,
-      float cacheThreshold,
-      float recipeViolationThreshold,
-      float commentThreshold,
-      float codeViolationThreshold,
-      int complexityLevel,
-      float complexityThreshold,
-      float duplicationThreshold,
-      float testThreshold,
-      float coverageThreshold,
-      float mutationTestThreshold) {
-    assertEquals(overallThreshold, criteria.getOverallThreshold(), 0.1f);
-    assertEquals(cacheThreshold, criteria.getCacheThreshold(), 0.1f);
-    assertEquals(recipeViolationThreshold, criteria.getRecipeViolationThreshold(), 0.1f);
-    assertEquals(commentThreshold, criteria.getCommentThreshold(), 0.1f);
-    assertEquals(codeViolationThreshold, criteria.getCodeViolationThreshold(), 0.1f);
+  private void assertValues(double overallThreshold,
+      double cacheThreshold,
+      double recipeViolationThreshold,
+      double commentThreshold,
+      double codeViolationThreshold,
+      long complexityLevel,
+      double complexityThreshold,
+      double duplicationThreshold,
+      double testThreshold,
+      double coverageThreshold,
+      double mutationTestThreshold) {
+    assertEquals(overallThreshold, criteria.getOverallThreshold(), 0.1);
+    assertEquals(cacheThreshold, criteria.getCacheThreshold(), 0.1);
+    assertEquals(recipeViolationThreshold, criteria.getRecipeViolationThreshold(), 0.1);
+    assertEquals(commentThreshold, criteria.getCommentThreshold(), 0.1);
+    assertEquals(codeViolationThreshold, criteria.getCodeViolationThreshold(), 0.1);
     assertEquals(complexityLevel, criteria.getComplexityLevel());
-    assertEquals(complexityThreshold, criteria.getComplexityThreshold(), 0.1f);
-    assertEquals(duplicationThreshold, criteria.getDuplicationThreshold(), 0.1f);
-    assertEquals(testThreshold, criteria.getTestThreshold(), 0.1f);
-    assertEquals(coverageThreshold, criteria.getCoverageThreshold(), 0.1f);
-    assertEquals(mutationTestThreshold, criteria.getMutationTestThreshold(), 0.1f);
+    assertEquals(complexityThreshold, criteria.getComplexityThreshold(), 0.1);
+    assertEquals(duplicationThreshold, criteria.getDuplicationThreshold(), 0.1);
+    assertEquals(testThreshold, criteria.getTestThreshold(), 0.1);
+    assertEquals(coverageThreshold, criteria.getCoverageThreshold(), 0.1);
+    assertEquals(mutationTestThreshold, criteria.getMutationTestThreshold(), 0.1);
   }
 
   @Test
   public void testInitData() {
-    assertValues(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    assertValues(0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0);
   }
 
   @Test
   public void testSetData() {
-    criteria.setOverallThreshold(0.1f);
-    criteria.setCacheThreshold(0.2f);
-    criteria.setRecipeViolationThreshold(0.3f);
-    criteria.setCommentThreshold(0.4f);
-    criteria.setCodeViolationThreshold(0.5f);
+    criteria.setOverallThreshold(0.1);
+    criteria.setCacheThreshold(0.2);
+    criteria.setRecipeViolationThreshold(0.3);
+    criteria.setCommentThreshold(0.4);
+    criteria.setCodeViolationThreshold(0.5);
     criteria.setComplexityLevel(6);
-    criteria.setComplexityThreshold(0.6f);
-    criteria.setDuplicationThreshold(0.7f);
-    criteria.setTestThreshold(0.8f);
-    criteria.setCoverageThreshold(0.9f);
-    criteria.setMutationTestThreshold(1.0f);
-    assertValues(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 6, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f);
+    criteria.setComplexityThreshold(0.6);
+    criteria.setDuplicationThreshold(0.7);
+    criteria.setTestThreshold(0.8);
+    criteria.setCoverageThreshold(0.9);
+    criteria.setMutationTestThreshold(1.0);
+    assertValues(0.1, 0.2, 0.3, 0.4, 0.5, 6, 0.6, 0.7, 0.8, 0.9, 1.0);
   }
 }
