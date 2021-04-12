@@ -24,31 +24,21 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.util.stream.Stream;
+
 /**
- * Represents the premirror cache data.
+ * A collectable interface.
  *
  * @author Sung Gon Kim
  */
-public final class PremirrorCacheData extends CacheData {
+public interface Collectable {
 
   /**
-   * Default constructor.
+   * Returns the stream of the given class type.
    *
-   * @param recipe    name
-   * @param available the cache availability
+   * @param clazz class type
+   * @param <T>   object the stream
+   * @return a stream object
    */
-  public PremirrorCacheData(final String recipe, final boolean available) {
-    this(recipe, "", available);
-  }
-
-  /**
-   * Default constructor.
-   *
-   * @param recipe    name
-   * @param task      name
-   * @param available the cache availability
-   */
-  public PremirrorCacheData(final String recipe, final String task, final boolean available) {
-    super(recipe, task, available);
-  }
+  <T> Stream<T> objects(Class<T> clazz);
 }

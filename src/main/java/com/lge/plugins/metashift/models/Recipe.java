@@ -26,23 +26,31 @@ package com.lge.plugins.metashift.models;
 
 import com.lge.plugins.metashift.metrics.Visitable;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * Represents a recipe containing various data for metrics.
  *
  * @author Sung Gon Kim
  */
-public final class Recipe extends Data<Recipe> implements Acceptable {
+public final class Recipe extends Data<Recipe> implements Acceptable, Collectable {
 
   /**
    * Represents the data set mapper.
    */
   private final Map<Class<?>, DataList<?>> collection;
+
+  /**
+   * Represents the heterogeneous data list.
+   */
+  private final List<Object> objects;
 
   /**
    * Default constructor.
@@ -63,7 +71,7 @@ public final class Recipe extends Data<Recipe> implements Acceptable {
   public Recipe(final String recipe) throws IllegalArgumentException {
     super(recipe);
 
-    String regexp = "^(?<recipe>[\\w-+]+)(?:-)(?<version>[\\w.+]+)(?:-)(?<revision>[\\w.+]+)$";
+    String regexp = "^(?<recipe>[\\w-+]+)-(?<version>[\\w.+]+)-(?<revision>[\\w.+]+)$";
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(recipe);
     if (!matcher.matches()) {
@@ -81,6 +89,8 @@ public final class Recipe extends Data<Recipe> implements Acceptable {
     collection.put(TestList.class, new TestList());
     collection.put(CoverageList.class, new CoverageList());
     collection.put(MutationTestList.class, new MutationTestList());
+
+    objects = new ArrayList<>();
   }
 
   /**
@@ -120,13 +130,30 @@ public final class Recipe extends Data<Recipe> implements Acceptable {
   }
 
   /**
+   * Adds the given object to the collection.
+   *
+   * @param object to store
+   */
+  public void add(final Object object) {
+    objects.add(object);
+  }
+
+  @SuppressWarnings({"unchecked", "PMD.UnnecessaryModifier"})
+  @Override
+  public final <T> Stream<T> objects(Class<T> clazz) {
+    return (Stream<T>) objects.stream().filter(o -> clazz.isAssignableFrom(o.getClass()));
+  }
+
+  /**
    * Set the given container object to the collection.
    *
    * @param <T>    the class type
    * @param object to store
    */
   public <T extends DataList<?>> void set(final T object) {
+    // TODO(sunggon82.kim): Remove this after refactoring
     collection.put(object.getClass(), object);
+    objects.addAll(object);
   }
 
   /**

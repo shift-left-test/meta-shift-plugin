@@ -22,33 +22,36 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics2;
+
+import com.lge.plugins.metashift.models.Collectable;
+import com.lge.plugins.metashift.models.DuplicationData;
 
 /**
- * Represents the premirror cache data.
+ * DuplicationEvaluator class.
  *
  * @author Sung Gon Kim
  */
-public final class PremirrorCacheData extends CacheData {
+public final class DuplicationEvaluator extends Evaluator<DuplicationEvaluator> {
 
   /**
    * Default constructor.
    *
-   * @param recipe    name
-   * @param available the cache availability
+   * @param criteria for evaluation
    */
-  public PremirrorCacheData(final String recipe, final boolean available) {
-    this(recipe, "", available);
+  public DuplicationEvaluator(final Criteria criteria) {
+    super(criteria.getDuplicationThreshold());
   }
 
-  /**
-   * Default constructor.
-   *
-   * @param recipe    name
-   * @param task      name
-   * @param available the cache availability
-   */
-  public PremirrorCacheData(final String recipe, final String task, final boolean available) {
-    super(recipe, task, available);
+  @Override
+  public boolean isQualified() {
+    return isAvailable() && (double) getNumerator() / (double) getDenominator() <= getThreshold();
+  }
+
+  @Override
+  protected void parseImpl(final Collectable c) {
+    setDenominator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum());
+    setNumerator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getDuplicatedLines)
+        .sum());
   }
 }

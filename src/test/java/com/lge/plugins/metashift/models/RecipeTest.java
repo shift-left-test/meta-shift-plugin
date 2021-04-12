@@ -123,6 +123,20 @@ public class RecipeTest {
     assertEquals(1, recipes.size());
   }
 
+  @Test
+  public void testAddMultipleObjects() {
+    Recipe recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new SharedStateCacheData("A", "X", true));
+    recipe.add(new SharedStateCacheData("B", "Y", false));
+    recipe.add(new PremirrorCacheData("C", "X", true));
+    recipe.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    recipe.add(new FailedTestData("B", "b.suite", "b.tc", "msg"));
+    recipe.add(new SkippedTestData("C", "c.suite", "c.tc", "msg"));
+    assertEquals(3, recipe.objects(CacheData.class).count());
+    assertEquals(2, recipe.objects(SharedStateCacheData.class).count());
+    assertEquals(3, recipe.objects(TestData.class).count());
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void testCreateRecipeWithUnknownPath() {
     Recipe.create(utils.getPath("unknown"));

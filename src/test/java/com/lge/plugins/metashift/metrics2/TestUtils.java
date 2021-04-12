@@ -22,33 +22,25 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics2;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * Represents the premirror cache data.
+ * A unit test support class.
  *
  * @author Sung Gon Kim
  */
-public final class PremirrorCacheData extends CacheData {
+public class TestUtils {
 
-  /**
-   * Default constructor.
-   *
-   * @param recipe    name
-   * @param available the cache availability
-   */
-  public PremirrorCacheData(final String recipe, final boolean available) {
-    this(recipe, "", available);
+  public static void assertEvaluator(Evaluator<?> object, boolean available, boolean qualified) {
+    assertEquals(available, object.isAvailable());
+    assertEquals(qualified, object.isQualified());
   }
 
-  /**
-   * Default constructor.
-   *
-   * @param recipe    name
-   * @param task      name
-   * @param available the cache availability
-   */
-  public PremirrorCacheData(final String recipe, final String task, final boolean available) {
-    super(recipe, task, available);
+  public static void assertCounter(Counter object, long denominator, long numerator, double ratio) {
+    assertEquals(denominator, object.getDenominator());
+    assertEquals(numerator, object.getNumerator());
+    assertEquals(ratio, object.getRatio(), 0.1);
   }
 }

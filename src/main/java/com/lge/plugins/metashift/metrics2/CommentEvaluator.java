@@ -22,33 +22,30 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics2;
+
+import com.lge.plugins.metashift.models.Collectable;
+import com.lge.plugins.metashift.models.CommentData;
 
 /**
- * Represents the premirror cache data.
+ * CommentEvaluator class.
  *
  * @author Sung Gon Kim
  */
-public final class PremirrorCacheData extends CacheData {
+public final class CommentEvaluator extends Evaluator<CommentEvaluator> {
 
   /**
    * Default constructor.
    *
-   * @param recipe    name
-   * @param available the cache availability
+   * @param criteria for evaluation
    */
-  public PremirrorCacheData(final String recipe, final boolean available) {
-    this(recipe, "", available);
+  public CommentEvaluator(final Criteria criteria) {
+    super(criteria.getCommentThreshold());
   }
 
-  /**
-   * Default constructor.
-   *
-   * @param recipe    name
-   * @param task      name
-   * @param available the cache availability
-   */
-  public PremirrorCacheData(final String recipe, final String task, final boolean available) {
-    super(recipe, task, available);
+  @Override
+  protected void parseImpl(final Collectable c) {
+    setDenominator(c.objects(CommentData.class).mapToLong(CommentData::getLines).sum());
+    setNumerator(c.objects(CommentData.class).mapToLong(CommentData::getCommentLines).sum());
   }
 }

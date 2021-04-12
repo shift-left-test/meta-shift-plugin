@@ -22,33 +22,48 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.metrics2;
+
+import com.lge.plugins.metashift.models.Collectable;
+import com.lge.plugins.metashift.models.ComplexityData;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Represents the premirror cache data.
+ * ComplexityEvaluator class.
  *
  * @author Sung Gon Kim
  */
-public final class PremirrorCacheData extends CacheData {
+public final class ComplexityEvaluator extends Evaluator<ComplexityEvaluator> {
+
+  /**
+   * Represents the complexity threshold.
+   */
+  private final long threshold;
 
   /**
    * Default constructor.
    *
-   * @param recipe    name
-   * @param available the cache availability
+   * @param criteria for evaluation
    */
-  public PremirrorCacheData(final String recipe, final boolean available) {
-    this(recipe, "", available);
+  public ComplexityEvaluator(final Criteria criteria) {
+    super(criteria.getComplexityThreshold());
+    threshold = criteria.getComplexityLevel();
   }
 
-  /**
-   * Default constructor.
-   *
-   * @param recipe    name
-   * @param task      name
-   * @param available the cache availability
-   */
-  public PremirrorCacheData(final String recipe, final String task, final boolean available) {
-    super(recipe, task, available);
+  @Override
+  public boolean isQualified() {
+    return isAvailable() && (double) getNumerator() / (double) getDenominator() <= getThreshold();
+  }
+
+  @Override
+  protected void parseImpl(Collectable c) {
+    List<ComplexityData> objects = c.objects(ComplexityData.class)
+        .sorted(Comparator.comparingInt(ComplexityData::getValue).reversed())
+        .collect(Collectors.toList());
+
+    setDenominator(objects.stream().distinct().count());
+    setNumerator(objects.stream().distinct().filter(o -> o.getValue() >= threshold).count());
   }
 }

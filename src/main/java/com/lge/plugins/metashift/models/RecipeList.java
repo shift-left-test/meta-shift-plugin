@@ -27,13 +27,16 @@ package com.lge.plugins.metashift.models;
 import com.lge.plugins.metashift.metrics.Visitable;
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Represents a set of Recipe objects.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeList extends DataList<Recipe> {
+public final class RecipeList extends DataList<Recipe> implements Collectable {
 
   /**
    * Create a list of recipes using the given report directory.
@@ -57,6 +60,16 @@ public final class RecipeList extends DataList<Recipe> {
     }
     Collections.sort(recipes);
     return recipes;
+  }
+
+  @Override
+  public <T> Stream<T> objects(Class<T> clazz) {
+    Stream<T> merged = Stream.empty();
+    List<Stream<T>> streams = stream().map(o -> o.objects(clazz)).collect(Collectors.toList());
+    for (Stream<T> stream : streams) {
+      merged = Stream.concat(merged, stream);
+    }
+    return merged;
   }
 
   @Override
