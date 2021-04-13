@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift;
 
+import com.lge.plugins.metashift.metrics.CodeSizeDelta;
+import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
 import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.metrics.Metrics;
@@ -36,6 +38,7 @@ import hudson.model.Run;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import jenkins.model.Jenkins;
 import jenkins.model.RunAction2;
 import net.sf.json.JSONArray;
@@ -58,7 +61,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
   private Integer cachePassedRecipes = 0;
   private Integer codeViolationPassedRecipes = 0;
   private Integer commentPassedRecipes = 0;
-  private final Integer complexityPassedRecipes = 0;
+  private Integer complexityPassedRecipes = 0;
   private Integer coveragePassedRecipes = 0;
   private Integer duplicationPassedRecipes = 0;
   private Integer mutationTestPassedRecipes = 0;
@@ -407,18 +410,24 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
   }
 
   /**
+   * Returns the delta between the previous and current builds.
+   *
+   * @return CodeSizeDelta object
+   */
+  private CodeSizeDelta getCodeSizeDelta() {
+    CodeSizeEvaluator previous =
+        Optional.ofNullable(getPreviousMetrics()).map(Metrics::getCodeSize).orElse(null);
+    CodeSizeEvaluator current = getMetrics().getCodeSize();
+    return CodeSizeDelta.between(previous, current);
+  }
+
+  /**
    * recipe count diff with previous build.
    *
    * @return recipes diff
    */
   public long getRecipesDiff() {
-    long current = this.getMetrics().getCodeSize() != null
-        ? this.getMetrics().getCodeSize().getRecipes() : 0;
-    long previous = this.getPreviousMetrics() != null
-        && this.getPreviousMetrics().getCodeSize() != null
-        ? this.getPreviousMetrics().getCodeSize().getRecipes() : 0;
-
-    return current - previous;
+    return getCodeSizeDelta().getRecipes();
   }
 
   /**
@@ -427,13 +436,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return lines diff
    */
   public long getLinesDiff() {
-    long current = this.getMetrics().getCodeSize() != null
-        ? this.getMetrics().getCodeSize().getLines() : 0;
-    long previous = this.getPreviousMetrics() != null
-        && this.getPreviousMetrics().getCodeSize() != null
-        ? this.getPreviousMetrics().getCodeSize().getLines() : 0;
-
-    return current - previous;
+    return getCodeSizeDelta().getLines();
   }
 
   /**
@@ -442,13 +445,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return functions diff
    */
   public long getFunctionsDiff() {
-    long current = this.getMetrics().getCodeSize() != null
-        ? this.getMetrics().getCodeSize().getFunctions() : 0;
-    long previous = this.getPreviousMetrics() != null
-        && this.getPreviousMetrics().getCodeSize() != null
-        ? this.getPreviousMetrics().getCodeSize().getFunctions() : 0;
-
-    return current - previous;
+    return getCodeSizeDelta().getFunctions();
   }
 
   /**
@@ -457,13 +454,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return classes diff
    */
   public long getClassesDiff() {
-    long current = this.getMetrics().getCodeSize() != null
-        ? this.getMetrics().getCodeSize().getClasses() : 0;
-    long previous = this.getPreviousMetrics() != null
-        && this.getPreviousMetrics().getCodeSize() != null
-        ? this.getPreviousMetrics().getCodeSize().getClasses() : 0;
-
-    return current - previous;
+    return getCodeSizeDelta().getClasses();
   }
 
   /**
@@ -472,12 +463,6 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return files diff
    */
   public long getFilesDiff() {
-    long current = this.getMetrics().getCodeSize() != null
-        ? this.getMetrics().getCodeSize().getFiles() : 0;
-    long previous = this.getPreviousMetrics() != null
-        && this.getPreviousMetrics().getCodeSize() != null
-        ? this.getPreviousMetrics().getCodeSize().getFiles() : 0;
-
-    return current - previous;
+    return getCodeSizeDelta().getFiles();
   }
 }
