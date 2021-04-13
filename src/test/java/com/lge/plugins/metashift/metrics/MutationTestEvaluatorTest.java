@@ -53,7 +53,7 @@ public class MutationTestEvaluatorTest {
     Criteria criteria = new Criteria();
     criteria.setMutationTestThreshold(0.5);
     evaluator = new MutationTestEvaluator(criteria);
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
   }
@@ -80,7 +80,7 @@ public class MutationTestEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);
@@ -92,9 +92,9 @@ public class MutationTestEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
-    recipe.add(new SkippedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SkippedMutationTestData("A-1.0.0-r0", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SurvivedMutationTestData("A-1.0.0-r0", "b.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -106,10 +106,10 @@ public class MutationTestEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
-    recipe.add(new SkippedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new KilledMutationTestData("A", "d.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SkippedMutationTestData("A-1.0.0-r0", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SurvivedMutationTestData("A-1.0.0-r0", "b.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("A-1.0.0-r0", "d.file", "C", "f()", 1, "AOR", "TC"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -121,7 +121,7 @@ public class MutationTestEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
-    recipe.add(new SkippedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SkippedMutationTestData("A-1.0.0-r0", "a.file", "C", "f()", 1, "AOR", "TC"));
     assertEquals(1, evaluator.parse(recipe).getDenominator());
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getDenominator());
   }
@@ -137,11 +137,11 @@ public class MutationTestEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new SkippedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SkippedMutationTestData("A-1.0.0-r0", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SurvivedMutationTestData("A-1.0.0-r0", "b.file", "C", "f()", 1, "AOR", "TC"));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new KilledMutationTestData("B", "c.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("B-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -155,12 +155,12 @@ public class MutationTestEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new SkippedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SkippedMutationTestData("A-1.0.0-r0", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SurvivedMutationTestData("A-1.0.0-r0", "b.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new KilledMutationTestData("B", "d.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("B-1.0.0-r0", "d.file", "C", "f()", 1, "AOR", "TC"));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -173,7 +173,7 @@ public class MutationTestEvaluatorTest {
 
   @Test
   public void testParseRecipesResetValues() {
-    recipe.add(new SkippedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SkippedMutationTestData("A-1.0.0-r0", "a.file", "C", "f()", 1, "AOR", "TC"));
     assertEquals(1, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
   }

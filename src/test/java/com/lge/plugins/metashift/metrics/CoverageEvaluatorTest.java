@@ -52,7 +52,7 @@ public class CoverageEvaluatorTest {
     Criteria criteria = new Criteria();
     criteria.setCoverageThreshold(0.5);
     evaluator = new CoverageEvaluator(criteria);
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
   }
@@ -77,7 +77,7 @@ public class CoverageEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);

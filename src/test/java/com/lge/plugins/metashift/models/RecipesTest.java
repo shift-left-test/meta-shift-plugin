@@ -48,7 +48,7 @@ public class RecipesTest {
 
   @Before
   public void setUp() {
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
   }
 
@@ -70,18 +70,18 @@ public class RecipesTest {
   @Test
   public void testAddMultipleObjects() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new SharedStateCacheData("A", "X", true));
-    recipe.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "X", true));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
     recipes.add(recipe);
 
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new SharedStateCacheData("B", "Y", false));
-    recipe.add(new FailedTestData("B", "b.suite", "b.tc", "msg"));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "Y", false));
+    recipe.add(new FailedTestData("B-1.0.0-r0", "b.suite", "b.tc", "msg"));
     recipes.add(recipe);
 
     recipe = new Recipe("C-1.0.0-r0");
-    recipe.add(new PremirrorCacheData("C", "X", true));
-    recipe.add(new SkippedTestData("C", "c.suite", "c.tc", "msg"));
+    recipe.add(new PremirrorCacheData("C-1.0.0-r0", "X", true));
+    recipe.add(new SkippedTestData("C-1.0.0-r0", "c.suite", "c.tc", "msg"));
     recipes.add(recipe);
 
     assertEquals(3, recipes.objects(CacheData.class).count());
@@ -91,18 +91,18 @@ public class RecipesTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithUnknownPath() {
-    Recipes.create(new File(folder.getRoot(), "unknown"));
+    new Recipes(new File(folder.getRoot(), "unknown"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithoutDirectory() throws IOException {
-    Recipes.create(folder.newFile());
+    new Recipes(folder.newFile());
   }
 
   @Test
   public void testCreateWithEmptyReportDirectory() throws IOException {
     File report = folder.newFolder("report");
-    recipes = Recipes.create(report);
+    recipes = new Recipes(report);
     assertEquals(0, recipes.size());
   }
 
@@ -110,7 +110,7 @@ public class RecipesTest {
   public void testCreateWithoutSubDirectories() throws IOException {
     File report = folder.newFolder("report");
     FileUtils.touch(new File(report, "a.file"));
-    recipes = Recipes.create(report);
+    recipes = new Recipes(report);
     assertEquals(0, recipes.size());
   }
 
@@ -118,7 +118,7 @@ public class RecipesTest {
   public void testCreateWithInvalidDirectories() throws IOException {
     File report = folder.newFolder("report");
     FileUtils.forceMkdir(new File(report, "invalid"));
-    Recipes.create(report);
+    new Recipes(report);
   }
 
   @Test
@@ -127,7 +127,7 @@ public class RecipesTest {
     FileUtils.forceMkdir(new File(report, "cmake-project-1.0.0-r0"));
     FileUtils.forceMkdir(new File(report, "qmake5-project-1.0.0-r0"));
     FileUtils.forceMkdir(new File(report, "autotools-1.0.0-r0"));
-    recipes = Recipes.create(report);
+    recipes = new Recipes(report);
     assertEquals(3, recipes.size());
   }
 }

@@ -39,12 +39,12 @@ import org.junit.Test;
  */
 public class DuplicationDataTest {
 
-  private final DuplicationData origin = new DuplicationData("A", "a.file", 10, 5);
-  private final DuplicationData same = new DuplicationData("A", "a.file", 10, 5);
+  private final DuplicationData origin = new DuplicationData("A-1.0.0-r0", "a.file", 10, 5);
+  private final DuplicationData same = new DuplicationData("A-1.0.0-r0", "a.file", 10, 5);
 
   @Test
   public void testInitData() {
-    assertEquals("A", origin.getRecipe());
+    assertEquals("A-1.0.0-r0", origin.getRecipe());
     assertEquals("a.file", origin.getFile());
     assertEquals(10, origin.getLines());
     assertEquals(5, origin.getDuplicatedLines());
@@ -56,32 +56,36 @@ public class DuplicationDataTest {
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new DuplicationData("B", "a.file", 10, 5));
-    assertNotEquals(origin, new DuplicationData("A", "b.file", 10, 5));
-    assertEquals(origin, new DuplicationData("A", "a.file", 10000, 5));
-    assertEquals(origin, new DuplicationData("A", "a.file", 10, 5000));
+    assertNotEquals(origin, new DuplicationData("B-1.0.0-r0", "a.file", 10, 5));
+    assertNotEquals(origin, new DuplicationData("A-1.0.0-r0", "b.file", 10, 5));
+    assertEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 10000, 5));
+    assertEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 10, 5000));
   }
 
   @Test
   public void testHashCode() {
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new DuplicationData("B", "a.file", 10, 5).hashCode());
-    assertNotEquals(origin.hashCode(), new DuplicationData("A", "b.file", 10, 5).hashCode());
-    assertEquals(origin.hashCode(), new DuplicationData("A", "a.file", 10000, 5).hashCode());
-    assertEquals(origin.hashCode(), new DuplicationData("A", "a.file", 10, 5000).hashCode());
+    assertNotEquals(origin.hashCode(),
+        new DuplicationData("B-1.0.0-r0", "a.file", 10, 5).hashCode());
+    assertNotEquals(origin.hashCode(),
+        new DuplicationData("A-1.0.0-r0", "b.file", 10, 5).hashCode());
+    assertEquals(origin.hashCode(),
+        new DuplicationData("A-1.0.0-r0", "a.file", 10000, 5).hashCode());
+    assertEquals(origin.hashCode(),
+        new DuplicationData("A-1.0.0-r0", "a.file", 10, 5000).hashCode());
   }
 
   @Test
   public void testComparable() {
     List<DuplicationData> expected = new ArrayList<>();
-    expected.add(new DuplicationData("A", "a.file", 10, 5));
-    expected.add(new DuplicationData("A", "b.file", 10, 5));
-    expected.add(new DuplicationData("B", "b.file", 10, 5));
+    expected.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 5));
+    expected.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 5));
+    expected.add(new DuplicationData("B-1.0.0-r0", "b.file", 10, 5));
 
     List<DuplicationData> actual = new ArrayList<>();
-    actual.add(new DuplicationData("B", "b.file", 10, 5));
-    actual.add(new DuplicationData("A", "b.file", 10, 5));
-    actual.add(new DuplicationData("A", "a.file", 10, 5));
+    actual.add(new DuplicationData("B-1.0.0-r0", "b.file", 10, 5));
+    actual.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 5));
+    actual.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 5));
 
     Collections.sort(actual);
     assertEquals(expected, actual);

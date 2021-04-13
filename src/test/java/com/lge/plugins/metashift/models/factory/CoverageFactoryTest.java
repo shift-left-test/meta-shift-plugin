@@ -75,14 +75,14 @@ public class CoverageFactoryTest {
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File directory = utils.createDirectory("report", "A", "coverage").getParentFile();
+    File directory = utils.createDirectory("report", "A-1.0.0-r0", "coverage").getParentFile();
     objects = CoverageFactory.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedFile() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
         .append("<class filename='a.cpp'>")
         .append("  <methods>")
@@ -93,7 +93,7 @@ public class CoverageFactoryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithEmptyFile() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     CoverageFactory.create(directory);
@@ -101,7 +101,7 @@ public class CoverageFactoryTest {
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
-    File directory = utils.createDirectory("report", "B");
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<classes> </classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     objects = CoverageFactory.create(directory);
@@ -110,7 +110,7 @@ public class CoverageFactoryTest {
 
   @Test
   public void testCreateWithInsufficientMethodData() throws Exception {
-    File directory = utils.createDirectory("report", "B");
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder
         .append("<class filename='a.cpp'>")
         .append("  <methods/>")
@@ -125,7 +125,7 @@ public class CoverageFactoryTest {
 
   @Test
   public void testCreateWithEmptyLineData() throws Exception {
-    File directory = utils.createDirectory("report", "B");
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder
         .append("<classes>")
         .append("  <class filename='a.cpp'>")
@@ -146,7 +146,7 @@ public class CoverageFactoryTest {
 
   @Test
   public void testCreateWithInsufficientLineData() throws Exception {
-    File directory = utils.createDirectory("report", "B");
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder
         .append("<classes>")
         .append("  <class filename='a.cpp'>")
@@ -168,7 +168,7 @@ public class CoverageFactoryTest {
 
   @Test
   public void testCreateWithSingleData() throws Exception {
-    File directory = utils.createDirectory("report", "C");
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("<classes>")
         .append("  <class filename='a.cpp'>")
@@ -189,12 +189,12 @@ public class CoverageFactoryTest {
     assertEquals(1, objects.size());
 
     Iterator<CoverageData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C", "a.cpp", "func1()", 2, 0, true);
+    assertValues(iterator.next(), "C-1.0.0-r0", "a.cpp", "func1()", 2, 0, true);
   }
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    File directory = utils.createDirectory("report", "D");
+    File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("<classes>")
         .append("  <class filename='a.cpp'>")
@@ -227,15 +227,15 @@ public class CoverageFactoryTest {
     assertEquals(4, objects.size());
 
     Iterator<CoverageData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D", "a.cpp", "func1()", 1, 0, true);
-    assertValues(iterator.next(), "D", "a.cpp", "func1()", 10, 0, false);
-    assertValues(iterator.next(), "D", "a.cpp", "func2()", 30, 0, true);
-    assertValues(iterator.next(), "D", "a.cpp", "func2()", 30, 1, false);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", "func1()", 1, 0, true);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", "func1()", 10, 0, false);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", "func2()", 30, 0, true);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", "func2()", 30, 1, false);
   }
 
   @Test
   public void testCreateWithMultipleFiles() throws Exception {
-    File directory = utils.createDirectory("report", "E");
+    File directory = utils.createDirectory("report", "E-1.0.0-r0");
     builder
         .append("<classes>")
         .append("  <class filename='a.cpp'>")
@@ -284,9 +284,9 @@ public class CoverageFactoryTest {
     assertEquals(4, objects.size());
 
     Iterator<CoverageData> iterator = objects.iterator();
-    assertValues(iterator.next(), "E", "a.cpp", "func1()", 1, 0, true);
-    assertValues(iterator.next(), "E", "a.cpp", "func1()", 10, 0, false);
-    assertValues(iterator.next(), "E", "b.cpp", "func2()", 30, 0, true);
-    assertValues(iterator.next(), "E", "b.cpp", "func2()", 30, 1, false);
+    assertValues(iterator.next(), "E-1.0.0-r0", "a.cpp", "func1()", 1, 0, true);
+    assertValues(iterator.next(), "E-1.0.0-r0", "a.cpp", "func1()", 10, 0, false);
+    assertValues(iterator.next(), "E-1.0.0-r0", "b.cpp", "func2()", 30, 0, true);
+    assertValues(iterator.next(), "E-1.0.0-r0", "b.cpp", "func2()", 30, 1, false);
   }
 }

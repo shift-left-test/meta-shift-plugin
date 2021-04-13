@@ -73,14 +73,14 @@ public class CommentFactoryTest {
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File directory = utils.createDirectory("report", "A", "checkcode").getParentFile();
+    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
     objects = CommentFactory.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     CommentFactory.create(directory);
@@ -88,7 +88,7 @@ public class CommentFactoryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInsufficientData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
         .append("{")
         .append("  'size': [")
@@ -101,7 +101,7 @@ public class CommentFactoryTest {
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
-    File directory = utils.createDirectory("report", "B");
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     objects = CommentFactory.create(directory);
@@ -110,7 +110,7 @@ public class CommentFactoryTest {
 
   @Test
   public void testCreateWithSingleData() throws Exception {
-    File directory = utils.createDirectory("report", "C");
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
         .append("  'size': [")
@@ -130,12 +130,12 @@ public class CommentFactoryTest {
     assertEquals(1, objects.size());
 
     Iterator<CommentData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C", "a.file", 20, 5);
+    assertValues(iterator.next(), "C-1.0.0-r0", "a.file", 20, 5);
   }
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    File directory = utils.createDirectory("report", "D");
+    File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("{")
         .append("  'size': [")
@@ -156,7 +156,7 @@ public class CommentFactoryTest {
     assertEquals(2, objects.size());
 
     Iterator<CommentData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D", "a.file", 10, 5);
-    assertValues(iterator.next(), "D", "b.file", 20, 3);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", 10, 5);
+    assertValues(iterator.next(), "D-1.0.0-r0", "b.file", 20, 3);
   }
 }

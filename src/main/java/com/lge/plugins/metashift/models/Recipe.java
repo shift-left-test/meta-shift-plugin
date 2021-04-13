@@ -37,8 +37,6 @@ import com.lge.plugins.metashift.models.factory.TestFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -54,13 +52,29 @@ public final class Recipe extends Data<Recipe> implements Collectable {
   private final List<Object> objects;
 
   /**
-   * Default constructor.
+   * Create a Recipe object using the given recipe directory.
    *
    * @param path to recipe directory
-   * @throws IllegalArgumentException if the recipe name is malformed
+   * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
    */
   public Recipe(final File path) throws IllegalArgumentException {
     this(path.getName());
+    if (!path.exists()) {
+      throw new IllegalArgumentException("Directory not found: " + path);
+    }
+    if (!path.isDirectory()) {
+      throw new IllegalArgumentException("Not a directory: " + path);
+    }
+    objects.addAll(CacheFactory.create(path));
+    objects.addAll(CodeSizeFactory.create(path));
+    objects.addAll(CodeViolationFactory.create(path));
+    objects.addAll(CommentFactory.create(path));
+    objects.addAll(ComplexityFactory.create(path));
+    objects.addAll(CoverageFactory.create(path));
+    objects.addAll(DuplicationFactory.create(path));
+    objects.addAll(MutationTestFactory.create(path));
+    objects.addAll(RecipeViolationFactory.create(path));
+    objects.addAll(TestFactory.create(path));
   }
 
   /**
@@ -71,40 +85,7 @@ public final class Recipe extends Data<Recipe> implements Collectable {
    */
   public Recipe(final String recipe) throws IllegalArgumentException {
     super(recipe);
-    String regexp = "^(?<recipe>[\\w-+]+)-(?<version>[\\w.+]+)-(?<revision>[\\w.+]+)$";
-    Pattern pattern = Pattern.compile(regexp);
-    Matcher matcher = pattern.matcher(recipe);
-    if (!matcher.matches()) {
-      throw new IllegalArgumentException("Invalid recipe name: " + recipe);
-    }
     objects = new ArrayList<>();
-  }
-
-  /**
-   * Create a Recipe object using the given recipe directory.
-   *
-   * @param path to a recipe directory
-   * @throws IllegalArgumentException if the path is invalid
-   */
-  public static Recipe create(final File path) throws IllegalArgumentException {
-    if (!path.exists()) {
-      throw new IllegalArgumentException("Directory not found: " + path);
-    }
-    if (!path.isDirectory()) {
-      throw new IllegalArgumentException("Not a directory: " + path);
-    }
-    Recipe recipe = new Recipe(path);
-    recipe.addAll(CacheFactory.create(path));
-    recipe.addAll(CodeSizeFactory.create(path));
-    recipe.addAll(CodeViolationFactory.create(path));
-    recipe.addAll(CommentFactory.create(path));
-    recipe.addAll(ComplexityFactory.create(path));
-    recipe.addAll(CoverageFactory.create(path));
-    recipe.addAll(DuplicationFactory.create(path));
-    recipe.addAll(MutationTestFactory.create(path));
-    recipe.addAll(RecipeViolationFactory.create(path));
-    recipe.addAll(TestFactory.create(path));
-    return recipe;
   }
 
   /**
@@ -114,15 +95,6 @@ public final class Recipe extends Data<Recipe> implements Collectable {
    */
   public void add(final Object object) {
     this.objects.add(object);
-  }
-
-  /**
-   * Adds the given objects to the collection.
-   *
-   * @param objects to add
-   */
-  public void addAll(final List<? extends Data<?>> objects) {
-    this.objects.addAll(objects);
   }
 
   @SuppressWarnings({"unchecked", "PMD.UnnecessaryModifier"})

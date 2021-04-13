@@ -53,7 +53,7 @@ public class RecipeViolationEvaluatorTest {
     Criteria criteria = new Criteria();
     criteria.setRecipeViolationThreshold(0.5);
     evaluator = new RecipeViolationEvaluator(criteria);
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
   }
@@ -80,7 +80,7 @@ public class RecipeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);
@@ -92,9 +92,9 @@ public class RecipeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
-    recipe.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    recipe.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    recipe.add(new MajorRecipeViolationData("A", "b.file", 1, "major", "major", "major"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
+    recipe.add(new MinorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "minor", "minor", "minor"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "b.file", 1, "major", "major", "major"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -106,10 +106,10 @@ public class RecipeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
-    recipe.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    recipe.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    recipe.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
-    recipe.add(new MajorRecipeViolationData("A", "b.file", 1, "major", "major", "major"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
+    recipe.add(new MinorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "minor", "minor", "minor"));
+    recipe.add(new InfoRecipeViolationData("A-1.0.0-r0", "a.file", 1, "info", "info", "info"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "b.file", 1, "major", "major", "major"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -121,7 +121,7 @@ public class RecipeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
-    recipe.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
     assertEquals(1, evaluator.parse(recipe).getDenominator());
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getDenominator());
   }
@@ -140,11 +140,11 @@ public class RecipeViolationEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    recipe.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
+    recipe.add(new MinorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "minor", "minor", "minor"));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
+    recipe.add(new MajorRecipeViolationData("B-1.0.0-r0", "b.file", 1, "major", "major", "major"));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -158,12 +158,12 @@ public class RecipeViolationEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    recipe.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    recipe.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
+    recipe.add(new MinorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "minor", "minor", "minor"));
+    recipe.add(new InfoRecipeViolationData("A-1.0.0-r0", "a.file", 1, "info", "info", "info"));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new MajorRecipeViolationData("B", "b.file", 1, "major", "major", "major"));
+    recipe.add(new MajorRecipeViolationData("B-1.0.0-r0", "b.file", 1, "major", "major", "major"));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -176,7 +176,7 @@ public class RecipeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipesResetValues() {
-    recipe.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
     assertEquals(1, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
   }

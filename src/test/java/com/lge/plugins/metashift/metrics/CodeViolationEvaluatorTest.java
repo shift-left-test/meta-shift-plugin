@@ -54,7 +54,7 @@ public class CodeViolationEvaluatorTest {
     Criteria criteria = new Criteria();
     criteria.setCodeViolationThreshold(0.5);
     evaluator = new CodeViolationEvaluator(criteria);
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
   }
@@ -81,7 +81,7 @@ public class CodeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new SharedStateCacheData("A", "do_package", true));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_package", true));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);
@@ -93,7 +93,8 @@ public class CodeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -105,9 +106,12 @@ public class CodeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    recipe.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
-    recipe.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MinorCodeViolationData("A-1.0.0-r0", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new InfoCodeViolationData("A-1.0.0-r0", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -119,7 +123,8 @@ public class CodeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     assertEquals(1, evaluator.parse(recipe).getDenominator());
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getDenominator());
   }
@@ -138,11 +143,14 @@ public class CodeViolationEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new MajorCodeViolationData("B", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    recipe.add(new MinorCodeViolationData("B", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MajorCodeViolationData("B-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MinorCodeViolationData("B-1.0.0-r0", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -156,12 +164,16 @@ public class CodeViolationEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    recipe.add(new InfoCodeViolationData("B", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new InfoCodeViolationData("B-1.0.0-r0", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new MajorCodeViolationData("B", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    recipe.add(new MinorCodeViolationData("B", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MajorCodeViolationData("B-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MinorCodeViolationData("B-1.0.0-r0", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -174,7 +186,8 @@ public class CodeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipesResetValues() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     assertEquals(1, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
   }

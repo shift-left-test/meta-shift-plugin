@@ -52,7 +52,7 @@ public class CacheEvaluatorTest {
     Criteria criteria = new Criteria();
     criteria.setCacheThreshold(0.5);
     evaluator = new CacheEvaluator(criteria);
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
   }
@@ -77,7 +77,7 @@ public class CacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new DuplicationData("A-B-C", "a.file", 10, 5));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 5));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);
@@ -88,9 +88,9 @@ public class CacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedSingleTypeData() {
-    recipe.add(new PremirrorCacheData("A", true));
-    recipe.add(new PremirrorCacheData("B", false));
-    recipe.add(new PremirrorCacheData("C", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", true));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", false));
+    recipe.add(new PremirrorCacheData("C-1.0.0-r0", false));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -101,8 +101,8 @@ public class CacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedSingleTypeData() {
-    recipe.add(new SharedStateCacheData("A", "do_package", true));
-    recipe.add(new SharedStateCacheData("B", "do_package", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_package", true));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_package", false));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -113,11 +113,11 @@ public class CacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedMultipleTypeData() {
-    recipe.add(new PremirrorCacheData("A", true));
-    recipe.add(new PremirrorCacheData("B", false));
-    recipe.add(new PremirrorCacheData("C", false));
-    recipe.add(new SharedStateCacheData("A", "do_package", true));
-    recipe.add(new SharedStateCacheData("B", "do_package", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", true));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", false));
+    recipe.add(new PremirrorCacheData("C-1.0.0-r0", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_package", true));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_package", false));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -128,10 +128,10 @@ public class CacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedMultipleTypeData() {
-    recipe.add(new PremirrorCacheData("A", true));
-    recipe.add(new PremirrorCacheData("B", false));
-    recipe.add(new SharedStateCacheData("A", "do_package", true));
-    recipe.add(new SharedStateCacheData("B", "do_package", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", true));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_package", true));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_package", false));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -142,7 +142,7 @@ public class CacheEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
-    recipe.add(new PremirrorCacheData("A", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", true));
     assertEquals(1, evaluator.parse(recipe).getDenominator());
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getDenominator());
   }
@@ -160,13 +160,13 @@ public class CacheEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedMultipleTypeData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new PremirrorCacheData("A", true));
-    recipe.add(new PremirrorCacheData("B", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", true));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", false));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new PremirrorCacheData("C", false));
-    recipe.add(new SharedStateCacheData("A", "do_package", true));
-    recipe.add(new SharedStateCacheData("B", "do_package", false));
+    recipe.add(new PremirrorCacheData("C-1.0.0-r0", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_package", true));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_package", false));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -179,12 +179,12 @@ public class CacheEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedMultipleTypeData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new PremirrorCacheData("A", true));
-    recipe.add(new PremirrorCacheData("B", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", true));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", false));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new SharedStateCacheData("A", "do_package", true));
-    recipe.add(new SharedStateCacheData("B", "do_package", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_package", true));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_package", false));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -197,10 +197,10 @@ public class CacheEvaluatorTest {
   @Test
   public void testParseRecipesWithDuplicates() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new SharedStateCacheData("X", "do_package", true));
+    recipe.add(new SharedStateCacheData("X-1.0.0-r0", "do_package", true));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new SharedStateCacheData("X", "do_package", true));
+    recipe.add(new SharedStateCacheData("X-1.0.0-r0", "do_package", true));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -209,7 +209,7 @@ public class CacheEvaluatorTest {
 
   @Test
   public void testParseRecipesResetValues() {
-    recipe.add(new SharedStateCacheData("X", "do_package", true));
+    recipe.add(new SharedStateCacheData("X-1.0.0-r0", "do_package", true));
     assertEquals(1, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
   }

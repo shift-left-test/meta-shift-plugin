@@ -73,14 +73,14 @@ public class TestFactoryTest {
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File directory = utils.createDirectory("report", "A", "test").getParentFile();
+    File directory = utils.createDirectory("report", "A-1.0.0-r0", "test").getParentFile();
     objects = TestFactory.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("/testsuite>");
     utils.writeLines(builder, directory, "test", "1.xml");
     TestFactory.create(directory);
@@ -88,7 +88,7 @@ public class TestFactoryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithEmptyFile() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "test", "1.xml");
     TestFactory.create(directory);
@@ -96,7 +96,7 @@ public class TestFactoryTest {
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
-    File directory = utils.createDirectory("report", "B");
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<testsuites> </testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
     objects = TestFactory.create(directory);
@@ -104,7 +104,7 @@ public class TestFactoryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInvalidData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
         .append("<testsuites>")
         .append("  <testsuite name='A'>")
@@ -119,7 +119,7 @@ public class TestFactoryTest {
 
   @Test
   public void testCreateWithSingleData() throws Exception {
-    File directory = utils.createDirectory("report", "C");
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("<testsuites>")
         .append("  <testsuite name='A'>")
@@ -131,12 +131,12 @@ public class TestFactoryTest {
     assertEquals(1, objects.size());
 
     Iterator<TestData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C", "A", "test1", "");
+    assertValues(iterator.next(), "C-1.0.0-r0", "A", "test1", "");
   }
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    File directory = utils.createDirectory("report", "D");
+    File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("<testsuites>")
         .append("  <testsuite name='A'>")
@@ -163,15 +163,15 @@ public class TestFactoryTest {
     assertEquals(4, objects.size());
 
     Iterator<TestData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D", "A", "test1", "");
-    assertValues(iterator.next(), "D", "B", "test2", "failure");
-    assertValues(iterator.next(), "D", "C", "test3", "error");
-    assertValues(iterator.next(), "D", "D", "test4", "skipped");
+    assertValues(iterator.next(), "D-1.0.0-r0", "A", "test1", "");
+    assertValues(iterator.next(), "D-1.0.0-r0", "B", "test2", "failure");
+    assertValues(iterator.next(), "D-1.0.0-r0", "C", "test3", "error");
+    assertValues(iterator.next(), "D-1.0.0-r0", "D", "test4", "skipped");
   }
 
   @Test
   public void testCreateWithMultipleFiles() throws Exception {
-    File directory = utils.createDirectory("report", "E");
+    File directory = utils.createDirectory("report", "E-1.0.0-r0");
     builder = new StringBuilder();
     builder
         .append("<testsuites>")
@@ -214,9 +214,9 @@ public class TestFactoryTest {
     assertEquals(4, objects.size());
 
     Iterator<TestData> iterator = objects.iterator();
-    assertValues(iterator.next(), "E", "A", "test1", "");
-    assertValues(iterator.next(), "E", "B", "test2", "failure");
-    assertValues(iterator.next(), "E", "C", "test3", "error");
-    assertValues(iterator.next(), "E", "D", "test4", "skipped");
+    assertValues(iterator.next(), "E-1.0.0-r0", "A", "test1", "");
+    assertValues(iterator.next(), "E-1.0.0-r0", "B", "test2", "failure");
+    assertValues(iterator.next(), "E-1.0.0-r0", "C", "test3", "error");
+    assertValues(iterator.next(), "E-1.0.0-r0", "D", "test4", "skipped");
   }
 }

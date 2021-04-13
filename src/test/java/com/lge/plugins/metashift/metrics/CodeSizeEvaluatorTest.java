@@ -51,7 +51,7 @@ public class CodeSizeEvaluatorTest {
     Criteria criteria = new Criteria();
     criteria.setRecipeViolationThreshold(0.5);
     evaluator = new CodeSizeEvaluator();
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
   }
@@ -80,7 +80,7 @@ public class CodeSizeEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
 
     assertValues(0, 0, 0, 0, 0);
@@ -88,8 +88,8 @@ public class CodeSizeEvaluatorTest {
 
   @Test
   public void testParseRecipeWithData() {
-    recipe.add(new CodeSizeData("A", "a.file", 3, 2, 1));
-    recipe.add(new CodeSizeData("A", "b.file", 6, 4, 2));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 6, 4, 2));
     evaluator.parse(recipe);
 
     assertValues(1, 2, 9, 6, 3);
@@ -97,7 +97,7 @@ public class CodeSizeEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
-    recipe.add(new CodeSizeData("A", "a.file", 3, 2, 1));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1));
     assertEquals(3, evaluator.parse(recipe).getLines());
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getLines());
   }
@@ -112,10 +112,10 @@ public class CodeSizeEvaluatorTest {
   @Test
   public void testParseRecipesWithData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new CodeSizeData("A", "a.file", 3, 2, 1));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new CodeSizeData("B", "b.file", 6, 4, 2));
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "b.file", 6, 4, 2));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -124,7 +124,7 @@ public class CodeSizeEvaluatorTest {
 
   @Test
   public void testParseRecipesResetValues() {
-    recipe.add(new CodeSizeData("A", "a.file", 3, 2, 1));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1));
     assertEquals(3, evaluator.parse(recipes).getLines());
     assertEquals(0, evaluator.parse(new Recipes()).getLines());
   }

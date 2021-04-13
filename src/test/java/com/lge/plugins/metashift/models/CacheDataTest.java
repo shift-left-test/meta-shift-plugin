@@ -40,12 +40,12 @@ import org.junit.Test;
  */
 public class CacheDataTest {
 
-  private final CacheData origin = new PremirrorCacheData("A", "X", true);
-  private final CacheData same = new PremirrorCacheData("A", "X", true);
+  private final CacheData origin = new PremirrorCacheData("A-1.0.0-r0", "X", true);
+  private final CacheData same = new PremirrorCacheData("A-1.0.0-r0", "X", true);
 
   @Test
   public void testInitData() {
-    assertEquals("A", origin.getRecipe());
+    assertEquals("A-1.0.0-r0", origin.getRecipe());
     assertEquals("X", origin.getSignature());
     assertTrue(origin.isAvailable());
   }
@@ -56,34 +56,39 @@ public class CacheDataTest {
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new SharedStateCacheData("A", "X", true));
-    assertNotEquals(origin, new PremirrorCacheData("B", "X", true));
-    assertNotEquals(origin, new PremirrorCacheData("A", "Y", true));
-    assertEquals(origin, new PremirrorCacheData("A", "X", false));
-    assertNotEquals(origin, new SharedStateCacheData("A", "X:do_A", true));
+    assertNotEquals(origin, new SharedStateCacheData("A-1.0.0-r0", "X", true));
+    assertNotEquals(origin, new PremirrorCacheData("B-1.0.0-r0", "X", true));
+    assertNotEquals(origin, new PremirrorCacheData("A-1.0.0-r0", "Y", true));
+    assertEquals(origin, new PremirrorCacheData("A-1.0.0-r0", "X", false));
+    assertNotEquals(origin, new SharedStateCacheData("A-1.0.0-r0", "X:do_A", true));
   }
 
   @Test
   public void testHashCode() {
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new SharedStateCacheData("A", "X", true).hashCode());
-    assertNotEquals(origin.hashCode(), new PremirrorCacheData("B", "X", true).hashCode());
-    assertNotEquals(origin.hashCode(), new PremirrorCacheData("A", "Y", true).hashCode());
-    assertEquals(origin.hashCode(), new PremirrorCacheData("A", "X", false).hashCode());
-    assertNotEquals(origin.hashCode(), new SharedStateCacheData("A", "X:do_A", true).hashCode());
+    assertNotEquals(origin.hashCode(),
+        new SharedStateCacheData("A-1.0.0-r0", "X", true).hashCode());
+    assertNotEquals(origin.hashCode(),
+        new PremirrorCacheData("B-1.0.0-r0", "X", true).hashCode());
+    assertNotEquals(origin.hashCode(),
+        new PremirrorCacheData("A-1.0.0-r0", "Y", true).hashCode());
+    assertEquals(origin.hashCode(),
+        new PremirrorCacheData("A-1.0.0-r0", "X", false).hashCode());
+    assertNotEquals(origin.hashCode(),
+        new SharedStateCacheData("A-1.0.0-r0", "X:do_A", true).hashCode());
   }
 
   @Test
   public void testComparable() {
     List<CacheData> expected = new ArrayList<>();
-    expected.add(new SharedStateCacheData("A", "X:do_compile", true));
-    expected.add(new SharedStateCacheData("A", "X:do_fetch", true));
-    expected.add(new SharedStateCacheData("B", "X:do_compile", true));
+    expected.add(new SharedStateCacheData("A-1.0.0-r0", "X:do_compile", true));
+    expected.add(new SharedStateCacheData("A-1.0.0-r0", "X:do_fetch", true));
+    expected.add(new SharedStateCacheData("B-1.0.0-r0", "X:do_compile", true));
 
     List<CacheData> actual = new ArrayList<>();
-    actual.add(new SharedStateCacheData("B", "X:do_compile", true));
-    actual.add(new SharedStateCacheData("A", "X:do_fetch", true));
-    actual.add(new SharedStateCacheData("A", "X:do_compile", true));
+    actual.add(new SharedStateCacheData("B-1.0.0-r0", "X:do_compile", true));
+    actual.add(new SharedStateCacheData("A-1.0.0-r0", "X:do_fetch", true));
+    actual.add(new SharedStateCacheData("A-1.0.0-r0", "X:do_compile", true));
 
     Collections.sort(actual);
     assertEquals(expected, actual);

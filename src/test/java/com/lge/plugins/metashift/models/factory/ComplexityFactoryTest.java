@@ -75,14 +75,14 @@ public class ComplexityFactoryTest {
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File directory = utils.createDirectory("report", "A", "checkcode").getParentFile();
+    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
     objects = ComplexityFactory.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     ComplexityFactory.create(directory);
@@ -90,7 +90,7 @@ public class ComplexityFactoryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInsufficientData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'complexity': [ { 'file': 'a.file' } ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     ComplexityFactory.create(directory);
@@ -98,7 +98,7 @@ public class ComplexityFactoryTest {
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
-    File directory = utils.createDirectory("report", "B");
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'complexity': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     objects = ComplexityFactory.create(directory);
@@ -107,7 +107,7 @@ public class ComplexityFactoryTest {
 
   @Test
   public void testCreateWithSingleData() throws Exception {
-    File directory = utils.createDirectory("report", "C");
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
         .append("  'complexity': [")
@@ -125,12 +125,12 @@ public class ComplexityFactoryTest {
     assertEquals(1, objects.size());
 
     Iterator<ComplexityData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C", "a.file", "func1()", 5, 10, 1);
+    assertValues(iterator.next(), "C-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
   }
 
   @Test
   public void testCreateWithDuplicatedData() throws Exception {
-    File directory = utils.createDirectory("report", "D");
+    File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("{")
         .append("  'complexity': [")
@@ -162,12 +162,12 @@ public class ComplexityFactoryTest {
     assertEquals(1, objects.size());
 
     Iterator<ComplexityData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D", "a.file", "func1()", 25, 30, 7);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", "func1()", 25, 30, 7);
   }
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    File directory = utils.createDirectory("report", "E");
+    File directory = utils.createDirectory("report", "E-1.0.0-r0");
     builder
         .append("{")
         .append("  'complexity': [")
@@ -199,8 +199,8 @@ public class ComplexityFactoryTest {
     assertEquals(3, objects.size());
 
     Iterator<ComplexityData> iterator = objects.iterator();
-    assertValues(iterator.next(), "E", "a.file", "func1()", 5, 10, 1);
-    assertValues(iterator.next(), "E", "b.file", "func2()", 15, 20, 3);
-    assertValues(iterator.next(), "E", "c.file", "func3()", 25, 30, 7);
+    assertValues(iterator.next(), "E-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
+    assertValues(iterator.next(), "E-1.0.0-r0", "b.file", "func2()", 15, 20, 3);
+    assertValues(iterator.next(), "E-1.0.0-r0", "c.file", "func3()", 25, 30, 7);
   }
 }

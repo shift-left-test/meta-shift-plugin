@@ -69,7 +69,7 @@ public class MetricsTest {
   public void setUp() {
     Criteria criteria = new Criteria(0.5, 0.5, 0.5, 0.5, 0.5, 5, 0.5, 0.5, 0.5, 0.5, 0.5);
     metrics = new Metrics(criteria);
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
   }
@@ -90,8 +90,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedCacheData() {
-    recipe.add(new PremirrorCacheData("A", false));
-    recipe.add(new SharedStateCacheData("B", "do_package", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", false));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_package", false));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, false);
@@ -102,8 +102,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedCacheData() {
-    recipe.add(new PremirrorCacheData("A", true));
-    recipe.add(new SharedStateCacheData("B", "do_package", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", true));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_package", true));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, true);
@@ -114,7 +114,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedCodeViolationData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, false);
@@ -125,9 +126,12 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedCodeViolationData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    recipe.add(new MinorCodeViolationData("A", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
-    recipe.add(new InfoCodeViolationData("A", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MinorCodeViolationData("A-1.0.0-r0", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new InfoCodeViolationData("A-1.0.0-r0", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, true);
@@ -138,8 +142,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedCommentData() {
-    recipe.add(new CommentData("A", "a.file", 10, 5));
-    recipe.add(new CommentData("B", "b.file", 10, 0));
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new CommentData("B-1.0.0-r0", "b.file", 10, 0));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, false);
@@ -150,8 +154,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedCommentData() {
-    recipe.add(new CommentData("A", "a.file", 10, 5));
-    recipe.add(new CommentData("B", "b.file", 20, 15));
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new CommentData("B-1.0.0-r0", "b.file", 20, 15));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, true);
@@ -162,8 +166,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedComplexityData() {
-    recipe.add(new ComplexityData("A", "a.file", "f()", 5, 10, 5));
-    recipe.add(new ComplexityData("B", "a.file", "f()", 5, 10, 5));
+    recipe.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 5));
+    recipe.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, false);
@@ -174,8 +178,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedComplexityData() {
-    recipe.add(new ComplexityData("A", "a.file", "f()", 5, 10, 5));
-    recipe.add(new ComplexityData("B", "a.file", "f()", 5, 10, 0));
+    recipe.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 5));
+    recipe.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 0));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, true);
@@ -236,9 +240,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedMutationTestData() {
-    recipe.add(new SkippedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SkippedMutationTestData("A-1.0.0-r0", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SurvivedMutationTestData("A-1.0.0-r0", "b.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, false);
@@ -249,10 +253,10 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedMutationTestData() {
-    recipe.add(new SkippedMutationTestData("A", "a.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new SurvivedMutationTestData("A", "b.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new KilledMutationTestData("A", "c.file", "C", "f()", 1, "AOR", "TC"));
-    recipe.add(new KilledMutationTestData("A", "d.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SkippedMutationTestData("A-1.0.0-r0", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SurvivedMutationTestData("A-1.0.0-r0", "b.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("A-1.0.0-r0", "d.file", "C", "f()", 1, "AOR", "TC"));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, true);
@@ -263,9 +267,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedRecipeViolationData() {
-    recipe.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    recipe.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    recipe.add(new MajorRecipeViolationData("A", "b.file", 1, "major", "major", "major"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
+    recipe.add(new MinorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "minor", "minor", "minor"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "b.file", 1, "major", "major", "major"));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, false);
@@ -276,10 +280,10 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedRecipeViolationData() {
-    recipe.add(new MajorRecipeViolationData("A", "a.file", 1, "major", "major", "major"));
-    recipe.add(new MinorRecipeViolationData("A", "a.file", 1, "minor", "minor", "minor"));
-    recipe.add(new InfoRecipeViolationData("A", "a.file", 1, "info", "info", "info"));
-    recipe.add(new MajorRecipeViolationData("A", "b.file", 1, "major", "major", "major"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
+    recipe.add(new MinorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "minor", "minor", "minor"));
+    recipe.add(new InfoRecipeViolationData("A-1.0.0-r0", "a.file", 1, "info", "info", "info"));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "b.file", 1, "major", "major", "major"));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, true);
@@ -290,8 +294,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithSizeData() {
-    recipe.add(new CodeSizeData("A", "a.file", 3, 2, 1));
-    recipe.add(new CodeSizeData("A", "b.file", 6, 4, 2));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 6, 4, 2));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, false, false);
@@ -305,10 +309,10 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedTestData() {
-    recipe.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    recipe.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
-    recipe.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
-    recipe.add(new SkippedTestData("A", "d.suite", "c.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    recipe.add(new FailedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
+    recipe.add(new ErrorTestData("A-1.0.0-r0", "a.suite", "c.tc", "msg"));
+    recipe.add(new SkippedTestData("A-1.0.0-r0", "d.suite", "c.tc", "msg"));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, false);
@@ -319,10 +323,10 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedTestData() {
-    recipe.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    recipe.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
-    recipe.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
-    recipe.add(new PassedTestData("A", "e.suite", "a.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    recipe.add(new FailedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
+    recipe.add(new ErrorTestData("A-1.0.0-r0", "a.suite", "c.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "e.suite", "a.tc", "msg"));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, true);

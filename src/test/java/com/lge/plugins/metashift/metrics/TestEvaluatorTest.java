@@ -54,7 +54,7 @@ public class TestEvaluatorTest {
     Criteria criteria = new Criteria();
     criteria.setTestThreshold(0.5);
     evaluator = new TestEvaluator(criteria);
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
   }
@@ -83,7 +83,7 @@ public class TestEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);
@@ -96,10 +96,10 @@ public class TestEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
-    recipe.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    recipe.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
-    recipe.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
-    recipe.add(new SkippedTestData("A", "d.suite", "c.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    recipe.add(new FailedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
+    recipe.add(new ErrorTestData("A-1.0.0-r0", "a.suite", "c.tc", "msg"));
+    recipe.add(new SkippedTestData("A-1.0.0-r0", "d.suite", "c.tc", "msg"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -112,10 +112,10 @@ public class TestEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
-    recipe.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    recipe.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
-    recipe.add(new ErrorTestData("A", "a.suite", "c.tc", "msg"));
-    recipe.add(new PassedTestData("A", "e.suite", "a.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    recipe.add(new FailedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
+    recipe.add(new ErrorTestData("A-1.0.0-r0", "a.suite", "c.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "e.suite", "a.tc", "msg"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -128,7 +128,7 @@ public class TestEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
-    recipe.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
     assertEquals(1, evaluator.parse(recipe).getDenominator());
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getDenominator());
   }
@@ -148,12 +148,12 @@ public class TestEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new FailedTestData("B", "a.suite", "b.tc", "msg"));
-    recipe.add(new ErrorTestData("B", "a.suite", "c.tc", "msg"));
-    recipe.add(new SkippedTestData("B", "d.suite", "c.tc", "msg"));
+    recipe.add(new FailedTestData("B-1.0.0-r0", "a.suite", "b.tc", "msg"));
+    recipe.add(new ErrorTestData("B-1.0.0-r0", "a.suite", "c.tc", "msg"));
+    recipe.add(new SkippedTestData("B-1.0.0-r0", "d.suite", "c.tc", "msg"));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -168,12 +168,12 @@ public class TestEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    recipe.add(new FailedTestData("A", "a.suite", "b.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    recipe.add(new FailedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new ErrorTestData("B", "a.suite", "c.tc", "msg"));
-    recipe.add(new PassedTestData("B", "e.suite", "a.tc", "msg"));
+    recipe.add(new ErrorTestData("B-1.0.0-r0", "a.suite", "c.tc", "msg"));
+    recipe.add(new PassedTestData("B-1.0.0-r0", "e.suite", "a.tc", "msg"));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -187,7 +187,7 @@ public class TestEvaluatorTest {
 
   @Test
   public void testParseRecipesResetValues() {
-    recipe.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
     assertEquals(1, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
   }

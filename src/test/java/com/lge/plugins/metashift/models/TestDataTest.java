@@ -39,12 +39,12 @@ import org.junit.Test;
  */
 public class TestDataTest {
 
-  private final TestData origin = new PassedTestData("A", "a.suite", "a.tc", "msg");
-  private final TestData same = new PassedTestData("A", "a.suite", "a.tc", "msg");
+  private final TestData origin = new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg");
+  private final TestData same = new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg");
 
   @Test
   public void testInitData() {
-    assertEquals("A", origin.getRecipe());
+    assertEquals("A-1.0.0-r0", origin.getRecipe());
     assertEquals("a.suite", origin.getSuite());
     assertEquals("a.tc", origin.getName());
     assertEquals("msg", origin.getMessage());
@@ -56,45 +56,47 @@ public class TestDataTest {
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new FailedTestData("A", "a.suite", "a.tc", "msg"));
-    assertNotEquals(origin, new ErrorTestData("A", "a.suite", "a.tc", "msg"));
-    assertNotEquals(origin, new SkippedTestData("A", "a.suite", "a.tc", "msg"));
-    assertNotEquals(origin, new PassedTestData("B", "a.suite", "a.tc", "msg"));
-    assertNotEquals(origin, new PassedTestData("A", "b.suite", "a.tc", "msg"));
-    assertNotEquals(origin, new PassedTestData("A", "a.suite", "b.tc", "msg"));
-    assertEquals(origin, new PassedTestData("A", "a.suite", "a.tc", "X"));
+    assertNotEquals(origin, new FailedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    assertNotEquals(origin, new ErrorTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    assertNotEquals(origin, new SkippedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    assertNotEquals(origin, new PassedTestData("B-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    assertNotEquals(origin, new PassedTestData("A-1.0.0-r0", "b.suite", "a.tc", "msg"));
+    assertNotEquals(origin, new PassedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
+    assertEquals(origin, new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "X"));
   }
 
   @Test
   public void testHashCode() {
     assertEquals(origin.hashCode(), same.hashCode());
     assertNotEquals(origin.hashCode(),
-        new FailedTestData("A", "a.suite", "a.tc", "msg").hashCode());
-    assertNotEquals(origin.hashCode(), new ErrorTestData("A", "a.suite", "a.tc", "msg").hashCode());
+        new FailedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg").hashCode());
     assertNotEquals(origin.hashCode(),
-        new SkippedTestData("A", "a.suite", "a.tc", "msg").hashCode());
+        new ErrorTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg").hashCode());
     assertNotEquals(origin.hashCode(),
-        new PassedTestData("B", "a.suite", "a.tc", "msg").hashCode());
+        new SkippedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg").hashCode());
     assertNotEquals(origin.hashCode(),
-        new PassedTestData("A", "b.suite", "a.tc", "msg").hashCode());
+        new PassedTestData("B-1.0.0-r0", "a.suite", "a.tc", "msg").hashCode());
     assertNotEquals(origin.hashCode(),
-        new PassedTestData("A", "a.suite", "b.tc", "msg").hashCode());
-    assertEquals(origin.hashCode(), new PassedTestData("A", "a.suite", "a.tc", "X").hashCode());
+        new PassedTestData("A-1.0.0-r0", "b.suite", "a.tc", "msg").hashCode());
+    assertNotEquals(origin.hashCode(),
+        new PassedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg").hashCode());
+    assertEquals(origin.hashCode(),
+        new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "X").hashCode());
   }
 
   @Test
   public void testComparable() {
     List<TestData> expected = new ArrayList<>();
-    expected.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
-    expected.add(new PassedTestData("A", "a.suite", "b.tc", "msg"));
-    expected.add(new PassedTestData("A", "b.suite", "b.tc", "msg"));
-    expected.add(new PassedTestData("B", "b.suite", "b.tc", "msg"));
+    expected.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    expected.add(new PassedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
+    expected.add(new PassedTestData("A-1.0.0-r0", "b.suite", "b.tc", "msg"));
+    expected.add(new PassedTestData("B-1.0.0-r0", "b.suite", "b.tc", "msg"));
 
     List<TestData> actual = new ArrayList<>();
-    actual.add(new PassedTestData("B", "b.suite", "b.tc", "msg"));
-    actual.add(new PassedTestData("A", "b.suite", "b.tc", "msg"));
-    actual.add(new PassedTestData("A", "a.suite", "b.tc", "msg"));
-    actual.add(new PassedTestData("A", "a.suite", "a.tc", "msg"));
+    actual.add(new PassedTestData("B-1.0.0-r0", "b.suite", "b.tc", "msg"));
+    actual.add(new PassedTestData("A-1.0.0-r0", "b.suite", "b.tc", "msg"));
+    actual.add(new PassedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
+    actual.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
 
     Collections.sort(actual);
     assertEquals(expected, actual);

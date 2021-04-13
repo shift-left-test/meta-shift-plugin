@@ -133,8 +133,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     // TODO: process raw data file. ex copy report files
 
     // load recipe list.
-    final Recipes recipes = Recipes.create(
-        new File(new FilePath(workspace, this.reportRoot).toURI()));
+    Recipes recipes = new Recipes(new File(new FilePath(workspace, this.reportRoot).toURI()));
 
     // load criteria.
     Criteria criteria = (this.localCriteria == null)

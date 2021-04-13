@@ -24,6 +24,9 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Represents a data object for all metrics.
  *
@@ -41,8 +44,15 @@ public abstract class Data<T> implements Comparable<T> {
    * Default constructor.
    *
    * @param recipe name
+   * @throws IllegalArgumentException if the recipe name is malformed
    */
   public Data(final String recipe) {
+    String regexp = "^(?<recipe>[\\w-+]+)-(?<version>[\\w.+]+)-(?<revision>[\\w.+]+)$";
+    Pattern pattern = Pattern.compile(regexp);
+    Matcher matcher = pattern.matcher(recipe);
+    if (!matcher.matches()) {
+      throw new IllegalArgumentException("Invalid recipe name: " + recipe);
+    }
     this.recipe = recipe;
   }
 

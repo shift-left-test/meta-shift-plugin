@@ -51,7 +51,7 @@ public class CommentEvaluatorTest {
     Criteria criteria = new Criteria();
     criteria.setCommentThreshold(0.5);
     evaluator = new CommentEvaluator(criteria);
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
   }
@@ -72,7 +72,7 @@ public class CommentEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);
@@ -81,8 +81,8 @@ public class CommentEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
-    recipe.add(new CommentData("A", "a.file", 10, 5));
-    recipe.add(new CommentData("A", "b.file", 10, 0));
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new CommentData("A-1.0.0-r0", "b.file", 10, 0));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -91,8 +91,8 @@ public class CommentEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
-    recipe.add(new CommentData("A", "a.file", 10, 5));
-    recipe.add(new CommentData("A", "b.file", 10, 5));
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new CommentData("A-1.0.0-r0", "b.file", 10, 5));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -101,7 +101,7 @@ public class CommentEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
-    recipe.add(new CommentData("A", "a.file", 10, 5));
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     assertEquals(10, evaluator.parse(recipe).getDenominator());
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getDenominator());
   }
@@ -117,10 +117,10 @@ public class CommentEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new CommentData("A", "a.file", 10, 5));
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new CommentData("B", "b.file", 10, 0));
+    recipe.add(new CommentData("B-1.0.0-r0", "b.file", 10, 0));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -131,10 +131,10 @@ public class CommentEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new CommentData("A", "a.file", 10, 5));
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new CommentData("B", "b.file", 20, 15));
+    recipe.add(new CommentData("B-1.0.0-r0", "b.file", 20, 15));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -144,7 +144,7 @@ public class CommentEvaluatorTest {
 
   @Test
   public void testParseRecipesResetValues() {
-    recipe.add(new CommentData("A", "a.file", 10, 5));
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     assertEquals(10, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
   }

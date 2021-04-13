@@ -73,14 +73,14 @@ public class DuplicationFactoryTest {
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File directory = utils.createDirectory("report", "A", "checkcode").getParentFile();
+    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
     objects = DuplicationFactory.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     DuplicationFactory.create(directory);
@@ -88,7 +88,7 @@ public class DuplicationFactoryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInsufficientData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'size': [ { 'file': 'a.file' } ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     DuplicationFactory.create(directory);
@@ -96,7 +96,7 @@ public class DuplicationFactoryTest {
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
-    File directory = utils.createDirectory("report", "B");
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     objects = DuplicationFactory.create(directory);
@@ -105,7 +105,7 @@ public class DuplicationFactoryTest {
 
   @Test
   public void testCreateWithSingleData() throws Exception {
-    File directory = utils.createDirectory("report", "C");
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
         .append("  'size': [")
@@ -121,12 +121,12 @@ public class DuplicationFactoryTest {
     assertEquals(1, objects.size());
 
     DuplicationData object = objects.iterator().next();
-    assertValues(object, "C", "a.file", 20, 2);
+    assertValues(object, "C-1.0.0-r0", "a.file", 20, 2);
   }
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    File directory = utils.createDirectory("report", "D");
+    File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("{")
         .append("  'size': [")
@@ -147,7 +147,7 @@ public class DuplicationFactoryTest {
     assertEquals(2, objects.size());
 
     Iterator<DuplicationData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D", "a.file", 10, 5);
-    assertValues(iterator.next(), "D", "b.file", 20, 5);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", 10, 5);
+    assertValues(iterator.next(), "D-1.0.0-r0", "b.file", 20, 5);
   }
 }

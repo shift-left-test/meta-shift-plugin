@@ -51,7 +51,7 @@ public class DuplicationEvaluatorTest {
     Criteria criteria = new Criteria();
     criteria.setDuplicationThreshold(0.5);
     evaluator = new DuplicationEvaluator(criteria);
-    recipe = new Recipe("A-B-C");
+    recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
   }
@@ -72,7 +72,7 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new MajorCodeViolationData("A", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);
@@ -81,7 +81,7 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
-    recipe.add(new DuplicationData("A", "a.file", 10, 6));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 6));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -90,7 +90,7 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
-    recipe.add(new DuplicationData("A", "b.file", 10, 4));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 4));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -99,7 +99,7 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
-    recipe.add(new DuplicationData("A", "a.file", 10, 6));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 6));
     assertEquals(10, evaluator.parse(recipe).getDenominator());
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getDenominator());
   }

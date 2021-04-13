@@ -75,14 +75,14 @@ public class RecipeViolationFactoryTest {
 
   @Test
   public void testCreateWithNoFile() throws Exception {
-    File directory = utils.createDirectory("report", "A", "checkrecipe").getParentFile();
+    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkrecipe").getParentFile();
     objects = RecipeViolationFactory.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     RecipeViolationFactory.create(directory);
@@ -90,7 +90,7 @@ public class RecipeViolationFactoryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedFile() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'issues': [ { 'file': 'a.bb', 'line': 1, 'severity': 'info' } ] }");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     RecipeViolationFactory.create(directory);
@@ -98,7 +98,7 @@ public class RecipeViolationFactoryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithUnknownSeverityType() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
         .append("{")
         .append("  'issues': [")
@@ -117,7 +117,7 @@ public class RecipeViolationFactoryTest {
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
-    File directory = utils.createDirectory("report", "B");
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'issues': [ ] }");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     objects = RecipeViolationFactory.create(directory);
@@ -126,7 +126,7 @@ public class RecipeViolationFactoryTest {
 
   @Test
   public void testCreateWithSingleData() throws Exception {
-    File directory = utils.createDirectory("report", "C");
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
         .append("  'issues': [")
@@ -144,12 +144,12 @@ public class RecipeViolationFactoryTest {
     assertEquals(1, objects.size());
 
     Iterator<RecipeViolationData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C", "a.file", 1, "checksum", "error", "checksum error");
+    assertValues(iterator.next(), "C-1.0.0-r0", "a.file", 1, "checksum", "error", "checksum error");
   }
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    File directory = utils.createDirectory("report", "D");
+    File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("{")
         .append("  'issues': [")
@@ -181,8 +181,8 @@ public class RecipeViolationFactoryTest {
     assertEquals(3, objects.size());
 
     Iterator<RecipeViolationData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D", "a.file", 1, "checksum", "error", "checksum error");
-    assertValues(iterator.next(), "D", "b.file", 2, "indent", "warning", "indent warning");
-    assertValues(iterator.next(), "D", "c.file", 3, "typo", "info", "typo info");
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", 1, "checksum", "error", "checksum error");
+    assertValues(iterator.next(), "D-1.0.0-r0", "b.file", 2, "indent", "warning", "indent warning");
+    assertValues(iterator.next(), "D-1.0.0-r0", "c.file", 3, "typo", "info", "typo info");
   }
 }

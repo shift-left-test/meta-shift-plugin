@@ -65,14 +65,14 @@ public class CacheFactoryTest {
 
   @Test
   public void testCreateWithNoFile() throws IOException {
-    File directory = utils.createDirectory("report", "A", "checkcache").getParentFile();
+    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcache").getParentFile();
     objects = CacheFactory.create(directory);
     assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
     CacheFactory.create(directory);
@@ -80,7 +80,7 @@ public class CacheFactoryTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInsufficientData() throws Exception {
-    File directory = utils.createDirectory("report", "A");
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
         .append("{")
         .append("  'Premirror': { },")
@@ -92,7 +92,7 @@ public class CacheFactoryTest {
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
-    File directory = utils.createDirectory("report", "B");
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder
         .append("{")
         .append("  'Premirror': { 'Found': [], 'Missed': [] },")
@@ -105,7 +105,7 @@ public class CacheFactoryTest {
 
   @Test
   public void testCreateWithPremirrorData() throws Exception {
-    File directory = utils.createDirectory("report", "C");
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
         .append("  'Premirror': { 'Found': ['A', 'B'], 'Missed': ['C'] },")
@@ -118,7 +118,7 @@ public class CacheFactoryTest {
 
   @Test
   public void testCreateWithSharedStateData() throws Exception {
-    File directory = utils.createDirectory("report", "D");
+    File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("{")
         .append("  'Premirror': { 'Found': [], 'Missed': [] },")
@@ -131,7 +131,7 @@ public class CacheFactoryTest {
 
   @Test
   public void testCreateWithMultipleData() throws Exception {
-    File directory = utils.createDirectory("report", "E");
+    File directory = utils.createDirectory("report", "E-1.0.0-r0");
     builder
         .append("{")
         .append("  'Premirror': { 'Found': ['A', 'B'], 'Missed': ['C'] },")

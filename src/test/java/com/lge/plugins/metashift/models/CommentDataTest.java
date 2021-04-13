@@ -39,12 +39,12 @@ import org.junit.Test;
  */
 public class CommentDataTest {
 
-  private final CommentData origin = new CommentData("A", "a.file", 10, 5);
-  private final CommentData same = new CommentData("A", "a.file", 10, 5);
+  private final CommentData origin = new CommentData("A-1.0.0-r0", "a.file", 10, 5);
+  private final CommentData same = new CommentData("A-1.0.0-r0", "a.file", 10, 5);
 
   @Test
   public void testInitData() {
-    assertEquals("A", origin.getRecipe());
+    assertEquals("A-1.0.0-r0", origin.getRecipe());
     assertEquals("a.file", origin.getFile());
     assertEquals(10, origin.getLines());
     assertEquals(5, origin.getCommentLines());
@@ -56,34 +56,34 @@ public class CommentDataTest {
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new CommentData("B", "a.file", 10, 5));
-    assertNotEquals(origin, new CommentData("A", "b.file", 10, 5));
-    assertEquals(origin, new CommentData("A", "a.file", 10000, 5));
-    assertEquals(origin, new CommentData("A", "a.file", 10, 1000));
+    assertNotEquals(origin, new CommentData("B-1.0.0-r0", "a.file", 10, 5));
+    assertNotEquals(origin, new CommentData("A-1.0.0-r0", "b.file", 10, 5));
+    assertEquals(origin, new CommentData("A-1.0.0-r0", "a.file", 10000, 5));
+    assertEquals(origin, new CommentData("A-1.0.0-r0", "a.file", 10, 1000));
   }
 
   @Test
   public void testHashCode() {
     assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new CommentData("B", "a.file", 10, 5).hashCode());
-    assertNotEquals(origin.hashCode(), new CommentData("A", "b.file", 10, 5).hashCode());
-    assertEquals(origin.hashCode(), new CommentData("A", "a.file", 10000, 5).hashCode());
-    assertEquals(origin.hashCode(), new CommentData("A", "a.file", 10, 1000).hashCode());
+    assertNotEquals(origin.hashCode(), new CommentData("B-1.0.0-r0", "a.file", 10, 5).hashCode());
+    assertNotEquals(origin.hashCode(), new CommentData("A-1.0.0-r0", "b.file", 10, 5).hashCode());
+    assertEquals(origin.hashCode(), new CommentData("A-1.0.0-r0", "a.file", 10000, 5).hashCode());
+    assertEquals(origin.hashCode(), new CommentData("A-1.0.0-r0", "a.file", 10, 1000).hashCode());
   }
 
   @Test
   public void testComparable() {
     List<CommentData> expected = new ArrayList<>();
-    expected.add(new CommentData("A", "a.file", 10, 5));
-    expected.add(new CommentData("A", "b.file", 10, 5));
-    expected.add(new CommentData("B", "a.file", 10, 5));
-    expected.add(new CommentData("B", "b.file", 10, 5));
+    expected.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    expected.add(new CommentData("A-1.0.0-r0", "b.file", 10, 5));
+    expected.add(new CommentData("B-1.0.0-r0", "a.file", 10, 5));
+    expected.add(new CommentData("B-1.0.0-r0", "b.file", 10, 5));
 
     List<CommentData> actual = new ArrayList<>();
-    actual.add(new CommentData("B", "b.file", 10, 5));
-    actual.add(new CommentData("B", "a.file", 10, 5));
-    actual.add(new CommentData("A", "b.file", 10, 5));
-    actual.add(new CommentData("A", "a.file", 10, 5));
+    actual.add(new CommentData("B-1.0.0-r0", "b.file", 10, 5));
+    actual.add(new CommentData("B-1.0.0-r0", "a.file", 10, 5));
+    actual.add(new CommentData("A-1.0.0-r0", "b.file", 10, 5));
+    actual.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
 
     Collections.sort(actual);
     assertEquals(expected, actual);

@@ -39,27 +39,33 @@ import java.util.stream.Stream;
 public final class Recipes extends ArrayList<Recipe> implements Collectable {
 
   /**
-   * Create a list of recipes using the given report directory.
+   * Default constructor.
+   */
+  public Recipes() {
+    super();
+  }
+
+  /**
+   * Create a list of Recipe objects using the given report directory.
    *
    * @param path to directory
    * @throws IllegalArgumentException if the path is invalid
    */
-  public static Recipes create(final File path) throws IllegalArgumentException {
+  public Recipes(final File path) {
+    this();
     if (!path.exists()) {
       throw new IllegalArgumentException("Directory not found: " + path);
     }
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
-    Recipes recipes = new Recipes();
     File[] directories = path.listFiles(File::isDirectory);
     if (directories != null) {
       for (File directory : directories) {
-        recipes.add(Recipe.create(directory));
+        this.add(new Recipe(directory));
       }
     }
-    Collections.sort(recipes);
-    return recipes;
+    Collections.sort(this);
   }
 
   @Override
