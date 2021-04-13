@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.metrics2.Criteria;
 import com.lge.plugins.metashift.models.Recipe;
 import hudson.model.Action;
 import hudson.model.Run;
@@ -51,7 +51,7 @@ public class MetaShiftRecipeAction extends MetaShiftActionBaseWithMetrics implem
     this.name = recipe.getRecipe();
     this.parent = parent;
 
-    recipe.accept(this.getMetrics());
+    this.getMetrics().parse(recipe);
   }
 
   public MetaShiftBuildAction getParentAction() {

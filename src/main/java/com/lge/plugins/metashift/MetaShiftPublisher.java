@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.metrics2.Criteria;
 import com.lge.plugins.metashift.models.RecipeList;
 import hudson.Extension;
 import hudson.FilePath;
@@ -102,7 +102,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
     @Override
     public String getDisplayName() {
-      return "Meta Shift Report";
+      return "Publish Meta-Shift Report";
     }
 
     @Override

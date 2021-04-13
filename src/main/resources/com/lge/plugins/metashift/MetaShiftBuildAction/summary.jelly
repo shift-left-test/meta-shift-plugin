@@ -15,31 +15,31 @@ xmlns:ms="/metashift">
   <div class="row metashift overview">
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Recipes</h4>
-      <p>${it.sizeQualifier.recipes}
+      <p>${it.metrics.getSize().recipes}
         <ms:text-diff diff="${it.recipesDiff}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Lines</h4>
-      <p>${it.sizeQualifier.lines}
+      <p>${it.metrics.getSize().lines}
         <ms:text-diff diff="${it.linesDiff}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Functions</h4>
-      <p>${it.sizeQualifier.functions}
+      <p>${it.metrics.getSize().functions}
         <ms:text-diff diff="${it.functionsDiff}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Classes</h4>
-      <p>${it.sizeQualifier.classes}
+      <p>${it.metrics.getSize().classes}
         <ms:text-diff diff="${it.classesDiff}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Files</h4>
-      <p>${it.sizeQualifier.files}
+      <p>${it.metrics.getSize().files}
         <ms:text-diff diff="${it.filesDiff}" />
       </p>
     </div>
@@ -56,28 +56,28 @@ xmlns:ms="/metashift">
   </div>
   <div class="row metashift">
     <ms:measurement-summary title="Cache Availability"
-      qualifier="${it.cacheQualifier}" />
+      evaluator="${it.metrics.cacheAvailability}" />
     <ms:measurement-summary title="Recipe Violations"
-      qualifier="${it.recipeViolationQualifier}" />
+      evaluator="${it.metrics.recipeViolations}" />
   </div>
   <div class="row metashift">
     <h4>Code Quality</h4>
   </div>
   <div class="row metashift">
     <ms:measurement-summary title="Comments"
-      qualifier="${it.commentQualifier}" />
+      evaluator="${it.metrics.comments}" />
     <ms:measurement-summary title="Violations"
-      qualifier="${it.codeViolationQualifier}" />
+      evaluator="${it.metrics.codeViolations}" />
     <ms:measurement-summary title="Complexity"
-      qualifier="${it.complexityQualifier}" />
+      evaluator="${it.metrics.complexity}" />
     <ms:measurement-summary title="Duplications"
-      qualifier="${it.duplicationQualifier}" />
+      evaluator="${it.metrics.duplications}" />
     <ms:measurement-summary title="Testing"
-      qualifier="${it.testQualifier}" />
+      evaluator="${it.metrics.test}" />
     <ms:measurement-summary title="Coverage"
-      qualifier="${it.coverageQualifier}" />
+      evaluator="${it.metrics.coverage}" />
     <ms:measurement-summary title="Mutation Score"
-      qualifier="${it.mutationTestQualifier}" />
+      evaluator="${it.metrics.mutationTest}" />
   </div>
   </div>
 </j:jelly>

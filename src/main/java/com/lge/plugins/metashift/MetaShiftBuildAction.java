@@ -24,8 +24,9 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.metrics.Criteria;
-import com.lge.plugins.metashift.metrics.Qualifier;
+import com.lge.plugins.metashift.metrics2.Criteria;
+import com.lge.plugins.metashift.metrics2.Evaluator;
+import com.lge.plugins.metashift.metrics2.Metrics;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeList;
 import hudson.PluginWrapper;
@@ -39,7 +40,6 @@ import jenkins.model.Jenkins;
 import jenkins.model.RunAction2;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
 import net.sf.json.util.PropertyFilter;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -74,45 +74,45 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
     this.run = run;
     this.criteria = criteria;
 
-    recipes.accept(this.getMetrics());
+    this.getMetrics().parse(recipes);
 
     for (Recipe recipe : recipes) {
       MetaShiftRecipeAction recipeAction =
           new MetaShiftRecipeAction(this, this.criteria, recipe);
       this.addAction(recipeAction);
 
-      if (isQualified(recipeAction.getCacheQualifier())) {
+      if (isQualified(recipeAction.getMetrics().getCacheAvailability())) {
         cachePassedRecipes++;
       }
-      if (isQualified(recipeAction.getCodeViolationQualifier())) {
+      if (isQualified(recipeAction.getMetrics().getCodeViolations())) {
         codeViolationPassedRecipes++;
       }
-      if (isQualified(recipeAction.getCommentQualifier())) {
+      if (isQualified(recipeAction.getMetrics().getComments())) {
         commentPassedRecipes++;
       }
-      if (isQualified(recipeAction.getComplexityQualifier())) {
+      if (isQualified(recipeAction.getMetrics().getComplexity())) {
         commentPassedRecipes++;
       }
-      if (isQualified(recipeAction.getCoverageQualifier())) {
+      if (isQualified(recipeAction.getMetrics().getCoverage())) {
         coveragePassedRecipes++;
       }
-      if (isQualified(recipeAction.getDuplicationQualifier())) {
+      if (isQualified(recipeAction.getMetrics().getDuplications())) {
         duplicationPassedRecipes++;
       }
-      if (isQualified(recipeAction.getMutationTestQualifier())) {
+      if (isQualified(recipeAction.getMetrics().getMutationTest())) {
         mutationTestPassedRecipes++;
       }
-      if (isQualified(recipeAction.getRecipeViolationQualifier())) {
+      if (isQualified(recipeAction.getMetrics().getRecipeViolations())) {
         recipeViolationPassedRecipes++;
       }
-      if (isQualified(recipeAction.getTestQualifier())) {
+      if (isQualified(recipeAction.getMetrics().getTest())) {
         testPassedRecipes++;
       }
     }
   }
 
-  private boolean isQualified(Qualifier<?> qualifier) {
-    return qualifier != null && qualifier.isQualified();
+  private boolean isQualified(Evaluator<?> evaluator) {
+    return evaluator != null && evaluator.isQualified();
   }
 
   @Override
@@ -259,35 +259,9 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
   public JSONArray getRecipesTableModel() {
     JSONArray result = new JSONArray();
 
-    List<MetaShiftRecipeAction> recipes = this.getRecipes();
-
-    JsonConfig jsonConfig = new JsonConfig();
-    jsonConfig.setJsonPropertyFilter(new CustomPropertyFilter());
-
-    for (MetaShiftRecipeAction recipe : recipes) {
-      JSONObject recipeObj = new JSONObject();
-      recipeObj.put("name", recipe.getDisplayName());
-      recipeObj.put("size", JSONObject.fromObject(recipe.getSizeQualifier(),
-          jsonConfig));
-      recipeObj.put("cache", JSONObject.fromObject(recipe.getCacheQualifier(),
-          jsonConfig));
-      recipeObj.put("recipeViolation", JSONObject.fromObject(recipe.getRecipeViolationQualifier(),
-          jsonConfig));
-      recipeObj.put("comment", JSONObject.fromObject(recipe.getCommentQualifier(),
-          jsonConfig));
-      recipeObj.put("codeViolation", JSONObject.fromObject(recipe.getCodeViolationQualifier(),
-          jsonConfig));
-      recipeObj.put("complexity", JSONObject.fromObject(recipe.getComplexityQualifier(),
-          jsonConfig));
-      recipeObj.put("duplication", JSONObject.fromObject(recipe.getDuplicationQualifier(),
-          jsonConfig));
-      recipeObj.put("test", JSONObject.fromObject(recipe.getTestQualifier(),
-          jsonConfig));
-      recipeObj.put("coverage", JSONObject.fromObject(recipe.getCoverageQualifier(),
-          jsonConfig));
-      recipeObj.put("mutationTest", JSONObject.fromObject(recipe.getMutationTestQualifier(),
-          jsonConfig));
-
+    for (MetaShiftRecipeAction recipe : this.getRecipes()) {
+      JSONObject recipeObj = JSONObject.fromObject(recipe.getMetrics());
+      recipeObj.element("name", recipe.getDisplayName());
       result.add(recipeObj);
     }
 
@@ -301,7 +275,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
 
     private String name;
     private String type;
-    private List<Float> data;
+    private List<Double> data;
 
     public String getName() {
       return this.name;
@@ -311,20 +285,20 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
       return this.type;
     }
 
-    public List<Float> getData() {
+    public List<Double> getData() {
       return this.data;
     }
 
     /**
-     * add data to series with  qualifier.
+     * add data to series with  evaluator.
      *
-     * @param qualifier qualifier
+     * @param evaluator evaluator
      */
-    public void addData(Qualifier<?> qualifier) {
-      if (qualifier != null) {
-        this.data.add(0, qualifier.getRatio() * 100);
+    public void addData(Evaluator<?> evaluator) {
+      if (evaluator != null && evaluator.isAvailable()) {
+        this.data.add(0, evaluator.getRatio() * 100);
       } else {
-        this.data.add(0, 0f); // TODO: n/a case
+        this.data.add(0, null);
       }
     }
 
@@ -372,15 +346,15 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
       }
       buildNameList.add(0, b.getDisplayName());
 
-      seriesCache.addData(msAction.getCacheQualifier());
-      seriesRecipeViolation.addData(msAction.getRecipeViolationQualifier());
-      seriesComment.addData(msAction.getCommentQualifier());
-      seriesCodeViolation.addData(msAction.getCodeViolationQualifier());
-      seriesComplexity.addData(msAction.getComplexityQualifier());
-      seriesDuplication.addData(msAction.getDuplicationQualifier());
-      seriesTest.addData(msAction.getTestQualifier());
-      seriesCoverage.addData(msAction.getCoverageQualifier());
-      seriesMutation.addData(msAction.getMutationTestQualifier());
+      seriesCache.addData(msAction.getMetrics().getCacheAvailability());
+      seriesRecipeViolation.addData(msAction.getMetrics().getRecipeViolations());
+      seriesComment.addData(msAction.getMetrics().getComments());
+      seriesCodeViolation.addData(msAction.getMetrics().getCodeViolations());
+      seriesComplexity.addData(msAction.getMetrics().getComplexity());
+      seriesDuplication.addData(msAction.getMetrics().getDuplications());
+      seriesTest.addData(msAction.getMetrics().getTest());
+      seriesCoverage.addData(msAction.getMetrics().getCoverage());
+      seriesMutation.addData(msAction.getMetrics().getMutationTest());
 
       // TODO: check response series size
       if (buildNameList.size() >= 10) {
@@ -419,11 +393,17 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
           return previousAction;
         }
       }
-
       build = build.getPreviousSuccessfulBuild();
     }
-
     return null;
+  }
+
+  private Metrics getPreviousMetrics() {
+    if (getPreviousBuildAction() != null) {
+      return getPreviousBuildAction().getMetrics();
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -431,11 +411,14 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    *
    * @return recipes diff
    */
-  public int getRecipesDiff() {
-    if (this.getPreviousBuildAction() != null) {
-      return this.getRecipes().size() - this.getPreviousBuildAction().getRecipes().size();
-    }
-    return 0;
+  public long getRecipesDiff() {
+    long current = this.getMetrics().getSize() != null
+        ? this.getMetrics().getSize().getRecipes() : 0;
+    long previous = this.getPreviousMetrics() != null
+        && this.getPreviousMetrics().getSize() != null
+        ? this.getPreviousMetrics().getSize().getRecipes() : 0;
+
+    return current - previous;
   }
 
   /**
@@ -443,12 +426,14 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    *
    * @return lines diff
    */
-  public int getLinesDiff() {
-    if (this.getPreviousBuildAction() != null) {
-      return this.getSizeQualifier().getLines()
-          - this.getPreviousBuildAction().getSizeQualifier().getLines();
-    }
-    return 0;
+  public long getLinesDiff() {
+    long current = this.getMetrics().getSize() != null
+        ? this.getMetrics().getSize().getLines() : 0;
+    long previous = this.getPreviousMetrics() != null
+        && this.getPreviousMetrics().getSize() != null
+        ? this.getPreviousMetrics().getSize().getLines() : 0;
+      
+    return current - previous;
   }
 
   /**
@@ -456,12 +441,14 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    *
    * @return functions diff
    */
-  public int getFunctionsDiff() {
-    if (this.getPreviousBuildAction() != null) {
-      return this.getSizeQualifier().getFunctions()
-          - this.getPreviousBuildAction().getSizeQualifier().getFunctions();
-    }
-    return 0;
+  public long getFunctionsDiff() {
+    long current = this.getMetrics().getSize() != null
+        ? this.getMetrics().getSize().getFunctions() : 0;
+    long previous = this.getPreviousMetrics() != null
+        && this.getPreviousMetrics().getSize() != null
+        ? this.getPreviousMetrics().getSize().getFunctions() : 0;
+      
+    return current - previous;
   }
 
   /**
@@ -469,12 +456,14 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    *
    * @return classes diff
    */
-  public int getClassesDiff() {
-    if (this.getPreviousBuildAction() != null) {
-      return this.getSizeQualifier().getClasses()
-          - this.getPreviousBuildAction().getSizeQualifier().getClasses();
-    }
-    return 0;
+  public long getClassesDiff() {
+    long current = this.getMetrics().getSize() != null
+        ? this.getMetrics().getSize().getClasses() : 0;
+    long previous = this.getPreviousMetrics() != null
+        && this.getPreviousMetrics().getSize() != null
+        ? this.getPreviousMetrics().getSize().getClasses() : 0;
+      
+    return current - previous;
   }
 
   /**
@@ -482,11 +471,13 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    *
    * @return files diff
    */
-  public int getFilesDiff() {
-    if (this.getPreviousBuildAction() != null) {
-      return this.getSizeQualifier().getFiles()
-          - this.getPreviousBuildAction().getSizeQualifier().getFiles();
-    }
-    return 0;
+  public long getFilesDiff() {
+    long current = this.getMetrics().getSize() != null
+        ? this.getMetrics().getSize().getFiles() : 0;
+    long previous = this.getPreviousMetrics() != null
+        && this.getPreviousMetrics().getSize() != null
+        ? this.getPreviousMetrics().getSize().getFiles() : 0;
+      
+    return current - previous;
   }
 }

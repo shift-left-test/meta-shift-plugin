@@ -24,18 +24,8 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.metrics.CacheQualifier;
-import com.lge.plugins.metashift.metrics.CodeViolationQualifier;
-import com.lge.plugins.metashift.metrics.CommentQualifier;
-import com.lge.plugins.metashift.metrics.ComplexityQualifier;
-import com.lge.plugins.metashift.metrics.CoverageQualifier;
-import com.lge.plugins.metashift.metrics.Criteria;
-import com.lge.plugins.metashift.metrics.DuplicationQualifier;
-import com.lge.plugins.metashift.metrics.Metrics;
-import com.lge.plugins.metashift.metrics.MutationTestQualifier;
-import com.lge.plugins.metashift.metrics.RecipeViolationQualifier;
-import com.lge.plugins.metashift.metrics.SizeQualifier;
-import com.lge.plugins.metashift.metrics.TestQualifier;
+import com.lge.plugins.metashift.metrics2.Criteria;
+import com.lge.plugins.metashift.metrics2.Metrics;
 import hudson.model.Actionable;
 import java.text.DecimalFormat;
 
@@ -53,48 +43,6 @@ public abstract class MetaShiftActionBaseWithMetrics extends Actionable {
   public Metrics getMetrics() {
     return this.metrics;
   }
-
-  /// api for front-end
-  public SizeQualifier getSizeQualifier() {
-    return (SizeQualifier) this.metrics.get(SizeQualifier.class);
-  }
-
-  public CacheQualifier getCacheQualifier() {
-    return (CacheQualifier) this.metrics.get(CacheQualifier.class);
-  }
-
-  public RecipeViolationQualifier getRecipeViolationQualifier() {
-    return (RecipeViolationQualifier) this.metrics.get(RecipeViolationQualifier.class);
-  }
-
-  public CommentQualifier getCommentQualifier() {
-    return (CommentQualifier) this.metrics.get(CommentQualifier.class);
-  }
-
-  public CodeViolationQualifier getCodeViolationQualifier() {
-    return (CodeViolationQualifier) this.metrics.get(CodeViolationQualifier.class);
-  }
-
-  public ComplexityQualifier getComplexityQualifier() {
-    return (ComplexityQualifier) this.metrics.get(ComplexityQualifier.class);
-  }
-
-  public DuplicationQualifier getDuplicationQualifier() {
-    return (DuplicationQualifier) this.metrics.get(DuplicationQualifier.class);
-  }
-
-  public TestQualifier getTestQualifier() {
-    return (TestQualifier) this.metrics.get(TestQualifier.class);
-  }
-
-  public CoverageQualifier getCoverageQualifier() {
-    return (CoverageQualifier) this.metrics.get(CoverageQualifier.class);
-  }
-
-  public MutationTestQualifier getMutationTestQualifier() {
-    return (MutationTestQualifier) this.metrics.get(MutationTestQualifier.class);
-  }
-
 
   ///helper for ui
   public String getFixedFloat(String format, float number) {

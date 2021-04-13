@@ -9,7 +9,6 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
     <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
-      <j:set var="qualified" value="${it.metrics.qualified}" />
       <div class="row metashift">
         <h1>${it.run.project.displayName} ${it.run.displayName}</h1>
       </div>
@@ -20,31 +19,31 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
       <div class="row metashift overview">
         <div class="col-2 bg-light shadow-sm panel">
           <h4>Recipes</h4>
-          <p>${it.sizeQualifier.recipes}
+          <p>${it.metrics.getSize().recipes}
             <ms:text-diff diff="${it.recipesDiff}" />
           </p>
         </div>
         <div class="col-2 bg-light shadow-sm panel">
           <h4>Lines</h4>
-          <p>${it.sizeQualifier.lines}
+          <p>${it.metrics.getSize().lines}
             <ms:text-diff diff="${it.linesDiff}" />
           </p>
         </div>
         <div class="col-2 bg-light shadow-sm panel">
           <h4>Functions</h4>
-          <p>${it.sizeQualifier.functions}
+          <p>${it.metrics.getSize().functions}
             <ms:text-diff diff="${it.functionsDiff}" />
           </p>
         </div>
         <div class="col-2 bg-light shadow-sm panel">
           <h4>Classes</h4>
-          <p>${it.sizeQualifier.classes}
+          <p>${it.metrics.getSize().classes}
             <ms:text-diff diff="${it.classesDiff}" />
           </p>
         </div>
         <div class="col-2 bg-light shadow-sm panel">
           <h4>Files</h4>
-          <p>${it.sizeQualifier.files}
+          <p>${it.metrics.getSize().files}
             <ms:text-diff diff="${it.filesDiff}" />
           </p>
         </div>
@@ -54,8 +53,8 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
         <div class="col-5">
           <div class="row">
             <h3>Metrics
-              <span class="measurement-group badge ${qualified ? 'badge-success':'badge-danger'}">
-                ${qualified ? 'Passed' : 'Failed'}
+              <span class="measurement-group badge ${it.metrics.qualified ? 'badge-success':'badge-danger'}">
+                ${it.metrics.qualified ? 'Passed' : 'Failed'}
               </span>
             </h3>
           </div>
@@ -79,14 +78,14 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               <tr>
                 <th rowspan="2">Build Perf.</th>
                 <j:choose>
-                  <j:when test="${it.cacheQualifier.available}">
-                    <th class="${it.cacheQualifier.qualified ? 'text-success' : 'text-danger'}">
+                  <j:when test="${it.metrics.cacheAvailability.available}">
+                    <th class="${it.metrics.cacheAvailability.qualified ? 'text-success' : 'text-danger'}">
                       Cache Availability
                     </th>
-                    <td>${it.cacheQualifier.numerator}</td>
-                    <td>${it.cacheQualifier.denominator}</td>
-                    <td class="${it.cacheQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.cacheQualifier.ratio * 100)}%
+                    <td>${it.metrics.cacheAvailability.numerator}</td>
+                    <td>${it.metrics.cacheAvailability.denominator}</td>
+                    <td class="${it.cacheQmetrics.cacheAvailabilityualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.metrics.cacheAvailability.ratio * 100)}%
                     </td>
                     <td>${it.criteria.cacheThreshold}%</td>
                     <td>${it.cachePassedRecipes}</td>
@@ -105,14 +104,14 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               </tr>
               <tr>
                 <j:choose>
-                  <j:when test="${it.recipeViolationQualifier.available}">
-                    <th class="${it.recipeViolationQualifier.qualified ? 'text-success' : 'text-danger'}">
+                  <j:when test="${it.metrics.recipeViolations.available}">
+                    <th class="${it.metrics.recipeViolations.qualified ? 'text-success' : 'text-danger'}">
                       Recipe Violations
                     </th>
-                    <td>${it.recipeViolationQualifier.numerator}</td>
-                    <td>${it.recipeViolationQualifier.denominator}</td>
-                    <td class="${it.recipeViolationQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.recipeViolationQualifier.ratio * 100)}%
+                    <td>${it.metrics.recipeViolations.numerator}</td>
+                    <td>${it.metrics.recipeViolations.denominator}</td>
+                    <td class="${it.metrics.recipeViolations.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.metrics.recipeViolations.ratio * 100)}%
                     </td>
                     <td>${it.criteria.recipeViolationThreshold}%</td>
                     <td>${it.recipeViolationPassedRecipes}</td>
@@ -132,14 +131,14 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               <tr>
                 <th rowspan="7">Code Quality</th>
                 <j:choose>
-                  <j:when test="${it.commentQualifier.available}">
-                    <th class="${it.commentQualifier.qualified ? 'text-success' : 'text-danger'}">
+                  <j:when test="${it.metrics.comments.available}">
+                    <th class="${it.metrics.comments.qualified ? 'text-success' : 'text-danger'}">
                       Comments
                     </th>
-                    <td>${it.commentQualifier.numerator}</td>
-                    <td>${it.commentQualifier.denominator}</td>
-                    <td class="${it.commentQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.commentQualifier.ratio * 100)}%
+                    <td>${it.metrics.comments.numerator}</td>
+                    <td>${it.metrics.comments.denominator}</td>
+                    <td class="${it.metrics.comments.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.metrics.comments.ratio * 100)}%
                     </td>
                     <td>${it.criteria.commentThreshold}%</td>
                     <td>${it.commentPassedRecipes}</td>
@@ -158,14 +157,14 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               </tr>
               <tr>
                 <j:choose>
-                  <j:when test="${it.codeViolationQualifier.available}">
-                    <th class="${it.codeViolationQualifier.qualified ? 'text-success' : 'text-danger'}">
+                  <j:when test="${it.metrics.codeViolations.available}">
+                    <th class="${it.metrics.codeViolations.qualified ? 'text-success' : 'text-danger'}">
                       Code Violations
                     </th>
-                    <td>${it.codeViolationQualifier.numerator}</td>
-                    <td>${it.codeViolationQualifier.denominator}</td>
-                    <td class="${it.codeViolationQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.codeViolationQualifier.ratio * 100)}%
+                    <td>${it.metrics.codeViolations.numerator}</td>
+                    <td>${it.metrics.codeViolations.denominator}</td>
+                    <td class="${it.metrics.codeViolations.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.metrics.codeViolations.ratio * 100)}%
                     </td>
                     <td>${it.criteria.codeViolationThreshold}%</td>
                     <td>${it.codeViolationPassedRecipes}</td>
@@ -184,14 +183,14 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               </tr>
               <tr>
                 <j:choose>
-                  <j:when test="${it.complexityQualifier.available}">
-                    <th class="${it.complexityQualifier.qualified ? 'text-success' : 'text-danger'}">
+                  <j:when test="${it.metrics.complexity.available}">
+                    <th class="${it.metrics.complexity.qualified ? 'text-success' : 'text-danger'}">
                       Complexity
                     </th>
-                    <td>${it.complexityQualifier.numerator}</td>
-                    <td>${it.complexityQualifier.denominator}</td>
-                    <td class="${it.complexityQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.complexityQualifier.ratio * 100)}%
+                    <td>${it.metrics.complexity.numerator}</td>
+                    <td>${it.metrics.complexity.denominator}</td>
+                    <td class="${it.metrics.complexity.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.metrics.complexity.ratio * 100)}%
                     </td>
                     <td>${it.criteria.complexityThreshold}%</td>
                     <td>${it.complexityPassedRecipes}</td>
@@ -210,14 +209,14 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               </tr>
               <tr>
                 <j:choose>
-                  <j:when test="${it.duplicationQualifier.available}">
-                    <th class="${it.duplicationQualifier.qualified ? 'text-success' : 'text-danger'}">
+                  <j:when test="${it.metrics.duplications.available}">
+                    <th class="${it.metrics.duplications.qualified ? 'text-success' : 'text-danger'}">
                       Duplications
                     </th>
-                    <td>${it.duplicationQualifier.numerator}</td>
-                    <td>${it.duplicationQualifier.denominator}</td>
-                    <td class="${it.duplicationQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.duplicationQualifier.ratio * 100)}%
+                    <td>${it.metrics.duplications.numerator}</td>
+                    <td>${it.metrics.duplications.denominator}</td>
+                    <td class="${it.metrics.duplications.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.metrics.duplications.ratio * 100)}%
                     </td>
                     <td>${it.criteria.duplicationThreshold}%</td>
                     <td>${it.duplicationPassedRecipes}</td>
@@ -236,14 +235,14 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               </tr>
               <tr>
                 <j:choose>
-                  <j:when test="${it.testQualifier.available}">
-                    <th class="${it.testQualifier.qualified ? 'text-success' : 'text-danger'}">
+                  <j:when test="${it.metrics.test.available}">
+                    <th class="${it.metrics.test.qualified ? 'text-success' : 'text-danger'}">
                       Test
                     </th>
-                    <td>${it.testQualifier.numerator}</td>
-                    <td>${it.testQualifier.denominator}</td>
-                    <td class="${it.testQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.testQualifier.ratio * 100)}%
+                    <td>${it.metrics.test.numerator}</td>
+                    <td>${it.metrics.test.denominator}</td>
+                    <td class="${it.metrics.test.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.metrics.test.ratio * 100)}%
                     </td>
                     <td>${it.criteria.testThreshold}%</td>
                     <td>${it.testPassedRecipes}</td>
@@ -262,14 +261,14 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               </tr>
               <tr>
                 <j:choose>
-                  <j:when test="${it.coverageQualifier.available}">
-                    <th class="${it.coverageQualifier.qualified ? 'text-success' : 'text-danger'}">
+                  <j:when test="${it.metrics.coverage.available}">
+                    <th class="${it.metrics.coverage.qualified ? 'text-success' : 'text-danger'}">
                       Coverage
                     </th>
-                    <td>${it.coverageQualifier.numerator}</td>
-                    <td>${it.coverageQualifier.denominator}</td>
+                    <td>${it.metrics.coverage.numerator}</td>
+                    <td>${it.metrics.coverage.denominator}</td>
                     <td class="${it.coverageQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.coverageQualifier.ratio * 100)}%
+                      ${it.getFixedFloat('#.##', it.metrics.coverage.ratio * 100)}%
                     </td>
                     <td>${it.criteria.coverageThreshold}%</td>
                     <td>${it.coveragePassedRecipes}</td>
@@ -288,14 +287,14 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
               </tr>
               <tr>
                 <j:choose>
-                  <j:when test="${it.mutationTestQualifier.available}">
-                    <th class="${it.mutationTestQualifier.qualified ? 'text-success' : 'text-danger'}">
+                  <j:when test="${it.metrics.mutationTest.available}">
+                    <th class="${it.metrics.mutationTest.qualified ? 'text-success' : 'text-danger'}">
                       Mutation Test
                     </th>
-                    <td>${it.mutationTestQualifier.numerator}</td>
-                    <td>${it.mutationTestQualifier.denominator}</td>
-                    <td class="${it.mutationTestQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.mutationTestQualifier.ratio * 100)}%
+                    <td>${it.metrics.mutationTest.numerator}</td>
+                    <td>${it.metrics.mutationTest.denominator}</td>
+                    <td class="${it.metrics.mutationTest.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                      ${it.getFixedFloat('#.##', it.metrics.mutationTest.ratio * 100)}%
                     </td>
                     <td>${it.criteria.mutationTestThreshold}%</td>
                     <td>${it.mutationTestPassedRecipes}</td>
