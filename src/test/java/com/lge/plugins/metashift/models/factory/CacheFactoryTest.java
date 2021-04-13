@@ -52,14 +52,14 @@ public class CacheFactoryTest {
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder, '\'', '"');
+    utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     objects = new ArrayList<>();
   }
 
   @Test
   public void testCreateWithUnknownPath() {
-    objects = CacheFactory.create(utils.getPath("unknown"));
+    objects = CacheFactory.create(utils.getPath("path-to-unknown"));
     assertEquals(0, objects.size());
   }
 

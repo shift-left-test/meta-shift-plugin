@@ -73,7 +73,7 @@ public class SimpleXmlParserTest {
 
   @Test(expected = FileNotFoundException.class)
   public void testWithUnknownPath() throws Exception {
-    new SimpleXmlParser(utils.getPath("unknown"));
+    new SimpleXmlParser(utils.getPath("path-to-unknown"));
   }
 
   @Test(expected = SAXParseException.class)

@@ -41,6 +41,10 @@ public class TemporaryFileUtils {
   private final char from;
   private final char to;
 
+  public TemporaryFileUtils(final TemporaryFolder folder) {
+    this(folder, '\'', '"');
+  }
+
   public TemporaryFileUtils(final TemporaryFolder folder, final char from, final char to) {
     this.folder = folder;
     this.from = from;
@@ -55,6 +59,25 @@ public class TemporaryFileUtils {
     File directory = FileUtils.getFile(folder.getRoot(), names);
     FileUtils.forceMkdir(directory);
     return directory;
+  }
+
+  public File createDirectory(final File parent, final String... names) throws IOException {
+    File directory = FileUtils.getFile(parent, names);
+    FileUtils.forceMkdir(directory);
+    return directory;
+  }
+
+  public File createFile(final String... names) throws IOException {
+    File file = getPath(names);
+    FileUtils.touch(file);
+    return file;
+  }
+
+  public File createFile(final File parent, final String... names) throws IOException {
+    File file = FileUtils.getFile(parent, names);
+    FileUtils.forceMkdir(file.getParentFile());
+    FileUtils.touch(file);
+    return file;
   }
 
   public void writeLines(final StringBuilder builder, final File file) {

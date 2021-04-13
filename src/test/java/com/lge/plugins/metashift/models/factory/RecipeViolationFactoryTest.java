@@ -52,7 +52,7 @@ public class RecipeViolationFactoryTest {
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder, '\'', '"');
+    utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     objects = new ArrayList<>();
   }
@@ -69,7 +69,7 @@ public class RecipeViolationFactoryTest {
 
   @Test
   public void testCreateListWithUnknownPath() {
-    objects = RecipeViolationFactory.create(utils.getPath("unknown"));
+    objects = RecipeViolationFactory.create(utils.getPath("path-to-unknown"));
     assertEquals(0, objects.size());
   }
 

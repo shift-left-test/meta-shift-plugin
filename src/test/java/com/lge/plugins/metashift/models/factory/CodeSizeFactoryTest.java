@@ -52,7 +52,7 @@ public class CodeSizeFactoryTest {
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder, '\'', '"');
+    utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     objects = new ArrayList<>();
   }
@@ -68,7 +68,7 @@ public class CodeSizeFactoryTest {
 
   @Test
   public void testCreateWithUnknownPath() {
-    objects = CodeSizeFactory.create(utils.getPath("unknown"));
+    objects = CodeSizeFactory.create(utils.getPath("path-to-unknown"));
     assertEquals(0, objects.size());
   }
 

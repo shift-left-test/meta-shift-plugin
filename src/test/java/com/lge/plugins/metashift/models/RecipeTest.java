@@ -54,7 +54,7 @@ public class RecipeTest {
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder, '\'', '"');
+    utils = new TemporaryFileUtils(folder);
     origin = new Recipe("cmake-project-1.0.0-r0");
     same = new Recipe("cmake-project-1.0.0-r0");
   }
@@ -145,12 +145,12 @@ public class RecipeTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateRecipeWithUnknownPath() {
-    new Recipe(utils.getPath("unknown"));
+    new Recipe(utils.getPath("path-to-unknown"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateRecipeWithoutDirectory() throws IOException {
-    new Recipe(folder.newFile());
+    new Recipe(utils.createFile("path-to-file"));
   }
 
   @Test(expected = IllegalArgumentException.class)

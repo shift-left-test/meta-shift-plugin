@@ -52,7 +52,7 @@ public class TestFactoryTest {
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder, '\'', '"');
+    utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     objects = new ArrayList<>();
   }
@@ -67,7 +67,7 @@ public class TestFactoryTest {
 
   @Test
   public void testCreateWithUnknownPath() {
-    objects = TestFactory.create(utils.getPath("unknown"));
+    objects = TestFactory.create(utils.getPath("path-to-unknown"));
     assertEquals(0, objects.size());
   }
 

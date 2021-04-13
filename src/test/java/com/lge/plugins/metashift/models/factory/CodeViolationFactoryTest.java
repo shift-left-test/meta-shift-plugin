@@ -52,7 +52,7 @@ public class CodeViolationFactoryTest {
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder, '\'', '"');
+    utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     objects = new ArrayList<>();
   }
@@ -72,7 +72,7 @@ public class CodeViolationFactoryTest {
 
   @Test
   public void testCreateWithUnknownPath() {
-    objects = CodeViolationFactory.create(utils.getPath("unknown"));
+    objects = CodeViolationFactory.create(utils.getPath("path-to-unknown"));
     assertEquals(0, objects.size());
   }
 

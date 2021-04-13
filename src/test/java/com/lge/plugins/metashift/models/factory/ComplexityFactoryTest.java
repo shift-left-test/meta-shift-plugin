@@ -52,7 +52,7 @@ public class ComplexityFactoryTest {
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder, '\'', '"');
+    utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     objects = new ArrayList<>();
   }
@@ -69,7 +69,7 @@ public class ComplexityFactoryTest {
 
   @Test
   public void testCreateWithUnknownPath() {
-    objects = ComplexityFactory.create(utils.getPath("unknown"));
+    objects = ComplexityFactory.create(utils.getPath("path-to-unknown"));
     assertEquals(0, objects.size());
   }
 

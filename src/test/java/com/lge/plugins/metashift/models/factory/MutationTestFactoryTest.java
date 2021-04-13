@@ -52,7 +52,7 @@ public class MutationTestFactoryTest {
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder, '\'', '"');
+    utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     objects = new ArrayList<>();
   }
@@ -70,7 +70,7 @@ public class MutationTestFactoryTest {
 
   @Test
   public void testCreateWithUnknownPath() {
-    objects = MutationTestFactory.create(utils.getPath("unknown"));
+    objects = MutationTestFactory.create(utils.getPath("path-to-unknown"));
     assertEquals(0, objects.size());
   }
 

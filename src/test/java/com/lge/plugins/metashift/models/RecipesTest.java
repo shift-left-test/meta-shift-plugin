@@ -28,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,11 +42,13 @@ public class RecipesTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
+  private TemporaryFileUtils utils;
   private Recipe recipe;
   private Recipes recipes;
 
   @Before
   public void setUp() {
+    utils = new TemporaryFileUtils(folder);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
   }
@@ -91,42 +92,42 @@ public class RecipesTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithUnknownPath() {
-    new Recipes(new File(folder.getRoot(), "unknown"));
+    new Recipes(utils.getPath("path-to-unknown"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithoutDirectory() throws IOException {
-    new Recipes(folder.newFile());
+    new Recipes(utils.createFile("path-to-file"));
   }
 
   @Test
   public void testCreateWithEmptyReportDirectory() throws IOException {
-    File report = folder.newFolder("report");
+    File report = utils.createDirectory("report");
     recipes = new Recipes(report);
     assertEquals(0, recipes.size());
   }
 
   @Test
   public void testCreateWithoutSubDirectories() throws IOException {
-    File report = folder.newFolder("report");
-    FileUtils.touch(new File(report, "a.file"));
+    File report = utils.createDirectory("report");
+    utils.createFile(report, "a.file");
     recipes = new Recipes(report);
     assertEquals(0, recipes.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInvalidDirectories() throws IOException {
-    File report = folder.newFolder("report");
-    FileUtils.forceMkdir(new File(report, "invalid"));
+    File report = utils.createDirectory("report");
+    utils.createDirectory(report, "invalid");
     new Recipes(report);
   }
 
   @Test
   public void testCreateWithMultipleDirectories() throws IOException {
-    File report = folder.newFolder("report");
-    FileUtils.forceMkdir(new File(report, "cmake-project-1.0.0-r0"));
-    FileUtils.forceMkdir(new File(report, "qmake5-project-1.0.0-r0"));
-    FileUtils.forceMkdir(new File(report, "autotools-1.0.0-r0"));
+    File report = utils.createDirectory("report");
+    utils.createDirectory(report, "cmake-project-1.0.0-r0");
+    utils.createDirectory(report, "qmake5-project-1.0.0-r0");
+    utils.createDirectory(report, "autotools-1.0.0-r0");
     recipes = new Recipes(report);
     assertEquals(3, recipes.size());
   }

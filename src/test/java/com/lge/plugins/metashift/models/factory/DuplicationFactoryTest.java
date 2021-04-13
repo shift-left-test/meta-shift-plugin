@@ -52,7 +52,7 @@ public class DuplicationFactoryTest {
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder, '\'', '"');
+    utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     objects = new ArrayList<>();
   }
@@ -67,7 +67,7 @@ public class DuplicationFactoryTest {
 
   @Test
   public void testCreateWithUnknownPath() {
-    objects = DuplicationFactory.create(utils.getPath("unknown"));
+    objects = DuplicationFactory.create(utils.getPath("path-to-unknown"));
     assertEquals(0, objects.size());
   }
 

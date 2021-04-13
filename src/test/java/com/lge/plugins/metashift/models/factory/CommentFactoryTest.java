@@ -52,7 +52,7 @@ public class CommentFactoryTest {
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder, '\'', '"');
+    utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     objects = new ArrayList<>();
   }
@@ -67,7 +67,7 @@ public class CommentFactoryTest {
 
   @Test
   public void testCreateSetWithUnknownPath() {
-    objects = CommentFactory.create(utils.getPath("unknown"));
+    objects = CommentFactory.create(utils.getPath("path-to-unknown"));
     assertEquals(0, objects.size());
   }
 
