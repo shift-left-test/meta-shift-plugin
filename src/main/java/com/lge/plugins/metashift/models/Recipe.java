@@ -78,7 +78,7 @@ public final class Recipe extends Data<Recipe> implements Collectable {
   }
 
   /**
-   * Default constructor.
+   * Creates an empty Recipe object with the given recipe name.
    *
    * @param recipe name
    * @throws IllegalArgumentException if the recipe name is malformed

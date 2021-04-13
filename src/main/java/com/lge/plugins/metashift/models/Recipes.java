@@ -39,7 +39,7 @@ import java.util.stream.Stream;
 public final class Recipes extends ArrayList<Recipe> implements Collectable {
 
   /**
-   * Default constructor.
+   * Creates an empty list of Recipe objects.
    */
   public Recipes() {
     super();
