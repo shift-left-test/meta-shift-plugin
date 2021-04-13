@@ -29,7 +29,7 @@ import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
 import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.metrics.Metrics;
-import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.metrics.QualifiedRecipes;
 import com.lge.plugins.metashift.models.Recipes;
 import hudson.PluginWrapper;
 import hudson.model.AbstractBuild;
@@ -58,15 +58,15 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
 
   private final Criteria criteria;
 
-  private Integer cachePassedRecipes = 0;
-  private Integer codeViolationPassedRecipes = 0;
-  private Integer commentPassedRecipes = 0;
-  private Integer complexityPassedRecipes = 0;
-  private Integer coveragePassedRecipes = 0;
-  private Integer duplicationPassedRecipes = 0;
-  private Integer mutationTestPassedRecipes = 0;
-  private Integer recipeViolationPassedRecipes = 0;
-  private Integer testPassedRecipes = 0;
+  private final Integer cachePassedRecipes;
+  private final Integer codeViolationPassedRecipes;
+  private final Integer commentPassedRecipes;
+  private final Integer complexityPassedRecipes;
+  private final Integer coveragePassedRecipes;
+  private final Integer duplicationPassedRecipes;
+  private final Integer mutationTestPassedRecipes;
+  private final Integer recipeViolationPassedRecipes;
+  private final Integer testPassedRecipes;
 
   /**
    * Default constructor.
@@ -79,43 +79,18 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
 
     this.getMetrics().parse(recipes);
 
-    for (Recipe recipe : recipes) {
-      MetaShiftRecipeAction recipeAction =
-          new MetaShiftRecipeAction(this, this.criteria, recipe);
-      this.addAction(recipeAction);
+    recipes.forEach(recipe -> addAction(new MetaShiftRecipeAction(this, criteria, recipe)));
 
-      if (isQualified(recipeAction.getMetrics().getCacheAvailability())) {
-        cachePassedRecipes++;
-      }
-      if (isQualified(recipeAction.getMetrics().getCodeViolations())) {
-        codeViolationPassedRecipes++;
-      }
-      if (isQualified(recipeAction.getMetrics().getComments())) {
-        commentPassedRecipes++;
-      }
-      if (isQualified(recipeAction.getMetrics().getComplexity())) {
-        commentPassedRecipes++;
-      }
-      if (isQualified(recipeAction.getMetrics().getCoverage())) {
-        coveragePassedRecipes++;
-      }
-      if (isQualified(recipeAction.getMetrics().getDuplications())) {
-        duplicationPassedRecipes++;
-      }
-      if (isQualified(recipeAction.getMetrics().getMutationTest())) {
-        mutationTestPassedRecipes++;
-      }
-      if (isQualified(recipeAction.getMetrics().getRecipeViolations())) {
-        recipeViolationPassedRecipes++;
-      }
-      if (isQualified(recipeAction.getMetrics().getTest())) {
-        testPassedRecipes++;
-      }
-    }
-  }
-
-  private boolean isQualified(Evaluator<?> evaluator) {
-    return evaluator != null && evaluator.isQualified();
+    QualifiedRecipes qualifiedRecipes = new QualifiedRecipes(recipes, new Metrics(criteria));
+    cachePassedRecipes = qualifiedRecipes.getCacheAvailability().size();
+    codeViolationPassedRecipes = qualifiedRecipes.getCodeViolations().size();
+    commentPassedRecipes = qualifiedRecipes.getComments().size();
+    complexityPassedRecipes = qualifiedRecipes.getComplexity().size();
+    coveragePassedRecipes = qualifiedRecipes.getCoverage().size();
+    duplicationPassedRecipes = qualifiedRecipes.getDuplications().size();
+    mutationTestPassedRecipes = qualifiedRecipes.getMutationTest().size();
+    recipeViolationPassedRecipes = qualifiedRecipes.getRecipeViolations().size();
+    testPassedRecipes = qualifiedRecipes.getTest().size();
   }
 
   @Override

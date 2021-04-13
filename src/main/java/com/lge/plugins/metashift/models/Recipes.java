@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.models;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +44,15 @@ public final class Recipes extends ArrayList<Recipe> implements Collectable {
    */
   public Recipes() {
     super();
+  }
+
+  /**
+   * Create a list of recipe objects using the given collection.
+   *
+   * @param collection to add
+   */
+  public Recipes(final Collection<Recipe> collection) {
+    super(collection);
   }
 
   /**

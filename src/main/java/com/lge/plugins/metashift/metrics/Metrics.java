@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public final class Metrics extends Evaluator<Metrics> {
+public final class Metrics extends Evaluator<Metrics> implements Queryable<Evaluator<?>> {
 
   /**
    * Represents the collection of evaluators.
@@ -66,13 +66,9 @@ public final class Metrics extends Evaluator<Metrics> {
     this.criteria = criteria;
   }
 
-  /**
-   * Returns the cache availability evaluator.
-   *
-   * @return an evaluator object
-   */
-  public CacheEvaluator getCacheAvailability() {
-    return (CacheEvaluator) collection.get(CacheEvaluator.class);
+  @Override
+  public Evaluator<?> getCacheAvailability() {
+    return collection.get(CacheEvaluator.class);
   }
 
   /**
@@ -84,76 +80,44 @@ public final class Metrics extends Evaluator<Metrics> {
     return (CodeSizeEvaluator) collection.get(CodeSizeEvaluator.class);
   }
 
-  /**
-   * Returns the code violation evaluator.
-   *
-   * @return an evaluator object
-   */
-  public CodeViolationEvaluator getCodeViolations() {
-    return (CodeViolationEvaluator) collection.get(CodeViolationEvaluator.class);
+  @Override
+  public Evaluator<?> getCodeViolations() {
+    return collection.get(CodeViolationEvaluator.class);
   }
 
-  /**
-   * Returns the comment evaluator.
-   *
-   * @return an evaluator object
-   */
-  public CommentEvaluator getComments() {
-    return (CommentEvaluator) collection.get(CommentEvaluator.class);
+  @Override
+  public Evaluator<?> getComments() {
+    return collection.get(CommentEvaluator.class);
   }
 
-  /**
-   * Returns the complexity evaluator.
-   *
-   * @return an evaluator object
-   */
-  public ComplexityEvaluator getComplexity() {
-    return (ComplexityEvaluator) collection.get(ComplexityEvaluator.class);
+  @Override
+  public Evaluator<?> getComplexity() {
+    return collection.get(ComplexityEvaluator.class);
   }
 
-  /**
-   * Returns the coverage evaluator.
-   *
-   * @return an evaluator object
-   */
-  public CoverageEvaluator getCoverage() {
-    return (CoverageEvaluator) collection.get(CoverageEvaluator.class);
+  @Override
+  public Evaluator<?> getCoverage() {
+    return collection.get(CoverageEvaluator.class);
   }
 
-  /**
-   * Returns the duplication evaluator.
-   *
-   * @return an evaluator object
-   */
-  public DuplicationEvaluator getDuplications() {
-    return (DuplicationEvaluator) collection.get(DuplicationEvaluator.class);
+  @Override
+  public Evaluator<?> getDuplications() {
+    return collection.get(DuplicationEvaluator.class);
   }
 
-  /**
-   * Returns the mutation test evaluator.
-   *
-   * @return an evaluator object
-   */
-  public MutationTestEvaluator getMutationTest() {
-    return (MutationTestEvaluator) collection.get(MutationTestEvaluator.class);
+  @Override
+  public Evaluator<?> getMutationTest() {
+    return collection.get(MutationTestEvaluator.class);
   }
 
-  /**
-   * Returns the recipe violation evaluator.
-   *
-   * @return an evaluator object
-   */
-  public RecipeViolationEvaluator getRecipeViolations() {
-    return (RecipeViolationEvaluator) collection.get(RecipeViolationEvaluator.class);
+  @Override
+  public Evaluator<?> getRecipeViolations() {
+    return collection.get(RecipeViolationEvaluator.class);
   }
 
-  /**
-   * Returns the test evaluator.
-   *
-   * @return an evaluator object
-   */
-  public TestEvaluator getTest() {
-    return (TestEvaluator) collection.get(TestEvaluator.class);
+  @Override
+  public Evaluator<?> getTest() {
+    return collection.get(TestEvaluator.class);
   }
 
   @Override
