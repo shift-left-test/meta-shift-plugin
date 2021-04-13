@@ -22,30 +22,25 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.metrics.Criteria;
-import com.lge.plugins.metashift.metrics.Metrics;
-import hudson.model.Actionable;
-import java.text.DecimalFormat;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Base Action class which has metrics and api.
+ * A unit test support class.
+ *
+ * @author Sung Gon Kim
  */
-public abstract class MetaShiftActionBaseWithMetrics extends Actionable {
+public class TestUtils {
 
-  private final Metrics metrics;
-
-  public MetaShiftActionBaseWithMetrics(Criteria criteria) {
-    this.metrics = new Metrics(criteria);
+  public static void assertEvaluator(Evaluator<?> object, boolean available, boolean qualified) {
+    assertEquals(available, object.isAvailable());
+    assertEquals(qualified, object.isQualified());
   }
 
-  public Metrics getMetrics() {
-    return this.metrics;
-  }
-
-  ///helper for ui
-  public String getFixedFloat(String format, float number) {
-    return new DecimalFormat(format).format(number);
+  public static void assertCounter(Counter object, long denominator, long numerator, double ratio) {
+    assertEquals(denominator, object.getDenominator());
+    assertEquals(numerator, object.getNumerator());
+    assertEquals(ratio, object.getRatio(), 0.1);
   }
 }

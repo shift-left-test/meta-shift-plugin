@@ -24,85 +24,74 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.Collectable;
+
 /**
- * Counter class.
+ * Evaluator class.
  *
  * @author Sung Gon Kim
  */
-public class Counter {
+public abstract class Evaluator<T> extends Counter {
 
   /**
-   * Represents the denominator.
+   * Represents the threshold.
    */
-  private long denominator;
-
-  /**
-   * Represents the numerator.
-   */
-  private long numerator;
-
-  /**
-   * Default constructor.
-   */
-  public Counter() {
-    this(0, 0);
-  }
+  private final double threshold;
 
   /**
    * Default constructor.
    *
-   * @param denominator value
-   * @param numerator   value
+   * @param threshold for evaluation
    */
-  public Counter(final long denominator, final long numerator) {
-    this.denominator = denominator;
-    this.numerator = numerator;
+  public Evaluator(final double threshold) {
+    this.threshold = threshold;
   }
 
   /**
-   * Returns the denominator of the metric.
+   * Returns the threshold.
    *
-   * @return denominator
+   * @return threshold value
    */
-  public long getDenominator() {
-    return denominator;
+  public final double getThreshold() {
+    return threshold;
   }
 
   /**
-   * Sets the denominator value.
+   * Returns whether the metric is available.
    *
-   * @param denominator value
+   * @return true if the metric is available, false otherwise
    */
-  public void setDenominator(final long denominator) {
-    this.denominator = denominator;
+  public final boolean isAvailable() {
+    return getDenominator() > 0;
   }
 
   /**
-   * Returns the numerator of the metric.
+   * Returns whether the evaluation of the metric meets the criteria.
    *
-   * @return numerator
+   * @return true if the metric meets the criteria, false otherwise
    */
-  public long getNumerator() {
-    return numerator;
+  public boolean isQualified() {
+    return isAvailable() && (double) getNumerator() / (double) getDenominator() >= getThreshold();
   }
 
   /**
-   * Sets the numerator value.
+   * Parse the given object to create metric data.
    *
-   * @param numerator value
+   * @param object to parse
+   * @return self
    */
-  public void setNumerator(final long numerator) {
-    this.numerator = numerator;
+  @SuppressWarnings("unchecked")
+  public final T parse(final Collectable object) {
+    setDenominator(0);
+    setNumerator(0);
+    parseImpl(object);
+    return (T) this;
   }
 
   /**
-   * Returns the calculated ratio of the metric or zero if the denominator is zero.
+   * Evaluate the given object.
    *
-   * @return ratio
+   * @param c object to evaluate
    */
-  public double getRatio() {
-    long denominator = getDenominator();
-    long numerator = getNumerator();
-    return denominator > 0 ? (double) numerator / (double) denominator : 0.0;
-  }
+  protected abstract void parseImpl(final Collectable c);
 }

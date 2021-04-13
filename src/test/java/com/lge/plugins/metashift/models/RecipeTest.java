@@ -70,12 +70,12 @@ public class RecipeTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testInitWithInsufficientFullname() {
+  public void testInitWithInsufficientName() {
     new Recipe("cmake-project");
   }
 
   @Test
-  public void testInitWithComplexFullname() {
+  public void testInitWithComplexName() {
     Recipe recipe = new Recipe("qtbase+-native-5.15.2+gitAUTOINC+40143c189b-r+1.0");
     assertEquals("qtbase+-native-5.15.2+gitAUTOINC+40143c189b-r+1.0", recipe.getRecipe());
   }
@@ -157,15 +157,6 @@ public class RecipeTest {
     File directory = utils.createDirectory("report", "cmake-project-1.0.0-r0");
     Recipe recipe = Recipe.create(directory);
     assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
-    assertEquals(0, recipe.get(CacheList.class).size());
-    assertEquals(0, recipe.get(RecipeViolationList.class).size());
-    assertEquals(0, recipe.get(SizeList.class).size());
-    assertEquals(0, recipe.get(CommentList.class).size());
-    assertEquals(0, recipe.get(CodeViolationList.class).size());
-    assertEquals(0, recipe.get(ComplexityList.class).size());
-    assertEquals(0, recipe.get(DuplicationList.class).size());
-    assertEquals(0, recipe.get(TestList.class).size());
-    assertEquals(0, recipe.get(CoverageList.class).size());
-    assertEquals(0, recipe.get(MutationTestList.class).size());
+    assertEquals(0, recipe.objects(Data.class).count());
   }
 }

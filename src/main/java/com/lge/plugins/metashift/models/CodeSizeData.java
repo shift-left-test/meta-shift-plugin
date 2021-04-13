@@ -25,56 +25,56 @@
 package com.lge.plugins.metashift.models;
 
 /**
- * Represents the coverage data.
+ * Represents the code size data.
  *
  * @author Sung Gon Kim
  */
-public abstract class CoverageData extends Data<CoverageData> {
+public final class CodeSizeData extends Data<CodeSizeData> {
 
   /**
-   * Represents the file name.
+   * Represents the filename.
    */
   private final String file;
 
   /**
-   * Represents the function name.
+   * Represents the number of lines for the file.
    */
-  private final String function;
+  private final long lines;
 
   /**
-   * Represents the line number.
+   * Represents the number of functions for the file.
    */
-  private final long line;
+  private final long functions;
 
   /**
-   * Represents the coverage item index.
+   * Represents the number of classes for the file.
    */
-  private final long index;
-
-  /**
-   * Represents the coverage status.
-   */
-  private final boolean covered;
+  private final long classes;
 
   /**
    * Default constructor.
    *
-   * @param recipe   name
-   * @param file     name
-   * @param function name
-   * @param line     number
-   * @param index    coverage item index
-   * @param covered  coverage status
+   * @param recipe    name.
+   * @param file      name.
+   * @param lines     the number of lines for the file.
+   * @param functions the number of functions for the file.
+   * @param classes   the number of classes for the file.
    */
-  public CoverageData(final String recipe, final String file, final String function,
-      final long line,
-      final long index, final boolean covered) {
+  public CodeSizeData(final String recipe, final String file, final long lines,
+      final long functions, final long classes) {
     super(recipe);
     this.file = file;
-    this.function = function;
-    this.line = line;
-    this.index = index;
-    this.covered = covered;
+    this.lines = lines;
+    this.functions = functions;
+    this.classes = classes;
+  }
+
+  @Override
+  public int compareTo(final CodeSizeData other) {
+    return compareEach(
+        getRecipe().compareTo(other.getRecipe()),
+        file.compareTo(other.file)
+    );
   }
 
   @Override
@@ -88,27 +88,16 @@ public abstract class CoverageData extends Data<CoverageData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((CoverageData) object) == 0;
+    return compareTo((CodeSizeData) object) == 0;
   }
 
   @Override
   public int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file, function, line, index);
-  }
-
-  @Override
-  public int compareTo(final CoverageData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        file.compareTo(other.file),
-        function.compareTo(other.function),
-        Long.compare(line, other.line),
-        Long.compare(index, other.index)
-    );
+    return computeHashCode(getClass(), getRecipe(), file);
   }
 
   /**
-   * Returns the file name.
+   * Return the filename.
    *
    * @return filename
    */
@@ -117,38 +106,29 @@ public abstract class CoverageData extends Data<CoverageData> {
   }
 
   /**
-   * Returns the function name.
+   * Return the number of lines.
    *
-   * @return function name
+   * @return lines
    */
-  public String getFunction() {
-    return function;
+  public long getLines() {
+    return lines;
   }
 
   /**
-   * Returns the line number.
+   * Return the number of functions.
    *
-   * @return line number
+   * @return functions
    */
-  public long getLine() {
-    return line;
+  public long getFunctions() {
+    return functions;
   }
 
   /**
-   * Returns the coverage item index.
+   * Return the number of classes.
    *
-   * @return coverage item index
+   * @return classes
    */
-  public long getIndex() {
-    return index;
-  }
-
-  /**
-   * Represents the coverage status.
-   *
-   * @return true if it is covered, false otherwise
-   */
-  public boolean isCovered() {
-    return covered;
+  public long getClasses() {
+    return classes;
   }
 }

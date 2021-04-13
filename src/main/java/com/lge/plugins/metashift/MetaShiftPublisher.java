@@ -24,8 +24,8 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.metrics2.Criteria;
-import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.models.Recipes;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -51,7 +51,7 @@ import org.kohsuke.stapler.StaplerRequest;
 public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
   private final String reportRoot;
-  private Criteria localCriteria;
+  private final Criteria localCriteria;
 
   /**
    * Default constructor.
@@ -133,7 +133,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     // TODO: process raw data file. ex copy report files
 
     // load recipe list.
-    final RecipeList recipes = RecipeList.create(
+    final Recipes recipes = Recipes.create(
         new File(new FilePath(workspace, this.reportRoot).toURI()));
 
     // load criteria.

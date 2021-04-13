@@ -24,11 +24,11 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.metrics2.Criteria;
-import com.lge.plugins.metashift.metrics2.Evaluator;
-import com.lge.plugins.metashift.metrics2.Metrics;
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.metrics.Evaluator;
+import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.models.RecipeList;
+import com.lge.plugins.metashift.models.Recipes;
 import hudson.PluginWrapper;
 import hudson.model.AbstractBuild;
 import hudson.model.Result;
@@ -53,12 +53,12 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
 
   private transient Run<?, ?> run;
 
-  private Criteria criteria;
+  private final Criteria criteria;
 
   private Integer cachePassedRecipes = 0;
   private Integer codeViolationPassedRecipes = 0;
   private Integer commentPassedRecipes = 0;
-  private Integer complexityPassedRecipes = 0;
+  private final Integer complexityPassedRecipes = 0;
   private Integer coveragePassedRecipes = 0;
   private Integer duplicationPassedRecipes = 0;
   private Integer mutationTestPassedRecipes = 0;
@@ -68,7 +68,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
   /**
    * Default constructor.
    */
-  public MetaShiftBuildAction(Run<?, ?> run, Criteria criteria, RecipeList recipes) {
+  public MetaShiftBuildAction(Run<?, ?> run, Criteria criteria, Recipes recipes) {
     super(criteria);
 
     this.run = run;
@@ -273,9 +273,9 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    */
   public static class TrendChartSeries {
 
-    private String name;
-    private String type;
-    private List<Double> data;
+    private final String name;
+    private final String type;
+    private final List<Double> data;
 
     public String getName() {
       return this.name;
@@ -412,11 +412,11 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return recipes diff
    */
   public long getRecipesDiff() {
-    long current = this.getMetrics().getSize() != null
-        ? this.getMetrics().getSize().getRecipes() : 0;
+    long current = this.getMetrics().getCodeSize() != null
+        ? this.getMetrics().getCodeSize().getRecipes() : 0;
     long previous = this.getPreviousMetrics() != null
-        && this.getPreviousMetrics().getSize() != null
-        ? this.getPreviousMetrics().getSize().getRecipes() : 0;
+        && this.getPreviousMetrics().getCodeSize() != null
+        ? this.getPreviousMetrics().getCodeSize().getRecipes() : 0;
 
     return current - previous;
   }
@@ -427,12 +427,12 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return lines diff
    */
   public long getLinesDiff() {
-    long current = this.getMetrics().getSize() != null
-        ? this.getMetrics().getSize().getLines() : 0;
+    long current = this.getMetrics().getCodeSize() != null
+        ? this.getMetrics().getCodeSize().getLines() : 0;
     long previous = this.getPreviousMetrics() != null
-        && this.getPreviousMetrics().getSize() != null
-        ? this.getPreviousMetrics().getSize().getLines() : 0;
-      
+        && this.getPreviousMetrics().getCodeSize() != null
+        ? this.getPreviousMetrics().getCodeSize().getLines() : 0;
+
     return current - previous;
   }
 
@@ -442,12 +442,12 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return functions diff
    */
   public long getFunctionsDiff() {
-    long current = this.getMetrics().getSize() != null
-        ? this.getMetrics().getSize().getFunctions() : 0;
+    long current = this.getMetrics().getCodeSize() != null
+        ? this.getMetrics().getCodeSize().getFunctions() : 0;
     long previous = this.getPreviousMetrics() != null
-        && this.getPreviousMetrics().getSize() != null
-        ? this.getPreviousMetrics().getSize().getFunctions() : 0;
-      
+        && this.getPreviousMetrics().getCodeSize() != null
+        ? this.getPreviousMetrics().getCodeSize().getFunctions() : 0;
+
     return current - previous;
   }
 
@@ -457,12 +457,12 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return classes diff
    */
   public long getClassesDiff() {
-    long current = this.getMetrics().getSize() != null
-        ? this.getMetrics().getSize().getClasses() : 0;
+    long current = this.getMetrics().getCodeSize() != null
+        ? this.getMetrics().getCodeSize().getClasses() : 0;
     long previous = this.getPreviousMetrics() != null
-        && this.getPreviousMetrics().getSize() != null
-        ? this.getPreviousMetrics().getSize().getClasses() : 0;
-      
+        && this.getPreviousMetrics().getCodeSize() != null
+        ? this.getPreviousMetrics().getCodeSize().getClasses() : 0;
+
     return current - previous;
   }
 
@@ -472,12 +472,12 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return files diff
    */
   public long getFilesDiff() {
-    long current = this.getMetrics().getSize() != null
-        ? this.getMetrics().getSize().getFiles() : 0;
+    long current = this.getMetrics().getCodeSize() != null
+        ? this.getMetrics().getCodeSize().getFiles() : 0;
     long previous = this.getPreviousMetrics() != null
-        && this.getPreviousMetrics().getSize() != null
-        ? this.getPreviousMetrics().getSize().getFiles() : 0;
-      
+        && this.getPreviousMetrics().getCodeSize() != null
+        ? this.getPreviousMetrics().getCodeSize().getFiles() : 0;
+
     return current - previous;
   }
 }

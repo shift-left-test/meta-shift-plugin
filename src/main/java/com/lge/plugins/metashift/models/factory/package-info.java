@@ -22,30 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
-
-import com.lge.plugins.metashift.metrics.Criteria;
-import com.lge.plugins.metashift.metrics.Metrics;
-import hudson.model.Actionable;
-import java.text.DecimalFormat;
-
 /**
- * Base Action class which has metrics and api.
+ * Provides factory methods for the model classes.
  */
-public abstract class MetaShiftActionBaseWithMetrics extends Actionable {
-
-  private final Metrics metrics;
-
-  public MetaShiftActionBaseWithMetrics(Criteria criteria) {
-    this.metrics = new Metrics(criteria);
-  }
-
-  public Metrics getMetrics() {
-    return this.metrics;
-  }
-
-  ///helper for ui
-  public String getFixedFloat(String format, float number) {
-    return new DecimalFormat(format).format(number);
-  }
-}
+package com.lge.plugins.metashift.models.factory;

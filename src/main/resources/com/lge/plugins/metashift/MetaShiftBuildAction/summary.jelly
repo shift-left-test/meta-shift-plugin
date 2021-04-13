@@ -15,31 +15,31 @@ xmlns:ms="/metashift">
   <div class="row metashift overview">
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Recipes</h4>
-      <p>${it.metrics.getSize().recipes}
+      <p>${it.metrics.codeSize.recipes}
         <ms:text-diff diff="${it.recipesDiff}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Lines</h4>
-      <p>${it.metrics.getSize().lines}
+      <p>${it.metrics.codeSize.lines}
         <ms:text-diff diff="${it.linesDiff}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Functions</h4>
-      <p>${it.metrics.getSize().functions}
+      <p>${it.metrics.codeSize.functions}
         <ms:text-diff diff="${it.functionsDiff}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Classes</h4>
-      <p>${it.metrics.getSize().classes}
+      <p>${it.metrics.codeSize.classes}
         <ms:text-diff diff="${it.classesDiff}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Files</h4>
-      <p>${it.metrics.getSize().files}
+      <p>${it.metrics.codeSize.files}
         <ms:text-diff diff="${it.filesDiff}" />
       </p>
     </div>

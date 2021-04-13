@@ -22,63 +22,48 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.metrics.Criteria;
-import com.lge.plugins.metashift.models.Recipe;
-import hudson.model.Action;
-import hudson.model.Run;
-import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.export.ExportedBean;
+import com.lge.plugins.metashift.models.Collectable;
+import com.lge.plugins.metashift.models.ComplexityData;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * MetaShift recipe action class.
+ * ComplexityEvaluator class.
+ *
+ * @author Sung Gon Kim
  */
-@ExportedBean
-public class MetaShiftRecipeAction extends MetaShiftActionBaseWithMetrics implements Action {
+public final class ComplexityEvaluator extends Evaluator<ComplexityEvaluator> {
 
-  MetaShiftBuildAction parent;
-
-  @Exported(visibility = 999)
-  public String name; // TODO: should be recipe representation.
+  /**
+   * Represents the complexity threshold.
+   */
+  private final long threshold;
 
   /**
    * Default constructor.
+   *
+   * @param criteria for evaluation
    */
-  public MetaShiftRecipeAction(MetaShiftBuildAction parent, Criteria criteria, Recipe recipe) {
-    super(criteria);
-
-    this.name = recipe.getRecipe();
-    this.parent = parent;
-
-    this.getMetrics().parse(recipe);
-  }
-
-  public MetaShiftBuildAction getParentAction() {
-    return this.parent;
-  }
-
-  public Run<?, ?> getRun() {
-    return this.parent.getRun();
+  public ComplexityEvaluator(final Criteria criteria) {
+    super(criteria.getComplexityThreshold());
+    threshold = criteria.getComplexityLevel();
   }
 
   @Override
-  public String getIconFileName() {
-    return "document.png";
+  public boolean isQualified() {
+    return isAvailable() && (double) getNumerator() / (double) getDenominator() <= getThreshold();
   }
 
   @Override
-  public String getDisplayName() {
-    return this.name;
-  }
+  protected void parseImpl(Collectable c) {
+    List<ComplexityData> objects = c.objects(ComplexityData.class)
+        .sorted(Comparator.comparingLong(ComplexityData::getValue).reversed())
+        .collect(Collectors.toList());
 
-  @Override
-  public String getUrlName() {
-    return this.name;
-  }
-
-  @Override
-  public String getSearchUrl() {
-    return getUrlName();
+    setDenominator(objects.stream().distinct().count());
+    setNumerator(objects.stream().distinct().filter(o -> o.getValue() >= threshold).count());
   }
 }

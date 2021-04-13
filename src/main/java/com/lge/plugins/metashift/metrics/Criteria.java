@@ -36,63 +36,63 @@ public final class Criteria {
   /**
    * Represents the threshold for the cache availability.
    */
-  private float cacheThreshold;
+  private double cacheThreshold;
 
   /**
    * Represents the threshold for the code violations.
    */
-  private float codeViolationThreshold;
+  private double codeViolationThreshold;
 
   /**
    * Represents the threshold for the comments.
    */
-  private float commentThreshold;
+  private double commentThreshold;
 
   /**
    * Represents the level of the complexity.
    */
-  private int complexityLevel;
+  private long complexityLevel;
 
   /**
    * Represents the threshold for the complexity.
    */
-  private float complexityThreshold;
+  private double complexityThreshold;
 
   /**
    * Represents the threshold for the coverage.
    */
-  private float coverageThreshold;
+  private double coverageThreshold;
 
   /**
    * Represents the threshold for the duplications.
    */
-  private float duplicationThreshold;
+  private double duplicationThreshold;
 
   /**
    * Represents the threshold for the mutation test.
    */
-  private float mutationTestThreshold;
+  private double mutationTestThreshold;
 
   /**
    * Represents the overall threshold.
    */
-  private float overallThreshold;
+  private double overallThreshold;
 
   /**
    * Represents the threshold for the recipe violations.
    */
-  private float recipeViolationThreshold;
+  private double recipeViolationThreshold;
 
   /**
    * Represents the threshold for the test.
    */
-  private float testThreshold;
+  private double testThreshold;
 
   /**
    * Default constructor.
    */
   public Criteria() {
-    this(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    this(0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0);
   }
 
   /**
@@ -111,17 +111,17 @@ public final class Criteria {
    * @param mutationTestThreshold    mutation test threshold
    */
   @DataBoundConstructor
-  public Criteria(final float overallThreshold,
-      final float cacheThreshold,
-      final float recipeViolationThreshold,
-      final float commentThreshold,
-      final float codeViolationThreshold,
-      final int complexityLevel,
-      final float complexityThreshold,
-      final float duplicationThreshold,
-      final float testThreshold,
-      final float coverageThreshold,
-      final float mutationTestThreshold) {
+  public Criteria(final double overallThreshold,
+      final double cacheThreshold,
+      final double recipeViolationThreshold,
+      final double commentThreshold,
+      final double codeViolationThreshold,
+      final long complexityLevel,
+      final double complexityThreshold,
+      final double duplicationThreshold,
+      final double testThreshold,
+      final double coverageThreshold,
+      final double mutationTestThreshold) {
     this.overallThreshold = overallThreshold;
     this.cacheThreshold = cacheThreshold;
     this.recipeViolationThreshold = recipeViolationThreshold;
@@ -140,7 +140,7 @@ public final class Criteria {
    *
    * @return cache threshold
    */
-  public float getCacheThreshold() {
+  public double getCacheThreshold() {
     return cacheThreshold;
   }
 
@@ -149,7 +149,7 @@ public final class Criteria {
    *
    * @param threshold for the cache availability
    */
-  public void setCacheThreshold(final float threshold) {
+  public void setCacheThreshold(final double threshold) {
     cacheThreshold = threshold;
   }
 
@@ -158,7 +158,7 @@ public final class Criteria {
    *
    * @return code violation threshold
    */
-  public float getCodeViolationThreshold() {
+  public double getCodeViolationThreshold() {
     return codeViolationThreshold;
   }
 
@@ -167,7 +167,7 @@ public final class Criteria {
    *
    * @param threshold for the code violations
    */
-  public void setCodeViolationThreshold(final float threshold) {
+  public void setCodeViolationThreshold(final double threshold) {
     codeViolationThreshold = threshold;
   }
 
@@ -176,7 +176,7 @@ public final class Criteria {
    *
    * @return comment threshold
    */
-  public float getCommentThreshold() {
+  public double getCommentThreshold() {
     return commentThreshold;
   }
 
@@ -185,7 +185,7 @@ public final class Criteria {
    *
    * @param threshold for the comments
    */
-  public void setCommentThreshold(final float threshold) {
+  public void setCommentThreshold(final double threshold) {
     commentThreshold = threshold;
   }
 
@@ -194,7 +194,7 @@ public final class Criteria {
    *
    * @return complexity level
    */
-  public int getComplexityLevel() {
+  public long getComplexityLevel() {
     return complexityLevel;
   }
 
@@ -203,7 +203,7 @@ public final class Criteria {
    *
    * @param level fot the complexity
    */
-  public void setComplexityLevel(final int level) {
+  public void setComplexityLevel(final long level) {
     complexityLevel = level;
   }
 
@@ -212,7 +212,7 @@ public final class Criteria {
    *
    * @return complexity threshold
    */
-  public float getComplexityThreshold() {
+  public double getComplexityThreshold() {
     return complexityThreshold;
   }
 
@@ -221,7 +221,7 @@ public final class Criteria {
    *
    * @param threshold for the complexity
    */
-  public void setComplexityThreshold(final float threshold) {
+  public void setComplexityThreshold(final double threshold) {
     complexityThreshold = threshold;
   }
 
@@ -230,7 +230,7 @@ public final class Criteria {
    *
    * @return coverage threshold
    */
-  public float getCoverageThreshold() {
+  public double getCoverageThreshold() {
     return coverageThreshold;
   }
 
@@ -239,7 +239,7 @@ public final class Criteria {
    *
    * @param threshold for the coverage
    */
-  public void setCoverageThreshold(final float threshold) {
+  public void setCoverageThreshold(final double threshold) {
     coverageThreshold = threshold;
   }
 
@@ -248,7 +248,7 @@ public final class Criteria {
    *
    * @return duplication threshold
    */
-  public float getDuplicationThreshold() {
+  public double getDuplicationThreshold() {
     return duplicationThreshold;
   }
 
@@ -257,7 +257,7 @@ public final class Criteria {
    *
    * @param threshold for the duplications
    */
-  public void setDuplicationThreshold(final float threshold) {
+  public void setDuplicationThreshold(final double threshold) {
     duplicationThreshold = threshold;
   }
 
@@ -266,7 +266,7 @@ public final class Criteria {
    *
    * @return mutation test threshold.
    */
-  public float getMutationTestThreshold() {
+  public double getMutationTestThreshold() {
     return mutationTestThreshold;
   }
 
@@ -275,7 +275,7 @@ public final class Criteria {
    *
    * @param threshold for the mutation test
    */
-  public void setMutationTestThreshold(final float threshold) {
+  public void setMutationTestThreshold(final double threshold) {
     mutationTestThreshold = threshold;
   }
 
@@ -284,7 +284,7 @@ public final class Criteria {
    *
    * @return overall threshold
    */
-  public float getOverallThreshold() {
+  public double getOverallThreshold() {
     return overallThreshold;
   }
 
@@ -293,7 +293,7 @@ public final class Criteria {
    *
    * @param threshold for the project
    */
-  public void setOverallThreshold(final float threshold) {
+  public void setOverallThreshold(final double threshold) {
     overallThreshold = threshold;
   }
 
@@ -302,7 +302,7 @@ public final class Criteria {
    *
    * @return recipe violation threshold
    */
-  public float getRecipeViolationThreshold() {
+  public double getRecipeViolationThreshold() {
     return recipeViolationThreshold;
   }
 
@@ -311,7 +311,7 @@ public final class Criteria {
    *
    * @param threshold for the recipe violations
    */
-  public void setRecipeViolationThreshold(final float threshold) {
+  public void setRecipeViolationThreshold(final double threshold) {
     recipeViolationThreshold = threshold;
   }
 
@@ -320,7 +320,7 @@ public final class Criteria {
    *
    * @return test threshold
    */
-  public float getTestThreshold() {
+  public double getTestThreshold() {
     return testThreshold;
   }
 
@@ -329,7 +329,7 @@ public final class Criteria {
    *
    * @param threshold for the test
    */
-  public void setTestThreshold(final float threshold) {
+  public void setTestThreshold(final double threshold) {
     testThreshold = threshold;
   }
 }

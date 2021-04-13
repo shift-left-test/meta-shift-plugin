@@ -24,13 +24,19 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.metrics.Visitable;
+import com.lge.plugins.metashift.models.factory.CacheFactory;
+import com.lge.plugins.metashift.models.factory.CodeSizeFactory;
+import com.lge.plugins.metashift.models.factory.CodeViolationFactory;
+import com.lge.plugins.metashift.models.factory.CommentFactory;
+import com.lge.plugins.metashift.models.factory.ComplexityFactory;
+import com.lge.plugins.metashift.models.factory.CoverageFactory;
+import com.lge.plugins.metashift.models.factory.DuplicationFactory;
+import com.lge.plugins.metashift.models.factory.MutationTestFactory;
+import com.lge.plugins.metashift.models.factory.RecipeViolationFactory;
+import com.lge.plugins.metashift.models.factory.TestFactory;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -40,13 +46,7 @@ import java.util.stream.Stream;
  *
  * @author Sung Gon Kim
  */
-public final class Recipe extends Data<Recipe> implements Acceptable, Collectable {
-
-  /**
-   * Represents the data set mapper.
-   */
-  // TODO(sunggon82.kim): Remove this after refactoring
-  private final Map<Class<?>, DataList<?>> collection;
+public final class Recipe extends Data<Recipe> implements Collectable {
 
   /**
    * Represents the heterogeneous data list.
@@ -71,27 +71,13 @@ public final class Recipe extends Data<Recipe> implements Acceptable, Collectabl
    */
   public Recipe(final String recipe) throws IllegalArgumentException {
     super(recipe);
-
     String regexp = "^(?<recipe>[\\w-+]+)-(?<version>[\\w.+]+)-(?<revision>[\\w.+]+)$";
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(recipe);
     if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid recipe name: " + recipe);
     }
-
     objects = new ArrayList<>();
-    // TODO(sunggon82.kim): Remove theses after refactoring
-    collection = new HashMap<>();
-    collection.put(CacheList.class, new CacheList());
-    collection.put(RecipeViolationList.class, new RecipeViolationList());
-    collection.put(SizeList.class, new SizeList());
-    collection.put(CommentList.class, new CommentList());
-    collection.put(CodeViolationList.class, new CodeViolationList());
-    collection.put(ComplexityList.class, new ComplexityList());
-    collection.put(DuplicationList.class, new DuplicationList());
-    collection.put(TestList.class, new TestList());
-    collection.put(CoverageList.class, new CoverageList());
-    collection.put(MutationTestList.class, new MutationTestList());
   }
 
   /**
@@ -100,110 +86,49 @@ public final class Recipe extends Data<Recipe> implements Acceptable, Collectabl
    * @param path to a recipe directory
    * @throws IllegalArgumentException if the path is invalid
    */
-  public static Recipe create(File path) throws IllegalArgumentException {
+  public static Recipe create(final File path) throws IllegalArgumentException {
     if (!path.exists()) {
       throw new IllegalArgumentException("Directory not found: " + path);
     }
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
-
     Recipe recipe = new Recipe(path);
-    for (Object o : CacheList.create(path)) {
-      recipe.add(o);
-    }
-    for (Object o : RecipeViolationList.create(path)) {
-      recipe.add(o);
-    }
-    for (Object o : SizeList.create(path)) {
-      recipe.add(o);
-    }
-    for (Object o : CommentList.create(path)) {
-      recipe.add(o);
-    }
-    for (Object o : CodeViolationList.create(path)) {
-      recipe.add(o);
-    }
-    for (Object o : ComplexityList.create(path)) {
-      recipe.add(o);
-    }
-    for (Object o : DuplicationList.create(path)) {
-      recipe.add(o);
-    }
-    for (Object o : TestList.create(path)) {
-      recipe.add(o);
-    }
-    for (Object o : CoverageList.create(path)) {
-      recipe.add(o);
-    }
-    for (Object o : MutationTestList.create(path)) {
-      recipe.add(o);
-    }
-    // TODO(sunggon82.kim): Remove these after refactoring
-    recipe.set(CacheList.create(path));
-    recipe.set(RecipeViolationList.create(path));
-    recipe.set(SizeList.create(path));
-    recipe.set(CommentList.create(path));
-    recipe.set(CodeViolationList.create(path));
-    recipe.set(ComplexityList.create(path));
-    recipe.set(DuplicationList.create(path));
-    recipe.set(TestList.create(path));
-    recipe.set(CoverageList.create(path));
-    recipe.set(MutationTestList.create(path));
+    recipe.addAll(CacheFactory.create(path));
+    recipe.addAll(CodeSizeFactory.create(path));
+    recipe.addAll(CodeViolationFactory.create(path));
+    recipe.addAll(CommentFactory.create(path));
+    recipe.addAll(ComplexityFactory.create(path));
+    recipe.addAll(CoverageFactory.create(path));
+    recipe.addAll(DuplicationFactory.create(path));
+    recipe.addAll(MutationTestFactory.create(path));
+    recipe.addAll(RecipeViolationFactory.create(path));
+    recipe.addAll(TestFactory.create(path));
     return recipe;
-  }
-
-  /**
-   * Performs the given action for each entry in this map.
-   *
-   * @param action The action to be performed for each entry
-   */
-  public void forEach(final BiConsumer<Class<?>, DataList<?>> action) {
-    // TODO(sunggon82.kim): Remove these after refactoring
-    collection.forEach(action);
   }
 
   /**
    * Adds the given object to the collection.
    *
-   * @param object to store
+   * @param object to add
    */
   public void add(final Object object) {
-    objects.add(object);
+    this.objects.add(object);
+  }
+
+  /**
+   * Adds the given objects to the collection.
+   *
+   * @param objects to add
+   */
+  public void addAll(final List<? extends Data<?>> objects) {
+    this.objects.addAll(objects);
   }
 
   @SuppressWarnings({"unchecked", "PMD.UnnecessaryModifier"})
   @Override
-  public final <T> Stream<T> objects(Class<T> clazz) {
+  public final <T> Stream<T> objects(final Class<T> clazz) {
     return (Stream<T>) objects.stream().filter(o -> clazz.isAssignableFrom(o.getClass()));
-  }
-
-  /**
-   * Set the given container object to the collection.
-   *
-   * @param <T>    the class type
-   * @param object to store
-   */
-  public <T extends DataList<?>> void set(final T object) {
-    // TODO(sunggon82.kim): Remove this after refactoring
-    collection.put(object.getClass(), object);
-    objects.addAll(object);
-  }
-
-  /**
-   * Return the relevant container object from the collection.
-   *
-   * @param <T>   the class type
-   * @param clazz the name of the class
-   * @return container object
-   */
-  public <T extends DataList<?>> T get(final Class<T> clazz) {
-    return clazz.cast(collection.get(clazz));
-  }
-
-  @Override
-  public void accept(final Visitable visitor) {
-    visitor.visit(this);
   }
 
   @Override

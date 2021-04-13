@@ -22,63 +22,30 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.metrics.Criteria;
-import com.lge.plugins.metashift.models.Recipe;
-import hudson.model.Action;
-import hudson.model.Run;
-import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.export.ExportedBean;
+import com.lge.plugins.metashift.models.Collectable;
+import com.lge.plugins.metashift.models.CommentData;
 
 /**
- * MetaShift recipe action class.
+ * CommentEvaluator class.
+ *
+ * @author Sung Gon Kim
  */
-@ExportedBean
-public class MetaShiftRecipeAction extends MetaShiftActionBaseWithMetrics implements Action {
-
-  MetaShiftBuildAction parent;
-
-  @Exported(visibility = 999)
-  public String name; // TODO: should be recipe representation.
+public final class CommentEvaluator extends Evaluator<CommentEvaluator> {
 
   /**
    * Default constructor.
+   *
+   * @param criteria for evaluation
    */
-  public MetaShiftRecipeAction(MetaShiftBuildAction parent, Criteria criteria, Recipe recipe) {
-    super(criteria);
-
-    this.name = recipe.getRecipe();
-    this.parent = parent;
-
-    this.getMetrics().parse(recipe);
-  }
-
-  public MetaShiftBuildAction getParentAction() {
-    return this.parent;
-  }
-
-  public Run<?, ?> getRun() {
-    return this.parent.getRun();
+  public CommentEvaluator(final Criteria criteria) {
+    super(criteria.getCommentThreshold());
   }
 
   @Override
-  public String getIconFileName() {
-    return "document.png";
-  }
-
-  @Override
-  public String getDisplayName() {
-    return this.name;
-  }
-
-  @Override
-  public String getUrlName() {
-    return this.name;
-  }
-
-  @Override
-  public String getSearchUrl() {
-    return getUrlName();
+  protected void parseImpl(final Collectable c) {
+    setDenominator(c.objects(CommentData.class).mapToLong(CommentData::getLines).sum());
+    setNumerator(c.objects(CommentData.class).mapToLong(CommentData::getCommentLines).sum());
   }
 }

@@ -24,102 +24,153 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.CacheList;
-import com.lge.plugins.metashift.models.CodeViolationList;
-import com.lge.plugins.metashift.models.CommentList;
-import com.lge.plugins.metashift.models.ComplexityList;
-import com.lge.plugins.metashift.models.DuplicationList;
-import com.lge.plugins.metashift.models.MutationTestList;
-import com.lge.plugins.metashift.models.RecipeViolationList;
-import com.lge.plugins.metashift.models.SizeList;
-import com.lge.plugins.metashift.models.TestList;
+import com.lge.plugins.metashift.models.Collectable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a set of metrics.
  *
  * @author Sung Gon Kim
  */
-public final class Metrics extends Qualifier<Qualifier<?>> {
+public final class Metrics extends Evaluator<Metrics> {
+
+  /**
+   * Represents the collection of evaluators.
+   */
+  private final Map<Class<?>, Evaluator<?>> collection;
+
+  /**
+   * Represents the criteria for evaluation.
+   */
+  private final Criteria criteria;
 
   /**
    * Default constructor.
+   *
+   * @param criteria for evaluation
    */
   public Metrics(final Criteria criteria) {
-    super(criteria.getOverallThreshold(),
-        new CacheQualifier(criteria.getCacheThreshold()),
-        new RecipeViolationQualifier(criteria.getRecipeViolationThreshold()),
-        new SizeQualifier(),
-        new CommentQualifier(criteria.getCommentThreshold()),
-        new CodeViolationQualifier(criteria.getCodeViolationThreshold()),
-        new ComplexityQualifier(criteria.getComplexityLevel(),
-            criteria.getComplexityThreshold()),
-        new DuplicationQualifier(criteria.getDuplicationThreshold()),
-        new TestQualifier(criteria.getTestThreshold()),
-        new MutationTestQualifier(criteria.getMutationTestThreshold()));
+    super(criteria.getOverallThreshold());
+    collection = new HashMap<>();
+    collection.put(CacheEvaluator.class, new CacheEvaluator(new Criteria()));
+    collection.put(CodeSizeEvaluator.class, new CodeSizeEvaluator());
+    collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(new Criteria()));
+    collection.put(CommentEvaluator.class, new CommentEvaluator(new Criteria()));
+    collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(new Criteria()));
+    collection.put(CoverageEvaluator.class, new CoverageEvaluator(new Criteria()));
+    collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(new Criteria()));
+    collection.put(MutationTestEvaluator.class, new MutationTestEvaluator(new Criteria()));
+    collection.put(RecipeViolationEvaluator.class, new RecipeViolationEvaluator(new Criteria()));
+    collection.put(TestEvaluator.class, new TestEvaluator(new Criteria()));
+    this.criteria = criteria;
+  }
+
+  /**
+   * Returns the cache availability evaluator.
+   *
+   * @return an evaluator object
+   */
+  public CacheEvaluator getCacheAvailability() {
+    return (CacheEvaluator) collection.get(CacheEvaluator.class);
+  }
+
+  /**
+   * Returns the code size evaluator.
+   *
+   * @return an evaluator object
+   */
+  public CodeSizeEvaluator getCodeSize() {
+    return (CodeSizeEvaluator) collection.get(CodeSizeEvaluator.class);
+  }
+
+  /**
+   * Returns the code violation evaluator.
+   *
+   * @return an evaluator object
+   */
+  public CodeViolationEvaluator getCodeViolations() {
+    return (CodeViolationEvaluator) collection.get(CodeViolationEvaluator.class);
+  }
+
+  /**
+   * Returns the comment evaluator.
+   *
+   * @return an evaluator object
+   */
+  public CommentEvaluator getComments() {
+    return (CommentEvaluator) collection.get(CommentEvaluator.class);
+  }
+
+  /**
+   * Returns the complexity evaluator.
+   *
+   * @return an evaluator object
+   */
+  public ComplexityEvaluator getComplexity() {
+    return (ComplexityEvaluator) collection.get(ComplexityEvaluator.class);
+  }
+
+  /**
+   * Returns the coverage evaluator.
+   *
+   * @return an evaluator object
+   */
+  public CoverageEvaluator getCoverage() {
+    return (CoverageEvaluator) collection.get(CoverageEvaluator.class);
+  }
+
+  /**
+   * Returns the duplication evaluator.
+   *
+   * @return an evaluator object
+   */
+  public DuplicationEvaluator getDuplications() {
+    return (DuplicationEvaluator) collection.get(DuplicationEvaluator.class);
+  }
+
+  /**
+   * Returns the mutation test evaluator.
+   *
+   * @return an evaluator object
+   */
+  public MutationTestEvaluator getMutationTest() {
+    return (MutationTestEvaluator) collection.get(MutationTestEvaluator.class);
+  }
+
+  /**
+   * Returns the recipe violation evaluator.
+   *
+   * @return an evaluator object
+   */
+  public RecipeViolationEvaluator getRecipeViolations() {
+    return (RecipeViolationEvaluator) collection.get(RecipeViolationEvaluator.class);
+  }
+
+  /**
+   * Returns the test evaluator.
+   *
+   * @return an evaluator object
+   */
+  public TestEvaluator getTest() {
+    return (TestEvaluator) collection.get(TestEvaluator.class);
   }
 
   @Override
-  public int getDenominator() {
-    return (int) getCollection().values().stream()
-        .filter(Qualifier::isAvailable).count();
-  }
+  protected void parseImpl(final Collectable c) {
+    collection.put(CacheEvaluator.class, new CacheEvaluator(criteria).parse(c));
+    collection.put(CodeSizeEvaluator.class, new CodeSizeEvaluator().parse(c));
+    collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(criteria).parse(c));
+    collection.put(CommentEvaluator.class, new CommentEvaluator(criteria).parse(c));
+    collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(criteria).parse(c));
+    collection.put(CoverageEvaluator.class, new CoverageEvaluator(criteria).parse(c));
+    collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(criteria).parse(c));
+    collection.put(MutationTestEvaluator.class, new MutationTestEvaluator(criteria).parse(c));
+    collection.put(RecipeViolationEvaluator.class,
+        new RecipeViolationEvaluator(criteria).parse(c));
+    collection.put(TestEvaluator.class, new TestEvaluator(criteria).parse(c));
 
-  @Override
-  public int getNumerator() {
-    return (int) getCollection().values().stream()
-        .filter(o -> o.isAvailable() && o.isQualified()).count();
-  }
-
-  @Override
-  public boolean isQualified() {
-    if (getDenominator() == 0) {
-      return false;
-    }
-    return ((float) getNumerator() / (float) getDenominator()) >= getThreshold();
-  }
-
-  @Override
-  public void visit(final CacheList object) {
-    object.accept(get(CacheQualifier.class));
-  }
-
-  @Override
-  public void visit(final SizeList object) {
-    object.accept(get(SizeQualifier.class));
-  }
-
-  @Override
-  public void visit(final CommentList object) {
-    object.accept(get(CommentQualifier.class));
-  }
-
-  @Override
-  public void visit(final RecipeViolationList object) {
-    object.accept(get(RecipeViolationQualifier.class));
-  }
-
-  @Override
-  public void visit(final CodeViolationList object) {
-    object.accept(get(CodeViolationQualifier.class));
-  }
-
-  @Override
-  public void visit(final ComplexityList object) {
-    object.accept(get(ComplexityQualifier.class));
-  }
-
-  @Override
-  public void visit(final DuplicationList object) {
-    object.accept(get(DuplicationQualifier.class));
-  }
-
-  @Override
-  public void visit(final TestList object) {
-    object.accept(get(TestQualifier.class));
-  }
-
-  @Override
-  public void visit(final MutationTestList object) {
-    object.accept(get(MutationTestQualifier.class));
+    setDenominator(collection.values().stream().filter(Evaluator::isAvailable).count());
+    setNumerator(collection.values().stream().filter(Evaluator::isQualified).count());
   }
 }
