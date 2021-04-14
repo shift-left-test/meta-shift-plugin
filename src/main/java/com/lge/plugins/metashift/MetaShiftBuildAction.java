@@ -35,7 +35,6 @@ import hudson.PluginWrapper;
 import hudson.model.AbstractBuild;
 import hudson.model.Result;
 import hudson.model.Run;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,8 +45,6 @@ import jenkins.model.Jenkins;
 import jenkins.model.RunAction2;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.util.PropertyFilter;
-import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -340,55 +337,55 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
   // Queryable interface
   @Override
   public List<MetaShiftRecipeAction> getCacheAvailability() {
-    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+    return new ArrayList<>(filteredBy(o ->
         o.getMetrics().getCacheAvailability().isQualified()));
   }
 
   @Override
   public ArrayList<MetaShiftRecipeAction> getCodeViolations() {
-    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+    return new ArrayList<>(filteredBy(o ->
         o.getMetrics().getCodeViolations().isQualified()));
   }
 
   @Override
   public ArrayList<MetaShiftRecipeAction> getComments() {
-    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+    return new ArrayList<>(filteredBy(o ->
         o.getMetrics().getComments().isQualified()));
   }
 
   @Override
   public ArrayList<MetaShiftRecipeAction> getComplexity() {
-    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+    return new ArrayList<>(filteredBy(o ->
         o.getMetrics().getComplexity().isQualified()));
   }
 
   @Override
   public ArrayList<MetaShiftRecipeAction> getCoverage() {
-    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+    return new ArrayList<>(filteredBy(o ->
         o.getMetrics().getCoverage().isQualified()));
   }
 
   @Override
   public ArrayList<MetaShiftRecipeAction> getDuplications() {
-    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+    return new ArrayList<>(filteredBy(o ->
         o.getMetrics().getDuplications().isQualified()));
   }
 
   @Override
   public ArrayList<MetaShiftRecipeAction> getMutationTest() {
-    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+    return new ArrayList<>(filteredBy(o ->
         o.getMetrics().getMutationTest().isQualified()));
   }
 
   @Override
   public ArrayList<MetaShiftRecipeAction> getRecipeViolations() {
-    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+    return new ArrayList<>(filteredBy(o ->
         o.getMetrics().getRecipeViolations().isQualified()));
   }
 
   @Override
   public ArrayList<MetaShiftRecipeAction> getTest() {
-    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+    return new ArrayList<>(filteredBy(o ->
         o.getMetrics().getTest().isQualified()));
   }
 }
