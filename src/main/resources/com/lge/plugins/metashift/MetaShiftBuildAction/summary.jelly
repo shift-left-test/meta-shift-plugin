@@ -16,31 +16,31 @@ xmlns:ms="/metashift">
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Recipes</h4>
       <p>${it.metrics.codeSize.recipes}
-        <ms:text-diff diff="${it.recipesDiff}" />
+        <ms:text-diff diff="${it.codeSizeDelta.recipes}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Lines</h4>
       <p>${it.metrics.codeSize.lines}
-        <ms:text-diff diff="${it.linesDiff}" />
+        <ms:text-diff diff="${it.codeSizeDelta.lines}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Functions</h4>
       <p>${it.metrics.codeSize.functions}
-        <ms:text-diff diff="${it.functionsDiff}" />
+        <ms:text-diff diff="${it.codeSizeDelta.functions}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Classes</h4>
       <p>${it.metrics.codeSize.classes}
-        <ms:text-diff diff="${it.classesDiff}" />
+        <ms:text-diff diff="${it.codeSizeDelta.classes}" />
       </p>
     </div>
     <div class="col-2 bg-light shadow-sm panel">
       <h4>Files</h4>
       <p>${it.metrics.codeSize.files}
-        <ms:text-diff diff="${it.filesDiff}" />
+        <ms:text-diff diff="${it.codeSizeDelta.files}" />
       </p>
     </div>
   </div>

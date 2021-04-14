@@ -35,9 +35,22 @@ function renderRecipesTable(tableDivId, buildAction) {
     return a.ratio - b.ratio;
   }
 
+  function ajaxRequestFunc(url, config, params) {
+    var self = this;
+
+    return new Promise(function (resolve, reject) {
+      buildAction.getRecipesTableModel(params.page, params.size, function (model) {
+        resolve(model.responseJSON);
+      });
+    });
+  }
+
   var table = new Tabulator(tableDivId,
     {
-      //height:500, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+      pagination: "remote",
+      paginationSize: 10,
+      ajaxRequestFunc: ajaxRequestFunc,
+      ajaxURL: "meta-shift", // just trigging ajaxRequestFunc
       layout:"fitColumns", //fit columns to width of table (optional)
       columns:[ //Define Table Columns
         { title:"Recipes", field:"name", widthGrow:1},
@@ -69,9 +82,4 @@ function renderRecipesTable(tableDivId, buildAction) {
         }
       ]
     });
-
-  buildAction.getRecipesTableModel(function (model) {
-    table.setData(model.responseJSON);
-    table.setSort([{column:"name", dir:"asc"}])
-  });
 }

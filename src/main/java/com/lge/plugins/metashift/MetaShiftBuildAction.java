@@ -29,7 +29,7 @@ import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
 import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.metrics.Metrics;
-import com.lge.plugins.metashift.metrics.QualifiedRecipes;
+import com.lge.plugins.metashift.metrics.Queryable;
 import com.lge.plugins.metashift.models.Recipes;
 import hudson.PluginWrapper;
 import hudson.model.AbstractBuild;
@@ -37,8 +37,11 @@ import hudson.model.Result;
 import hudson.model.Run;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import jenkins.model.Jenkins;
 import jenkins.model.RunAction2;
 import net.sf.json.JSONArray;
@@ -52,21 +55,13 @@ import org.kohsuke.stapler.export.ExportedBean;
  * MetaShift post build action class.
  */
 @ExportedBean
-public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics implements RunAction2 {
+public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
+    implements RunAction2, Queryable<List<MetaShiftRecipeAction>> {
 
   private transient Run<?, ?> run;
+  private transient List<MetaShiftRecipeAction> recipeActions;
 
   private final Criteria criteria;
-
-  private final Integer cachePassedRecipes;
-  private final Integer codeViolationPassedRecipes;
-  private final Integer commentPassedRecipes;
-  private final Integer complexityPassedRecipes;
-  private final Integer coveragePassedRecipes;
-  private final Integer duplicationPassedRecipes;
-  private final Integer mutationTestPassedRecipes;
-  private final Integer recipeViolationPassedRecipes;
-  private final Integer testPassedRecipes;
 
   /**
    * Default constructor.
@@ -80,17 +75,6 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
     this.getMetrics().parse(recipes);
 
     recipes.forEach(recipe -> addAction(new MetaShiftRecipeAction(this, criteria, recipe)));
-
-    QualifiedRecipes qualifiedRecipes = new QualifiedRecipes(recipes, new Metrics(criteria));
-    cachePassedRecipes = qualifiedRecipes.getCacheAvailability().size();
-    codeViolationPassedRecipes = qualifiedRecipes.getCodeViolations().size();
-    commentPassedRecipes = qualifiedRecipes.getComments().size();
-    complexityPassedRecipes = qualifiedRecipes.getComplexity().size();
-    coveragePassedRecipes = qualifiedRecipes.getCoverage().size();
-    duplicationPassedRecipes = qualifiedRecipes.getDuplications().size();
-    mutationTestPassedRecipes = qualifiedRecipes.getMutationTest().size();
-    recipeViolationPassedRecipes = qualifiedRecipes.getRecipeViolations().size();
-    testPassedRecipes = qualifiedRecipes.getTest().size();
   }
 
   @Override
@@ -150,82 +134,20 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return Run class
    */
   public Run<?, ?> getRun() {
-    return run;
-  }
-
-  public List<MetaShiftRecipeAction> getRecipes() {
-    return this.getActions(MetaShiftRecipeAction.class);
-  }
-
-  public int getCachePassedRecipes() {
-    return this.cachePassedRecipes;
-  }
-
-  public int getCodeViolationPassedRecipes() {
-    return this.codeViolationPassedRecipes;
-  }
-
-  public int getCommentPassedRecipes() {
-    return this.commentPassedRecipes;
-  }
-
-  public int getComplexityPassedRecipes() {
-    return this.complexityPassedRecipes;
-  }
-
-  public int getCoveragePassedRecipes() {
-    return this.coveragePassedRecipes;
-  }
-
-  public int getDuplicationPassedRecipes() {
-    return this.duplicationPassedRecipes;
-  }
-
-  public int getMutationTestPassedRecipes() {
-    return this.mutationTestPassedRecipes;
-  }
-
-  public int getRecipeViolationPassedRecipes() {
-    return this.recipeViolationPassedRecipes;
-  }
-
-  public int getTestPassedRecipes() {
-    return this.testPassedRecipes;
+    return this.run;
   }
 
   /**
-   * check current url is recipe's action.
+   * Returns recipeAction list.
    *
-   * @return is recipe's url or not
+   * @return MetaShiftRcipeAction List
    */
-  public boolean isRecipeAction() {
-    String url = Stapler.getCurrentRequest().getRequestURL().toString();
-    String href = getUrl();
-    try {
-      url = URLDecoder.decode(url, "UTF-8");
-      href = URLDecoder.decode(href, "UTF-8");
-      if (url.endsWith("/")) {
-        url = url.substring(0, url.length() - 1);
-      }
-      if (href.endsWith("/")) {
-        href = href.substring(0, href.length() - 1);
-      }
-
-      return url.contains(href);
-    } catch (Exception e) {
-      return false;
+  public List<MetaShiftRecipeAction> getRecipes() {
+    if (this.recipeActions == null) {
+      this.recipeActions = this.getActions(MetaShiftRecipeAction.class);
     }
-  }
 
-  /**
-   * filter class for qualifier json serialization.
-   */
-  public static class CustomPropertyFilter implements PropertyFilter {
-
-    @Override
-    public boolean apply(Object source, String name, Object value) {
-      return name.equals("collection");
-    }
+    return this.recipeActions;
   }
 
   /**
@@ -234,14 +156,27 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    * @return recipe qualifier list.
    */
   @JavaScriptMethod
-  public JSONArray getRecipesTableModel() {
-    JSONArray result = new JSONArray();
+  public JSONObject getRecipesTableModel(int pageIndex, int pageSize) {
+    JSONObject result = new JSONObject();
+    JSONArray data = new JSONArray();
 
-    for (MetaShiftRecipeAction recipe : this.getRecipes()) {
+    int recipeCount = this.getRecipes().size();
+    int baseIndex = pageSize * (pageIndex - 1);
+
+    for (int i = 0; i < pageSize; i++) {
+      int index = baseIndex + i;
+      if (index >= recipeCount) {
+        break;
+      }
+
+      MetaShiftRecipeAction recipe = this.getRecipes().get(index);
       JSONObject recipeObj = JSONObject.fromObject(recipe.getMetrics());
       recipeObj.element("name", recipe.getDisplayName());
-      result.add(recipeObj);
+      data.add(recipeObj);
     }
+
+    result.put("data", data);
+    result.put("last_page", (recipeCount + pageSize - 1) / pageSize);
 
     return result;
   }
@@ -389,55 +324,71 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics impleme
    *
    * @return CodeSizeDelta object
    */
-  private CodeSizeDelta getCodeSizeDelta() {
+  public CodeSizeDelta getCodeSizeDelta() {
     CodeSizeEvaluator previous =
-        Optional.ofNullable(getPreviousMetrics()).map(Metrics::getCodeSize).orElse(null);
+        Optional.ofNullable(getPreviousMetrics())
+            .map(Metrics::getCodeSize).orElse(null);
     CodeSizeEvaluator current = getMetrics().getCodeSize();
     return CodeSizeDelta.between(previous, current);
   }
 
-  /**
-   * recipe count diff with previous build.
-   *
-   * @return recipes diff
-   */
-  public long getRecipesDiff() {
-    return getCodeSizeDelta().getRecipes();
+  private Collection<MetaShiftRecipeAction>
+      filteredBy(final Predicate<? super MetaShiftRecipeAction> predicate) {
+    return this.getRecipes().stream().filter(predicate).collect(Collectors.toList());
   }
 
-  /**
-   * line count diff with previous build.
-   *
-   * @return lines diff
-   */
-  public long getLinesDiff() {
-    return getCodeSizeDelta().getLines();
+  // Queryable interface
+  @Override
+  public List<MetaShiftRecipeAction> getCacheAvailability() {
+    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+        o.getMetrics().getCacheAvailability().isQualified()));
   }
 
-  /**
-   * function count diff with previous build.
-   *
-   * @return functions diff
-   */
-  public long getFunctionsDiff() {
-    return getCodeSizeDelta().getFunctions();
+  @Override
+  public ArrayList<MetaShiftRecipeAction> getCodeViolations() {
+    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+        o.getMetrics().getCodeViolations().isQualified()));
   }
 
-  /**
-   * class count diff with previous build.
-   *
-   * @return classes diff
-   */
-  public long getClassesDiff() {
-    return getCodeSizeDelta().getClasses();
+  @Override
+  public ArrayList<MetaShiftRecipeAction> getComments() {
+    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+        o.getMetrics().getComments().isQualified()));
   }
 
-  /**
-   * file count diff with previous build.
-   *
-   * @return files diff
-   */
-  public long getFilesDiff() {
-    return getCodeSizeDelta().getFiles();
+  @Override
+  public ArrayList<MetaShiftRecipeAction> getComplexity() {
+    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+        o.getMetrics().getComplexity().isQualified()));
+  }
+
+  @Override
+  public ArrayList<MetaShiftRecipeAction> getCoverage() {
+    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+        o.getMetrics().getCoverage().isQualified()));
+  }
+
+  @Override
+  public ArrayList<MetaShiftRecipeAction> getDuplications() {
+    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+        o.getMetrics().getDuplications().isQualified()));
+  }
+
+  @Override
+  public ArrayList<MetaShiftRecipeAction> getMutationTest() {
+    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+        o.getMetrics().getMutationTest().isQualified()));
+  }
+
+  @Override
+  public ArrayList<MetaShiftRecipeAction> getRecipeViolations() {
+    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+        o.getMetrics().getRecipeViolations().isQualified()));
+  }
+
+  @Override
+  public ArrayList<MetaShiftRecipeAction> getTest() {
+    return new ArrayList<MetaShiftRecipeAction>(filteredBy(o ->
+        o.getMetrics().getTest().isQualified()));
   }
 }

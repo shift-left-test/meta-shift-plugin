@@ -20,31 +20,31 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
         <div class="col-2 bg-light shadow-sm panel">
           <h4>Recipes</h4>
           <p>${it.metrics.codeSize.recipes}
-            <ms:text-diff diff="${it.recipesDiff}" />
+            <ms:text-diff diff="${it.codeSizeDelta.recipes}" />
           </p>
         </div>
         <div class="col-2 bg-light shadow-sm panel">
           <h4>Lines</h4>
           <p>${it.metrics.codeSize.lines}
-            <ms:text-diff diff="${it.linesDiff}" />
+            <ms:text-diff diff="${it.codeSizeDelta.lines}" />
           </p>
         </div>
         <div class="col-2 bg-light shadow-sm panel">
           <h4>Functions</h4>
           <p>${it.metrics.codeSize.functions}
-            <ms:text-diff diff="${it.functionsDiff}" />
+            <ms:text-diff diff="${it.codeSizeDelta.functions}" />
           </p>
         </div>
         <div class="col-2 bg-light shadow-sm panel">
           <h4>Classes</h4>
           <p>${it.metrics.codeSize.classes}
-            <ms:text-diff diff="${it.classesDiff}" />
+            <ms:text-diff diff="${it.codeSizeDelta.classes}" />
           </p>
         </div>
         <div class="col-2 bg-light shadow-sm panel">
           <h4>Files</h4>
           <p>${it.metrics.codeSize.files}
-            <ms:text-diff diff="${it.filesDiff}" />
+            <ms:text-diff diff="${it.codeSizeDelta.files}" />
           </p>
         </div>
       </div>
@@ -88,7 +88,7 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                       ${it.getFixedFloat('#.##', it.metrics.cacheAvailability.ratio * 100)}%
                     </td>
                     <td>${it.criteria.cacheThreshold}%</td>
-                    <td>${it.cachePassedRecipes}</td>
+                    <td>${it.cacheAvailability.size()}</td>
                   </j:when>
                   <j:otherwise>
                     <th class="text-muted">
@@ -114,7 +114,7 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                       ${it.getFixedFloat('#.##', it.metrics.recipeViolations.ratio * 100)}%
                     </td>
                     <td>${it.criteria.recipeViolationThreshold}%</td>
-                    <td>${it.recipeViolationPassedRecipes}</td>
+                    <td>${it.recipeViolations.size()}</td>
                   </j:when>
                   <j:otherwise>
                     <th class="text-muted">
@@ -141,7 +141,7 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                       ${it.getFixedFloat('#.##', it.metrics.comments.ratio * 100)}%
                     </td>
                     <td>${it.criteria.commentThreshold}%</td>
-                    <td>${it.commentPassedRecipes}</td>
+                    <td>${it.comments.size()}</td>
                   </j:when>
                   <j:otherwise>
                     <th class="text-muted">
@@ -167,7 +167,7 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                       ${it.getFixedFloat('#.##', it.metrics.codeViolations.ratio * 100)}%
                     </td>
                     <td>${it.criteria.codeViolationThreshold}%</td>
-                    <td>${it.codeViolationPassedRecipes}</td>
+                    <td>${it.codeViolations.size()}</td>
                   </j:when>
                   <j:otherwise>
                     <th class="text-muted">
@@ -193,7 +193,7 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                       ${it.getFixedFloat('#.##', it.metrics.complexity.ratio * 100)}%
                     </td>
                     <td>${it.criteria.complexityThreshold}%</td>
-                    <td>${it.complexityPassedRecipes}</td>
+                    <td>${it.complexity.size()}</td>
                   </j:when>
                   <j:otherwise>
                     <th class="text-muted">
@@ -219,7 +219,7 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                       ${it.getFixedFloat('#.##', it.metrics.duplications.ratio * 100)}%
                     </td>
                     <td>${it.criteria.duplicationThreshold}%</td>
-                    <td>${it.duplicationPassedRecipes}</td>
+                    <td>${it.duplications.size()}</td>
                   </j:when>
                   <j:otherwise>
                     <th class="text-muted">
@@ -245,7 +245,7 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                       ${it.getFixedFloat('#.##', it.metrics.test.ratio * 100)}%
                     </td>
                     <td>${it.criteria.testThreshold}%</td>
-                    <td>${it.testPassedRecipes}</td>
+                    <td>${it.test.size()}</td>
                   </j:when>
                   <j:otherwise>
                     <th class="text-muted">
@@ -271,7 +271,7 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                       ${it.getFixedFloat('#.##', it.metrics.coverage.ratio * 100)}%
                     </td>
                     <td>${it.criteria.coverageThreshold}%</td>
-                    <td>${it.coveragePassedRecipes}</td>
+                    <td>${it.coverage.size()}</td>
                   </j:when>
                   <j:otherwise>
                     <th class="text-muted">
@@ -297,7 +297,7 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                       ${it.getFixedFloat('#.##', it.metrics.mutationTest.ratio * 100)}%
                     </td>
                     <td>${it.criteria.mutationTestThreshold}%</td>
-                    <td>${it.mutationTestPassedRecipes}</td>
+                    <td>${it.mutationTest.size()}</td>
                   </j:when>
                   <j:otherwise>
                     <th class="text-muted">
