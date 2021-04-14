@@ -47,7 +47,7 @@ public abstract class Data<T> implements Comparable<T> {
    * @throws IllegalArgumentException if the recipe name is malformed
    */
   public Data(final String recipe) {
-    String regexp = "^(?<recipe>[\\w-+]+)-(?<version>[\\w-.+]+)-(?<revision>[\\w-.+]+)$";
+    String regexp = "^(?<recipe>[\\w-.+]+)-(?<version>[\\w-.+]+)-(?<revision>[\\w-.+]+)$";
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(recipe);
     if (!matcher.matches()) {

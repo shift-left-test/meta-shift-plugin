@@ -75,15 +75,10 @@ public class RecipeTest {
   }
 
   @Test
-  public void testInitWithHyphenedVersionName() {
-    Recipe recipe = new Recipe("cmake-project-1.0.0-10-r0");
-    assertEquals("cmake-project-1.0.0-10-r0", recipe.getRecipe());
-  }
-
-  @Test
   public void testInitWithComplexName() {
-    Recipe recipe = new Recipe("qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X-r+1.0-X");
-    assertEquals("qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X-r+1.0-X", recipe.getRecipe());
+    String name = "A.B.C.qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X-r+1.0-X";
+    Recipe recipe = new Recipe(name);
+    assertEquals(name, recipe.getRecipe());
   }
 
   @Test
