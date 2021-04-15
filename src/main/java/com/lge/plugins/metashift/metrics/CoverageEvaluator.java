@@ -25,9 +25,9 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
-import com.lge.plugins.metashift.models.Collectable;
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.StatementCoverageData;
+import com.lge.plugins.metashift.models.Streamable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -89,7 +89,7 @@ public final class CoverageEvaluator extends Evaluator<CoverageEvaluator> {
   }
 
   @Override
-  protected void parseImpl(final Collectable c) {
+  protected void parseImpl(final Streamable c) {
     collection.put(Type.STATEMENT, new Counter(
         c.objects(StatementCoverageData.class).count(),
         c.objects(StatementCoverageData.class).filter(CoverageData::isCovered).count()

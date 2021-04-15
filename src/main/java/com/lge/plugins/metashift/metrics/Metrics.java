@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.Collectable;
+import com.lge.plugins.metashift.models.Streamable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,7 +121,7 @@ public final class Metrics extends Evaluator<Metrics> implements Queryable<Evalu
   }
 
   @Override
-  protected void parseImpl(final Collectable c) {
+  protected void parseImpl(final Streamable c) {
     collection.put(CacheEvaluator.class, new CacheEvaluator(criteria).parse(c));
     collection.put(CodeSizeEvaluator.class, new CodeSizeEvaluator().parse(c));
     collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(criteria).parse(c));

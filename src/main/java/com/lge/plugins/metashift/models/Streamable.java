@@ -27,11 +27,11 @@ package com.lge.plugins.metashift.models;
 import java.util.stream.Stream;
 
 /**
- * A collectable interface.
+ * Streamable interface.
  *
  * @author Sung Gon Kim
  */
-public interface Collectable {
+public interface Streamable {
 
   /**
    * Returns the stream of the given class type.

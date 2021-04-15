@@ -24,8 +24,8 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.Collectable;
 import com.lge.plugins.metashift.models.CommentData;
+import com.lge.plugins.metashift.models.Streamable;
 
 /**
  * CommentEvaluator class.
@@ -44,7 +44,7 @@ public final class CommentEvaluator extends Evaluator<CommentEvaluator> {
   }
 
   @Override
-  protected void parseImpl(final Collectable c) {
+  protected void parseImpl(final Streamable c) {
     setDenominator(c.objects(CommentData.class).mapToLong(CommentData::getLines).sum());
     setNumerator(c.objects(CommentData.class).mapToLong(CommentData::getCommentLines).sum());
   }

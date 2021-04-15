@@ -25,9 +25,9 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.CacheData;
-import com.lge.plugins.metashift.models.Collectable;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
+import com.lge.plugins.metashift.models.Streamable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -89,7 +89,7 @@ public final class CacheEvaluator extends Evaluator<CacheEvaluator> {
   }
 
   @Override
-  protected void parseImpl(final Collectable c) {
+  protected void parseImpl(final Streamable c) {
     collection.put(Type.PREMIRROR, new Counter(
         c.objects(PremirrorCacheData.class).distinct().count(),
         c.objects(PremirrorCacheData.class).distinct().filter(CacheData::isAvailable).count()

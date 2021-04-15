@@ -44,7 +44,7 @@ import java.util.stream.Stream;
  *
  * @author Sung Gon Kim
  */
-public final class Recipe extends Data<Recipe> implements Collectable {
+public final class Recipe extends Data<Recipe> implements Streamable {
 
   /**
    * Represents the heterogeneous data list.

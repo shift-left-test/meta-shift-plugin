@@ -24,11 +24,11 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.Collectable;
 import com.lge.plugins.metashift.models.InfoRecipeViolationData;
 import com.lge.plugins.metashift.models.MajorRecipeViolationData;
 import com.lge.plugins.metashift.models.MinorRecipeViolationData;
 import com.lge.plugins.metashift.models.RecipeViolationData;
+import com.lge.plugins.metashift.models.Streamable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -109,7 +109,7 @@ public final class RecipeViolationEvaluator extends Evaluator<RecipeViolationEva
   }
 
   @Override
-  protected void parseImpl(final Collectable c) {
+  protected void parseImpl(final Streamable c) {
     collection.put(Type.MAJOR, new Counter(
         c.objects(RecipeViolationData.class).count(),
         c.objects(MajorRecipeViolationData.class).count()

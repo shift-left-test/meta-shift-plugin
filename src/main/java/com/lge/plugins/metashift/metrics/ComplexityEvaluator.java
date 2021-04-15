@@ -24,8 +24,8 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.Collectable;
 import com.lge.plugins.metashift.models.ComplexityData;
+import com.lge.plugins.metashift.models.Streamable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,7 +58,7 @@ public final class ComplexityEvaluator extends Evaluator<ComplexityEvaluator> {
   }
 
   @Override
-  protected void parseImpl(Collectable c) {
+  protected void parseImpl(final Streamable c) {
     List<ComplexityData> objects = c.objects(ComplexityData.class)
         .sorted(Comparator.comparingLong(ComplexityData::getValue).reversed())
         .collect(Collectors.toList());

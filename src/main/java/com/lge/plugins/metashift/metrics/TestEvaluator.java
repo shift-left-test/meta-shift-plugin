@@ -24,11 +24,11 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.Collectable;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.SkippedTestData;
+import com.lge.plugins.metashift.models.Streamable;
 import com.lge.plugins.metashift.models.TestData;
 import java.util.EnumMap;
 import java.util.Map;
@@ -119,7 +119,7 @@ public final class TestEvaluator extends Evaluator<TestEvaluator> {
   }
 
   @Override
-  protected void parseImpl(final Collectable c) {
+  protected void parseImpl(final Streamable c) {
     collection.put(Type.PASSED, new Counter(
         c.objects(TestData.class).count(),
         c.objects(PassedTestData.class).count()

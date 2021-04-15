@@ -137,7 +137,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
   /**
    * Returns recipeAction list.
    *
-   * @return MetaShiftRcipeAction List
+   * @return MetaShiftRecipeAction List
    */
   public List<MetaShiftRecipeAction> getRecipes() {
     if (this.recipeActions == null) {

@@ -25,7 +25,7 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
-import com.lge.plugins.metashift.models.Collectable;
+import com.lge.plugins.metashift.models.Streamable;
 
 /**
  * CodeSizeEvaluator class.
@@ -117,7 +117,7 @@ public final class CodeSizeEvaluator extends Evaluator<CodeSizeEvaluator> {
   }
 
   @Override
-  protected void parseImpl(final Collectable c) {
+  protected void parseImpl(final Streamable c) {
     recipes = c.objects(CodeSizeData.class).map(CodeSizeData::getRecipe).distinct().count();
     files = c.objects(CodeSizeData.class).map(CodeSizeData::getFile).distinct().count();
     lines = c.objects(CodeSizeData.class).mapToLong(CodeSizeData::getLines).sum();

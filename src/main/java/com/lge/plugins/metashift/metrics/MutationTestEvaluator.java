@@ -24,10 +24,10 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.Collectable;
 import com.lge.plugins.metashift.models.KilledMutationTestData;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.SkippedMutationTestData;
+import com.lge.plugins.metashift.models.Streamable;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
 import java.util.EnumMap;
 import java.util.Map;
@@ -104,7 +104,7 @@ public final class MutationTestEvaluator extends Evaluator<MutationTestEvaluator
   }
 
   @Override
-  protected void parseImpl(final Collectable c) {
+  protected void parseImpl(final Streamable c) {
     collection.put(Type.KILLED, new Counter(
         c.objects(MutationTestData.class).count(),
         c.objects(KilledMutationTestData.class).count()

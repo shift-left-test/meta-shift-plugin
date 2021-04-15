@@ -24,8 +24,8 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.Collectable;
 import com.lge.plugins.metashift.models.DuplicationData;
+import com.lge.plugins.metashift.models.Streamable;
 
 /**
  * DuplicationEvaluator class.
@@ -49,7 +49,7 @@ public final class DuplicationEvaluator extends Evaluator<DuplicationEvaluator> 
   }
 
   @Override
-  protected void parseImpl(final Collectable c) {
+  protected void parseImpl(final Streamable c) {
     setDenominator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum());
     setNumerator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getDuplicatedLines)
         .sum());

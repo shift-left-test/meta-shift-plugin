@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.Collectable;
+import com.lge.plugins.metashift.models.Streamable;
 
 /**
  * Evaluator class.
@@ -81,7 +81,7 @@ public abstract class Evaluator<T> extends Counter {
    * @return self
    */
   @SuppressWarnings("unchecked")
-  public final T parse(final Collectable object) {
+  public final T parse(final Streamable object) {
     setDenominator(0);
     setNumerator(0);
     parseImpl(object);
@@ -93,5 +93,5 @@ public abstract class Evaluator<T> extends Counter {
    *
    * @param c object to evaluate
    */
-  protected abstract void parseImpl(final Collectable c);
+  protected abstract void parseImpl(final Streamable c);
 }
