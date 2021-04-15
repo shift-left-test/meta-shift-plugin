@@ -113,6 +113,22 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
   }
 
   /**
+   * Counts the objects by the evaluator.
+   *
+   * @param recipes   to count
+   * @param evaluator for calculation
+   * @param <T>       class type
+   * @return Counter object
+   */
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
+  private <T extends Evaluator<T>> Counter countBy(Recipes recipes, Evaluator<T> evaluator) {
+    return new Counter(
+        recipes.stream().filter(o -> evaluator.parse(o).isAvailable()).count(),
+        recipes.stream().filter(o -> evaluator.parse(o).isQualified()).count()
+    );
+  }
+
+  /**
    * Parses the given recipes to count the number of qualified recipes.
    *
    * @param recipes to parse
@@ -131,21 +147,6 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
         countBy(recipes, new RecipeViolationEvaluator(criteria)));
     collection.put(Type.TEST, countBy(recipes, new TestEvaluator(criteria)));
     return this;
-  }
-
-  /**
-   * Counts the objects by the evaluator.
-   *
-   * @param recipes   to count
-   * @param evaluator for calculation
-   * @param <T>       class type
-   * @return Counter object
-   */
-  private <T extends Evaluator<T>> Counter countBy(Recipes recipes, Evaluator<T> evaluator) {
-    return new Counter(
-        recipes.stream().filter(o -> evaluator.parse(o).isAvailable()).count(),
-        recipes.stream().filter(o -> evaluator.parse(o).isQualified()).count()
-    );
   }
 
   /**

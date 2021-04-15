@@ -329,8 +329,8 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
     return CodeSizeDelta.between(previous, current);
   }
 
-  private Collection<MetaShiftRecipeAction>
-  filteredBy(final Predicate<? super MetaShiftRecipeAction> predicate) {
+  private Collection<MetaShiftRecipeAction> filteredBy(
+      final Predicate<? super MetaShiftRecipeAction> predicate) {
     return this.getRecipes().stream().filter(predicate).collect(Collectors.toList());
   }
 
