@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.lge.plugins.metashift.models.TemporaryFileUtils;
+import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

@@ -27,7 +27,7 @@ package com.lge.plugins.metashift.models.factory;
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.CacheData;
-import com.lge.plugins.metashift.models.TemporaryFileUtils;
+import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

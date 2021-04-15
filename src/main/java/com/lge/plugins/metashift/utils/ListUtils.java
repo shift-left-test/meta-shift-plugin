@@ -1,0 +1,80 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2021 LG Electronics, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package com.lge.plugins.metashift.utils;
+
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Provides utility methods for List objects.
+ *
+ * @author Sung Gon Kim
+ */
+public class ListUtils {
+
+  /**
+   * Returns the consecutive sublist of the list, each of the same size.
+   *
+   * @param list to return consecutive sublist of
+   * @param size of each sublist
+   * @param <T>  the element type
+   * @return a list of consecutive sublist
+   */
+  public static <T> List<List<T>> partition(List<T> list, int size) {
+    if (list == null || size <= 0) {
+      return Collections.emptyList();
+    }
+    return new Partition<>(list, size);
+  }
+
+  private static class Partition<T> extends AbstractList<List<T>> {
+
+    private final List<T> list;
+    private final int size;
+
+    public Partition(List<T> list, int size) {
+      this.list = list;
+      this.size = size;
+    }
+
+    @Override
+    public List<T> get(int index) {
+      int start = index * size;
+      int end = Math.min(start + size, list.size());
+      if (start > end || index < 0) {
+        throw new IndexOutOfBoundsException(
+            index + ": Index out of range <0, " + (size() - 1) + ">");
+      }
+      return new ArrayList<>(list.subList(start, end));
+    }
+
+    @Override
+    public int size() {
+      return (int) Math.ceil((double) list.size() / (double) size);
+    }
+  }
+}
