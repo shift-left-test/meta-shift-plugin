@@ -330,7 +330,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
   }
 
   private Collection<MetaShiftRecipeAction>
-      filteredBy(final Predicate<? super MetaShiftRecipeAction> predicate) {
+  filteredBy(final Predicate<? super MetaShiftRecipeAction> predicate) {
     return this.getRecipes().stream().filter(predicate).collect(Collectors.toList());
   }
 
