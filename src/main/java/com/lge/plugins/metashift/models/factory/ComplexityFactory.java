@@ -49,17 +49,6 @@ import org.apache.commons.io.IOUtils;
 public class ComplexityFactory {
 
   /**
-   * Removes all duplicates except the one with the highest complexity value.
-   *
-   * @param objects to remove duplicates
-   * @return unique list
-   */
-  private static List<ComplexityData> removeDuplicates(final List<ComplexityData> objects) {
-    objects.sort(Comparator.comparingLong(ComplexityData::getValue).reversed());
-    return objects.stream().distinct().collect(Collectors.toList());
-  }
-
-  /**
    * Create a list of objects using the given data.
    *
    * @param path to the report directory
@@ -80,7 +69,6 @@ public class ComplexityFactory {
             ((JSONObject) o).getLong("end"),
             ((JSONObject) o).getLong("value")));
       }
-      list = removeDuplicates(list);
     } catch (IOException e) {
       e.printStackTrace();
     } catch (JSONException e) {

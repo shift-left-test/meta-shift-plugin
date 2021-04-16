@@ -159,9 +159,11 @@ public class ComplexityFactoryTest {
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     objects = ComplexityFactory.create(directory);
-    assertEquals(1, objects.size());
+    assertEquals(3, objects.size());
 
     Iterator<ComplexityData> iterator = objects.iterator();
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", "func1()", 15, 20, 3);
     assertValues(iterator.next(), "D-1.0.0-r0", "a.file", "func1()", 25, 30, 7);
   }
 
