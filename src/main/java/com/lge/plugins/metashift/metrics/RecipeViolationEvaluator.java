@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  *
  * @author Sung Gon Kim
  */
-public final class RecipeViolationEvaluator extends Evaluator<RecipeViolationEvaluator> {
+public final class RecipeViolationEvaluator extends NegativeEvaluator<RecipeViolationEvaluator> {
 
   /**
    * Represents the recipe violation types.
@@ -74,11 +74,6 @@ public final class RecipeViolationEvaluator extends Evaluator<RecipeViolationEva
     super(criteria.getRecipeViolationThreshold());
     collection = new EnumMap<>(Type.class);
     Stream.of(Type.values()).forEach(type -> collection.put(type, new Counter()));
-  }
-
-  @Override
-  public boolean isQualified() {
-    return isAvailable() && (double) getNumerator() / (double) getDenominator() <= getThreshold();
   }
 
   /**
@@ -123,6 +118,7 @@ public final class RecipeViolationEvaluator extends Evaluator<RecipeViolationEva
         c.objects(InfoRecipeViolationData.class).count()
     ));
 
+    setAvailable(c.isAvailable(RecipeViolationData.class));
     setDenominator(getMajor().getDenominator());
     setNumerator(getMajor().getNumerator());
   }

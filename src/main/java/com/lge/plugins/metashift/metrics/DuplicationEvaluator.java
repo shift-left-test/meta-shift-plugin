@@ -32,7 +32,7 @@ import com.lge.plugins.metashift.models.Streamable;
  *
  * @author Sung Gon Kim
  */
-public final class DuplicationEvaluator extends Evaluator<DuplicationEvaluator> {
+public final class DuplicationEvaluator extends NegativeEvaluator<DuplicationEvaluator> {
 
   /**
    * Default constructor.
@@ -44,12 +44,8 @@ public final class DuplicationEvaluator extends Evaluator<DuplicationEvaluator> 
   }
 
   @Override
-  public boolean isQualified() {
-    return isAvailable() && (double) getNumerator() / (double) getDenominator() <= getThreshold();
-  }
-
-  @Override
   protected void parseImpl(final Streamable c) {
+    setAvailable(c.isAvailable(DuplicationData.class));
     setDenominator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum());
     setNumerator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getDuplicatedLines)
         .sum());

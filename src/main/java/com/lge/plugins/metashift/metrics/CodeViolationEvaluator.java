@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  *
  * @author Sung Gon Kim
  */
-public final class CodeViolationEvaluator extends Evaluator<CodeViolationEvaluator> {
+public final class CodeViolationEvaluator extends NegativeEvaluator<CodeViolationEvaluator> {
 
   /**
    * Represents the code violation types.
@@ -104,11 +104,6 @@ public final class CodeViolationEvaluator extends Evaluator<CodeViolationEvaluat
   }
 
   @Override
-  public boolean isQualified() {
-    return isAvailable() && (double) getNumerator() / (double) getDenominator() <= getThreshold();
-  }
-
-  @Override
   protected void parseImpl(final Streamable c) {
     collection.put(Type.MAJOR, new Counter(
         c.objects(CodeViolationData.class).count(),
@@ -123,6 +118,7 @@ public final class CodeViolationEvaluator extends Evaluator<CodeViolationEvaluat
         c.objects(InfoCodeViolationData.class).count()
     ));
 
+    setAvailable(c.isAvailable(CodeViolationData.class));
     setDenominator(getMajor().getDenominator());
     setNumerator(getMajor().getNumerator());
   }

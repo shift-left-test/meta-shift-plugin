@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  *
  * @author Sung Gon Kim
  */
-public final class MutationTestEvaluator extends Evaluator<MutationTestEvaluator> {
+public final class MutationTestEvaluator extends PositiveEvaluator<MutationTestEvaluator> {
 
   /**
    * Represents the mutation test types.
@@ -118,6 +118,7 @@ public final class MutationTestEvaluator extends Evaluator<MutationTestEvaluator
         c.objects(SkippedMutationTestData.class).count()
     ));
 
+    setAvailable(c.isAvailable(MutationTestData.class));
     setDenominator(getKilled().getDenominator());
     setNumerator(getKilled().getNumerator());
   }

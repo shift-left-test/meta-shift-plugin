@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -65,17 +66,21 @@ public class TestFactoryTest {
     assertEquals(message, object.getMessage());
   }
 
-  @Test
-  public void testCreateWithUnknownPath() {
-    objects = TestFactory.create(utils.getPath("path-to-unknown"));
-    assertEquals(0, objects.size());
+  @Test(expected = IOException.class)
+  public void testCreateWithUnknownPath() throws IOException {
+    TestFactory.create(utils.getPath("path-to-unknown"));
   }
 
-  @Test
-  public void testCreateWithNoFile() throws Exception {
+  @Test(expected = IOException.class)
+  public void testCreateWithNoTaskDirectory() throws IOException {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    TestFactory.create(directory);
+  }
+
+  @Test(expected = IOException.class)
+  public void testCreateWithNoFile() throws IOException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "test").getParentFile();
-    objects = TestFactory.create(directory);
-    assertEquals(0, objects.size());
+    TestFactory.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)

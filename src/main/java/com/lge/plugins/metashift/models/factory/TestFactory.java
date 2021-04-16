@@ -54,26 +54,25 @@ public class TestFactory {
    * @param path to the report directory
    * @return a list of objects
    * @throws IllegalArgumentException if failed to parse report files
+   * @throws IOException              if failed to locate report files
    */
-  public static List<TestData> create(final File path) throws IllegalArgumentException {
+  public static List<TestData> create(final File path)
+      throws IllegalArgumentException, IOException {
     List<TestData> list = new ArrayList<>();
     String recipe = path.getName();
     String[] extensions = {"xml"};
     File directory = new File(path, "test");
     if (!directory.exists()) {
-      return list;
+      throw new IOException("Unable to locate the directory: " + directory);
     }
     Collection<File> files = FileUtils.listFiles(directory, extensions, true);
     if (files.isEmpty()) {
-      return list;
+      throw new IOException("Unable to locate any files under: " + directory);
     }
     for (File file : files) {
       try {
         list.addAll(parseFile(recipe, file));
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (ParserConfigurationException | SAXException e) {
-        e.printStackTrace();
+      } catch (ParserConfigurationException | SAXException | IOException e) {
         throw new IllegalArgumentException("Failed to parse: " + file, e);
       }
     }

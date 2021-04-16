@@ -80,23 +80,22 @@ public class MutationTestFactory {
    * @param path to the report directory
    * @return a list of objects
    * @throws IllegalArgumentException if failed to parse report files
+   * @throws IOException              if failed to locate report files
    */
-  public static List<MutationTestData> create(final File path) throws IllegalArgumentException {
+  public static List<MutationTestData> create(final File path)
+      throws IllegalArgumentException, IOException {
     List<MutationTestData> list = new ArrayList<>();
     String recipe = path.getName();
     File report = FileUtils.getFile(path, "checktest", "mutations.xml");
     if (!report.exists()) {
-      return list;
+      throw new IOException("Unable to locate the file: " + report);
     }
     try {
       SimpleXmlParser parser = new SimpleXmlParser(report);
       for (Tag tag : parser.getChildNodes("mutation")) {
         list.add(createInstance(recipe, tag));
       }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (ParserConfigurationException | SAXException e) {
-      e.printStackTrace();
+    } catch (ParserConfigurationException | SAXException | IOException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     }
     Collections.sort(list);

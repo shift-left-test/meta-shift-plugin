@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  *
  * @author Sung Gon Kim
  */
-public final class CoverageEvaluator extends Evaluator<CoverageEvaluator> {
+public final class CoverageEvaluator extends PositiveEvaluator<CoverageEvaluator> {
 
   /**
    * Represents the coverage types.
@@ -98,6 +98,8 @@ public final class CoverageEvaluator extends Evaluator<CoverageEvaluator> {
         c.objects(BranchCoverageData.class).count(),
         c.objects(BranchCoverageData.class).filter(CoverageData::isCovered).count()
     ));
+
+    setAvailable(c.isAvailable(CoverageData.class));
     setDenominator(collection.values().stream().mapToLong(Counter::getDenominator).sum());
     setNumerator(collection.values().stream().mapToLong(Counter::getNumerator).sum());
   }

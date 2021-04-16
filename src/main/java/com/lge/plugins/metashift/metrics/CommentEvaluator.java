@@ -32,7 +32,7 @@ import com.lge.plugins.metashift.models.Streamable;
  *
  * @author Sung Gon Kim
  */
-public final class CommentEvaluator extends Evaluator<CommentEvaluator> {
+public final class CommentEvaluator extends PositiveEvaluator<CommentEvaluator> {
 
   /**
    * Default constructor.
@@ -45,6 +45,7 @@ public final class CommentEvaluator extends Evaluator<CommentEvaluator> {
 
   @Override
   protected void parseImpl(final Streamable c) {
+    setAvailable(c.isAvailable(CommentData.class));
     setDenominator(c.objects(CommentData.class).mapToLong(CommentData::getLines).sum());
     setNumerator(c.objects(CommentData.class).mapToLong(CommentData::getCommentLines).sum());
   }

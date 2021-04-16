@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -65,17 +66,21 @@ public class CommentFactoryTest {
     assertEquals(commentLines, object.getCommentLines());
   }
 
-  @Test
-  public void testCreateSetWithUnknownPath() {
-    objects = CommentFactory.create(utils.getPath("path-to-unknown"));
-    assertEquals(0, objects.size());
+  @Test(expected = IOException.class)
+  public void testCreateSetWithUnknownPath() throws IOException {
+    CommentFactory.create(utils.getPath("path-to-unknown"));
   }
 
-  @Test
-  public void testCreateWithNoFile() throws Exception {
+  @Test(expected = IOException.class)
+  public void testCreateWithNoTaskDirectory() throws IOException {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    CommentFactory.create(directory);
+  }
+
+  @Test(expected = IOException.class)
+  public void testCreateWithNoFile() throws IOException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
-    objects = CommentFactory.create(directory);
-    assertEquals(0, objects.size());
+    CommentFactory.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)

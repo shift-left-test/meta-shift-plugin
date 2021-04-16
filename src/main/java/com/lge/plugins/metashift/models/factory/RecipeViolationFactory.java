@@ -79,8 +79,11 @@ public class RecipeViolationFactory {
    *
    * @param path to the report directory
    * @return a list of objects
+   * @throws IllegalArgumentException if failed to parse report files
+   * @throws IOException              if failed to locate report files
    */
-  public static List<RecipeViolationData> create(final File path) {
+  public static List<RecipeViolationData> create(final File path)
+      throws IllegalArgumentException, IOException {
     List<RecipeViolationData> list = new ArrayList<>();
     String recipe = path.getName();
     File report = FileUtils.getFile(path, "checkrecipe", "recipe_violations.json");
@@ -90,10 +93,7 @@ public class RecipeViolationFactory {
       for (Object o : json.getJSONArray("issues")) {
         list.add(createInstance(recipe, (JSONObject) o));
       }
-    } catch (IOException e) {
-      e.printStackTrace();
     } catch (JSONException e) {
-      e.printStackTrace();
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     }
     Collections.sort(list);

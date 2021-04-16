@@ -35,8 +35,11 @@ import com.lge.plugins.metashift.models.factory.MutationTestFactory;
 import com.lge.plugins.metashift.models.factory.RecipeViolationFactory;
 import com.lge.plugins.metashift.models.factory.TestFactory;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -47,9 +50,42 @@ import java.util.stream.Stream;
 public final class Recipe extends Data<Recipe> implements Streamable {
 
   /**
+   * Represents the functional interface of factory methods.
+   *
+   * @param <T> input object type
+   * @param <R> output object type
+   */
+  @FunctionalInterface
+  private interface FactoryFunction<T, R> {
+
+    R apply(T t) throws IOException;
+  }
+
+  /**
+   * Represents the object availability.
+   */
+  private final Set<Class<?>> classes;
+
+  /**
    * Represents the heterogeneous data list.
    */
   private final List<Object> objects;
+
+  /**
+   * Adds the list of objects using the given path and the factory method.
+   *
+   * @param clazz   object type
+   * @param functor to parse the file
+   * @param path    to the report directory
+   */
+  private void addAll(Class<?> clazz, FactoryFunction<File, List<?>> functor, File path) {
+    try {
+      objects.addAll(functor.apply(path));
+      classes.add(clazz);
+    } catch (IOException ignored) {
+      // ignored
+    }
+  }
 
   /**
    * Create a Recipe object using the given recipe directory.
@@ -65,16 +101,16 @@ public final class Recipe extends Data<Recipe> implements Streamable {
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
-    objects.addAll(CacheFactory.create(path));
-    objects.addAll(CodeSizeFactory.create(path));
-    objects.addAll(CodeViolationFactory.create(path));
-    objects.addAll(CommentFactory.create(path));
-    objects.addAll(ComplexityFactory.create(path));
-    objects.addAll(CoverageFactory.create(path));
-    objects.addAll(DuplicationFactory.create(path));
-    objects.addAll(MutationTestFactory.create(path));
-    objects.addAll(RecipeViolationFactory.create(path));
-    objects.addAll(TestFactory.create(path));
+    addAll(CacheData.class, CacheFactory::create, path);
+    addAll(CodeSizeData.class, CodeSizeFactory::create, path);
+    addAll(CodeViolationData.class, CodeViolationFactory::create, path);
+    addAll(CommentData.class, CommentFactory::create, path);
+    addAll(ComplexityData.class, ComplexityFactory::create, path);
+    addAll(CoverageData.class, CoverageFactory::create, path);
+    addAll(DuplicationData.class, DuplicationFactory::create, path);
+    addAll(MutationTestData.class, MutationTestFactory::create, path);
+    addAll(RecipeViolationData.class, RecipeViolationFactory::create, path);
+    addAll(TestData.class, TestFactory::create, path);
   }
 
   /**
@@ -86,20 +122,28 @@ public final class Recipe extends Data<Recipe> implements Streamable {
   public Recipe(final String recipe) throws IllegalArgumentException {
     super(recipe);
     objects = new ArrayList<>();
+    classes = new HashSet<>();
   }
 
   /**
    * Adds the given object to the collection.
    *
    * @param object to add
+   * @param <T>    object type
    */
-  public void add(final Object object) {
-    this.objects.add(object);
+  public <T> void add(final T object) {
+    objects.add(object);
+    classes.add(object.getClass());
+  }
+
+  @Override
+  public <T> boolean isAvailable(final Class<T> clazz) {
+    return classes.stream().anyMatch(clazz::isAssignableFrom);
   }
 
   @SuppressWarnings({"unchecked", "PMD.UnnecessaryModifier"})
   @Override
-  public final <T> Stream<T> objects(final Class<T> clazz) {
+  public <T> Stream<T> objects(final Class<T> clazz) {
     return (Stream<T>) objects.stream().filter(o -> clazz.isAssignableFrom(o.getClass()));
   }
 

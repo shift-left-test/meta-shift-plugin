@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public final class Metrics extends Evaluator<Metrics> implements Queryable<Evaluator<?>> {
+public final class Metrics extends PositiveEvaluator<Metrics> implements Queryable<Evaluator<?>> {
 
   /**
    * Represents the collection of evaluators.
@@ -134,6 +134,7 @@ public final class Metrics extends Evaluator<Metrics> implements Queryable<Evalu
         new RecipeViolationEvaluator(criteria).parse(c));
     collection.put(TestEvaluator.class, new TestEvaluator(criteria).parse(c));
 
+    setAvailable(collection.values().stream().anyMatch(Evaluator::isAvailable));
     setDenominator(collection.values().stream().filter(Evaluator::isAvailable).count());
     setNumerator(collection.values().stream().filter(Evaluator::isQualified).count());
   }

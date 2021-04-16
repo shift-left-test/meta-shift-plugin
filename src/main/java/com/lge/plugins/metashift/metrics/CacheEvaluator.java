@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  *
  * @author Sung Gon Kim
  */
-public final class CacheEvaluator extends Evaluator<CacheEvaluator> {
+public final class CacheEvaluator extends PositiveEvaluator<CacheEvaluator> {
 
   /**
    * Represents the type of caches.
@@ -99,6 +99,7 @@ public final class CacheEvaluator extends Evaluator<CacheEvaluator> {
         c.objects(SharedStateCacheData.class).distinct().filter(CacheData::isAvailable).count()
     ));
 
+    setAvailable(c.isAvailable(CacheData.class));
     setDenominator(collection.values().stream().mapToLong(Counter::getDenominator).sum());
     setNumerator(collection.values().stream().mapToLong(Counter::getNumerator).sum());
   }

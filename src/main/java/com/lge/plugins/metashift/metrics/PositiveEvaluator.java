@@ -24,42 +24,28 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.ComplexityData;
-import com.lge.plugins.metashift.models.Streamable;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
- * ComplexityEvaluator class.
+ * PositiveEvaluator class.
  *
+ * @param <T> class type
  * @author Sung Gon Kim
  */
-public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvaluator> {
-
-  /**
-   * Represents the complexity threshold.
-   */
-  private final long threshold;
+public abstract class PositiveEvaluator<T> extends Evaluator<T> {
 
   /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param threshold for evaluation
    */
-  public ComplexityEvaluator(final Criteria criteria) {
-    super(criteria.getComplexityThreshold());
-    threshold = criteria.getComplexityLevel();
+  public PositiveEvaluator(final double threshold) {
+    super(threshold);
   }
 
   @Override
-  protected void parseImpl(final Streamable c) {
-    List<ComplexityData> objects = c.objects(ComplexityData.class)
-        .sorted(Comparator.comparingLong(ComplexityData::getValue).reversed())
-        .collect(Collectors.toList());
-
-    setAvailable(c.isAvailable(ComplexityData.class));
-    setDenominator(objects.stream().distinct().count());
-    setNumerator(objects.stream().distinct().filter(o -> o.getValue() >= threshold).count());
+  public boolean isQualified() {
+    if (!isAvailable()) {
+      return false;
+    }
+    return (double) getNumerator() / (double) getDenominator() >= getThreshold();
   }
 }

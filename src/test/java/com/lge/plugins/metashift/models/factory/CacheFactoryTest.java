@@ -57,17 +57,21 @@ public class CacheFactoryTest {
     objects = new ArrayList<>();
   }
 
-  @Test
-  public void testCreateWithUnknownPath() {
-    objects = CacheFactory.create(utils.getPath("path-to-unknown"));
-    assertEquals(0, objects.size());
+  @Test(expected = IOException.class)
+  public void testCreateWithUnknownPath() throws IOException {
+    CacheFactory.create(utils.getPath("path-to-unknown"));
   }
 
-  @Test
+  @Test(expected = IOException.class)
+  public void testCreateWithNoTaskDirectory() throws IOException {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    CacheFactory.create(directory);
+  }
+
+  @Test(expected = IOException.class)
   public void testCreateWithNoFile() throws IOException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcache").getParentFile();
-    objects = CacheFactory.create(directory);
-    assertEquals(0, objects.size());
+    CacheFactory.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)

@@ -52,8 +52,10 @@ public class CommentFactory {
    * @param path to the report directory
    * @return a list of objects
    * @throws IllegalArgumentException if failed to parse report files
+   * @throws IOException              if failed to locate report files
    */
-  public static List<CommentData> create(final File path) throws IllegalArgumentException {
+  public static List<CommentData> create(final File path)
+      throws IllegalArgumentException, IOException {
     List<CommentData> list = new ArrayList<>();
     String recipe = path.getName();
     File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
@@ -66,10 +68,7 @@ public class CommentFactory {
             ((JSONObject) o).getLong("total_lines"),
             ((JSONObject) o).getLong("comment_lines")));
       }
-    } catch (IOException e) {
-      e.printStackTrace();
     } catch (JSONException e) {
-      e.printStackTrace();
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     }
     Collections.sort(list);

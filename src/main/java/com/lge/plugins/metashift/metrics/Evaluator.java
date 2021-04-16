@@ -29,6 +29,7 @@ import com.lge.plugins.metashift.models.Streamable;
 /**
  * Evaluator class.
  *
+ * @param <T> class type
  * @author Sung Gon Kim
  */
 public abstract class Evaluator<T> extends Counter {
@@ -39,12 +40,18 @@ public abstract class Evaluator<T> extends Counter {
   private final double threshold;
 
   /**
+   * Represents the evaluator availability.
+   */
+  private boolean available;
+
+  /**
    * Default constructor.
    *
    * @param threshold for evaluation
    */
   public Evaluator(final double threshold) {
     this.threshold = threshold;
+    this.available = false;
   }
 
   /**
@@ -61,8 +68,17 @@ public abstract class Evaluator<T> extends Counter {
    *
    * @return true if the metric is available, false otherwise
    */
-  public final boolean isAvailable() {
-    return getDenominator() > 0;
+  public boolean isAvailable() {
+    return available;
+  }
+
+  /**
+   * Set the evaluator availability.
+   *
+   * @param available evaluator availability
+   */
+  protected void setAvailable(final boolean available) {
+    this.available = available;
   }
 
   /**
@@ -70,9 +86,7 @@ public abstract class Evaluator<T> extends Counter {
    *
    * @return true if the metric meets the criteria, false otherwise
    */
-  public boolean isQualified() {
-    return isAvailable() && (double) getNumerator() / (double) getDenominator() >= getThreshold();
-  }
+  public abstract boolean isQualified();
 
   /**
    * Parse the given object to create metric data.
@@ -82,6 +96,7 @@ public abstract class Evaluator<T> extends Counter {
    */
   @SuppressWarnings("unchecked")
   public final T parse(final Streamable object) {
+    setAvailable(false);
     setDenominator(0);
     setNumerator(0);
     parseImpl(object);

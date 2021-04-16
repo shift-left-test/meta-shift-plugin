@@ -51,8 +51,11 @@ public class ComplexityFactory {
    *
    * @param path to the report directory
    * @return a list of objects
+   * @throws IllegalArgumentException if failed to parse report files
+   * @throws IOException              if failed to locate report files
    */
-  public static List<ComplexityData> create(final File path) {
+  public static List<ComplexityData> create(final File path)
+      throws IllegalArgumentException, IOException {
     List<ComplexityData> list = new ArrayList<>();
     String recipe = path.getName();
     File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
@@ -67,10 +70,7 @@ public class ComplexityFactory {
             ((JSONObject) o).getLong("end"),
             ((JSONObject) o).getLong("value")));
       }
-    } catch (IOException e) {
-      e.printStackTrace();
     } catch (JSONException e) {
-      e.printStackTrace();
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     }
     Collections.sort(list);

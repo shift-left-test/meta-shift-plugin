@@ -39,7 +39,7 @@ import java.util.stream.Stream;
  *
  * @author Sung Gon Kim
  */
-public final class TestEvaluator extends Evaluator<TestEvaluator> {
+public final class TestEvaluator extends PositiveEvaluator<TestEvaluator> {
 
   /**
    * Represents the test types.
@@ -137,6 +137,7 @@ public final class TestEvaluator extends Evaluator<TestEvaluator> {
         c.objects(SkippedTestData.class).count()
     ));
 
+    setAvailable(c.isAvailable(TestData.class));
     setDenominator(getPassed().getDenominator());
     setNumerator(getPassed().getNumerator());
   }

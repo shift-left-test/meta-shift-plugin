@@ -34,11 +34,19 @@ import java.util.stream.Stream;
 public interface Streamable {
 
   /**
+   * Test if the given class type objects are available.
+   *
+   * @param clazz class type
+   * @return true if the object type is available, false otherwise
+   */
+  <T> boolean isAvailable(final Class<T> clazz);
+
+  /**
    * Returns the stream of the given class type.
    *
    * @param clazz class type
-   * @param <T>   object the stream
+   * @param <T>   type of the stream
    * @return a stream object
    */
-  <T> Stream<T> objects(Class<T> clazz);
+  <T> Stream<T> objects(final Class<T> clazz);
 }

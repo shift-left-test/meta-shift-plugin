@@ -32,7 +32,7 @@ import com.lge.plugins.metashift.models.Streamable;
  *
  * @author Sung Gon Kim
  */
-public final class CodeSizeEvaluator extends Evaluator<CodeSizeEvaluator> {
+public final class CodeSizeEvaluator extends NullEvaluator<CodeSizeEvaluator> {
 
   /**
    * Represents the number of recipes.
@@ -124,6 +124,7 @@ public final class CodeSizeEvaluator extends Evaluator<CodeSizeEvaluator> {
     functions = c.objects(CodeSizeData.class).mapToLong(CodeSizeData::getFunctions).sum();
     classes = c.objects(CodeSizeData.class).mapToLong(CodeSizeData::getClasses).sum();
 
+    setAvailable(false);
     setDenominator(0);
     setNumerator(0);
   }

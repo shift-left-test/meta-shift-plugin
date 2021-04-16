@@ -69,6 +69,11 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
   }
 
   @Override
+  public <T> boolean isAvailable(final Class<T> clazz) {
+    return stream().anyMatch(recipe -> recipe.isAvailable(clazz));
+  }
+
+  @Override
   public <T> Stream<T> objects(final Class<T> clazz) {
     Stream<T> merged = Stream.empty();
     List<Stream<T>> streams = stream().map(o -> o.objects(clazz)).collect(Collectors.toList());

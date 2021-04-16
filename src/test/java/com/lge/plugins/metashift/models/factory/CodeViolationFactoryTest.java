@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -70,17 +71,21 @@ public class CodeViolationFactoryTest {
     assertEquals(tool, object.getTool());
   }
 
-  @Test
-  public void testCreateWithUnknownPath() {
-    objects = CodeViolationFactory.create(utils.getPath("path-to-unknown"));
-    assertEquals(0, objects.size());
+  @Test(expected = IOException.class)
+  public void testCreateWithUnknownPath() throws IOException {
+    CodeViolationFactory.create(utils.getPath("path-to-unknown"));
   }
 
-  @Test
-  public void testCreateWithNoFile() throws Exception {
+  @Test(expected = IOException.class)
+  public void testCreateWithNoTaskDirectory() throws IOException {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    CodeViolationFactory.create(directory);
+  }
+
+  @Test(expected = IOException.class)
+  public void testCreateWithNoFile() throws IOException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
-    objects = CodeViolationFactory.create(directory);
-    assertEquals(0, objects.size());
+    CodeViolationFactory.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
