@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
@@ -160,5 +161,6 @@ public class RecipeTest {
     Recipe recipe = new Recipe(directory);
     assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
     assertEquals(0, recipe.objects(Data.class).count());
+    assertFalse(recipe.isAvailable(Data.class));
   }
 }

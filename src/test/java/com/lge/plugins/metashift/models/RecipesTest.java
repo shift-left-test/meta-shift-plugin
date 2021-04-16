@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
@@ -131,5 +132,7 @@ public class RecipesTest {
     utils.createDirectory(report, "autotools-1.0.0-r0");
     recipes = new Recipes(report);
     assertEquals(3, recipes.size());
+    assertEquals(0, recipes.objects(Data.class).count());
+    assertFalse(recipes.isAvailable(Data.class));
   }
 }
