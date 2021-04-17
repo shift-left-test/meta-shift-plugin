@@ -93,6 +93,12 @@ public class QualifiedRecipeCounterTest {
   }
 
   @Test
+  public void testParseEmptyRecipes() {
+    assertEquals(0, counter.parse(recipes).getRecipes().getDenominator());
+    assertEquals(0, counter.parse(recipes).getRecipes().getNumerator());
+  }
+
+  @Test
   public void testGetCacheAvailability() {
     recipe1.add(new PremirrorCacheData("A-1.0.0-r0", true));
     recipe2.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", false));

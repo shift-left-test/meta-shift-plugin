@@ -51,8 +51,13 @@ import com.lge.plugins.metashift.models.SkippedMutationTestData;
 import com.lge.plugins.metashift.models.SkippedTestData;
 import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
+import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import java.io.File;
+import java.io.IOException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Unit tests for the Metrics class.
@@ -61,12 +66,18 @@ import org.junit.Test;
  */
 public class MetricsTest {
 
+  @Rule
+  public final TemporaryFolder folder = new TemporaryFolder();
+  private TemporaryFileUtils utils;
+  private StringBuilder builder;
   private Metrics metrics;
   private Recipe recipe;
   private Recipes recipes;
 
   @Before
   public void setUp() {
+    utils = new TemporaryFileUtils(folder);
+    builder = new StringBuilder();
     Criteria criteria = new Criteria(0.5, 0.5, 0.5, 0.5, 0.5, 5, 0.5, 0.5, 0.5, 0.5, 0.5);
     metrics = new Metrics(criteria);
     recipe = new Recipe("A-1.0.0-r0");
@@ -333,5 +344,149 @@ public class MetricsTest {
     assertCounter(metrics, 1, 1, 1.0);
     assertEvaluator(metrics.getTest(), true, true);
     assertCounter(metrics.getTest(), 4, 2, 0.5);
+  }
+
+  @Test
+  public void testParseRecipeWithEmptyCacheData() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder
+        .append("{")
+        .append("  'Premirror': { 'Found': [], 'Missed': [] },")
+        .append("  'Shared State': { 'Found': [], 'Missed': [] }")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcache", "caches.json");
+    recipe = new Recipe(directory);
+    metrics.parse(recipe);
+
+    assertEvaluator(metrics, true, false);
+    assertCounter(metrics, 1, 0, 0.0);
+    assertEvaluator(metrics.getCacheAvailability(), true, false);
+    assertCounter(metrics.getCacheAvailability(), 0, 0, 0.0);
+  }
+
+  @Test
+  public void testParseRecipeWithEmptyCodeSizeData() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    recipe = new Recipe(directory);
+    metrics.parse(recipe);
+
+    assertEvaluator(metrics, true, true);
+    assertCounter(metrics, 4, 3, 0.75);
+    assertEvaluator(metrics.getCodeSize(), false, false);
+    assertCounter(metrics.getCodeSize(), 0, 0, 0.0);
+  }
+
+  @Test
+  public void testParseRecipeWithEmptyCodeViolationData() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    recipe = new Recipe(directory);
+    metrics.parse(recipe);
+
+    assertEvaluator(metrics, true, true);
+    assertCounter(metrics, 4, 3, 0.75);
+    assertEvaluator(metrics.getCodeViolations(), true, true);
+    assertCounter(metrics.getCodeViolations(), 0, 0, 0.0);
+  }
+
+  @Test
+  public void testParseRecipeWithEmptyCommentData() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    recipe = new Recipe(directory);
+    metrics.parse(recipe);
+
+    assertEvaluator(metrics, true, true);
+    assertCounter(metrics, 4, 3, 0.75);
+    assertEvaluator(metrics.getComments(), true, false);
+    assertCounter(metrics.getComments(), 0, 0, 0.0);
+  }
+
+  @Test
+  public void testParseRecipeWithEmptyComplexityData() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    recipe = new Recipe(directory);
+    metrics.parse(recipe);
+
+    assertEvaluator(metrics, true, true);
+    assertCounter(metrics, 4, 3, 0.75);
+    assertEvaluator(metrics.getComplexity(), true, true);
+    assertCounter(metrics.getComplexity(), 0, 0, 0.0);
+  }
+
+  @Test
+  public void testParseRecipeWithEmptyCoverageData() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("<classes> </classes>");
+    utils.writeLines(builder, directory, "coverage", "coverage.xml");
+    recipe = new Recipe(directory);
+    metrics.parse(recipe);
+
+    assertEvaluator(metrics, true, false);
+    assertCounter(metrics, 1, 0, 0.0);
+    assertEvaluator(metrics.getCoverage(), true, false);
+    assertCounter(metrics.getCoverage(), 0, 0, 0.0);
+  }
+
+  @Test
+  public void testParseRecipeWithEmptyDuplicationData() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    recipe = new Recipe(directory);
+    metrics.parse(recipe);
+
+    assertEvaluator(metrics, true, true);
+    assertCounter(metrics, 4, 3, 0.75);
+    assertEvaluator(metrics.getDuplications(), true, true);
+    assertCounter(metrics.getDuplications(), 0, 0, 0.0);
+  }
+
+  @Test
+  public void testParseRecipeWithEmptyMutationTestData() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("<mutations></mutations>");
+    utils.writeLines(builder, directory, "checktest", "mutations.xml");
+    recipe = new Recipe(directory);
+    metrics.parse(recipe);
+
+    assertEvaluator(metrics, true, false);
+    assertCounter(metrics, 1, 0, 0.0);
+    assertEvaluator(metrics.getMutationTest(), true, false);
+    assertCounter(metrics.getMutationTest(), 0, 0, 0.0);
+  }
+
+  @Test
+  public void testParseRecipeWithEmptyRecipeViolationData() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("{ 'issues': [ ] }");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    recipe = new Recipe(directory);
+    metrics.parse(recipe);
+
+    assertEvaluator(metrics, true, true);
+    assertCounter(metrics, 1, 1, 1.0);
+    assertEvaluator(metrics.getRecipeViolations(), true, true);
+    assertCounter(metrics.getRecipeViolations(), 0, 0, 0.0);
+  }
+
+  @Test
+  public void testParseRecipeWithEmptyTestData() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("<testsuites> </testsuites>");
+    utils.writeLines(builder, directory, "test", "1.xml");
+    recipe = new Recipe(directory);
+    metrics.parse(recipe);
+
+    assertEvaluator(metrics, true, false);
+    assertCounter(metrics, 1, 0, 0.0);
+    assertEvaluator(metrics.getTest(), true, false);
+    assertCounter(metrics.getTest(), 0, 0, 0.0);
   }
 }
