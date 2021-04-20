@@ -46,12 +46,10 @@ public class MetaShiftRecipeAction extends MetaShiftActionBaseWithMetrics implem
    * Default constructor.
    */
   public MetaShiftRecipeAction(MetaShiftBuildAction parent, Criteria criteria, Recipe recipe) {
-    super(criteria);
+    super(criteria, recipe);
 
     this.name = recipe.getRecipe();
     this.parent = parent;
-
-    this.getMetrics().parse(recipe);
   }
 
   public MetaShiftBuildAction getParentAction() {

@@ -31,6 +31,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.metrics.Queryable;
 import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.utils.ListUtils;
 import hudson.PluginWrapper;
 import hudson.model.AbstractBuild;
 import hudson.model.Result;
@@ -64,12 +65,10 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
    * Default constructor.
    */
   public MetaShiftBuildAction(Run<?, ?> run, Criteria criteria, Recipes recipes) {
-    super(criteria);
+    super(criteria, recipes);
 
     this.run = run;
     this.criteria = criteria;
-
-    this.getMetrics().parse(recipes);
 
     recipes.forEach(recipe -> addAction(new MetaShiftRecipeAction(this, criteria, recipe)));
   }
@@ -157,23 +156,23 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
     JSONObject result = new JSONObject();
     JSONArray data = new JSONArray();
 
-    int recipeCount = this.getRecipes().size();
-    int baseIndex = pageSize * (pageIndex - 1);
+    List<List<MetaShiftRecipeAction>> pagedRecipeAction
+        = ListUtils.partition(this.getRecipes(), pageSize);
 
-    for (int i = 0; i < pageSize; i++) {
-      int index = baseIndex + i;
-      if (index >= recipeCount) {
-        break;
-      }
+    if (pageIndex < 1) {
+      pageIndex = 1;
+    } else if (pageIndex > pagedRecipeAction.size()) {
+      pageIndex = pagedRecipeAction.size();
+    }
 
-      MetaShiftRecipeAction recipe = this.getRecipes().get(index);
+    for (MetaShiftRecipeAction recipe : pagedRecipeAction.get(pageIndex - 1)) {
       JSONObject recipeObj = JSONObject.fromObject(recipe.getMetrics());
       recipeObj.element("name", recipe.getDisplayName());
       data.add(recipeObj);
     }
 
     result.put("data", data);
-    result.put("last_page", (recipeCount + pageSize - 1) / pageSize);
+    result.put("last_page", pagedRecipeAction.size());
 
     return result;
   }

@@ -26,6 +26,7 @@ package com.lge.plugins.metashift;
 
 import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.metrics.Metrics;
+import com.lge.plugins.metashift.models.Streamable;
 import hudson.model.Actionable;
 import java.text.DecimalFormat;
 
@@ -36,8 +37,9 @@ public abstract class MetaShiftActionBaseWithMetrics extends Actionable {
 
   private final Metrics metrics;
 
-  public MetaShiftActionBaseWithMetrics(Criteria criteria) {
+  public MetaShiftActionBaseWithMetrics(Criteria criteria, Streamable streamable) {
     this.metrics = new Metrics(criteria);
+    this.metrics.parse(streamable);
   }
 
   public Metrics getMetrics() {
