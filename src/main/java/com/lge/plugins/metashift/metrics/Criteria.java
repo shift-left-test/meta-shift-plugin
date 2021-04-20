@@ -92,7 +92,7 @@ public final class Criteria {
    * Default constructor.
    */
   public Criteria() {
-    this(0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    this(1.0, 0.8, 0.1, 0.3, 0.1, 4, 0.1, 0.1, 0.95, 0.6, 0.85);
   }
 
   /**

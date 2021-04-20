@@ -69,7 +69,7 @@ public class CriteriaTest {
 
   @Test
   public void testInitData() {
-    assertValues(0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    assertValues(1.0, 0.8, 0.1, 0.3, 0.1, 4, 0.1, 0.1, 0.95, 0.6, 0.85);
   }
 
   @Test
