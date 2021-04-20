@@ -72,8 +72,8 @@ public class TestFactory {
     for (File file : files) {
       try {
         list.addAll(parseFile(recipe, file));
-      } catch (ParserConfigurationException | SAXException | IOException e) {
-        throw new IllegalArgumentException("Failed to parse: " + file, e);
+      } catch (ParserConfigurationException | SAXException | IOException ignored) {
+        // ignored
       }
     }
     Collections.sort(list);

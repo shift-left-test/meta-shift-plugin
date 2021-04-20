@@ -83,20 +83,22 @@ public class TestFactoryTest {
     TestFactory.create(directory);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithMalformedData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("/testsuite>");
     utils.writeLines(builder, directory, "test", "1.xml");
     TestFactory.create(directory);
+    assertEquals(0, objects.size());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithEmptyFile() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(directory);
+    objects = TestFactory.create(directory);
+    assertEquals(0, objects.size());
   }
 
   @Test
@@ -105,6 +107,7 @@ public class TestFactoryTest {
     builder.append("<testsuites> </testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
     objects = TestFactory.create(directory);
+    assertEquals(0, objects.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
