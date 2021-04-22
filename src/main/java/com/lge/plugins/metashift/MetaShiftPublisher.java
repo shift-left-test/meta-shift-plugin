@@ -30,6 +30,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -130,17 +131,32 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   @Override
   public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
       throws InterruptedException, IOException {
-    // TODO: process raw data file. ex copy report files
+    Result result = run.getResult();
 
-    // load recipe list.
-    Recipes recipes = new Recipes(new File(new FilePath(workspace, this.reportRoot).toURI()));
+    if (result != null && result.isBetterOrEqualTo(Result.UNSTABLE)) {
+      FilePath reportPath = new FilePath(workspace, this.reportRoot);
+      if (reportPath.exists()) {
+        // TODO: process raw data file. ex copy report files
 
-    // load criteria.
-    Criteria criteria = (this.localCriteria == null)
-        ? ((DescriptorImpl) getDescriptor()).getCriteria() : this.localCriteria;
+        // load recipe list.
+        Recipes recipes = new Recipes(new File(reportPath.toURI()));
 
-    // create action.
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run, criteria, recipes);
-    run.addAction(buildAction);
+        // load criteria.
+        Criteria criteria = (this.localCriteria == null)
+            ? ((DescriptorImpl) getDescriptor()).getCriteria() : this.localCriteria;
+
+        // create action.
+        MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run, criteria, recipes);
+        run.addAction(buildAction);
+
+        // if not qualified, set result to UNSTABLE
+        if (!buildAction.getMetrics().isQualified()) {
+          run.setResult(Result.UNSTABLE);
+        }
+      } else {
+        // TODO: how to report invalid report path issue?
+        listener.getLogger().println("Meta Shift Error: report path is not exist!!!");
+      }
+    }
   }
 }
