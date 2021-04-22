@@ -114,11 +114,32 @@ public class CoverageFactoryTest {
   }
 
   @Test
-  public void testCreateWithInsufficientMethodData() throws Exception {
+  public void testCreateWithEmptyMethodData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder
         .append("<class filename='a.cpp'>")
         .append("  <methods/>")
+        .append("  <lines>")
+        .append("    <line hits='1' number='1'/>")
+        .append("  </lines>")
+        .append("</class>");
+    utils.writeLines(builder, directory, "coverage", "coverage.xml");
+    objects = CoverageFactory.create(directory);
+    assertEquals(0, objects.size());
+  }
+
+  @Test
+  public void testCreateWithInsufficientMethodData() throws Exception {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder
+        .append("<class filename='a.cpp'>")
+        .append("    <methods>")
+        .append("      <method name='func1()'>")
+        .append("        <lines>")
+        .append("          <line number='10'/>")
+        .append("        </lines>")
+        .append("      </method>")
+        .append("    </methods>")
         .append("  <lines>")
         .append("    <line hits='1' number='1'/>")
         .append("  </lines>")

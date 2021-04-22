@@ -94,18 +94,22 @@ public class CoverageFactory {
     if (methods.isEmpty()) {
       return list;
     }
-    long lineNumber = Long.parseLong(line.getAttribute("number", "0"));
-    boolean covered = Long.parseLong(line.getAttribute("hits", "0")) > 0;
-    String method = methods.floorEntry(lineNumber).getValue();
-    TagList conditions = line.getChildNodes("cond");
-    if (conditions.isEmpty()) {
-      list.add(new StatementCoverageData(recipe, filename, method, lineNumber, covered));
-    } else {
-      for (Tag condition : conditions) {
-        long index = Long.parseLong(condition.getAttribute("branch_number", "0"));
-        covered = Long.parseLong(condition.getAttribute("hit", "0")) > 0;
-        list.add(new BranchCoverageData(recipe, filename, method, lineNumber, index, covered));
+    try {
+      long lineNumber = Long.parseLong(line.getAttribute("number", "0"));
+      boolean covered = Long.parseLong(line.getAttribute("hits", "0")) > 0;
+      String method = methods.floorEntry(lineNumber).getValue();
+      TagList conditions = line.getChildNodes("cond");
+      if (conditions.isEmpty()) {
+        list.add(new StatementCoverageData(recipe, filename, method, lineNumber, covered));
+      } else {
+        for (Tag condition : conditions) {
+          long index = Long.parseLong(condition.getAttribute("branch_number", "0"));
+          covered = Long.parseLong(condition.getAttribute("hit", "0")) > 0;
+          list.add(new BranchCoverageData(recipe, filename, method, lineNumber, index, covered));
+        }
       }
+    } catch (NullPointerException | NumberFormatException ignored) {
+      // ignored
     }
     return list;
   }
