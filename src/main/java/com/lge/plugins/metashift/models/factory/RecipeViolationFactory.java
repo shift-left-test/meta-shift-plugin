@@ -28,19 +28,15 @@ import com.lge.plugins.metashift.models.InfoRecipeViolationData;
 import com.lge.plugins.metashift.models.MajorRecipeViolationData;
 import com.lge.plugins.metashift.models.MinorRecipeViolationData;
 import com.lge.plugins.metashift.models.RecipeViolationData;
-import java.io.BufferedInputStream;
+import com.lge.plugins.metashift.utils.JsonUtils;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 /**
  * A factory class for the RecipeViolationData objects.
@@ -88,8 +84,7 @@ public class RecipeViolationFactory {
     String recipe = path.getName();
     File report = FileUtils.getFile(path, "checkrecipe", "recipe_violations.json");
     try {
-      InputStream is = new BufferedInputStream(new FileInputStream(report));
-      JSONObject json = JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
+      JSONObject json = JsonUtils.createObject(report);
       for (Object o : json.getJSONArray("issues")) {
         list.add(createInstance(recipe, (JSONObject) o));
       }

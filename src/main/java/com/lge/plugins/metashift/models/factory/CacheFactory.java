@@ -27,19 +27,15 @@ package com.lge.plugins.metashift.models.factory;
 import com.lge.plugins.metashift.models.CacheData;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
-import java.io.BufferedInputStream;
+import com.lge.plugins.metashift.utils.JsonUtils;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 /**
  * A factory class for CacheData objects.
@@ -62,8 +58,7 @@ public class CacheFactory {
     String recipe = path.getName();
     File report = FileUtils.getFile(path, "checkcache", "caches.json");
     try {
-      InputStream is = new BufferedInputStream(new FileInputStream(report));
-      JSONObject json = JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
+      JSONObject json = JsonUtils.createObject(report);
       for (Object o : json.getJSONObject("Premirror").getJSONArray("Found")) {
         list.add(new PremirrorCacheData(recipe, (String) o, true));
       }
