@@ -32,7 +32,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -45,6 +45,21 @@ import org.apache.commons.io.IOUtils;
  */
 public class JsonUtils {
 
+  private static class LruCache<K, V> extends LinkedHashMap<K, V> {
+
+    private final int capacity;
+
+    public LruCache(final int capacity) {
+      super(capacity, 0.75f, true);
+      this.capacity = capacity;
+    }
+
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+      return size() > capacity;
+    }
+  }
+
   /**
    * Represents the null json object.
    */
@@ -53,7 +68,7 @@ public class JsonUtils {
   /**
    * Represents the singleton objects.
    */
-  private static final Map<String, JSONObject> objects = new HashMap<>();
+  private static final Map<String, JSONObject> objects = new LruCache<>(10);
 
   /**
    * Create a JSONObject using the given file.
