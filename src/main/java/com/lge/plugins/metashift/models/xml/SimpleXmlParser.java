@@ -26,10 +26,12 @@ package com.lge.plugins.metashift.models.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -57,6 +59,7 @@ public class SimpleXmlParser {
       throws ParserConfigurationException, IOException, SAXException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
+    builder.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
     document = builder.parse(file);
     document.getDocumentElement().normalize();
   }

@@ -138,4 +138,18 @@ public class SimpleXmlParserTest {
     assertEquals(1, tags.size());
     assertFalse(tags.first().hasChildNodes());
   }
+
+  @Test
+  public void testParseXmlWithDtdManyTimes()
+      throws IOException, ParserConfigurationException, SAXException {
+    builder
+        .append("<?xml version=\"1.0\"?>")
+        .append("<!DOCTYPE coverage ")
+        .append("SYSTEM \"http://cobertura.sourceforge.net/xml/coverage-04.dtd\">")
+        .append("<coverage></coverage>");
+    prepare();
+    for (int i = 0; i < 1000; i++) {
+      parser = new SimpleXmlParser(utils.getPath("test.xml"));
+    }
+  }
 }
