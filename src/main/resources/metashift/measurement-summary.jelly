@@ -7,7 +7,7 @@
       <div class="summary col-2 rounded shadow ${evaluator.qualified ?
         'bg-success':'bg-danger'} text-white" style="margin: 5px;">
         <div class="row">
-          <b class="title">${title}</b>
+          <a href="${url}"><b class="title">${title}</b></a>
         </div>
         <div class="row">
           <b class="ratio">${it.getFixedFloat('#.##', evaluator.ratio * 100)}%</b>
@@ -20,7 +20,7 @@
     <j:otherwise>
       <div class="summary col-2 rounded shadow bg-secondary text-white" style="margin: 5px;">
         <div class="row">
-          <b class="title">${title}</b>
+          <a href="${url}"><b class="title">${title}</b></a>
         </div>
         <div class="row">
           <b class="ratio">N/A</b>

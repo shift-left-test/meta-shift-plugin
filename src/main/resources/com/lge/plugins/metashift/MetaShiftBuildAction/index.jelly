@@ -4,7 +4,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashift/charts">
   <l:layout title="Meta-Shift Report">
     <st:adjunct includes="com.lge.plugins.metashift.style"/>
-    <st:adjunct includes="com.lge.plugins.metashift.tabulator"/>
+    <st:adjunct includes="com.lge.plugins.metashift.recipes-table"/>
     <st:adjunct includes="com.lge.plugins.metashift.trend-chart"/>
     <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
     <st:include it="${it.run}" page="sidepanel.jelly" />

@@ -101,6 +101,7 @@ public final class Recipe extends Data<Recipe> implements Streamable {
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
+    
     addAll(CacheData.class, CacheFactory::create, path);
     addAll(CodeSizeData.class, CodeSizeFactory::create, path);
     addAll(CodeViolationData.class, CodeViolationFactory::create, path);

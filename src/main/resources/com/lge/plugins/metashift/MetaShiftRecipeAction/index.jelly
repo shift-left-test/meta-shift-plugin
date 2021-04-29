@@ -2,101 +2,80 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" 
 xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashift/charts">
-    <l:layout title="Meta-Shift Report">
-        <st:adjunct includes="com.lge.plugins.metashift.style"/>
-        <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
-        <st:include it="${it.run}" page="sidepanel.jelly" />
-        <l:main-panel>
+  <l:layout title="Meta-Shift Report">
+    <st:adjunct includes="com.lge.plugins.metashift.style"/>
+    <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+    <st:include it="${it.run}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <div class="row metashift">
+        <h1>${it.run.project.displayName} ${it.run.displayName}</h1>
+      </div>
+      <div class="row metashift">
+        <!-- overview -->
+        <h3>Overview</h3>
+      </div>
+      <div class="row metashift overview">
+        <div class="col-2 bg-light shadow-sm panel">
+          <h4>Lines</h4>
+          <p>${it.metrics.codeSize.lines}
+            <ms:text-diff diff="${it.codeSizeDelta.lines}" />
+          </p>
+        </div>
+        <div class="col-2 bg-light shadow-sm panel">
+          <h4>Functions</h4>
+          <p>${it.metrics.codeSize.functions}
+            <ms:text-diff diff="${it.codeSizeDelta.functions}" />
+          </p>
+        </div>
+        <div class="col-2 bg-light shadow-sm panel">
+          <h4>Classes</h4>
+          <p>${it.metrics.codeSize.classes}
+            <ms:text-diff diff="${it.codeSizeDelta.classes}" />
+          </p>
+        </div>
+        <div class="col-2 bg-light shadow-sm panel">
+          <h4>Files</h4>
+          <p>${it.metrics.codeSize.files}
+            <ms:text-diff diff="${it.codeSizeDelta.files}" />
+          </p>
+        </div>
+      </div>
 
-            <h1>Project ${it.run.project.displayName} ${it.run.displayName}
-                <j:choose>
-                    <j:when test="${it.metrics.qualified}">
-                        <span class="measurement-group badge badge-success ">Passed</span>
-                    </j:when>
-                    <j:otherwise>
-                        <span class="measurement-group badge badge-danger ">Failed</span>
-                    </j:otherwise>
-                </j:choose>
-            </h1>
-            <div class="row">
-                <!-- metric card -->
-                <div class="col-6">
-                    <!-- overview -->
-                    <div class="row">
-                        <h2>Overview - ${it.displayName}</h2>
-                    </div>
-                    <div>
-                        <div class="col-12">
-                            <p class="overview-text">Lines: ${it.sizeCounter.lines}</p>
-                            <p class="overview-text">Functions: ${it.sizeCounter.functions}</p>
-                            <p class="overview-text">Classes: ${it.sizeCounter.classes}</p>
-                            <p class="overview-text">Files: ${it.sizeCounter.files}</p>
-                        </div>
-                    </div>
-                    <!-- build performance -->
-                    <div class="row">
-                        <h3>Build Performance</h3>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <ms:measurement-card title="Cache Availability"
-                            qualifier="${it.cacheQualifier}" counter="${it.cacheCounter}"
-                            detail_url="cache_availability" />
-                        </div>
-                        <div class="col-6">
-                            <ms:measurement-card title="Violations"
-                            qualifier="${it.recipeViolationQualifier}" counter="${it.recipeViolationCounter}"
-                            detail_url="recipe_violations" />
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <sc:radar-chart id="radar0" it="${it}" model="${it.qualityRadarModel}" title="test" enableLinks="true"/>
-                </div>
-            </div>
-            <!-- Code Quality -->
-            <div class="row">
-                <h3>Code Quality</h3>
-            </div>
-            <div class="row">
-                <div class="col-3">
-                    <ms:measurement-card title="Comments"
-                    qualifier="${it.commentQualifier}" counter="${it.commentCounter}"
-                    detail_url="comments" />
-                </div>
-                <div class="col-3">
-                    <ms:measurement-card title="Violations"
-                    qualifier="${it.codeViolationQualifier}" counter="${it.codeViolationCounter}"
-                    detail_url="violations" />
-                </div>
-                <div class="col-3">
-                    <ms:measurement-card title="Complexity"
-                    qualifier="${it.complexityQualifier}" counter="${it.complexityCounter}"
-                    detail_url="complexity" />
-                </div>
-                <div class="col-3">
-                    <ms:measurement-card title="Duplications"
-                    qualifier="${it.duplicationQualifier}" counter="${it.duplicationCounter}"
-                    detail_url="duplications" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-3">
-                    <ms:measurement-card title="Testing"
-                    qualifier="${it.testQualifier}" counter="${it.testCounter}" 
-                    detail_url="testing" />
-                </div>
-                <div class="col-3">
-                    <ms:measurement-card title="Coverage"
-                    qualifier="${it.coverageQualifier}" counter="${it.coverageCounter}"
-                    detail_url="coverage" />
-                </div>
-                <div class="col-3">
-                    <ms:measurement-card title="Test Effectiveness"
-                    qualifier="${it.mutationTestQualifier}" counter="${it.mutationTestCounter}"
-                    detail_url="test_effectiveness" />
-                </div>             
-            </div>
-        </l:main-panel>
-    </l:layout>
+      <div class="row metashift">
+        <h3>Metrics
+          <span class="measurement-group badge ${it.metrics.qualified ? 'badge-success' : 'badge-danger'}">
+            ${it.metrics.qualified ? 'Passed' : 'Failed'}
+          </span>
+        </h3>
+      </div>
+      <div class="row metashift">
+        <h4>Build Performance</h4>
+      </div>
+      <div class="row metashift">
+        <ms:measurement-summary title="Cache Availability"
+          evaluator="${it.metrics.cacheAvailability}" url="cache_availability" />
+        <ms:measurement-summary title="Recipe Violations"
+          evaluator="${it.metrics.recipeViolations}" url="recipe_violations" />
+      </div>
+      <div class="row metashift">
+        <h4>Code Quality</h4>
+      </div>
+      <div class="row metashift">
+        <ms:measurement-summary title="Comments"
+          evaluator="${it.metrics.comments}" url="comments" />
+        <ms:measurement-summary title="Violations"
+          evaluator="${it.metrics.codeViolations}" url="code_violations" />
+        <ms:measurement-summary title="Complexity"
+          evaluator="${it.metrics.complexity}" url="complexity" />
+        <ms:measurement-summary title="Duplications"
+          evaluator="${it.metrics.duplications}" url="duplications" />
+        <ms:measurement-summary title="Testing"
+          evaluator="${it.metrics.test}" url="test" />
+        <ms:measurement-summary title="Coverage"
+          evaluator="${it.metrics.coverage}" url="coverage" />
+        <ms:measurement-summary title="Mutation Score"
+          evaluator="${it.metrics.mutationTest}" url="mutation_test" />
+      </div>
+    </l:main-panel>
+  </l:layout>
 </j:jelly>

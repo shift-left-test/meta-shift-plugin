@@ -47,6 +47,10 @@ function renderRecipesTable(tableDivId, buildAction) {
 
   var table = new Tabulator(tableDivId,
     {
+      rowClick: function(e, row) {
+        console.log(row.getData().name);
+        window.location.href = row.getData().name;
+      },
       pagination: "remote",
       paginationSize: 10,
       ajaxRequestFunc: ajaxRequestFunc,

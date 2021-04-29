@@ -50,6 +50,14 @@
   margin-bottom: 5px;
 }
 
+.summary a:link {
+  color: white;
+}
+
+.summary a:visited {
+  color: white;
+}
+
 .measurement-group.badge {
     margin-left: 50px;
 }

@@ -36,6 +36,7 @@ import hudson.PluginWrapper;
 import hudson.model.AbstractBuild;
 import hudson.model.Result;
 import hudson.model.Run;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,13 +61,14 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
   private transient List<MetaShiftRecipeAction> recipeActions;
 
   private final Criteria criteria;
+  private URI reportUri;
 
   /**
    * Default constructor.
    */
-  public MetaShiftBuildAction(Run<?, ?> run, Criteria criteria, Recipes recipes) {
+  public MetaShiftBuildAction(Run<?, ?> run, URI reportUri, Criteria criteria, Recipes recipes) {
     super(criteria, recipes);
-
+    this.reportUri = reportUri;
     this.run = run;
     this.criteria = criteria;
 
@@ -133,6 +135,10 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
     return this.run;
   }
 
+  public URI getReportUri() {
+    return this.reportUri;
+  }
+  
   /**
    * Returns recipeAction list.
    *
@@ -147,8 +153,10 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
   }
 
   /**
-   * return all recipes list.
+   * return paginated recipes list.
    *
+   * @param pageIndex page index
+   * @param pageSize page size
    * @return recipe qualifier list.
    */
   @JavaScriptMethod
@@ -288,13 +296,18 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
 
   private transient MetaShiftBuildAction previousAction;
 
-  private MetaShiftBuildAction getPreviousBuildAction() {
+  /**
+   * return previous not failed build action.
+   *
+   * @return metashift build action
+   */
+  public MetaShiftBuildAction getPreviousBuildAction() {
     if (previousAction != null) {
       return previousAction;
     }
 
     AbstractBuild<?, ?> build = ((AbstractBuild<?, ?>) this.run)
-        .getPreviousSuccessfulBuild();
+        .getPreviousNotFailedBuild();
     while (build != null) {
       if (build.getResult() != Result.FAILURE) {
         previousAction = build.getAction(MetaShiftBuildAction.class);
@@ -302,7 +315,7 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
           return previousAction;
         }
       }
-      build = build.getPreviousSuccessfulBuild();
+      build = build.getPreviousNotFailedBuild();
     }
     return null;
   }

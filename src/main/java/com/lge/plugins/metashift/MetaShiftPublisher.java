@@ -134,19 +134,24 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     Result result = run.getResult();
 
     if (result != null && result.isBetterOrEqualTo(Result.UNSTABLE)) {
-      FilePath reportPath = new FilePath(workspace, this.reportRoot);
+      FilePath reportPath = workspace.child(this.reportRoot);
       if (reportPath.exists()) {
-        // TODO: process raw data file. ex copy report files
+        // copy report files
+        FilePath buildTarget = new FilePath(run.getRootDir());
+        FilePath targetPath = new FilePath(buildTarget, "meta-shift-report");
+        listener.getLogger().println("copy report: " + reportPath + " -> " + targetPath);
+        reportPath.copyRecursiveTo(targetPath);
 
         // load recipe list.
-        Recipes recipes = new Recipes(new File(reportPath.toURI()));
+        Recipes recipes = new Recipes(new File(targetPath.toURI()));
 
         // load criteria.
         Criteria criteria = (this.localCriteria == null)
             ? ((DescriptorImpl) getDescriptor()).getCriteria() : this.localCriteria;
 
         // create action.
-        MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run, criteria, recipes);
+        MetaShiftBuildAction buildAction =
+            new MetaShiftBuildAction(run, targetPath.toURI(), criteria, recipes);
         run.addAction(buildAction);
 
         // if not qualified, set result to UNSTABLE

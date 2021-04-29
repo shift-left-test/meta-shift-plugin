@@ -24,10 +24,16 @@
 
 package com.lge.plugins.metashift;
 
+import com.lge.plugins.metashift.metrics.CodeSizeDelta;
+import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
 import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.models.Recipe;
 import hudson.model.Action;
 import hudson.model.Run;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -40,8 +46,13 @@ public class MetaShiftRecipeAction extends MetaShiftActionBaseWithMetrics implem
   MetaShiftBuildAction parent;
 
   @Exported(visibility = 999)
-  public String name; // TODO: should be recipe representation.
+  public String name;
 
+  public URI getRecipeUri() {
+    URI baseUri = parent.getReportUri();
+    return baseUri.resolve(baseUri.getPath() + '/' + this.name);
+  }
+  
   /**
    * Default constructor.
    */
@@ -49,7 +60,18 @@ public class MetaShiftRecipeAction extends MetaShiftActionBaseWithMetrics implem
     super(criteria, recipe);
 
     this.name = recipe.getRecipe();
+
     this.parent = parent;
+
+    this.addAction(new MetaShiftRecipeCacheAvailabilityAction(this));
+    this.addAction(new MetaShiftRecipeCodeViolationsAction(this));
+    this.addAction(new MetaShiftRecipeCommentsAction(this));
+    this.addAction(new MetaShiftRecipeComplexityAction(this));
+    this.addAction(new MetaShiftRecipeCoverageAction(this));
+    this.addAction(new MetaShiftRecipeDuplicationsAction(this));
+    this.addAction(new MetaShiftRecipeMutationTestAction(this));
+    this.addAction(new MetaShiftRecipeRecipeViolationsAction(this));
+    this.addAction(new MetaShiftRecipeTestAction(this));
   }
 
   public MetaShiftBuildAction getParentAction() {
@@ -78,5 +100,35 @@ public class MetaShiftRecipeAction extends MetaShiftActionBaseWithMetrics implem
   @Override
   public String getSearchUrl() {
     return getUrlName();
+  }
+
+  private Metrics getPreviousMetrics() {
+    if (getParentAction().getPreviousBuildAction() != null) {
+      List<MetaShiftRecipeAction> recipes =
+          getParentAction().getPreviousBuildAction().getActions(MetaShiftRecipeAction.class);
+
+      for (MetaShiftRecipeAction recipe : recipes) {
+        if (recipe.name.equals(this.name)) {
+          return recipe.getMetrics();
+        }
+      }
+
+      return null;
+    }
+
+    return null;
+  }
+
+  /**
+   * Returns the delta between the previous and current builds.
+   *
+   * @return CodeSizeDelta object
+   */
+  public CodeSizeDelta getCodeSizeDelta() {
+    CodeSizeEvaluator previous =
+        Optional.ofNullable(getPreviousMetrics())
+            .map(Metrics::getCodeSize).orElse(null);
+    CodeSizeEvaluator current = getMetrics().getCodeSize();
+    return CodeSizeDelta.between(previous, current);
   }
 }

@@ -5,79 +5,79 @@ xmlns:ms="/metashift">
   <st:adjunct includes="com.lge.plugins.metashift.style"/>
   <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
   <div class="shadow col-12">
-  <div class="row metashift">
-    <h2>MetaShift Summary</h2>
-  </div>
-  <div class="row metashift">
-    <!-- overview -->
-    <h3>Overview</h3>
-  </div>
-  <div class="row metashift overview">
-    <div class="col-2 bg-light shadow-sm panel">
-      <h4>Recipes</h4>
-      <p>${it.metrics.codeSize.recipes}
-        <ms:text-diff diff="${it.codeSizeDelta.recipes}" />
-      </p>
+    <div class="row metashift">
+      <h2>MetaShift Summary</h2>
     </div>
-    <div class="col-2 bg-light shadow-sm panel">
-      <h4>Lines</h4>
-      <p>${it.metrics.codeSize.lines}
-        <ms:text-diff diff="${it.codeSizeDelta.lines}" />
-      </p>
+    <div class="row metashift">
+      <!-- overview -->
+      <h3>Overview</h3>
     </div>
-    <div class="col-2 bg-light shadow-sm panel">
-      <h4>Functions</h4>
-      <p>${it.metrics.codeSize.functions}
-        <ms:text-diff diff="${it.codeSizeDelta.functions}" />
-      </p>
+    <div class="row metashift overview">
+      <div class="col-2 bg-light shadow-sm panel">
+        <h4>Recipes</h4>
+        <p>${it.metrics.codeSize.recipes}
+          <ms:text-diff diff="${it.codeSizeDelta.recipes}" />
+        </p>
+      </div>
+      <div class="col-2 bg-light shadow-sm panel">
+        <h4>Lines</h4>
+        <p>${it.metrics.codeSize.lines}
+          <ms:text-diff diff="${it.codeSizeDelta.lines}" />
+        </p>
+      </div>
+      <div class="col-2 bg-light shadow-sm panel">
+        <h4>Functions</h4>
+        <p>${it.metrics.codeSize.functions}
+          <ms:text-diff diff="${it.codeSizeDelta.functions}" />
+        </p>
+      </div>
+      <div class="col-2 bg-light shadow-sm panel">
+        <h4>Classes</h4>
+        <p>${it.metrics.codeSize.classes}
+          <ms:text-diff diff="${it.codeSizeDelta.classes}" />
+        </p>
+      </div>
+      <div class="col-2 bg-light shadow-sm panel">
+        <h4>Files</h4>
+        <p>${it.metrics.codeSize.files}
+          <ms:text-diff diff="${it.codeSizeDelta.files}" />
+        </p>
+      </div>
     </div>
-    <div class="col-2 bg-light shadow-sm panel">
-      <h4>Classes</h4>
-      <p>${it.metrics.codeSize.classes}
-        <ms:text-diff diff="${it.codeSizeDelta.classes}" />
-      </p>
+    <div class="row metashift">
+      <h3>Metrics
+        <span class="measurement-group badge ${it.metrics.qualified ? 'badge-success' : 'badge-danger'}">
+          ${it.metrics.qualified ? 'Passed' : 'Failed'}
+        </span>
+      </h3>
     </div>
-    <div class="col-2 bg-light shadow-sm panel">
-      <h4>Files</h4>
-      <p>${it.metrics.codeSize.files}
-        <ms:text-diff diff="${it.codeSizeDelta.files}" />
-      </p>
+    <div class="row metashift">
+      <h4>Build Performance</h4>
     </div>
-  </div>
-  <div class="row metashift">
-    <h3>Metrics
-      <span class="measurement-group badge ${it.metrics.qualified ? 'badge-success' : 'badge-danger'}">
-        ${it.metrics.qualified ? 'Passed' : 'Failed'}
-      </span>
-    </h3>
-  </div>
-  <div class="row metashift">
-    <h4>Build Performance</h4>
-  </div>
-  <div class="row metashift">
-    <ms:measurement-summary title="Cache Availability"
-      evaluator="${it.metrics.cacheAvailability}" />
-    <ms:measurement-summary title="Recipe Violations"
-      evaluator="${it.metrics.recipeViolations}" />
-  </div>
-  <div class="row metashift">
-    <h4>Code Quality</h4>
-  </div>
-  <div class="row metashift">
-    <ms:measurement-summary title="Comments"
-      evaluator="${it.metrics.comments}" />
-    <ms:measurement-summary title="Violations"
-      evaluator="${it.metrics.codeViolations}" />
-    <ms:measurement-summary title="Complexity"
-      evaluator="${it.metrics.complexity}" />
-    <ms:measurement-summary title="Duplications"
-      evaluator="${it.metrics.duplications}" />
-    <ms:measurement-summary title="Testing"
-      evaluator="${it.metrics.test}" />
-    <ms:measurement-summary title="Coverage"
-      evaluator="${it.metrics.coverage}" />
-    <ms:measurement-summary title="Mutation Score"
-      evaluator="${it.metrics.mutationTest}" />
-  </div>
+    <div class="row metashift">
+      <ms:measurement-summary title="Cache Availability"
+        evaluator="${it.metrics.cacheAvailability}" />
+      <ms:measurement-summary title="Recipe Violations"
+        evaluator="${it.metrics.recipeViolations}" />
+    </div>
+    <div class="row metashift">
+      <h4>Code Quality</h4>
+    </div>
+    <div class="row metashift">
+      <ms:measurement-summary title="Comments"
+        evaluator="${it.metrics.comments}" />
+      <ms:measurement-summary title="Violations"
+        evaluator="${it.metrics.codeViolations}" />
+      <ms:measurement-summary title="Complexity"
+        evaluator="${it.metrics.complexity}" />
+      <ms:measurement-summary title="Duplications"
+        evaluator="${it.metrics.duplications}" />
+      <ms:measurement-summary title="Testing"
+        evaluator="${it.metrics.test}" />
+      <ms:measurement-summary title="Coverage"
+        evaluator="${it.metrics.coverage}" />
+      <ms:measurement-summary title="Mutation Score"
+        evaluator="${it.metrics.mutationTest}" />
+    </div>
   </div>
 </j:jelly>

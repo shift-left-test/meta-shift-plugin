@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <j:new var="h" className="hudson.Functions" />
+  ${h.initPageVariables(context)}
+    
+  <link rel="stylesheet" href="${resURL}/plugin/metashift/external/tabulator-4.9.3/dist/css/tabulator.min.css" type="text/css" />
+  <script type="text/javascript" src="${resURL}/plugin/metashift/external/tabulator-4.9.3/dist/js/tabulator.min.js" />
+  <script type="text/javascript" src="${resURL}/plugin/metashift/js/coverage-table.js"/>
+</j:jelly>
