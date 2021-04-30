@@ -29,6 +29,7 @@ import com.lge.plugins.metashift.models.Recipes;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -36,12 +37,14 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
+import hudson.util.FormValidation;
 import java.io.File;
 import java.io.IOException;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -86,6 +89,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   @Extension
   public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
+    // global criteria variable
     private Criteria criteria;
 
     /**
@@ -112,6 +116,56 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       save();
 
       return super.configure(req, formData);
+    }
+
+    /**
+     * check threshold type field value validation.
+     *
+     * @param value input value
+     *
+     * @return form validation
+     */
+    public FormValidation doCheckThreshold(@QueryParameter String value) {
+      String thresholdStr = Util.fixEmptyAndTrim(value);
+      if (thresholdStr == null) {
+        return FormValidation.error("Value cannot be empty");
+      }
+
+      try {
+        float threshold = Float.parseFloat(thresholdStr);
+
+        if (threshold < 0 || threshold > 1) {
+          return FormValidation.error("Value must be a real value between 0 and 1.");
+        }
+        return FormValidation.ok();
+      } catch (Exception e) {
+        return FormValidation.error("Value must be a real value between 0 and 1.");
+      }
+    }
+
+    /**
+     * check limit type field value validation.
+     *
+     * @param value input value
+     *
+     * @return form validation
+     */
+    public FormValidation doCheckLimit(@QueryParameter String value) {
+      String limitStr = Util.fixEmptyAndTrim(value);
+      if (limitStr == null) {
+        return FormValidation.error("Value cannot be empty");
+      }
+
+      try {
+        int limit = Integer.parseInt(limitStr);
+
+        if (limit < 0) {
+          return FormValidation.error("Value must be a positive integer.");
+        }
+        return FormValidation.ok();
+      } catch (Exception e) {
+        return FormValidation.error("Value must be a positive integer.");
+      }
     }
 
     /**

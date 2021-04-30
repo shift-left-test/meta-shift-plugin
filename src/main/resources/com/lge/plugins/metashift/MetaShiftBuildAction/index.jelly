@@ -87,7 +87,9 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                     <td class="${it.cacheQmetrics.cacheAvailabilityualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
                       ${it.getFixedFloat('#.##', it.metrics.cacheAvailability.ratio * 100)}%
                     </td>
-                    <td>${it.criteria.cacheThreshold}%</td>
+                    <td>
+                      ${it.getFixedFloat('#.##', it.criteria.cacheThreshold * 100)}%
+                    </td>
                     <td>${it.cacheAvailability.size()}</td>
                   </j:when>
                   <j:otherwise>
@@ -113,7 +115,9 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                     <td class="${it.metrics.recipeViolations.qualified ? 'bg-success' : 'bg-danger'} text-white">
                       ${it.getFixedFloat('#.##', it.metrics.recipeViolations.ratio * 100)}%
                     </td>
-                    <td>${it.criteria.recipeViolationThreshold}%</td>
+                    <td>
+                      ${it.getFixedFloat('#.##', it.criteria.recipeViolationThreshold * 100)}%
+                    </td>
                     <td>${it.recipeViolations.size()}</td>
                   </j:when>
                   <j:otherwise>
@@ -140,7 +144,9 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                     <td class="${it.metrics.comments.qualified ? 'bg-success' : 'bg-danger'} text-white">
                       ${it.getFixedFloat('#.##', it.metrics.comments.ratio * 100)}%
                     </td>
-                    <td>${it.criteria.commentThreshold}%</td>
+                    <td>
+                      ${it.getFixedFloat('#.##', it.criteria.commentThreshold * 100)}%
+                    </td>
                     <td>${it.comments.size()}</td>
                   </j:when>
                   <j:otherwise>
@@ -166,7 +172,9 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                     <td class="${it.metrics.codeViolations.qualified ? 'bg-success' : 'bg-danger'} text-white">
                       ${it.getFixedFloat('#.##', it.metrics.codeViolations.ratio * 100)}%
                     </td>
-                    <td>${it.criteria.codeViolationThreshold}%</td>
+                    <td>
+                      ${it.getFixedFloat('#.##', it.criteria.codeViolationThreshold * 100)}%
+                    </td>
                     <td>${it.codeViolations.size()}</td>
                   </j:when>
                   <j:otherwise>
@@ -192,7 +200,9 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                     <td class="${it.metrics.complexity.qualified ? 'bg-success' : 'bg-danger'} text-white">
                       ${it.getFixedFloat('#.##', it.metrics.complexity.ratio * 100)}%
                     </td>
-                    <td>${it.criteria.complexityThreshold}%</td>
+                    <td>
+                      ${it.getFixedFloat('#.##', it.criteria.complexityThreshold * 100)}%
+                    </td>
                     <td>${it.complexity.size()}</td>
                   </j:when>
                   <j:otherwise>
@@ -218,7 +228,9 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                     <td class="${it.metrics.duplications.qualified ? 'bg-success' : 'bg-danger'} text-white">
                       ${it.getFixedFloat('#.##', it.metrics.duplications.ratio * 100)}%
                     </td>
-                    <td>${it.criteria.duplicationThreshold}%</td>
+                    <td>
+                      ${it.getFixedFloat('#.##', it.criteria.duplicationThreshold * 100)}%
+                    </td>
                     <td>${it.duplications.size()}</td>
                   </j:when>
                   <j:otherwise>
@@ -244,7 +256,9 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                     <td class="${it.metrics.test.qualified ? 'bg-success' : 'bg-danger'} text-white">
                       ${it.getFixedFloat('#.##', it.metrics.test.ratio * 100)}%
                     </td>
-                    <td>${it.criteria.testThreshold}%</td>
+                    <td>
+                      ${it.getFixedFloat('#.##', it.criteria.testThreshold * 100)}%
+                    </td>
                     <td>${it.test.size()}</td>
                   </j:when>
                   <j:otherwise>
@@ -267,10 +281,12 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                     </th>
                     <td>${it.metrics.coverage.numerator}</td>
                     <td>${it.metrics.coverage.denominator}</td>
-                    <td class="${it.coverageQualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
+                    <td class="${it.metrics.coverage.qualified ? 'bg-success' : 'bg-danger'} text-white">
                       ${it.getFixedFloat('#.##', it.metrics.coverage.ratio * 100)}%
                     </td>
-                    <td>${it.criteria.coverageThreshold}%</td>
+                    <td>
+                      ${it.getFixedFloat('#.##', it.criteria.coverageThreshold * 100)}%
+                    </td>
                     <td>${it.coverage.size()}</td>
                   </j:when>
                   <j:otherwise>
@@ -296,7 +312,9 @@ xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashi
                     <td class="${it.metrics.mutationTest.qualified ? 'bg-success' : 'bg-danger'} text-white">
                       ${it.getFixedFloat('#.##', it.metrics.mutationTest.ratio * 100)}%
                     </td>
-                    <td>${it.criteria.mutationTestThreshold}%</td>
+                    <td>
+                      ${it.getFixedFloat('#.##', it.criteria.mutationTestThreshold * 100)}%
+                    </td>
                     <td>${it.mutationTest.size()}</td>
                   </j:when>
                   <j:otherwise>

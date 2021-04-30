@@ -279,3 +279,6 @@ tags
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,visualstudiocode,eclipse,emacs,vim,java,maven
+
+/work
+

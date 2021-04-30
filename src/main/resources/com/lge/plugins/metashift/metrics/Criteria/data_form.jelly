@@ -1,41 +1,53 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <j:set var="publisher_class" value="com.lge.plugins.metashift.MetaShiftPublisher"/>
   <f:section title="Build Performance">
     <f:entry title="Cache Threshold" field="cacheThreshold">
-      <f:number default="80.0" value="${it.cacheThreshold}"/>
+      <f:number value="${it.cacheThreshold}" default="${descriptor.criteria.cacheThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Recipe Violation Threshold" field="recipeViolationThreshold">
-      <f:number default="80.0" value="${it.recipeViolationThreshold}"/>
+      <f:number value="${it.recipeViolationThreshold}" default="${descriptor.criteria.recipeViolationThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
   </f:section>
   <f:section title="Code Quality">
     <f:entry title="Comment Threshold" field="commentThreshold">
-      <f:number default="80.0" value="${it.commentThreshold}"/>
+      <f:number value="${it.commentThreshold}" default="${descriptor.criteria.commentThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Code Violation Threshold" field="codeViolationThreshold">
-      <f:number default="80.0" value="${it.codeViolationThreshold}"/>
+      <f:number value="${it.codeViolationThreshold}" default="${descriptor.criteria.codeViolationThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Complexity Level" field="complexityLevel">
-      <f:number default="2" value="${it.complexityLevel}"/>
+      <f:number value="${it.complexityLevel}" default="${descriptor.criteria.complexityLevel}"
+                checkUrl="'descriptorByName/${publisher_class}/checkLimit?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Complexity Threshold" field="complexityThreshold">
-      <f:number default="80.0" value="${it.complexityThreshold}"/>
+      <f:number value="${it.complexityThreshold}" default="${descriptor.criteria.complexityThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Duplication Threshold" field="duplicationThreshold">
-      <f:number default="80.0" value="${it.duplicationThreshold}"/>
+      <f:number value="${it.duplicationThreshold}" default="${descriptor.criteria.duplicationThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Test Threshold" field="testThreshold">
-      <f:number default="80.0" value="${it.testThreshold}"/>
+      <f:number value="${it.testThreshold}" default="${descriptor.criteria.testThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Coverage Threshold" field="coverageThreshold">
-      <f:number default="80.0" value="${it.coverageThreshold}"/>
+      <f:number value="${it.coverageThreshold}" default="${descriptor.cirteria.coverageThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Mutation Test Threshold" field="mutationTestThreshold">
-      <f:number default="80.0" value="${it.mutationTestThreshold}"/>
+      <f:number value="${it.mutationTestThreshold}" default="${descriptor.criteria.mutationTestThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Overall Threshold" field="overallThreshold">
-      <f:number default="80.0" value="${it.overallThreshold}"/>
+      <f:number value="${it.overallThreshold}" default="${descriptor.criteria.overallThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
   </f:section>
 </j:jelly>
