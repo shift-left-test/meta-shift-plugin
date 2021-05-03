@@ -30,12 +30,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -80,30 +77,11 @@ public class JsonUtils {
     if (file == null) {
       return JsonUtils.EMPTY;
     }
-    String key = getSha1sum(file, file.getAbsolutePath());
+    String key = DigestUtils.sha1(file, file.getAbsolutePath());
     if (!objects.containsKey(key)) {
       objects.put(key, getObject(file));
     }
     return objects.get(key);
-  }
-
-  /**
-   * Returns the sha1sum of the file, or default value of failed.
-   *
-   * @param file         to digest
-   * @param defaultValue default value
-   * @return sha1sum of the file
-   * @throws IOException if failed to operate with the file
-   */
-  private static String getSha1sum(final File file, final String defaultValue) throws IOException {
-    try {
-      MessageDigest digest = MessageDigest.getInstance("SHA-1");
-      digest.reset();
-      digest.update(FileUtils.readFileToByteArray(file));
-      return new String(digest.digest(), StandardCharsets.UTF_8);
-    } catch (NoSuchAlgorithmException ignored) {
-      return defaultValue;
-    }
   }
 
   /**

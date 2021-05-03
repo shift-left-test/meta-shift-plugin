@@ -80,15 +80,16 @@ public class TemporaryFileUtils {
     return file;
   }
 
-  public void writeLines(final StringBuilder builder, final File file) {
+  public File writeLines(final StringBuilder builder, final File file) {
     try {
       FileUtils.forceMkdirParent(file);
       FileUtils.write(file, builder.toString().replace(from, to), StandardCharsets.UTF_8);
     } catch (IOException ignored) {
     }
+    return file;
   }
 
-  public void writeLines(final StringBuilder builder, final File parent, final String... names) {
-    writeLines(builder, FileUtils.getFile(parent, names));
+  public File writeLines(final StringBuilder builder, final File parent, final String... names) {
+    return writeLines(builder, FileUtils.getFile(parent, names));
   }
 }
