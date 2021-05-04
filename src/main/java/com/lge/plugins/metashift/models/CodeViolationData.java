@@ -72,6 +72,11 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
   private final String tool;
 
   /**
+   * Represents the level of the violation.
+   */
+  private final String level;
+
+  /**
    * Default constructor.
    *
    * @param recipe      name
@@ -83,12 +88,13 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
    * @param description of the violation
    * @param severity    of the violation
    * @param tool        used for analysis
+   * @param level       of the violation
    */
   public CodeViolationData(final String recipe, final String file,
       final long line, final long column,
       final String rule, final String message,
       final String description,
-      final String severity, final String tool) {
+      final String severity, final String tool, final String level) {
     super(recipe);
     this.file = file;
     this.line = line;
@@ -98,6 +104,7 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
     this.description = description;
     this.severity = severity;
     this.tool = tool;
+    this.level = level;
   }
 
   @Override
@@ -201,5 +208,14 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
    */
   public final String getTool() {
     return tool;
+  }
+
+  /**
+   * Returns the level of the violation.
+   *
+   * @return level of the violation
+   */
+  public final String getLevel() {
+    return level;
   }
 }

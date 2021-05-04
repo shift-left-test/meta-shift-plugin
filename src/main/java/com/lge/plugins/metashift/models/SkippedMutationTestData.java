@@ -46,6 +46,6 @@ public final class SkippedMutationTestData extends MutationTestData {
       String mutatedClass, String mutatedMethod,
       long line, String mutator,
       String killingTest) {
-    super(recipe, file, mutatedClass, mutatedMethod, line, mutator, killingTest);
+    super(recipe, file, mutatedClass, mutatedMethod, line, mutator, killingTest, "SKIPPED");
   }
 }

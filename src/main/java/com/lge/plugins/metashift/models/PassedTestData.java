@@ -41,6 +41,6 @@ public final class PassedTestData extends TestData {
    */
   public PassedTestData(final String recipe, final String suite, final String name,
       final String message) {
-    super(recipe, suite, name, message);
+    super(recipe, suite, name, message, "PASSED");
   }
 }

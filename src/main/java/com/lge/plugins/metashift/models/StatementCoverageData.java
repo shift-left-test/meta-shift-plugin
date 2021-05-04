@@ -42,6 +42,6 @@ public final class StatementCoverageData extends CoverageData {
    */
   public StatementCoverageData(String recipe, String file, String function, long line,
       boolean covered) {
-    super(recipe, file, function, line, 0, covered);
+    super(recipe, file, function, line, 0, covered, "Statement");
   }
 }

@@ -62,6 +62,11 @@ public abstract class MutationTestData extends Data<MutationTestData> {
   private final String killingTest;
 
   /**
+   * Represents the status of the mutation test.
+   */
+  private final String status;
+
+  /**
    * Default constructor.
    *
    * @param recipe        name
@@ -71,10 +76,11 @@ public abstract class MutationTestData extends Data<MutationTestData> {
    * @param line          the line number
    * @param mutator       the mutation operator
    * @param killingTest   the test that kills the mutant
+   * @param status        of the mutation test
    */
   public MutationTestData(final String recipe, final String file, final String mutatedClass,
       final String mutatedMethod, final long line, final String mutator,
-      final String killingTest) {
+      final String killingTest, final String status) {
     super(recipe);
     this.file = file;
     this.mutatedClass = mutatedClass;
@@ -82,6 +88,7 @@ public abstract class MutationTestData extends Data<MutationTestData> {
     this.line = line;
     this.mutator = mutator;
     this.killingTest = killingTest;
+    this.status = status;
   }
 
   @Override
@@ -169,5 +176,14 @@ public abstract class MutationTestData extends Data<MutationTestData> {
    */
   public final String getKillingTest() {
     return killingTest;
+  }
+
+  /**
+   * Returns the status of the mutation test.
+   *
+   * @return status of the mutation test
+   */
+  public final String getStatus() {
+    return status;
   }
 }

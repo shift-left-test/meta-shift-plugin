@@ -55,6 +55,7 @@ public class CodeViolationDataTest {
     assertEquals("desc", origin.getDescription());
     assertEquals("E", origin.getSeverity());
     assertEquals("tool", origin.getTool());
+    assertEquals("MAJOR", origin.getLevel());
   }
 
   @Test

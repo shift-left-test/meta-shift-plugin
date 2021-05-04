@@ -46,6 +46,6 @@ public final class SurvivedMutationTestData extends MutationTestData {
       final String mutatedClass, final String mutatedMethod,
       final long line, final String mutator,
       final String killingTest) {
-    super(recipe, file, mutatedClass, mutatedMethod, line, mutator, killingTest);
+    super(recipe, file, mutatedClass, mutatedMethod, line, mutator, killingTest, "SURVIVED");
   }
 }

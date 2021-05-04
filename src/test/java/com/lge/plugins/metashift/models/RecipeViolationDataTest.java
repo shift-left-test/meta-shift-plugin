@@ -52,6 +52,7 @@ public class RecipeViolationDataTest {
     assertEquals("error_rule", origin.getRule());
     assertEquals("error_info", origin.getDescription());
     assertEquals("error", origin.getSeverity());
+    assertEquals("MAJOR", origin.getLevel());
   }
 
   @Test

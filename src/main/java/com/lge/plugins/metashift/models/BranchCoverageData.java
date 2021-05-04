@@ -43,6 +43,6 @@ public final class BranchCoverageData extends CoverageData {
    */
   public BranchCoverageData(String recipe, String file, String function, long line, long index,
       boolean covered) {
-    super(recipe, file, function, line, index, covered);
+    super(recipe, file, function, line, index, covered, "Branch");
   }
 }

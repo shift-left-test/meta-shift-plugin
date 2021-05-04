@@ -57,6 +57,11 @@ public abstract class CoverageData extends Data<CoverageData> {
   private final boolean covered;
 
   /**
+   * Represents the coverage type.
+   */
+  private final String type;
+
+  /**
    * Default constructor.
    *
    * @param recipe   name
@@ -65,16 +70,17 @@ public abstract class CoverageData extends Data<CoverageData> {
    * @param line     number
    * @param index    coverage item index
    * @param covered  coverage status
+   * @param type     coverage type
    */
   public CoverageData(final String recipe, final String file, final String function,
-      final long line,
-      final long index, final boolean covered) {
+      final long line, final long index, final boolean covered, final String type) {
     super(recipe);
     this.file = file;
     this.function = function;
     this.line = line;
     this.index = index;
     this.covered = covered;
+    this.type = type;
   }
 
   @Override
@@ -150,5 +156,14 @@ public abstract class CoverageData extends Data<CoverageData> {
    */
   public boolean isCovered() {
     return covered;
+  }
+
+  /**
+   * Returns the type of the coverage.
+   *
+   * @return coverage type
+   */
+  public String getType() {
+    return type;
   }
 }

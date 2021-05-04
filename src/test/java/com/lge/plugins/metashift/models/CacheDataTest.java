@@ -48,6 +48,7 @@ public class CacheDataTest {
     assertEquals("A-1.0.0-r0", origin.getRecipe());
     assertEquals("X", origin.getSignature());
     assertTrue(origin.isAvailable());
+    assertEquals("Premirror", origin.getType());
   }
 
   @Test

@@ -42,16 +42,24 @@ public abstract class CacheData extends Data<CacheData> {
   private final boolean available;
 
   /**
+   * Represents the type of the cache.
+   */
+  private final String type;
+
+  /**
    * Default constructor.
    *
    * @param recipe    name
    * @param signature name
    * @param available the cache availability
+   * @param type      of the cache
    */
-  public CacheData(final String recipe, final String signature, final boolean available) {
+  public CacheData(final String recipe, final String signature, final boolean available,
+      final String type) {
     super(recipe);
     this.signature = signature;
     this.available = available;
+    this.type = type;
   }
 
   @Override
@@ -97,5 +105,14 @@ public abstract class CacheData extends Data<CacheData> {
    */
   public final boolean isAvailable() {
     return available;
+  }
+
+  /**
+   * Returns the type of the cache.
+   *
+   * @return cache type
+   */
+  public final String getType() {
+    return type;
   }
 }

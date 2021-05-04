@@ -57,6 +57,11 @@ public abstract class RecipeViolationData extends Data<RecipeViolationData> {
   private final String severity;
 
   /**
+   * Represents the level of the violation.
+   */
+  private final String level;
+
+  /**
    * Default constructor.
    *
    * @param recipe      name
@@ -65,17 +70,18 @@ public abstract class RecipeViolationData extends Data<RecipeViolationData> {
    * @param rule        name
    * @param description of the recipe violation
    * @param severity    of the recipe violation
+   * @param level       of the recipe violation
    */
   public RecipeViolationData(final String recipe, final String file,
-      final long line, final String rule,
-      final String description,
-      final String severity) {
+      final long line, final String rule, final String description,
+      final String severity, final String level) {
     super(recipe);
     this.file = file;
     this.line = line;
     this.rule = rule;
     this.description = description;
     this.severity = severity;
+    this.level = level;
   }
 
   @Override
@@ -150,5 +156,14 @@ public abstract class RecipeViolationData extends Data<RecipeViolationData> {
    */
   public final String getSeverity() {
     return severity;
+  }
+
+  /**
+   * Returns the level of the recipe violation.
+   *
+   * @return level of the violation
+   */
+  public final String getLevel() {
+    return level;
   }
 }

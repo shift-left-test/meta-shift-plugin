@@ -39,6 +39,6 @@ public final class SharedStateCacheData extends CacheData {
    * @param available the cache availability
    */
   public SharedStateCacheData(final String recipe, final String task, final boolean available) {
-    super(recipe, task, available);
+    super(recipe, task, available, "SharedState");
   }
 }

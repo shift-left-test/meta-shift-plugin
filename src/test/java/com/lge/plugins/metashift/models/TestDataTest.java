@@ -48,6 +48,7 @@ public class TestDataTest {
     assertEquals("a.suite", origin.getSuite());
     assertEquals("a.tc", origin.getName());
     assertEquals("msg", origin.getMessage());
+    assertEquals("PASSED", origin.getStatus());
   }
 
   @Test

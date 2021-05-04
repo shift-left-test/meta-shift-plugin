@@ -53,6 +53,7 @@ public class CoverageDataTest {
     assertEquals(1, origin.getLine());
     assertEquals(0, origin.getIndex());
     assertTrue(origin.isCovered());
+    assertEquals("Statement", origin.getType());
   }
 
   @Test

@@ -53,6 +53,7 @@ public class MutationTestDataTest {
     assertEquals(1, origin.getLine());
     assertEquals("AOR", origin.getMutator());
     assertEquals("TC", origin.getKillingTest());
+    assertEquals("KILLED", origin.getStatus());
   }
 
   @Test

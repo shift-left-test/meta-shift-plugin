@@ -47,19 +47,26 @@ public abstract class TestData extends Data<TestData> {
   private final String message;
 
   /**
+   * Represents the status of the test.
+   */
+  private final String status;
+
+  /**
    * Default constructor.
    *
    * @param recipe  name
    * @param suite   name
    * @param name    of the test
    * @param message of the test
+   * @param status  of the test
    */
   public TestData(final String recipe, final String suite, final String name,
-      final String message) {
+      final String message, final String status) {
     super(recipe);
     this.suite = suite;
     this.name = name;
     this.message = message;
+    this.status = status;
   }
 
   @Override
@@ -115,5 +122,14 @@ public abstract class TestData extends Data<TestData> {
    */
   public final String getMessage() {
     return message;
+  }
+
+  /**
+   * Returns the status of the test.
+   *
+   * @return status of the test
+   */
+  public final String getStatus() {
+    return status;
   }
 }
