@@ -31,6 +31,7 @@ import static org.junit.Assert.assertNotEquals;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 /**
  * Unit tests for the Recipe class.
@@ -162,5 +164,14 @@ public class RecipeTest {
     assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
     assertEquals(0, recipe.objects(Data.class).count());
     assertFalse(recipe.isAvailable(Data.class));
+  }
+
+  @Test
+  public void testLogging() throws IOException {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    PrintStream logger = Mockito.mock(PrintStream.class);
+    new Recipe(directory, logger);
+    Mockito.verify(logger, Mockito.times(10))
+        .printf(Mockito.startsWith("[Recipe] B-1.0.0-r0: processing"), Mockito.anyString());
   }
 }

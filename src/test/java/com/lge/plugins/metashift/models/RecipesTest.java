@@ -30,10 +30,12 @@ import static org.junit.Assert.assertFalse;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 /**
  * Unit tests for the Recipes class
@@ -129,10 +131,23 @@ public class RecipesTest {
     File report = utils.createDirectory("report");
     utils.createDirectory(report, "cmake-project-1.0.0-r0");
     utils.createDirectory(report, "qmake5-project-1.0.0-r0");
-    utils.createDirectory(report, "autotools-1.0.0-r0");
+    utils.createDirectory(report, "autotools-project-1.0.0-r0");
     recipes = new Recipes(report);
     assertEquals(3, recipes.size());
     assertEquals(0, recipes.objects(Data.class).count());
     assertFalse(recipes.isAvailable(Data.class));
+  }
+
+  @Test
+  public void testLogging() throws IOException {
+    File report = utils.createDirectory("report");
+    utils.createDirectory(report, "cmake-project-1.0.0-r0");
+    utils.createDirectory(report, "qmake5-project-1.0.0-r0");
+    utils.createDirectory(report, "autotools-project-1.0.0-r0");
+    PrintStream logger = Mockito.mock(PrintStream.class);
+    recipes = new Recipes(report, logger);
+    Mockito.verify(logger).println("[Recipes] cmake-project-1.0.0-r0: processing");
+    Mockito.verify(logger).println("[Recipes] qmake5-project-1.0.0-r0: processing");
+    Mockito.verify(logger).println("[Recipes] autotools-project-1.0.0-r0: processing");
   }
 }

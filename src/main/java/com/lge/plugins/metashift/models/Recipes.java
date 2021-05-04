@@ -25,11 +25,13 @@
 package com.lge.plugins.metashift.models;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.io.output.NullPrintStream;
 
 /**
  * Represents a set of Recipe objects.
@@ -52,6 +54,17 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
    * @throws IllegalArgumentException if the path is invalid
    */
   public Recipes(final File path) {
+    this(path, NullPrintStream.NULL_PRINT_STREAM);
+  }
+
+  /**
+   * Create a list of Recipe objects using the given report directory.
+   *
+   * @param path   to directory
+   * @param logger object
+   * @throws IllegalArgumentException if the path is invalid
+   */
+  public Recipes(final File path, final PrintStream logger) {
     this();
     if (!path.exists()) {
       throw new IllegalArgumentException("Directory not found: " + path);
@@ -62,6 +75,7 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
     File[] directories = path.listFiles(File::isDirectory);
     if (directories != null) {
       for (File directory : directories) {
+        logger.println("[Recipes] " + directory.getName() + ": processing");
         this.add(new Recipe(directory));
       }
     }

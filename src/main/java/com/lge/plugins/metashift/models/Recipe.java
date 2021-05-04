@@ -36,11 +36,13 @@ import com.lge.plugins.metashift.models.factory.RecipeViolationFactory;
 import com.lge.plugins.metashift.models.factory.TestFactory;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+import org.apache.commons.io.output.NullPrintStream;
 
 /**
  * Represents a recipe containing various data for metrics.
@@ -94,6 +96,17 @@ public final class Recipe extends Data<Recipe> implements Streamable {
    * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
    */
   public Recipe(final File path) throws IllegalArgumentException {
+    this(path, NullPrintStream.NULL_PRINT_STREAM);
+  }
+
+  /**
+   * Create a Recipe object using the given recipe directory.
+   *
+   * @param path   to recipe directory
+   * @param logger object
+   * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
+   */
+  public Recipe(final File path, final PrintStream logger) throws IllegalArgumentException {
     this(path.getName());
     if (!path.exists()) {
       throw new IllegalArgumentException("Directory not found: " + path);
@@ -101,16 +114,27 @@ public final class Recipe extends Data<Recipe> implements Streamable {
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
-    
+
+    String format = "[Recipe] " + getRecipe() + ": processing the %s data%n";
+    logger.printf(format, "cache availability");
     addAll(CacheData.class, CacheFactory::create, path);
+    logger.printf(format, "code size");
     addAll(CodeSizeData.class, CodeSizeFactory::create, path);
+    logger.printf(format, "code violation");
     addAll(CodeViolationData.class, CodeViolationFactory::create, path);
+    logger.printf(format, "comment");
     addAll(CommentData.class, CommentFactory::create, path);
+    logger.printf(format, "complexity");
     addAll(ComplexityData.class, ComplexityFactory::create, path);
+    logger.printf(format, "coverage");
     addAll(CoverageData.class, CoverageFactory::create, path);
+    logger.printf(format, "duplication");
     addAll(DuplicationData.class, DuplicationFactory::create, path);
+    logger.printf(format, "mutation test");
     addAll(MutationTestData.class, MutationTestFactory::create, path);
+    logger.printf(format, "recipe violation");
     addAll(RecipeViolationData.class, RecipeViolationFactory::create, path);
+    logger.printf(format, "test");
     addAll(TestData.class, TestFactory::create, path);
   }
 
