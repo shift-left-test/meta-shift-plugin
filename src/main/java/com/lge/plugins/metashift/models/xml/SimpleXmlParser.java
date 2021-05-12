@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.models.xml;
 
+import com.lge.plugins.metashift.utils.DigestUtils;
+import com.lge.plugins.metashift.utils.LruCache;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -41,6 +43,14 @@ import org.xml.sax.SAXException;
  */
 public class SimpleXmlParser {
 
+  /**
+   * Represents the singleton cache object.
+   */
+  private static final LruCache<String, Document> objects = new LruCache<>();
+
+  /**
+   * Represents the document object.
+   */
   private final Document document;
 
   /**
@@ -57,11 +67,16 @@ public class SimpleXmlParser {
    */
   public SimpleXmlParser(final File file)
       throws ParserConfigurationException, IOException, SAXException {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder = factory.newDocumentBuilder();
-    builder.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
-    document = builder.parse(file);
-    document.getDocumentElement().normalize();
+    String checksum = DigestUtils.sha1(file, file.getAbsolutePath());
+    if (!objects.containsKey(checksum)) {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = factory.newDocumentBuilder();
+      builder.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
+      Document document = builder.parse(file);
+      document.getDocumentElement().normalize();
+      objects.put(checksum, document);
+    }
+    this.document = objects.get(checksum);
   }
 
   /**
