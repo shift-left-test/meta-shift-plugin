@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.utils;
 
+import hudson.FilePath;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -44,7 +46,13 @@ public class JsonUtils {
 
   private static class LruCache<K, V> extends LinkedHashMap<K, V> {
 
+    private static final int DEFAULT_CAPACITY = 30;
+
     private final int capacity;
+
+    public LruCache() {
+      this(DEFAULT_CAPACITY);
+    }
 
     public LruCache(final int capacity) {
       super(capacity, 0.75f, true);
@@ -65,7 +73,7 @@ public class JsonUtils {
   /**
    * Represents the singleton objects.
    */
-  private static final Map<String, JSONObject> objects = new LruCache<>(10);
+  private static final Map<String, JSONObject> objects = new LruCache<>();
 
   /**
    * Create a JSONObject using the given file.
@@ -85,6 +93,17 @@ public class JsonUtils {
   }
 
   /**
+   * Create a JSONObject using the given file.
+   *
+   * @param file to a json file
+   * @return a JSON object
+   */
+  public static JSONObject createObject(final FilePath file)
+      throws IOException, InterruptedException {
+    return createObject(new File(file.toURI()));
+  }
+
+  /**
    * Returns a JSON object using the file.
    *
    * @param file to parse
@@ -94,5 +113,30 @@ public class JsonUtils {
   private static JSONObject getObject(final File file) throws IOException {
     InputStream is = new BufferedInputStream(new FileInputStream(file));
     return JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
+  }
+
+  /**
+   * Saves the JSON object as the file.
+   *
+   * @param object to save
+   * @param file   to save
+   * @throws IOException if failed to operate with the file
+   */
+  public static void saveAs(final JSONObject object, final File file) throws IOException {
+    FileUtils.forceMkdirParent(file);
+    FileUtils.writeStringToFile(file, object.toString(2), StandardCharsets.UTF_8);
+  }
+
+  /**
+   * Saves the JSON object as the file.
+   *
+   * @param object to save
+   * @param file   to save
+   * @throws IOException          if failed to operate with the file
+   * @throws InterruptedException if an interruption occurred
+   */
+  public static void saveAs(final JSONObject object, final FilePath file)
+      throws IOException, InterruptedException {
+    saveAs(object, new File(file.toURI()));
   }
 }

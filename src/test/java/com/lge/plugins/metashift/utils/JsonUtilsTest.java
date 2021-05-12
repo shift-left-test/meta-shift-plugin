@@ -28,8 +28,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import net.sf.json.JSONObject;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,8 +58,8 @@ public class JsonUtilsTest {
   }
 
   @Test
-  public void testCreateWithNull() throws IOException {
-    assertEquals(JsonUtils.EMPTY, JsonUtils.createObject(null));
+  public void testCreateWithNullFile() throws IOException {
+    assertEquals(JsonUtils.EMPTY, JsonUtils.createObject((File) null));
   }
 
   @Test(expected = IOException.class)
@@ -101,5 +105,16 @@ public class JsonUtilsTest {
     utils.writeLines(builder, file2);
 
     assertNotSame(JsonUtils.createObject(file1), JsonUtils.createObject(file2));
+  }
+
+  @Test
+  public void testSaveAs() throws IOException, InterruptedException {
+    JSONObject object = new JSONObject();
+    object.put("A", "1");
+    object.put("B", "2");
+    File file = utils.getPath("path", "to", "file.json");
+    JsonUtils.saveAs(object, new FilePath(file));
+    assertEquals("{\n  \"A\": \"1\",\n  \"B\": \"2\"\n}",
+        FileUtils.readFileToString(file, StandardCharsets.UTF_8));
   }
 }
