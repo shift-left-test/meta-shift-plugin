@@ -44,11 +44,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.NullPrintStream;
 
 /**
- * DataStore class.
+ * FileStore class.
  *
  * @author Sung Gon Kim
  */
-public class DataStore {
+public class FileStore {
 
   /**
    * Represents the path to the stored report directory.
@@ -60,7 +60,7 @@ public class DataStore {
    *
    * @param storage path to store files
    */
-  public DataStore(final FilePath storage) {
+  public FileStore(final FilePath storage) {
     this.storage = storage;
   }
 
@@ -87,7 +87,7 @@ public class DataStore {
       throw new FileNotFoundException(String.format("Failed to find the directory: %s", path));
     }
 
-    logger.printf("[DataStore] Copying files: '%s' -> '%s'%n", path, storage);
+    logger.printf("[FileStore] Copying files: '%s' -> '%s'%n", path, storage);
     path.copyRecursiveTo(storage);
 
     Recipes recipes = new Recipes(new File(storage.toURI()));
@@ -98,31 +98,31 @@ public class DataStore {
       try {
         parent = JsonUtils.createObject(new File(directory, "metadata.json")).getString("S");
       } catch (IOException e) {
-        logger.printf("[DataStore] %s: Failed to read metadata.json: %s", recipe.getRecipe(), e);
+        logger.printf("[FileStore] %s: Failed to read metadata.json: %s", recipe.getRecipe(), e);
         continue;
       }
 
-      logger.printf("[DataStore] %s: Collecting code violation data files", recipe.getRecipe());
+      logger.printf("[FileStore] %s: Collecting code violation data files", recipe.getRecipe());
       recipes.objects(CodeViolationData.class)
           .forEach(o -> copySourceFile(parent, o.getFile(), directory, indices, logger));
 
-      logger.printf("[DataStore] %s: Collecting complexity data files", recipe.getRecipe());
+      logger.printf("[FileStore] %s: Collecting complexity data files", recipe.getRecipe());
       recipes.objects(ComplexityData.class)
           .forEach(o -> copySourceFile(parent, o.getFile(), directory, indices, logger));
 
-      logger.printf("[DataStore] %s: Collecting coverage data files", recipe.getRecipe());
+      logger.printf("[FileStore] %s: Collecting coverage data files", recipe.getRecipe());
       recipe.objects(CoverageData.class)
           .forEach(o -> copySourceFile(parent, o.getFile(), directory, indices, logger));
 
-      logger.printf("[DataStore] %s: Collecting mutation test data files", recipe.getRecipe());
+      logger.printf("[FileStore] %s: Collecting mutation test data files", recipe.getRecipe());
       recipe.objects(MutationTestData.class)
           .forEach(o -> copySourceFile(parent, o.getFile(), directory, indices, logger));
 
-      logger.printf("[DataStore] %s: Collecting recipe violation data files", recipe.getRecipe());
+      logger.printf("[FileStore] %s: Collecting recipe violation data files", recipe.getRecipe());
       recipe.objects(RecipeViolationData.class)
           .forEach(o -> copySourceFile(parent, o.getFile(), directory, indices, logger));
 
-      logger.printf("[DataStore] %s: Creating index.json", recipe.getRecipe());
+      logger.printf("[FileStore] %s: Creating index.json", recipe.getRecipe());
       JsonUtils.saveAs(indices, FileUtils.getFile(directory, "objects", "index.json"));
     }
     return recipes;
@@ -151,7 +151,7 @@ public class DataStore {
       }
       indices.putIfAbsent(file, target.getAbsolutePath());
     } catch (IOException e) {
-      logger.printf("[DataStore] %s: Failed to copy the file: '%s' -> '%s'",
+      logger.printf("[FileStore] %s: Failed to copy the file: '%s' -> '%s'",
           recipe, source, target);
     }
   }

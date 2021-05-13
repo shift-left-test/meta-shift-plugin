@@ -51,16 +51,16 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 /**
- * Unit tests for the DataStore class.
+ * Unit tests for the FileStore class.
  *
  * @author Sung Gon Kim
  */
-public class DataStoreTest {
+public class FileStoreTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
-  private DataStore dataStore;
+  private FileStore fileStore;
   private File report;
   private File source;
   private File recipe;
@@ -78,7 +78,7 @@ public class DataStoreTest {
     objects = FileUtils.getFile(storage, "A-1.0.0-r0", "objects");
     test_cpp = FileUtils.getFile(objects, "10", "5edad8d18ec788380ae11c9dd9093cac79abb8");
     test_bb = FileUtils.getFile(objects, "ba", "8602f544e3ad92b8de87096d26f9f3f03037b8");
-    dataStore = new DataStore(new FilePath(storage));
+    fileStore = new FileStore(new FilePath(storage));
   }
 
   private void prepareFixture(boolean metadata, boolean sourceFiles, boolean sageReport,
@@ -208,20 +208,20 @@ public class DataStoreTest {
 
   @Test(expected = FileNotFoundException.class)
   public void testLoadFromUnknownPath() throws IOException, InterruptedException {
-    dataStore.load(new FilePath(utils.getPath("path/to/unknown")));
+    fileStore.load(new FilePath(utils.getPath("path/to/unknown")));
   }
 
   @Test
   public void testLoadPrintsLogs() throws IOException, InterruptedException {
     prepareFixture(true, true, true, true, true, true);
     PrintStream logger = Mockito.mock(PrintStream.class);
-    dataStore.load(new FilePath(report), logger);
-    Mockito.verify(logger).printf(Mockito.startsWith("[DataStore] Copying files:"),
+    fileStore.load(new FilePath(report), logger);
+    Mockito.verify(logger).printf(Mockito.startsWith("[FileStore] Copying files:"),
         Mockito.any(), Mockito.any());
     Mockito.verify(logger, Mockito.times(5))
-        .printf(Mockito.startsWith("[DataStore] %s: Collecting"), Mockito.anyString());
+        .printf(Mockito.startsWith("[FileStore] %s: Collecting"), Mockito.anyString());
     Mockito.verify(logger)
-        .printf(Mockito.eq("[DataStore] %s: Creating index.json"), Mockito.anyString());
+        .printf(Mockito.eq("[FileStore] %s: Creating index.json"), Mockito.anyString());
   }
 
   @Test
@@ -229,9 +229,9 @@ public class DataStoreTest {
       throws IOException, InterruptedException {
     prepareFixture(false, true, true, true, true, true);
     PrintStream logger = Mockito.mock(PrintStream.class);
-    dataStore.load(new FilePath(report), logger);
+    fileStore.load(new FilePath(report), logger);
     Mockito.verify(logger)
-        .printf(Mockito.eq("[DataStore] %s: Failed to read metadata.json: %s"),
+        .printf(Mockito.eq("[FileStore] %s: Failed to read metadata.json: %s"),
             Mockito.anyString(), Mockito.any());
   }
 
@@ -240,16 +240,16 @@ public class DataStoreTest {
       throws IOException, InterruptedException {
     prepareFixture(true, false, true, true, true, true);
     PrintStream logger = Mockito.mock(PrintStream.class);
-    dataStore.load(new FilePath(report), logger);
+    fileStore.load(new FilePath(report), logger);
     Mockito.verify(logger, Mockito.times(5))
-        .printf(Mockito.eq("[DataStore] %s: Failed to copy the file: '%s' -> '%s'"),
+        .printf(Mockito.eq("[FileStore] %s: Failed to copy the file: '%s' -> '%s'"),
             Mockito.anyString(), Mockito.any(), Mockito.any());
   }
 
   @Test
   public void testLoadSavesFiles() throws IOException, InterruptedException {
     prepareFixture(true, true, true, true, true, true);
-    dataStore.load(new FilePath(report));
+    fileStore.load(new FilePath(report));
     assertTrue(FileUtils.getFile(recipe, "metadata.json").exists());
     assertTrue(FileUtils.getFile(recipe, "checkcode", "sage_report.json").exists());
     assertTrue(FileUtils.getFile(recipe, "coverage", "coverage.xml").exists());
@@ -263,7 +263,7 @@ public class DataStoreTest {
   @Test
   public void testLoadReturnedRecipes() throws IOException, InterruptedException {
     prepareFixture(true, true, true, true, true, true);
-    Recipes recipes = dataStore.load(new FilePath(report));
+    Recipes recipes = fileStore.load(new FilePath(report));
     assertEquals(1, recipes.size());
     Recipe recipe = recipes.get(0);
     assertEquals("A-1.0.0-r0", recipe.getRecipe());
@@ -275,61 +275,61 @@ public class DataStoreTest {
   @Test
   public void testGetSavedFileOfCodeViolationData() throws IOException, InterruptedException {
     prepareFixture(true, true, true, false, false, false);
-    Recipes recipes = dataStore.load(new FilePath(report));
+    Recipes recipes = fileStore.load(new FilePath(report));
     Recipe recipe = recipes.get(0);
 
     CodeViolationData o = recipe.objects(CodeViolationData.class).findFirst()
         .orElseThrow(NullPointerException::new);
-    assertEquals(test_cpp, dataStore.get(recipe.getRecipe(), o.getFile()));
+    assertEquals(test_cpp, fileStore.get(recipe.getRecipe(), o.getFile()));
   }
 
   @Test
   public void testGetSavedFileOfComplexityData() throws IOException, InterruptedException {
     prepareFixture(true, true, true, false, false, false);
-    Recipe recipe = dataStore.load(new FilePath(report)).get(0);
+    Recipe recipe = fileStore.load(new FilePath(report)).get(0);
     ComplexityData o = recipe.objects(ComplexityData.class).findFirst()
         .orElseThrow(NullPointerException::new);
-    assertEquals(test_cpp, dataStore.get(recipe.getRecipe(), o.getFile()));
+    assertEquals(test_cpp, fileStore.get(recipe.getRecipe(), o.getFile()));
   }
 
   @Test
   public void testGetSavedFileOfCoverageData() throws IOException, InterruptedException {
     prepareFixture(true, true, false, false, true, false);
-    Recipe recipe = dataStore.load(new FilePath(report)).get(0);
+    Recipe recipe = fileStore.load(new FilePath(report)).get(0);
     CoverageData o = recipe.objects(CoverageData.class).findFirst()
         .orElseThrow(NullPointerException::new);
-    assertEquals(test_cpp, dataStore.get(recipe.getRecipe(), o.getFile()));
+    assertEquals(test_cpp, fileStore.get(recipe.getRecipe(), o.getFile()));
   }
 
   @Test
   public void testGetSavedFileOfMutationTestData() throws IOException, InterruptedException {
     prepareFixture(true, true, false, true, false, false);
-    Recipe recipe = dataStore.load(new FilePath(report)).get(0);
+    Recipe recipe = fileStore.load(new FilePath(report)).get(0);
     MutationTestData o = recipe.objects(MutationTestData.class).findFirst()
         .orElseThrow(NullPointerException::new);
-    assertEquals(test_cpp, dataStore.get(recipe.getRecipe(), o.getFile()));
+    assertEquals(test_cpp, fileStore.get(recipe.getRecipe(), o.getFile()));
   }
 
   @Test
   public void testGetSavedFileOfRecipeViolationData() throws IOException, InterruptedException {
     prepareFixture(true, true, false, false, false, true);
-    Recipe recipe = dataStore.load(new FilePath(report)).get(0);
+    Recipe recipe = fileStore.load(new FilePath(report)).get(0);
     RecipeViolationData o = recipe.objects(RecipeViolationData.class).findFirst()
         .orElseThrow(NullPointerException::new);
-    assertEquals(test_bb, dataStore.get(recipe.getRecipe(), o.getFile()));
+    assertEquals(test_bb, fileStore.get(recipe.getRecipe(), o.getFile()));
   }
 
   @Test
   public void testGetReturnsNullWhenUnknownRecipeGiven() throws IOException, InterruptedException {
     prepareFixture(true, true, true, true, true, true);
-    dataStore.load(new FilePath(report));
-    assertNull(dataStore.get("unknown-1.0.0-r0", "test.cpp"));
+    fileStore.load(new FilePath(report));
+    assertNull(fileStore.get("unknown-1.0.0-r0", "test.cpp"));
   }
 
   @Test
   public void testGetReturnsNullWhenUnknownFileGiven() throws IOException, InterruptedException {
     prepareFixture(true, true, true, true, true, true);
-    dataStore.load(new FilePath(report));
-    assertNull(dataStore.get("A-1.0.0-r0", "unknown.file"));
+    fileStore.load(new FilePath(report));
+    assertNull(fileStore.get("A-1.0.0-r0", "unknown.file"));
   }
 }
