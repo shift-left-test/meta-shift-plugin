@@ -63,8 +63,8 @@ public class JsonUtilsTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath() throws IOException {
-    JsonUtils.createObject(utils.getPath("path-to-unknown"));
+  public void testCreateWithUnknownPath() throws IOException, InterruptedException {
+    JsonUtils.createObject(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
