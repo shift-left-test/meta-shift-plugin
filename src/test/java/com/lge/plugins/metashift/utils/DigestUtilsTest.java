@@ -28,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -51,7 +50,7 @@ public class DigestUtilsTest {
   }
 
   @Test(expected = IOException.class)
-  public void testSha1WithUnknownPath() throws IOException, NoSuchAlgorithmException {
+  public void testSha1WithUnknownPath() throws IOException {
     DigestUtils.sha1(utils.getPath("path-to-unknown"));
   }
 
@@ -61,7 +60,7 @@ public class DigestUtilsTest {
   }
 
   @Test(expected = IOException.class)
-  public void testSha1WithDirectory() throws IOException, NoSuchAlgorithmException {
+  public void testSha1WithDirectory() throws IOException {
     DigestUtils.sha1(utils.createDirectory("directory"));
   }
 
@@ -71,9 +70,19 @@ public class DigestUtilsTest {
   }
 
   @Test
-  public void testEmptyFile() throws IOException, NoSuchAlgorithmException {
+  public void testEmptyFile() throws IOException {
     File directory = utils.createDirectory("directory");
     File file = utils.writeLines(new StringBuilder(), directory, "a.file");
     assertEquals("da39a3ee5e6b4b0d3255bfef95601890afd80709", DigestUtils.sha1(file));
+  }
+
+  @Test
+  public void testSha1OfEmptyString() {
+    assertEquals("da39a3ee5e6b4b0d3255bfef95601890afd80709", DigestUtils.sha1(""));
+  }
+
+  @Test
+  public void testSha1OfEmptyStringWithDefaultValue() {
+    assertEquals("da39a3ee5e6b4b0d3255bfef95601890afd80709", DigestUtils.sha1("", "X"));
   }
 }
