@@ -39,6 +39,16 @@ public final class Criteria {
   private double cacheThreshold;
 
   /**
+   * Represents the threshold for the premirror cache availability.
+   */
+  private double premirrorCacheThreshold;
+
+  /**
+   * Represents the threshold for the shared state cache availability.
+   */
+  private double sharedStateCacheThreshold;
+
+  /**
    * Represents the threshold for the code violations.
    */
   private double codeViolationThreshold;
@@ -124,6 +134,8 @@ public final class Criteria {
       final double mutationTestThreshold) {
     this.overallThreshold = overallThreshold;
     this.cacheThreshold = cacheThreshold;
+    this.premirrorCacheThreshold = cacheThreshold;
+    this.sharedStateCacheThreshold = cacheThreshold;
     this.recipeViolationThreshold = recipeViolationThreshold;
     this.commentThreshold = commentThreshold;
     this.codeViolationThreshold = codeViolationThreshold;
@@ -151,6 +163,44 @@ public final class Criteria {
    */
   public void setCacheThreshold(final double threshold) {
     cacheThreshold = threshold;
+    premirrorCacheThreshold = threshold;
+    sharedStateCacheThreshold = threshold;
+  }
+
+  /**
+   * Returns the premirror cache availability threshold.
+   *
+   * @return premirror cache threshold
+   */
+  public double getPremirrorCacheThreshold() {
+    return premirrorCacheThreshold;
+  }
+
+  /**
+   * Sets the premirror cache availability threshold.
+   *
+   * @param threshold for the premirror cache availability
+   */
+  public void setPremirrorCacheThreshold(final double threshold) {
+    premirrorCacheThreshold = threshold;
+  }
+
+  /**
+   * Returns the shared state cache availability threshold.
+   *
+   * @return shared state cache threshold
+   */
+  public double getSharedStateCacheThreshold() {
+    return sharedStateCacheThreshold;
+  }
+
+  /**
+   * Sets the shared state cache availability threshold.
+   *
+   * @param threshold for the shared state cache availability
+   */
+  public void setSharedStateCacheThreshold(final double threshold) {
+    sharedStateCacheThreshold = threshold;
   }
 
   /**
