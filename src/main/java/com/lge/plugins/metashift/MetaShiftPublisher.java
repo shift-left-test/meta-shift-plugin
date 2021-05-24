@@ -25,12 +25,13 @@
 package com.lge.plugins.metashift;
 
 import com.lge.plugins.metashift.metrics.Criteria;
-import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractProject;
+import hudson.model.Action;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -38,7 +39,6 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
-import java.io.File;
 import java.io.IOException;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
@@ -190,22 +190,16 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     if (result != null && result.isBetterOrEqualTo(Result.UNSTABLE)) {
       FilePath reportPath = workspace.child(this.reportRoot);
       if (reportPath.exists()) {
-        // copy report files
-        FilePath buildTarget = new FilePath(run.getRootDir());
-        FilePath targetPath = new FilePath(buildTarget, "meta-shift-report");
-        listener.getLogger().println("copy report: " + reportPath + " -> " + targetPath);
-        reportPath.copyRecursiveTo(targetPath);
-
-        // load recipe list.
-        Recipes recipes = new Recipes(new File(targetPath.toURI()));
-
         // load criteria.
         Criteria criteria = (this.localCriteria == null)
             ? ((DescriptorImpl) getDescriptor()).getCriteria() : this.localCriteria;
 
+        FilePath buildPath = new FilePath(run.getRootDir());
+        DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
+
         // create action.
         MetaShiftBuildAction buildAction =
-            new MetaShiftBuildAction(run, targetPath.toURI(), criteria, recipes);
+            new MetaShiftBuildAction(run, listener, criteria, reportPath, dataSource);
         run.addAction(buildAction);
 
         // if not qualified, set result to UNSTABLE
@@ -217,5 +211,10 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
         listener.getLogger().println("Meta Shift Error: report path is not exist!!!");
       }
     }
+  }
+
+  @Override
+  public Action getProjectAction(AbstractProject<?, ?> project) {
+    return new MetaShiftProjectAction(project);
   }
 }

@@ -24,11 +24,16 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.models.factory.RecipeViolationFactory;
-import hudson.model.Action;
-import java.io.File;
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeViolationData;
+import com.lge.plugins.metashift.persistence.DataSource;
+import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
@@ -36,10 +41,39 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * MetaShift recipe's recipe violation detail view action class.
  */
 public class MetaShiftRecipeRecipeViolationsAction
-    extends MetaShiftRecipeActionChild implements Action {
+    extends MetaShiftRecipeActionChild {
 
-  public MetaShiftRecipeRecipeViolationsAction(MetaShiftRecipeAction parent) {
-    super(parent);
+  static final String STORE_KEY_RECIPEVIOLATIONLIST = "RecipeViolationList";
+
+  /**
+   * constructor.
+   *
+   * @param parent parent action
+   * @param listener logger
+   * @param criteria criteria
+   * @param dataSource datasource
+   * @param recipe recipe
+   * @param metadata metadata
+   */
+  public MetaShiftRecipeRecipeViolationsAction(
+      MetaShiftRecipeAction parent, TaskListener listener,
+      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
+    super(parent, listener, criteria, dataSource, recipe, metadata);
+
+    List<RecipeViolationData> recipeViolationList =
+        recipe.objects(RecipeViolationData.class).collect(Collectors.toList());
+
+    try {
+      dataSource.put(recipeViolationList,
+          this.getParentAction().getName(), STORE_KEY_RECIPEVIOLATIONLIST);
+
+      for (RecipeViolationData data : recipeViolationList) {
+        this.saveFilecontents(metadata, data.getFile());
+      }
+    } catch (IOException e) {
+      listener.getLogger().println(e.getMessage());
+      e.printStackTrace(listener.getLogger());
+    }
   }
 
   @Override
@@ -58,6 +92,37 @@ public class MetaShiftRecipeRecipeViolationsAction
   }
 
   /**
+   * count for severity.
+   */
+  public static class RecipeViolationStats {
+    String file;
+    int info = 0;
+    int minor = 0;
+    int major = 0;
+    int total = 0;
+
+    public RecipeViolationStats(String file) {
+      this.file = file;
+    }
+
+    public String getFile() {
+      return this.file;
+    }
+
+    public int getInfo() {
+      return this.info;
+    }
+
+    public int getMinor() {
+      return this.minor;
+    }
+
+    public int getMajor() {
+      return this.major;
+    }
+  }
+
+  /**
    * return paginated recipe violation list.
    *
    * @param pageIndex page index
@@ -66,15 +131,68 @@ public class MetaShiftRecipeRecipeViolationsAction
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeViolationTableModel(int pageIndex, int pageSize)
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize)
       throws IOException {
-    if (getParentAction().getMetrics().getRecipeViolations().isAvailable()) {
-      List<?> recipeViolationDataList = RecipeViolationFactory.create(
-        new File(this.getParentAction().getRecipeUri()));
+    if (getParentAction().getMetrics().getCodeViolations().isAvailable()) {
+      List<RecipeViolationData> recipeViolationDataList = this.getDataSource().get(
+          this.getParentAction().getName(), STORE_KEY_RECIPEVIOLATIONLIST);
 
-      return getPagedDataList(pageIndex, pageSize, recipeViolationDataList);
+      Map<String, RecipeViolationStats> recipeFilesMap =
+          new HashMap<String, RecipeViolationStats>();
+
+      for (RecipeViolationData violationData : recipeViolationDataList) {
+        if (!recipeFilesMap.containsKey(violationData.getFile())) {
+          recipeFilesMap.put(violationData.getFile(),
+              new RecipeViolationStats(violationData.getFile()));
+        }
+        RecipeViolationStats stats = recipeFilesMap.get(violationData.getFile());
+        switch (violationData.getLevel()) {
+          case "MAJOR": 
+            stats.major++;
+            break;
+          case "MINOR":
+            stats.minor++;
+            break;
+          case "INFO":
+            stats.info++;
+            break;
+          default:
+            // TODO: invalid level case?
+            // ignore
+            break;
+        }
+        stats.total++;
+      }
+
+      return getPagedDataList(pageIndex, pageSize,
+          recipeFilesMap.values().stream().collect(Collectors.toList()));
     } else {
       return null;
     }
+  }
+  
+  /**
+   * return file contents and violation list for that file.
+   *
+   * @param recipePath file path
+   * @return json object
+   * @throws IOException invalid file path
+   */
+  @JavaScriptMethod
+  public JSONObject getFileRecipeViolationDetail(String recipePath)
+      throws IOException {
+    JSONObject result = new JSONObject();
+
+    List<RecipeViolationData> recipeViolationDataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_RECIPEVIOLATIONLIST);
+
+    List<RecipeViolationData> violationDataList =
+        recipeViolationDataList.stream().filter(o -> o.getFile().equals(recipePath))
+        .collect(Collectors.toList());
+
+    result.put("dataList", violationDataList);
+    result.put("content", this.readFileContents(recipePath));
+
+    return result;
   }
 }

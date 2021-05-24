@@ -24,11 +24,14 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.models.factory.DuplicationFactory;
-import hudson.model.Action;
-import java.io.File;
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.models.DuplicationData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.persistence.DataSource;
+import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
@@ -36,10 +39,34 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * MetaShift recipe's duplication detail view action class.
  */
 public class MetaShiftRecipeDuplicationsAction
-    extends MetaShiftRecipeActionChild implements Action {
+    extends MetaShiftRecipeActionChild {
 
-  public MetaShiftRecipeDuplicationsAction(MetaShiftRecipeAction parent) {
-    super(parent);
+  static final String STORE_KEY_DUPLICATIONLIST = "DuplicationList";
+
+  /**
+   * constructor.
+   *
+   * @param parent parent action
+   * @param listener logger
+   * @param criteria criteria
+   * @param dataSource datasource
+   * @param recipe recipe
+   * @param metadata metadata
+   */
+  public MetaShiftRecipeDuplicationsAction(
+      MetaShiftRecipeAction parent, TaskListener listener,
+      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
+    super(parent, listener, criteria, dataSource, recipe, metadata);
+
+    List<DuplicationData> duplicationList =
+        recipe.objects(DuplicationData.class).collect(Collectors.toList());
+
+    try {
+      dataSource.put(duplicationList, this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
+    } catch (IOException e) {
+      listener.getLogger().println(e.getMessage());
+      e.printStackTrace(listener.getLogger());
+    }
   }
 
   @Override
@@ -66,11 +93,11 @@ public class MetaShiftRecipeDuplicationsAction
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getDuplicationTableModel(int pageIndex, int pageSize)
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize)
       throws IOException {
     if (getParentAction().getMetrics().getDuplications().isAvailable()) {
-      List<?> duplicationDataList = DuplicationFactory.create(
-        new File(this.getParentAction().getRecipeUri()));
+      List<?> duplicationDataList = this.getDataSource().get(
+          this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
 
       return getPagedDataList(pageIndex, pageSize, duplicationDataList);
     } else {

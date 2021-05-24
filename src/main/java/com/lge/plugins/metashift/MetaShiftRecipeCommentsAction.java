@@ -24,11 +24,14 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.models.factory.CommentFactory;
-import hudson.model.Action;
-import java.io.File;
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.models.CommentData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.persistence.DataSource;
+import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
@@ -36,10 +39,33 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * MetaShift recipe's comment detail view action class.
  */
 public class MetaShiftRecipeCommentsAction
-    extends MetaShiftRecipeActionChild implements Action {
+    extends MetaShiftRecipeActionChild {
 
-  public MetaShiftRecipeCommentsAction(MetaShiftRecipeAction parent) {
-    super(parent);
+  static final String STORE_KEY_COMMENTLIST = "CommmentList";
+
+  /**
+   * constructor.
+   *
+   * @param parent parent action
+   * @param listener logger
+   * @param criteria criteria
+   * @param dataSource datasource
+   * @param recipe recipe
+   * @param metadata metadata
+   */
+  public MetaShiftRecipeCommentsAction(
+      MetaShiftRecipeAction parent, TaskListener listener,
+      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
+    super(parent, listener, criteria, dataSource, recipe, metadata);
+
+    List<CommentData> commentList = recipe.objects(CommentData.class).collect(Collectors.toList());
+
+    try {
+      dataSource.put(commentList, this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
+    } catch (IOException e) {
+      listener.getLogger().println(e.getMessage());
+      e.printStackTrace(listener.getLogger());
+    }
   }
 
   @Override
@@ -66,15 +92,12 @@ public class MetaShiftRecipeCommentsAction
    * @throws IOException invalid recipe uri
    */  
   @JavaScriptMethod
-  public JSONObject getCommentTableModel(int pageIndex, int pageSize)
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize)
       throws IOException {
-    if (getParentAction().getMetrics().getComments().isAvailable()) {
-      List<?> commentDataList = CommentFactory.create(
-        new File(this.getParentAction().getRecipeUri()));
-      
-      return getPagedDataList(pageIndex, pageSize, commentDataList);
-    } else {
-      return null;
-    }
+    
+    List<?> commentDataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
+
+    return getPagedDataList(pageIndex, pageSize, commentDataList);
   }
 }

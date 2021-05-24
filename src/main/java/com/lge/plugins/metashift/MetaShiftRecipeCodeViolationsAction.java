@@ -24,11 +24,15 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.models.factory.CodeViolationFactory;
-import hudson.model.Action;
-import java.io.File;
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.models.CodeViolationData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.persistence.DataSource;
+import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
@@ -36,12 +40,37 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * MetaShift recipe's code violation detail view action class.
  */
 public class MetaShiftRecipeCodeViolationsAction
-    extends MetaShiftRecipeActionChild implements Action {
+    extends MetaShiftRecipeActionChild {
 
-  public MetaShiftRecipeCodeViolationsAction(MetaShiftRecipeAction parent) {
-    super(parent);
+  static final String STORE_KEY_CODEVIOLATIONLIST = "CodeViloationList";
+
+  /**
+   * constructor.
+   *
+   * @param parent parent action
+   * @param listener logger
+   * @param criteria criteria
+   * @param dataSource datasource
+   * @param recipe recipe
+   * @param metadata metadata
+   */
+  public MetaShiftRecipeCodeViolationsAction(
+      MetaShiftRecipeAction parent, TaskListener listener,
+      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
+    super(parent, listener, criteria, dataSource, recipe, metadata);
+
+    List<CodeViolationData> codeViolationDataList =
+        recipe.objects(CodeViolationData.class).collect(Collectors.toList());
+
+    try {
+      dataSource.put(codeViolationDataList,
+          this.getParentAction().getName(), STORE_KEY_CODEVIOLATIONLIST);
+    } catch (IOException e) {
+      listener.getLogger().println(e.getMessage());
+      e.printStackTrace(listener.getLogger());
+    }
   }
-  
+
   @Override
   public String getIconFileName() {
     return "document.png";
@@ -58,6 +87,54 @@ public class MetaShiftRecipeCodeViolationsAction
   }
 
   /**
+   * code violation for each file.
+   */
+  public static class FileCodeViolations {
+    private String file;
+    private int major;
+    private int minor;
+    private int info;
+
+    /**
+     * constructor.
+     */
+    public FileCodeViolations(String file) {
+      this.file = file;
+      this.major = 0;
+      this.minor = 0;
+      this.info = 0;
+    }
+
+    public String getFile() {
+      return this.file;
+    }
+
+    public int getMajor() {
+      return this.major;
+    }
+
+    public int getMinor() {
+      return this.minor;
+    }
+
+    public int getInfo() {
+      return this.info;
+    }
+
+    public void addMajor() {
+      this.major++;
+    }
+
+    public void addMinor() {
+      this.minor++;
+    }
+
+    public void addInfo() {
+      this.info++;
+    }
+  }
+
+  /**
    * return paginated code violation list.
    *
    * @param pageIndex page index
@@ -66,15 +143,56 @@ public class MetaShiftRecipeCodeViolationsAction
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getCodeViolationTableModel(int pageIndex, int pageSize)
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize)
       throws IOException {
-    if (getParentAction().getMetrics().getCodeViolations().isAvailable()) {
-      List<?> codeViolationDataList = CodeViolationFactory.create(
-        new File(this.getParentAction().getRecipeUri()));
-      
-      return getPagedDataList(pageIndex, pageSize, codeViolationDataList);
-    } else {
-      return null;
+    List<CodeViolationData> codeViolationDataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_CODEVIOLATIONLIST);
+    
+    HashMap<String, FileCodeViolations> fileInfo = new HashMap<String, FileCodeViolations>();
+
+    for (CodeViolationData codeViolationData : codeViolationDataList) {
+      String file = codeViolationData.getFile();
+      if (!fileInfo.containsKey(file)) {
+        fileInfo.put(file, new FileCodeViolations(file));
+      }
+      switch (codeViolationData.getLevel()) {
+        case "MAJOR":
+          fileInfo.get(file).addMajor();
+          break;
+        case "MINOR":
+          fileInfo.get(file).addMinor();
+          break;
+        case "INFO":
+          fileInfo.get(file).addInfo();
+          break;
+        default:
+          // TODO: temporary check code
+          throw new IOException("invalid level name");
+      }
     }
+
+    return getPagedDataList(pageIndex, pageSize,
+        fileInfo.values().stream().collect(Collectors.toList()));
+  }
+
+  /**
+   * return file code viloation detail.
+   */
+  @JavaScriptMethod
+  public JSONObject getFileCodeViolationDetail(String codePath)
+      throws IOException {
+    JSONObject result = new JSONObject();
+
+    List<CodeViolationData> codeViolationDataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_CODEVIOLATIONLIST);
+    
+    List<CodeViolationData> violationDataList =
+        codeViolationDataList.stream().filter(o -> o.getFile().equals(codePath))
+        .collect(Collectors.toList());
+
+    result.put("dataList", violationDataList);
+    result.put("content", this.readFileContents(codePath));
+
+    return result;
   }
 }

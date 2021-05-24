@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": "./src/main/webapp/js/",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "module": "es2015",
+    "target": "es2017",
+    "jsx": "react",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+  }
+}

@@ -24,11 +24,14 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.models.factory.MutationTestFactory;
-import hudson.model.Action;
-import java.io.File;
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.models.MutationTestData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.persistence.DataSource;
+import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
@@ -36,10 +39,34 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * MetaShift recipe's mutation test detail view action class.
  */
 public class MetaShiftRecipeMutationTestAction
-    extends MetaShiftRecipeActionChild implements Action {
-  
-  public MetaShiftRecipeMutationTestAction(MetaShiftRecipeAction parent) {
-    super(parent);
+    extends MetaShiftRecipeActionChild {
+
+  static final String STORE_KEY_MUTATIONTESTLIST = "MutationTestList";
+
+  /**
+   * constructor.
+   *
+   * @param parent parent action
+   * @param listener logger
+   * @param criteria criteria
+   * @param dataSource datasource
+   * @param recipe recipe
+   * @param metadata metadata
+   */
+  public MetaShiftRecipeMutationTestAction(
+      MetaShiftRecipeAction parent, TaskListener listener,
+      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
+    super(parent, listener, criteria, dataSource, recipe, metadata);
+
+    List<MutationTestData> cacheList =
+        recipe.objects(MutationTestData.class).collect(Collectors.toList());
+
+    try {
+      dataSource.put(cacheList, this.getParentAction().getName(), STORE_KEY_MUTATIONTESTLIST);
+    } catch (IOException e) {
+      listener.getLogger().println(e.getMessage());
+      e.printStackTrace(listener.getLogger());
+    }
   }
 
   @Override
@@ -66,15 +93,36 @@ public class MetaShiftRecipeMutationTestAction
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getMutationTestTableModel(int pageIndex, int pageSize)
+  public JSONObject getRecipeMutationTests(int pageIndex, int pageSize)
       throws IOException {
     if (getParentAction().getMetrics().getMutationTest().isAvailable()) {
-      List<?> mutationTestDataList = MutationTestFactory.create(
-        new File(this.getParentAction().getRecipeUri()));
+      List<MutationTestData> mutationTestDataList = this.getDataSource().get(
+          this.getParentAction().getName(), STORE_KEY_MUTATIONTESTLIST);
 
       return getPagedDataList(pageIndex, pageSize, mutationTestDataList);
     } else {
       return null;
     }
+  }
+
+  /**
+   * return file mutaiontest detail.
+   */
+  @JavaScriptMethod
+  public JSONObject getFileMutationTestDetail(String recipePath)
+      throws IOException {
+    JSONObject result = new JSONObject();
+
+    List<MutationTestData> mutationTestDataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_MUTATIONTESTLIST);
+
+    List<MutationTestData> dataList =
+        mutationTestDataList.stream().filter(o -> o.getFile().equals(recipePath))
+        .collect(Collectors.toList());
+
+    result.put("dataList", dataList);
+    result.put("content", this.readFileContents(recipePath));
+
+    return result;
   }
 }

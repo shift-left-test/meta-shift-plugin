@@ -1,32 +1,26 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" 
-xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashift/charts">
-    <l:layout title="Meta-Shift Report">
-        <st:adjunct includes="com.lge.plugins.metashift.style"/>
-        <st:adjunct includes="com.lge.plugins.metashift.comment-table"/>
-        <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
-        <st:include it="${it.run}" page="sidepanel.jelly" />
-        <l:main-panel>
-
-          <h1>
-            ${it.run.project.displayName} ${it.run.displayName}
-          </h1>
-          <h2>
-            Comments [${it.parentAction.displayName}]
-          </h2>
-          <div class="row metashift">
-            <div class="col-11">
-              <h3>Comment List</h3>
-              <div style="width:100%" id="comment-table"></div>
-            </div>
-            <script type="text/javascript">
-            {
-              const buildAction = <st:bind value="${it}" />;
-              renderCommentTable("#comment-table", buildAction)
-            }
-            </script>
-          </div>
-        </l:main-panel>
-    </l:layout>
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <l:layout title="Meta-Shift Report">
+    <st:adjunct includes="com.lge.plugins.metashift.front"/>
+    <st:include it="${it.run}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <st:bind var="proxy" value="${it}" />
+      <h1>
+        ${it.run.project.displayName} ${it.run.displayName}
+      </h1>
+      <h2>
+        Comments [${it.parentAction.displayName}]
+      </h2>
+      <h3>Comment List</h3>
+      <comment-files />
+      <script type="text/javascript">
+      {
+        document.querySelector("comment-files").setAjaxFunc(
+          proxy.getRecipeFiles
+        );
+      }
+      </script>
+    </l:main-panel>
+  </l:layout>
 </j:jelly>

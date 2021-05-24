@@ -1,81 +1,101 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" 
-xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashift/charts">
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <l:layout title="Meta-Shift Report">
-    <st:adjunct includes="com.lge.plugins.metashift.style"/>
-    <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+    <st:adjunct includes="com.lge.plugins.metashift.front"/>
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
-      <div class="row metashift">
-        <h1>${it.run.project.displayName} ${it.run.displayName}</h1>
-      </div>
-      <div class="row metashift">
-        <!-- overview -->
-        <h3>Overview</h3>
-      </div>
-      <div class="row metashift overview">
-        <div class="col-2 bg-light shadow-sm panel">
-          <h4>Lines</h4>
-          <p>${it.metrics.codeSize.lines}
-            <ms:text-diff diff="${it.codeSizeDelta.lines}" />
-          </p>
-        </div>
-        <div class="col-2 bg-light shadow-sm panel">
-          <h4>Functions</h4>
-          <p>${it.metrics.codeSize.functions}
-            <ms:text-diff diff="${it.codeSizeDelta.functions}" />
-          </p>
-        </div>
-        <div class="col-2 bg-light shadow-sm panel">
-          <h4>Classes</h4>
-          <p>${it.metrics.codeSize.classes}
-            <ms:text-diff diff="${it.codeSizeDelta.classes}" />
-          </p>
-        </div>
-        <div class="col-2 bg-light shadow-sm panel">
-          <h4>Files</h4>
-          <p>${it.metrics.codeSize.files}
-            <ms:text-diff diff="${it.codeSizeDelta.files}" />
-          </p>
-        </div>
-      </div>
-
-      <div class="row metashift">
-        <h3>Metrics
-          <span class="measurement-group badge ${it.metrics.qualified ? 'badge-success' : 'badge-danger'}">
-            ${it.metrics.qualified ? 'Passed' : 'Failed'}
-          </span>
-        </h3>
-      </div>
-      <div class="row metashift">
-        <h4>Build Performance</h4>
-      </div>
-      <div class="row metashift">
-        <ms:measurement-summary title="Cache Availability"
-          evaluator="${it.metrics.cacheAvailability}" url="cache_availability" />
-        <ms:measurement-summary title="Recipe Violations"
-          evaluator="${it.metrics.recipeViolations}" url="recipe_violations" />
-      </div>
-      <div class="row metashift">
-        <h4>Code Quality</h4>
-      </div>
-      <div class="row metashift">
-        <ms:measurement-summary title="Comments"
-          evaluator="${it.metrics.comments}" url="comments" />
-        <ms:measurement-summary title="Violations"
-          evaluator="${it.metrics.codeViolations}" url="code_violations" />
-        <ms:measurement-summary title="Complexity"
-          evaluator="${it.metrics.complexity}" url="complexity" />
-        <ms:measurement-summary title="Duplications"
-          evaluator="${it.metrics.duplications}" url="duplications" />
-        <ms:measurement-summary title="Testing"
-          evaluator="${it.metrics.test}" url="test" />
-        <ms:measurement-summary title="Coverage"
-          evaluator="${it.metrics.coverage}" url="coverage" />
-        <ms:measurement-summary title="Mutation Score"
-          evaluator="${it.metrics.mutationTest}" url="mutation_test" />
-      </div>
+      <h1>${it.run.project.displayName} ${it.run.displayName}</h1>
+      <h3>Overview</h3>
+      <code-size
+        lineSize="${it.metrics.codeSize.lines}"
+        lineSizeDelta="${it.codeSizeDelta.lines}"
+        functionSize="${it.metrics.codeSize.functions}"
+        functionSizeDelta="${it.codeSizeDelta.functions}"
+        classSize="${it.metrics.codeSize.classes}"
+        classSizeDelta="${it.codeSizeDelta.classes}"
+        fileSize="${it.metrics.codeSize.files}"
+        fileSizeDelta="${it.codeSizeDelta.files}"
+      />
+      <h3>Metrics
+        <span class="${it.metrics.qualified ? 'text-pass' : 'text-fail'}">
+          ${it.metrics.qualified ? 'Passed' : 'Failed'}
+        </span>
+      </h3>
+      <h4>Build Performance</h4>
+      <metrics-simple-view
+        title="Cache Availability"
+        url="cache_availability"
+        available="${it.metrics.cacheAvailability.available}"
+        qualified="${it.metrics.cacheAvailability.qualified}"
+        ratio="${it.metrics.cacheAvailability.ratio}"
+        numerator="${it.metrics.cacheAvailability.numerator}"
+        denominator="${it.metrics.cacheAvailability.denominator}" />
+      <metrics-simple-view
+        title="Recipe Violations"
+        url="recipe_violations"
+        available="${it.metrics.recipeViolations.available}"
+        qualified="${it.metrics.recipeViolations.qualified}"
+        ratio="${it.metrics.recipeViolations.ratio}"
+        numerator="${it.metrics.recipeViolations.numerator}"
+        denominator="${it.metrics.recipeViolations.denominator}" />
+      <h4>Code Quality</h4>
+      <metrics-simple-view
+        title="Comments"
+        url="comments"
+        available="${it.metrics.comments.available}"
+        qualified="${it.metrics.comments.qualified}"
+        ratio="${it.metrics.comments.ratio}"
+        numerator="${it.metrics.comments.numerator}"
+        denominator="${it.metrics.comments.denominator}" />
+      <metrics-simple-view
+        title="Violations"
+        url="code_violations"
+        available="${it.metrics.codeViolations.available}"
+        qualified="${it.metrics.codeViolations.qualified}"
+        ratio="${it.metrics.codeViolations.ratio}"
+        numerator="${it.metrics.codeViolations.numerator}"
+        denominator="${it.metrics.codeViolations.denominator}" />
+      <metrics-simple-view
+        title="Complexity"
+        url="complexity"
+        available="${it.metrics.complexity.available}"
+        qualified="${it.metrics.complexity.qualified}"
+        ratio="${it.metrics.complexity.ratio}"
+        numerator="${it.metrics.complexity.numerator}"
+        denominator="${it.metrics.complexity.denominator}" />
+      <metrics-simple-view
+        title="Duplications"
+        url="duplications"
+        available="${it.metrics.duplications.available}"
+        qualified="${it.metrics.duplications.qualified}"
+        ratio="${it.metrics.duplications.ratio}"
+        numerator="${it.metrics.duplications.numerator}"
+        denominator="${it.metrics.duplications.denominator}" />
+      <metrics-simple-view
+        title="Testing"
+        url="test"
+        available="${it.metrics.test.available}"
+        qualified="${it.metrics.test.qualified}"
+        ratio="${it.metrics.test.ratio}"
+        numerator="${it.metrics.test.numerator}"
+        denominator="${it.metrics.test.denominator}" />
+      <metrics-simple-view
+        title="Coverage"
+        url="coverage"
+        available="${it.metrics.coverage.available}"
+        qualified="${it.metrics.coverage.qualified}"
+        ratio="${it.metrics.coverage.ratio}"
+        numerator="${it.metrics.coverage.numerator}"
+        denominator="${it.metrics.coverage.denominator}" />
+      <metrics-simple-view
+        title="Mutation Test"
+        url="mutation_test"
+        available="${it.metrics.mutationTest.available}"
+        qualified="${it.metrics.mutationTest.qualified}"
+        ratio="${it.metrics.mutationTest.ratio}"
+        numerator="${it.metrics.mutationTest.numerator}"
+        denominator="${it.metrics.mutationTest.denominator}" />
     </l:main-panel>
   </l:layout>
 </j:jelly>

@@ -30,13 +30,19 @@ import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.metrics.Queryable;
+import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ListUtils;
+import hudson.FilePath;
 import hudson.PluginWrapper;
 import hudson.model.AbstractBuild;
+import hudson.model.Actionable;
 import hudson.model.Result;
 import hudson.model.Run;
-import java.net.URI;
+import hudson.model.TaskListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -54,25 +60,40 @@ import org.kohsuke.stapler.export.ExportedBean;
  * MetaShift post build action class.
  */
 @ExportedBean
-public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
+public class MetaShiftBuildAction extends Actionable
     implements RunAction2, Queryable<List<MetaShiftRecipeAction>> {
 
   private transient Run<?, ?> run;
   private transient List<MetaShiftRecipeAction> recipeActions;
 
   private final Criteria criteria;
-  private URI reportUri;
+  private Metrics metrics;
+
+  private DataSource dataSource;
 
   /**
    * Default constructor.
    */
-  public MetaShiftBuildAction(Run<?, ?> run, URI reportUri, Criteria criteria, Recipes recipes) {
-    super(criteria, recipes);
-    this.reportUri = reportUri;
+  public MetaShiftBuildAction(Run<?, ?> run, TaskListener listener,
+      Criteria criteria, FilePath reportRoot, DataSource dataSource)
+      throws IOException, InterruptedException {
+    super();
+
     this.run = run;
     this.criteria = criteria;
+    this.dataSource = dataSource;
+    this.metrics = new Metrics(criteria);
 
-    recipes.forEach(recipe -> addAction(new MetaShiftRecipeAction(this, criteria, recipe)));
+    Recipes recipes = new Recipes(new File(reportRoot.toURI()), listener.getLogger());
+
+    this.metrics = new Metrics(criteria);
+    this.metrics.parse(recipes);
+
+    for (Recipe recipe : recipes) {
+      MetaShiftRecipeAction recipeAction = new MetaShiftRecipeAction(
+          this, listener, criteria, reportRoot, dataSource, recipe);
+      this.addAction(recipeAction);
+    }
   }
 
   @Override
@@ -135,8 +156,12 @@ public class MetaShiftBuildAction extends MetaShiftActionBaseWithMetrics
     return this.run;
   }
 
-  public URI getReportUri() {
-    return this.reportUri;
+  public Metrics getMetrics() {
+    return this.metrics;
+  }
+
+  public DataSource getDataSource() {
+    return this.dataSource;
   }
   
   /**

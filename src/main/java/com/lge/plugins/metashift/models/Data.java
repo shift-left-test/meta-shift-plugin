@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
  * @author Sung Gon Kim
  */
 public abstract class Data<T> implements Comparable<T>, Serializable {
-
   /**
    * Represents the UUID of the class.
    */

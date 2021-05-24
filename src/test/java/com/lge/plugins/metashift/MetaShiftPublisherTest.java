@@ -29,6 +29,7 @@ import hudson.model.FreeStyleProject;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.JenkinsRule.WebClient;
 
 /**
  * Unit tests for the MetaShiftPublisher class.
@@ -44,8 +45,15 @@ public class MetaShiftPublisherTest {
   public void testConfigureRoundTrip() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
     String path = project.getRootDir().getAbsolutePath();
-    project.getPublishersList().add(new MetaShiftPublisher(path, new Criteria()));
-    project = jenkins.configRoundtrip(project);
+    MetaShiftPublisher before = new MetaShiftPublisher(path, new Criteria());
+    project.getPublishersList().add(before);
+
+    // HtmlUnit does not play well with JavaScript
+    WebClient client = jenkins.createWebClient();
+    client.getOptions().setThrowExceptionOnScriptError(false);
+
+    jenkins.submit(client.getPage(project, "configure").getFormByName("config"));
+
     jenkins.assertEqualDataBoundBeans(new MetaShiftPublisher(path, new Criteria()),
         project.getPublishersList().get(0));
   }

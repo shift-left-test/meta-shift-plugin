@@ -24,11 +24,17 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.models.factory.CoverageFactory;
-import hudson.model.Action;
-import java.io.File;
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.models.CoverageData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.persistence.DataSource;
+import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
@@ -36,10 +42,33 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * MetaShift recipe's coverage detail view action class.
  */
 public class MetaShiftRecipeCoverageAction
-    extends MetaShiftRecipeActionChild implements Action {
+    extends MetaShiftRecipeActionChild {
+  static final String STORE_KEY_COVERAGELIST = "CoverageList";
 
-  public MetaShiftRecipeCoverageAction(MetaShiftRecipeAction parent) {
-    super(parent);
+  /**
+   * constructor.
+   *
+   * @param parent parent action
+   * @param listener logger
+   * @param criteria criteria
+   * @param dataSource datasource
+   * @param recipe recipe
+   * @param metadata metadata
+   */
+  public MetaShiftRecipeCoverageAction(
+      MetaShiftRecipeAction parent, TaskListener listener,
+      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
+    super(parent, listener, criteria, dataSource, recipe, metadata);
+
+    List<CoverageData> coverageList =
+        recipe.objects(CoverageData.class).collect(Collectors.toList());
+
+    try {
+      dataSource.put(coverageList, this.getParentAction().getName(), STORE_KEY_COVERAGELIST);
+    } catch (IOException e) {
+      listener.getLogger().println(e.getMessage());
+      e.printStackTrace(listener.getLogger());
+    }
   }
 
   @Override
@@ -58,6 +87,97 @@ public class MetaShiftRecipeCoverageAction
   }
 
   /**
+   * key for line + index.
+   */
+  public static class LineIndex {
+    Long line;
+    long index;
+
+    public LineIndex(long line, long index) {
+      this.line = line;
+      this.index = index;
+    }
+
+    public long getLine() {
+      return this.line;
+    }
+    
+    public long getIndex() {
+      return this.index;
+    }
+  }
+
+  /**
+   * coverage info for each file.
+   */
+  public static class FileCoverage {
+    private String file;
+    private Set<Long> lines;
+    private Set<Long> coveredLines;
+    private Set<LineIndex> indexs;
+    private Set<LineIndex> coveredIndexs;
+
+    /**
+     * constructor.
+     */
+    public FileCoverage(String file) {
+      this.file = file;
+      this.lines = new HashSet<Long>();
+      this.coveredLines = new HashSet<Long>();
+      this.indexs = new HashSet<LineIndex>();
+      this.coveredIndexs = new HashSet<LineIndex>();
+    }
+
+    public String getFile() {
+      return this.file;
+    }
+
+    /**
+     * return line coverage.
+     *
+     * @return line coverage
+     */
+    public double getLineCoverage() {
+      if (this.lines.isEmpty()) {
+        return 0;
+      }
+
+      return (double) this.coveredLines.size() / (double) this.lines.size();
+    }
+
+    /**
+     * return branch coverage.
+     *
+     * @return branch coverage
+     */
+    public double getBranchCoverage() {
+      if (this.indexs.isEmpty()) {
+        return 0;
+      }
+
+      return (double) this.coveredIndexs.size() / (double) this.indexs.size();
+    }
+
+    /**
+     * add coverage info.
+     *
+     * @param line line
+     * @param index index
+     * @param covered is covered
+     */
+    public void addCoveredInfo(long line, long index, boolean covered) {
+      LineIndex lineIndex = new LineIndex(line, index);
+
+      this.lines.add(line);
+      this.indexs.add(lineIndex);
+      if (covered) {
+        this.coveredLines.add(line);
+        this.coveredIndexs.add(lineIndex);
+      }
+    }
+  }
+
+  /**
    * return paginated coverage list.
    *
    * @param pageIndex page index
@@ -66,15 +186,50 @@ public class MetaShiftRecipeCoverageAction
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getCoverageTableModel(int pageIndex, int pageSize)
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize)
       throws IOException {
     if (getParentAction().getMetrics().getCoverage().isAvailable()) {
-      List<?> coverageDataList = CoverageFactory.create(
-        new File(this.getParentAction().getRecipeUri()));
+      List<CoverageData> coverageDataList = this.getDataSource().get(
+          this.getParentAction().getName(), STORE_KEY_COVERAGELIST);
 
-      return getPagedDataList(pageIndex, pageSize, coverageDataList);
+      HashMap<String, FileCoverage> fileInfo = new HashMap<String, FileCoverage>();
+
+      for (CoverageData coverageData : coverageDataList) {
+        String file = coverageData.getFile();
+        long index = coverageData.getIndex();
+        long line = coverageData.getLine();
+
+        if (!fileInfo.containsKey(file)) {
+          fileInfo.put(file, new FileCoverage(file));
+        }
+        fileInfo.get(file).addCoveredInfo(line, index, coverageData.isCovered());
+      }
+
+      return getPagedDataList(pageIndex, pageSize,
+          fileInfo.values().stream().collect(Collectors.toList()));
     } else {
       return null;
     }
+  }
+
+  /**
+   * return file coverage info.
+   */
+  @JavaScriptMethod
+  public JSONObject getFileCoverageDetail(String codePath)
+      throws IOException {
+    JSONObject result = new JSONObject();
+
+    List<CoverageData> coverageDataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_COVERAGELIST);
+    
+    List<CoverageData> dataList =
+        coverageDataList.stream().filter(o -> o.getFile().equals(codePath))
+        .collect(Collectors.toList());
+    
+    result.put("dataList", dataList);
+    result.put("content", this.readFileContents(codePath));
+
+    return result;
   }
 }

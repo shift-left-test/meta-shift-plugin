@@ -1,360 +1,108 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" 
-xmlns:c="/charts" xmlns:bs="/bootstrap" xmlns:ms="/metashift" xmlns:sc="/metashift/charts">
+xmlns:c="/charts">
   <l:layout title="Meta-Shift Report">
-    <st:adjunct includes="com.lge.plugins.metashift.style"/>
-    <st:adjunct includes="com.lge.plugins.metashift.recipes-table"/>
-    <st:adjunct includes="com.lge.plugins.metashift.trend-chart"/>
-    <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+    <st:adjunct includes="com.lge.plugins.metashift.front"/>
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
-      <div class="row metashift">
-        <h1>${it.run.project.displayName} ${it.run.displayName}</h1>
-      </div>
-      <div class="row metashift">
-        <!-- overview -->
-        <h3>Overview</h3>
-      </div>
-      <div class="row metashift overview">
-        <div class="col-2 bg-light shadow-sm panel">
-          <h4>Recipes</h4>
-          <p>${it.metrics.codeSize.recipes}
-            <ms:text-diff diff="${it.codeSizeDelta.recipes}" />
-          </p>
-        </div>
-        <div class="col-2 bg-light shadow-sm panel">
-          <h4>Lines</h4>
-          <p>${it.metrics.codeSize.lines}
-            <ms:text-diff diff="${it.codeSizeDelta.lines}" />
-          </p>
-        </div>
-        <div class="col-2 bg-light shadow-sm panel">
-          <h4>Functions</h4>
-          <p>${it.metrics.codeSize.functions}
-            <ms:text-diff diff="${it.codeSizeDelta.functions}" />
-          </p>
-        </div>
-        <div class="col-2 bg-light shadow-sm panel">
-          <h4>Classes</h4>
-          <p>${it.metrics.codeSize.classes}
-            <ms:text-diff diff="${it.codeSizeDelta.classes}" />
-          </p>
-        </div>
-        <div class="col-2 bg-light shadow-sm panel">
-          <h4>Files</h4>
-          <p>${it.metrics.codeSize.files}
-            <ms:text-diff diff="${it.codeSizeDelta.files}" />
-          </p>
-        </div>
-      </div>
-      <div class="row metashift">
-        <!-- metric card -->
-        <div class="col-5">
-          <div class="row">
-            <h3>Metrics
-              <span class="measurement-group badge ${it.metrics.qualified ? 'badge-success':'badge-danger'}">
-                ${it.metrics.qualified ? 'Passed' : 'Failed'}
-              </span>
-            </h3>
-          </div>
-          <div class="row">
-            <table class="build-table">
-              <colgroup>
-                <col style="width:5%" />
-                <col style="width:20%" />
-                <col style="width:10%" />
-                <col style="width:10%" />
-                <col style="width:5%" />
-                <col style="width:5%" />
-                <col style="width:5%" />
-              </colgroup>
-              <tr class="bg-secondary text-white">
-                <th colspan="2">Category</th>
-                <th colspan="3">Rate</th>
-                <th>Thres hold</th>
-                <th>Pass Recipe#</th>
-              </tr>
-              <tr>
-                <th rowspan="2">Build Perf.</th>
-                <j:choose>
-                  <j:when test="${it.metrics.cacheAvailability.available}">
-                    <th class="${it.metrics.cacheAvailability.qualified ? 'text-success' : 'text-danger'}">
-                      Cache Availability
-                    </th>
-                    <td>${it.metrics.cacheAvailability.numerator}</td>
-                    <td>${it.metrics.cacheAvailability.denominator}</td>
-                    <td class="${it.cacheQmetrics.cacheAvailabilityualifier.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.metrics.cacheAvailability.ratio * 100)}%
-                    </td>
-                    <td>
-                      ${it.getFixedFloat('#.##', it.criteria.cacheThreshold * 100)}%
-                    </td>
-                    <td>${it.cacheAvailability.size()}</td>
-                  </j:when>
-                  <j:otherwise>
-                    <th class="text-muted">
-                      Cache Availability
-                    </th>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                  </j:otherwise>
-                </j:choose>
-              </tr>
-              <tr>
-                <j:choose>
-                  <j:when test="${it.metrics.recipeViolations.available}">
-                    <th class="${it.metrics.recipeViolations.qualified ? 'text-success' : 'text-danger'}">
-                      Recipe Violations
-                    </th>
-                    <td>${it.metrics.recipeViolations.numerator}</td>
-                    <td>${it.metrics.recipeViolations.denominator}</td>
-                    <td class="${it.metrics.recipeViolations.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.metrics.recipeViolations.ratio * 100)}%
-                    </td>
-                    <td>
-                      ${it.getFixedFloat('#.##', it.criteria.recipeViolationThreshold * 100)}%
-                    </td>
-                    <td>${it.recipeViolations.size()}</td>
-                  </j:when>
-                  <j:otherwise>
-                    <th class="text-muted">
-                      Recipe Violations
-                    </th>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                  </j:otherwise>
-                </j:choose>
-              </tr>
-              <tr>
-                <th rowspan="7">Code Quality</th>
-                <j:choose>
-                  <j:when test="${it.metrics.comments.available}">
-                    <th class="${it.metrics.comments.qualified ? 'text-success' : 'text-danger'}">
-                      Comments
-                    </th>
-                    <td>${it.metrics.comments.numerator}</td>
-                    <td>${it.metrics.comments.denominator}</td>
-                    <td class="${it.metrics.comments.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.metrics.comments.ratio * 100)}%
-                    </td>
-                    <td>
-                      ${it.getFixedFloat('#.##', it.criteria.commentThreshold * 100)}%
-                    </td>
-                    <td>${it.comments.size()}</td>
-                  </j:when>
-                  <j:otherwise>
-                    <th class="text-muted">
-                      Comments
-                    </th>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                  </j:otherwise>
-                </j:choose>
-              </tr>
-              <tr>
-                <j:choose>
-                  <j:when test="${it.metrics.codeViolations.available}">
-                    <th class="${it.metrics.codeViolations.qualified ? 'text-success' : 'text-danger'}">
-                      Code Violations
-                    </th>
-                    <td>${it.metrics.codeViolations.numerator}</td>
-                    <td>${it.metrics.codeViolations.denominator}</td>
-                    <td class="${it.metrics.codeViolations.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.metrics.codeViolations.ratio * 100)}%
-                    </td>
-                    <td>
-                      ${it.getFixedFloat('#.##', it.criteria.codeViolationThreshold * 100)}%
-                    </td>
-                    <td>${it.codeViolations.size()}</td>
-                  </j:when>
-                  <j:otherwise>
-                    <th class="text-muted">
-                      Code Violations
-                    </th>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                  </j:otherwise>
-                </j:choose>
-              </tr>
-              <tr>
-                <j:choose>
-                  <j:when test="${it.metrics.complexity.available}">
-                    <th class="${it.metrics.complexity.qualified ? 'text-success' : 'text-danger'}">
-                      Complexity
-                    </th>
-                    <td>${it.metrics.complexity.numerator}</td>
-                    <td>${it.metrics.complexity.denominator}</td>
-                    <td class="${it.metrics.complexity.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.metrics.complexity.ratio * 100)}%
-                    </td>
-                    <td>
-                      ${it.getFixedFloat('#.##', it.criteria.complexityThreshold * 100)}%
-                    </td>
-                    <td>${it.complexity.size()}</td>
-                  </j:when>
-                  <j:otherwise>
-                    <th class="text-muted">
-                      Complexity
-                    </th>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                  </j:otherwise>
-                </j:choose>
-              </tr>
-              <tr>
-                <j:choose>
-                  <j:when test="${it.metrics.duplications.available}">
-                    <th class="${it.metrics.duplications.qualified ? 'text-success' : 'text-danger'}">
-                      Duplications
-                    </th>
-                    <td>${it.metrics.duplications.numerator}</td>
-                    <td>${it.metrics.duplications.denominator}</td>
-                    <td class="${it.metrics.duplications.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.metrics.duplications.ratio * 100)}%
-                    </td>
-                    <td>
-                      ${it.getFixedFloat('#.##', it.criteria.duplicationThreshold * 100)}%
-                    </td>
-                    <td>${it.duplications.size()}</td>
-                  </j:when>
-                  <j:otherwise>
-                    <th class="text-muted">
-                      Duplications
-                    </th>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                  </j:otherwise>
-                </j:choose>
-              </tr>
-              <tr>
-                <j:choose>
-                  <j:when test="${it.metrics.test.available}">
-                    <th class="${it.metrics.test.qualified ? 'text-success' : 'text-danger'}">
-                      Test
-                    </th>
-                    <td>${it.metrics.test.numerator}</td>
-                    <td>${it.metrics.test.denominator}</td>
-                    <td class="${it.metrics.test.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.metrics.test.ratio * 100)}%
-                    </td>
-                    <td>
-                      ${it.getFixedFloat('#.##', it.criteria.testThreshold * 100)}%
-                    </td>
-                    <td>${it.test.size()}</td>
-                  </j:when>
-                  <j:otherwise>
-                    <th class="text-muted">
-                      Test
-                    </th>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                  </j:otherwise>
-                </j:choose>
-              </tr>
-              <tr>
-                <j:choose>
-                  <j:when test="${it.metrics.coverage.available}">
-                    <th class="${it.metrics.coverage.qualified ? 'text-success' : 'text-danger'}">
-                      Coverage
-                    </th>
-                    <td>${it.metrics.coverage.numerator}</td>
-                    <td>${it.metrics.coverage.denominator}</td>
-                    <td class="${it.metrics.coverage.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.metrics.coverage.ratio * 100)}%
-                    </td>
-                    <td>
-                      ${it.getFixedFloat('#.##', it.criteria.coverageThreshold * 100)}%
-                    </td>
-                    <td>${it.coverage.size()}</td>
-                  </j:when>
-                  <j:otherwise>
-                    <th class="text-muted">
-                      Coverage
-                    </th>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                  </j:otherwise>
-                </j:choose>
-              </tr>
-              <tr>
-                <j:choose>
-                  <j:when test="${it.metrics.mutationTest.available}">
-                    <th class="${it.metrics.mutationTest.qualified ? 'text-success' : 'text-danger'}">
-                      Mutation Test
-                    </th>
-                    <td>${it.metrics.mutationTest.numerator}</td>
-                    <td>${it.metrics.mutationTest.denominator}</td>
-                    <td class="${it.metrics.mutationTest.qualified ? 'bg-success' : 'bg-danger'} text-white">
-                      ${it.getFixedFloat('#.##', it.metrics.mutationTest.ratio * 100)}%
-                    </td>
-                    <td>
-                      ${it.getFixedFloat('#.##', it.criteria.mutationTestThreshold * 100)}%
-                    </td>
-                    <td>${it.mutationTest.size()}</td>
-                  </j:when>
-                  <j:otherwise>
-                    <th class="text-muted">
-                      Mutation Test
-                    </th>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                    <td class="text-muted">--</td>
-                  </j:otherwise>
-                </j:choose>
-              </tr>
-            </table>
-          </div>
-        </div>
-        <div class="col-6">
-          <h3>Trend</h3>
-          <div style="width:100%; height:100%" id="trend-chart"></div>
-          <script type="text/javascript">
-          {
-            const buildAction = <st:bind value="${it}" />;
-            renderTrendChart("trend-chart", buildAction)
-          }
-          </script>
-        </div>
-      </div>
-      <div class="row metashift">
-        <div class="col-11">
-          <h3>Recipe List</h3>
-          <div style="width:100%" id="recipes-table"></div>
-        </div>
-        <script type="text/javascript">
-        {
-          const buildAction = <st:bind value="${it}" />;
-          renderRecipesTable("#recipes-table", buildAction)
-        }
-        </script>
-      </div>
+      <st:bind var="proxy" value="${it}" />
+      <h1>${it.run.project.displayName} ${it.run.displayName}</h1>
+      <h3>Overview</h3>
+      <code-size
+        recipeSize="${it.metrics.codeSize.recipes}"
+        recipeSizeDelta="${it.codeSizeDelta.recipes}"
+        lineSize="${it.metrics.codeSize.lines}"
+        lineSizeDelta="${it.codeSizeDelta.lines}"
+        functionSize="${it.metrics.codeSize.functions}"
+        functionSizeDelta="${it.codeSizeDelta.functions}"
+        classSize="${it.metrics.codeSize.classes}"
+        classSizeDelta="${it.codeSizeDelta.classes}"
+        fileSize="${it.metrics.codeSize.files}"
+        fileSizeDelta="${it.codeSizeDelta.files}"
+      />
+      <h3>Metrics
+        <span class="${it.metrics.qualified ? 'text-pass' : 'text-fail'}">
+          ${it.metrics.qualified ? 'Passed' : 'Failed'}
+        </span>
+      </h3>
+      <h4>Build Performance</h4>
+      <metrics-simple-view
+        title="Cache Availability"
+        available="${it.metrics.cacheAvailability.available}"
+        qualified="${it.metrics.cacheAvailability.qualified}"
+        ratio="${it.metrics.cacheAvailability.ratio}"
+        numerator="${it.metrics.cacheAvailability.numerator}"
+        denominator="${it.metrics.cacheAvailability.denominator}" />
+      <metrics-simple-view
+        title="Recipe Violations"
+        available="${it.metrics.recipeViolations.available}"
+        qualified="${it.metrics.recipeViolations.qualified}"
+        ratio="${it.metrics.recipeViolations.ratio}"
+        numerator="${it.metrics.recipeViolations.numerator}"
+        denominator="${it.metrics.recipeViolations.denominator}" />
+      <h4>Code Quality</h4>
+      <metrics-simple-view
+        title="Comments"
+        available="${it.metrics.comments.available}"
+        qualified="${it.metrics.comments.qualified}"
+        ratio="${it.metrics.comments.ratio}"
+        numerator="${it.metrics.comments.numerator}"
+        denominator="${it.metrics.comments.denominator}" />
+      <metrics-simple-view
+        title="Violations"
+        available="${it.metrics.codeViolations.available}"
+        qualified="${it.metrics.codeViolations.qualified}"
+        ratio="${it.metrics.codeViolations.ratio}"
+        numerator="${it.metrics.codeViolations.numerator}"
+        denominator="${it.metrics.codeViolations.denominator}" />
+      <metrics-simple-view
+        title="Complexity"
+        available="${it.metrics.complexity.available}"
+        qualified="${it.metrics.complexity.qualified}"
+        ratio="${it.metrics.complexity.ratio}"
+        numerator="${it.metrics.complexity.numerator}"
+        denominator="${it.metrics.complexity.denominator}" />
+      <metrics-simple-view
+        title="Duplications"
+        available="${it.metrics.duplications.available}"
+        qualified="${it.metrics.duplications.qualified}"
+        ratio="${it.metrics.duplications.ratio}"
+        numerator="${it.metrics.duplications.numerator}"
+        denominator="${it.metrics.duplications.denominator}" />
+      <metrics-simple-view
+        title="Testing"
+        available="${it.metrics.test.available}"
+        qualified="${it.metrics.test.qualified}"
+        ratio="${it.metrics.test.ratio}"
+        numerator="${it.metrics.test.numerator}"
+        denominator="${it.metrics.test.denominator}" />
+      <metrics-simple-view
+        title="Coverage"
+        available="${it.metrics.coverage.available}"
+        qualified="${it.metrics.coverage.qualified}"
+        ratio="${it.metrics.coverage.ratio}"
+        numerator="${it.metrics.coverage.numerator}"
+        denominator="${it.metrics.coverage.denominator}" />
+      <metrics-simple-view
+        title="Mutation Test"
+        available="${it.metrics.mutationTest.available}"
+        qualified="${it.metrics.mutationTest.qualified}"
+        ratio="${it.metrics.mutationTest.ratio}"
+        numerator="${it.metrics.mutationTest.numerator}"
+        denominator="${it.metrics.mutationTest.denominator}" />
+      <h3>Recipe List</h3>
+      <recipe-list>
+        
+      </recipe-list>
+      
+      <script type="text/javascript">
+      {
+        document.querySelector("recipe-list").setAjaxFunc(
+          proxy.getRecipesTableModel
+        )
+      }
+      </script>
     </l:main-panel>
   </l:layout>
 </j:jelly>

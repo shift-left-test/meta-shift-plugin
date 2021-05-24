@@ -24,24 +24,68 @@
 
 package com.lge.plugins.metashift;
 
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ListUtils;
+import hudson.model.Action;
 import hudson.model.Run;
+import hudson.model.TaskListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.FileUtils;
 
 /**
  * MetaShift recipe's detail view common feature class.
  */
-public abstract class MetaShiftRecipeActionChild {
+public abstract class MetaShiftRecipeActionChild implements Action {
 
   private MetaShiftRecipeAction parent;
 
-  public MetaShiftRecipeActionChild(MetaShiftRecipeAction parent) {
+  /**
+   * constructor.
+   *
+   * @param parent parent action
+   * @param listener logger
+   * @param criteria criteria
+   * @param dataSource datasource
+   * @param recipe recipe
+   * @param metadata metadata
+   */
+  public MetaShiftRecipeActionChild(MetaShiftRecipeAction parent, TaskListener listener,
+      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
     this.parent = parent;
   }
 
   public MetaShiftRecipeAction getParentAction() {
     return this.parent;
+  }
+
+  public DataSource getDataSource() {
+    return this.parent.getParentAction().getDataSource();
+  }
+
+  /**
+   * save codepath content to DataSource.
+   */
+  public void saveFilecontents(JSONObject metadata, String codePath)
+      throws IOException {
+    File file = new File(codePath);
+    String contents;
+    if (file.isAbsolute()) {
+      contents = FileUtils.readFileToString(file, "UTF-8");
+    } else {
+      contents = FileUtils.readFileToString(
+          new File(metadata.getString("S"), codePath), "UTF-8");
+    }
+    this.getDataSource().put(contents, this.parent.getName(), "FILE", codePath);
+  }
+
+  public String readFileContents(String codePath)
+      throws IOException {
+    return this.getDataSource().get(this.parent.getName(), "FILE", codePath);   
   }
 
   public Run<?, ?> getRun() {
@@ -57,7 +101,11 @@ public abstract class MetaShiftRecipeActionChild {
     }
 
     JSONObject result = new JSONObject();
-    result.put("data", pagedDataList.get(pageIndex - 1));
+    if (pageIndex > 0) {
+      result.put("data", pagedDataList.get(pageIndex - 1));
+    } else {
+      result.put("data", null);
+    }
     result.put("last_page", pagedDataList.size());
     return result;
   }

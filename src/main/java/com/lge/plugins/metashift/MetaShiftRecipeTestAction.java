@@ -24,11 +24,14 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.models.factory.TestFactory;
-import hudson.model.Action;
-import java.io.File;
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.TestData;
+import com.lge.plugins.metashift.persistence.DataSource;
+import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
@@ -36,10 +39,33 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * MetaShift recipe's test detail view action class.
  */
 public class MetaShiftRecipeTestAction
-    extends MetaShiftRecipeActionChild implements Action {
+    extends MetaShiftRecipeActionChild {
 
-  public MetaShiftRecipeTestAction(MetaShiftRecipeAction parent) {
-    super(parent);
+  static final String STORE_KEY_TESTLIST = "TestList";
+
+  /**
+   * constructor.
+   *
+   * @param parent parent action
+   * @param listener logger
+   * @param criteria criteria
+   * @param dataSource datasource
+   * @param recipe recipe
+   * @param metadata metadata
+   */
+  public MetaShiftRecipeTestAction(
+      MetaShiftRecipeAction parent, TaskListener listener,
+      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
+    super(parent, listener, criteria, dataSource, recipe, metadata);
+
+    List<TestData> testList = recipe.objects(TestData.class).collect(Collectors.toList());
+
+    try {
+      dataSource.put(testList, this.getParentAction().getName(), STORE_KEY_TESTLIST);
+    } catch (IOException e) {
+      listener.getLogger().println(e.getMessage());
+      e.printStackTrace(listener.getLogger());
+    }
   }
 
   @Override
@@ -66,11 +92,11 @@ public class MetaShiftRecipeTestAction
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getTestTableModel(int pageIndex, int pageSize)
+  public JSONObject getRecipeTests(int pageIndex, int pageSize)
       throws IOException {
     if (getParentAction().getMetrics().getTest().isAvailable()) {
-      List<?> testDataList = TestFactory.create(
-        new File(this.getParentAction().getRecipeUri()));
+      List<?> testDataList = this.getDataSource().get(
+          this.getParentAction().getName(), STORE_KEY_TESTLIST);
 
       return getPagedDataList(pageIndex, pageSize, testDataList);
     } else {

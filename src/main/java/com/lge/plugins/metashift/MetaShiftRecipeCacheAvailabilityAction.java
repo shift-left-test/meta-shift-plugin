@@ -24,11 +24,14 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.models.factory.CacheFactory;
-import hudson.model.Action;
-import java.io.File;
+import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.models.CacheData;
+import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.persistence.DataSource;
+import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
@@ -36,10 +39,33 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * MetaShift recipe's cache availability detail view action class.
  */
 public class MetaShiftRecipeCacheAvailabilityAction
-    extends MetaShiftRecipeActionChild implements Action {
+    extends MetaShiftRecipeActionChild {
 
-  public MetaShiftRecipeCacheAvailabilityAction(MetaShiftRecipeAction parent) {
-    super(parent);
+  static final String STORE_KEY_CACHELIST = "CacheList";
+
+  /**
+   * constructor.
+   *
+   * @param parent parent action
+   * @param listener logger
+   * @param criteria criteria
+   * @param dataSource datasource
+   * @param recipe recipe
+   * @param metadata metadata
+   */
+  public MetaShiftRecipeCacheAvailabilityAction(
+      MetaShiftRecipeAction parent, TaskListener listener,
+      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
+    super(parent, listener, criteria, dataSource, recipe, metadata);
+
+    List<CacheData> cacheList = recipe.objects(CacheData.class).collect(Collectors.toList());
+
+    try {
+      dataSource.put(cacheList, this.getParentAction().getName(), STORE_KEY_CACHELIST);
+    } catch (IOException e) {
+      listener.getLogger().println(e.getMessage());
+      e.printStackTrace(listener.getLogger());
+    }
   }
 
   @Override
@@ -66,14 +92,10 @@ public class MetaShiftRecipeCacheAvailabilityAction
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getCacheTableModel(int pageIndex, int pageSize)
+  public JSONObject getRecipeCaches(int pageIndex, int pageSize)
       throws IOException {
-    if (getParentAction().getMetrics().getCacheAvailability().isAvailable()) {
-      List<?> cacheList = CacheFactory.create(
-        new File(this.getParentAction().getRecipeUri()));
-      return getPagedDataList(pageIndex, pageSize, cacheList);
-    } else {
-      return null;
-    }
+    List<?> cacheList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_CACHELIST);
+    return getPagedDataList(pageIndex, pageSize, cacheList);
   }
 }

@@ -66,11 +66,6 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.12.0</version>
     </dependency>
-    <dependency>
-        <groupId>io.jenkins.plugins</groupId>
-        <artifactId>bootstrap4-api</artifactId>
-        <version>4.5.3-1</version>
-    </dependency>
     <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
     <dependency>
       <groupId>org.mockito</groupId>
@@ -152,6 +147,44 @@
             <outputFormat>HTML</outputFormat>
             <outputFormat>XML</outputFormat>
           </outputFormats>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.11.3</version>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>webpack build</id>
+            <goals>
+              <goal>webpack</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <arguments></arguments>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <nodeVersion>v12.20.0</nodeVersion>
+          <npmVersion>6.14.12</npmVersion>
         </configuration>
       </plugin>
     </plugins>
