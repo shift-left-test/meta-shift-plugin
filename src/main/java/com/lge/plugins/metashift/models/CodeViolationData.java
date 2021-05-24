@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public abstract class CodeViolationData extends Data<CodeViolationData> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = -4358435516364346298L;
+
+  /**
    * Represents the name fo the file.
    */
   private final String file;

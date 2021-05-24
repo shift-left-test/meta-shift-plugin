@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public final class MajorCodeViolationData extends CodeViolationData {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 9181658951378014035L;
+
+  /**
    * Default constructor.
    *
    * @param recipe      name

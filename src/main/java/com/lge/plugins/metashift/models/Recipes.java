@@ -41,6 +41,11 @@ import org.apache.commons.io.output.NullPrintStream;
 public final class Recipes extends ArrayList<Recipe> implements Streamable {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 9217713417115395018L;
+
+  /**
    * Creates an empty list of Recipe objects.
    */
   public Recipes() {

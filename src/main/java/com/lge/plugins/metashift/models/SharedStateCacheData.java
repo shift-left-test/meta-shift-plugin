@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public final class SharedStateCacheData extends CacheData {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 3499107394956644333L;
+
+  /**
    * Default constructor.
    *
    * @param recipe    name

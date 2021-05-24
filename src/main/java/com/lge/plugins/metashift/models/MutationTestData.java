@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public abstract class MutationTestData extends Data<MutationTestData> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = -5700729307383480244L;
+
+  /**
    * Represents the name of the file.
    */
   private final String file;

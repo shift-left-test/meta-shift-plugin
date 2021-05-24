@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public final class InfoRecipeViolationData extends RecipeViolationData {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = -7166769406751508127L;
+
+  /**
    * Default constructor.
    *
    * @param recipe      name

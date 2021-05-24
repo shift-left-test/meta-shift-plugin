@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public abstract class TestData extends Data<TestData> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 246499080494784249L;
+
+  /**
    * Represents the name of the test suite.
    */
   private final String suite;

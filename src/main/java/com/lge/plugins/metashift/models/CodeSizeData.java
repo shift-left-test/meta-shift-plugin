@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public final class CodeSizeData extends Data<CodeSizeData> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 6104523429583412555L;
+
+  /**
    * Represents the filename.
    */
   private final String file;

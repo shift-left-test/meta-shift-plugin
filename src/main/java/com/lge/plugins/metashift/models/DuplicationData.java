@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public final class DuplicationData extends Data<DuplicationData> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 5396591078130330879L;
+
+  /**
    * Represents the name of the file.
    */
   private final String file;

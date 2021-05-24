@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public abstract class CacheData extends Data<CacheData> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = -8870145998645249730L;
+
+  /**
    * Represents the cache signature.
    */
   private final String signature;

@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public final class ComplexityData extends Data<ComplexityData> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 919490239643007829L;
+
+  /**
    * Represents the name of the file.
    */
   private final String file;

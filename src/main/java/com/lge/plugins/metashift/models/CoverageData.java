@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public abstract class CoverageData extends Data<CoverageData> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 2663571199454502598L;
+
+  /**
    * Represents the file name.
    */
   private final String file;

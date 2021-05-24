@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +34,12 @@ import java.util.regex.Pattern;
  * @param <T> the class type
  * @author Sung Gon Kim
  */
-public abstract class Data<T> implements Comparable<T> {
+public abstract class Data<T> implements Comparable<T>, Serializable {
+
+  /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = -7672797936775946949L;
 
   /**
    * Represents the name of the recipe.

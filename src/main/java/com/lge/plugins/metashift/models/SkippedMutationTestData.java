@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public final class SkippedMutationTestData extends MutationTestData {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 6172236786183701568L;
+
+  /**
    * Default constructor.
    *
    * @param recipe        name

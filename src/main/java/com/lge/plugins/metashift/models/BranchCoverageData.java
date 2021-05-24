@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public final class BranchCoverageData extends CoverageData {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = -8559015880405926852L;
+
+  /**
    * Default constructor.
    *
    * @param recipe   name

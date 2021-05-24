@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public final class CommentData extends Data<CommentData> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = -8223804714224191070L;
+
+  /**
    * Represents the name of the file.
    */
   private final String file;

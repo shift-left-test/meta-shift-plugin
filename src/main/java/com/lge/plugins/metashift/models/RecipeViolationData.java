@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public abstract class RecipeViolationData extends Data<RecipeViolationData> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = -5849334727328868160L;
+
+  /**
    * Represents the name of the file.
    */
   private final String file;

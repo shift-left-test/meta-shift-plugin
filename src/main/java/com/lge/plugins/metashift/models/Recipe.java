@@ -52,6 +52,11 @@ import org.apache.commons.io.output.NullPrintStream;
 public final class Recipe extends Data<Recipe> implements Streamable {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = -3212169684403928336L;
+
+  /**
    * Represents the functional interface of factory methods.
    *
    * @param <T> input object type

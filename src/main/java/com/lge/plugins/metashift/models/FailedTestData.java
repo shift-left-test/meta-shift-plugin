@@ -32,6 +32,11 @@ package com.lge.plugins.metashift.models;
 public final class FailedTestData extends TestData {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 195117557746969885L;
+
+  /**
    * Default constructor.
    *
    * @param recipe  name
