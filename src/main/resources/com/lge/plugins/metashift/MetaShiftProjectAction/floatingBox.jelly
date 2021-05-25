@@ -4,12 +4,14 @@
   <st:adjunct includes="com.lge.plugins.metashift.front"/>
 
   <st:bind var="proxy" value="${from}" />
-  <build-trend-chart />
+  <div class="metashift">
+    <build-trend-chart />
+  </div>
   <script type="text/javascript">
   {
     document.querySelector("build-trend-chart").setAjaxFunc(
       proxy.getTrendChartModel
-    );
+    )
   }
   </script>
 </j:jelly>

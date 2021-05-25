@@ -1,5 +1,76 @@
 @import './vars.scss';
 
+@font-face {
+  font-family: 'MetaShift';
+  src: url('../fonts/OpenSansCondensed-Light.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MetaShiftBold';
+  src: url('../fonts/OpenSansCondensed-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MetaShiftItalic';
+  src: url('../fonts/OpenSansCondensed-LightItalic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.metashift {
+  font-family: 'MetaShift';
+  
+  h1 {
+    margin-top: 30px;
+  }
+  
+  h2 {
+    margin-top: 30px;
+  }
+  
+  h3 {
+    margin-top: 10px;
+    margin-left: 20px;
+  }
+  
+  h4 {
+    margin-top: 10px;
+    font-size: 24px;
+  }
+}
+
+// icon
+.ico-pass:after {
+  padding: 5px 18px 5px 30px;
+  background-position: 50%;
+  background-size: 30px 30px;
+  background-repeat: no-repeat;
+  background-image: url('../img/check_circle_black_36dp.png');
+  content:"";
+}
+
+.ico-fail:after {
+  padding: 5px 18px 5px 30px;
+  background-position: 50%;
+  background-size: 30px 30px;
+  background-repeat: no-repeat;
+  background-image: url('../img/cancel_black_36dp.png');
+  content:"";
+}
+
+.ico-na:after {
+  padding: 5px 18px 5px 30px;
+  background-position: 50%;
+  background-size: 30px 30px;
+  background-repeat: no-repeat;
+  background-image: url('../img/remove_circle_black_36dp.png');
+  content:"";
+}
+
 build-trend-chart {
   .chart {
     width: 600px;
@@ -44,14 +115,20 @@ code-size {
     border-color: gray;
     margin: 2px;
     text-align: center;
-    width: 15%;
+    width: 180px;
+    padding: 5px;
   }
 
-  p {
-    margin: 0;
+  .title {
+    font-size: 16px;
+    font-weight: bold;
   }
+
   .size-number {
+    //font-family: 'MetaShiftBold';
+    font-weight: bold;
     font-size: 30px;
+    line-height: 30px;
   }
 
   .size-diff {
@@ -63,22 +140,30 @@ code-size {
 
 metrics-simple-view {
   display: inline-block;
-  border: 1px solid;
-  border-radius: 3px;
-  border-color: gray;
+  
   margin: 2px;
   text-align: center;
-  width: 20%;
+  width: 180px;
 
-  p {
-    margin: 0;
+  .board{
+    border: 1px solid;
+    border-radius: 3px;
+    border-color: gray;
+  }
+
+  .title {
+    padding-top: 8px;
+    font-size: 16px;
   }
 
   .size-number {
+    font-family: 'MetaShiftBold';
     font-size: 40px;
+    line-height: 40px;
   }
 
   .progress {
+    margin-top: 2px;
     width: 100%;
     height: 10px;
     background-color: gray;
@@ -94,28 +179,8 @@ metrics-simple-view.has-url:hover {
   transform: scale(1.05);
 }
 
-.metashift {
-  h1 {
-    margin-top: 30px;
-  }
-  
-  h2 {
-    margin-top: 30px;
-  }
-  
-  h3 {
-    margin-top: 10px;
-    margin-left: 20px;
-  }
-  
-  h4 {
-    text-align: center;
-    font-size: 24px;
-  }
-}
-
 .text-na {
-  color: #101010;
+  color: gray;
 }
 
 .text-pass {

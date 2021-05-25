@@ -20,7 +20,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         document.querySelector("coverage-files").setAjaxFunc(
           proxy.getRecipeFiles,
           proxy.getFileCoverageDetail
-        );
+        )
       }
       </script>
     </l:main-panel>

@@ -21,33 +21,30 @@ export class MetricsSimpleView extends LitElement {
     var diffDirection = this.delta == 0 ? '' :
         (this.delta > 0 ? '▲' : '▼');
 
-    return html`<div>
-      <p>
-        <b class="title">${this.title}</b>
-        <span>
+    var textClass = this.available === "true" ? '' : 'text-na';
+    // TODO: progress should be racipe rate
+    var progress = this.available === "true" ? this.numerator / this.denominator * 100 : 0;
+    return html`<div class="board">
+      <div class="title">
+        <b class=${this.available === "true" ?
+        (this.qualified === "true" ? 
+          'ico-pass':
+          'ico-fail'):'ico-na'}>${this.title}</b>
+      </div>
+      <div class="size-number ${textClass}">
         ${this.available === "true" ?
-          (this.qualified === "true" ? 
-            html`PASS`:
-            html`FAIL`):html``}
-        </span>
-      </p>
-      <p class="size-number">
-        <b>${this.available === "true" ?
         html`${(this.ratio * 100).toFixed(2)}%` :
-        html`N/A`}</b>
-      </p>
-      <p class="size-diff">
+        html`N/A`}
+      </div>
+      <div class="size-diff ${textClass}">
       (${diffDirection}${this.delta})
-      </p>
-      <p class="text-white description">
-        ${this.available === "true" ?
-          html`<b>${this.numerator}</b> out of <b>${this.denominator}</b>` :
-          html``}</p>
-      <div class="progress">
-        <div class="progress-bar" style="width:${
-          this.numerator / this.denominator * 100
-        }%">
-        </div>
+      </div>
+      <div class="description ${textClass}">
+        <b>${this.numerator}</b> out of <b>${this.denominator}</b>
+      </div>
+    </div>
+    <div class="progress">
+      <div class="progress-bar" style="width:${progress}%">
       </div>
     </div>
     `

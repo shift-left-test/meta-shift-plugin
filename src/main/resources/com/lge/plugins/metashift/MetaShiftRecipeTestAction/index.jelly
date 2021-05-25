@@ -6,19 +6,21 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
       <st:bind var="proxy" value="${it}" />
-      <h1>
-        ${it.run.project.displayName} ${it.run.displayName}
-      </h1>
-      <h2>
-        Test [${it.parentAction.displayName}]
-      </h2>
-      <h3>Test List</h3>
-      <test-list />
+      <div class="metashift">
+        <h1>
+          ${it.run.project.displayName} ${it.run.displayName}
+        </h1>
+        <h2>
+          Test [${it.parentAction.displayName}]
+        </h2>
+        <h3>Test List</h3>
+        <test-list />
+      </div>
       <script type="text/javascript">
       {
         document.querySelector("test-list").setAjaxFunc(
           proxy.getRecipeTests
-        );
+        )
       }
       </script>
     </l:main-panel>

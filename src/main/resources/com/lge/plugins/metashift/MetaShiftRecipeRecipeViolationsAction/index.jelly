@@ -6,21 +6,23 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
       <st:bind var="proxy" value="${it}" />
-      <h1>
-        ${it.run.project.displayName} ${it.run.displayName}
-      </h1>
-      <h2>
-        Recipe Violations [${it.parentAction.displayName}]
-      </h2>
-      <h3>Recipe Files</h3>
-      <recipe-violation-files />
-      <recipe-violation-file-view/>
+      <div class="metashift">
+        <h1>
+          ${it.run.project.displayName} ${it.run.displayName}
+        </h1>
+        <h2>
+          Recipe Violations [${it.parentAction.displayName}]
+        </h2>
+        <h3>Recipe Files</h3>
+        <recipe-violation-files />
+        <recipe-violation-file-view/>
+      </div>
       <script type="text/javascript">
       {
         document.querySelector("recipe-violation-files").setAjaxFunc(
           proxy.getRecipeFiles,
           proxy.getFileRecipeViolationDetail
-        );
+        )
       }
       </script>
     </l:main-panel>

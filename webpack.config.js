@@ -4,7 +4,7 @@ const path = require('path')
 const rewrite = require('express-urlrewrite')
 
 module.exports = {
-  entry: './src/front/js/index.js',
+  entry: './src/main/frontend/js/index.js',
   module: {
     rules: [
       {
@@ -26,7 +26,13 @@ module.exports = {
         ]
       },
       {
-        test: /\.ttf$/,
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        use: [
+          'file-loader'
+        ]
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
         use: [
           'file-loader'
         ]

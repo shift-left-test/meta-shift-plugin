@@ -2,72 +2,68 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <st:adjunct includes="com.lge.plugins.metashift.front"/>
-  <h2>MetaShift Summary
-    <span class="${it.metrics.qualified ? 'text-pass':'text-fail'}">
-      ${it.metrics.qualified ? 'Passed' : 'Failed'}
-    </span>
-  </h2>
-  <build-summary
-    title="Cache Availability"
-    available="${it.metrics.cacheAvailability.available}"
-    qualified="${it.metrics.cacheAvailability.qualified}"
-    ratio="${it.metrics.cacheAvailability.ratio}"
-    numerator="${it.metrics.cacheAvailability.numerator}"
-    denominator="${it.metrics.cacheAvailability.denominator}" />
-  <build-summary
-    title="Recipe Violations"
-    available="${it.metrics.recipeViolations.available}"
-    qualified="${it.metrics.recipeViolations.qualified}"
-    ratio="${it.metrics.recipeViolations.ratio}"
-    numerator="${it.metrics.recipeViolations.numerator}"
-    denominator="${it.metrics.recipeViolations.denominator}" />
-  <build-summary
-    title="Comments"
-    available="${it.metrics.comments.available}"
-    qualified="${it.metrics.comments.qualified}"
-    ratio="${it.metrics.comments.ratio}"
-    numerator="${it.metrics.comments.numerator}"
-    denominator="${it.metrics.comments.denominator}" />
-  <build-summary
-    title="Violations"
-    available="${it.metrics.codeViolations.available}"
-    qualified="${it.metrics.codeViolations.qualified}"
-    ratio="${it.metrics.codeViolations.ratio}"
-    numerator="${it.metrics.codeViolations.numerator}"
-    denominator="${it.metrics.codeViolations.denominator}" />
-  <build-summary
-    title="Complexity"
-    available="${it.metrics.complexity.available}"
-    qualified="${it.metrics.complexity.qualified}"
-    ratio="${it.metrics.complexity.ratio}"
-    numerator="${it.metrics.complexity.numerator}"
-    denominator="${it.metrics.complexity.denominator}" />
-  <build-summary
-    title="Duplications"
-    available="${it.metrics.duplications.available}"
-    qualified="${it.metrics.duplications.qualified}"
-    ratio="${it.metrics.duplications.ratio}"
-    numerator="${it.metrics.duplications.numerator}"
-    denominator="${it.metrics.duplications.denominator}" />
-  <build-summary
-    title="Testing"
-    available="${it.metrics.test.available}"
-    qualified="${it.metrics.test.qualified}"
-    ratio="${it.metrics.test.ratio}"
-    numerator="${it.metrics.test.numerator}"
-    denominator="${it.metrics.test.denominator}" />
-  <build-summary
-    title="Coverage"
-    available="${it.metrics.coverage.available}"
-    qualified="${it.metrics.coverage.qualified}"
-    ratio="${it.metrics.coverage.ratio}"
-    numerator="${it.metrics.coverage.numerator}"
-    denominator="${it.metrics.coverage.denominator}" />
-  <build-summary
-    title="Mutation Test"
-    available="${it.metrics.mutationTest.available}"
-    qualified="${it.metrics.mutationTest.qualified}"
-    ratio="${it.metrics.mutationTest.ratio}"
-    numerator="${it.metrics.mutationTest.numerator}"
-    denominator="${it.metrics.mutationTest.denominator}" />
+  <div class="metashift">
+    <h2>MetaShift Summary
+      <span class="${it.metrics.qualified ? 'text-pass':'text-fail'}">
+        ${it.metrics.qualified ? 'Passed' : 'Failed'}
+      </span>
+    </h2>
+    <build-summary title="Cache Availability"
+      available="${it.metrics.cacheAvailability.available}"
+      qualified="${it.metrics.cacheAvailability.qualified}"
+      ratio="${it.metrics.cacheAvailability.ratio}"
+      numerator="${it.metrics.cacheAvailability.numerator}"
+      denominator="${it.metrics.cacheAvailability.denominator}" />
+    <build-summary title="Recipe Violations"
+      available="${it.metrics.recipeViolations.available}"
+      qualified="${it.metrics.recipeViolations.qualified}"
+      ratio="${it.metrics.recipeViolations.ratio}"
+      numerator="${it.metrics.recipeViolations.numerator}"
+      denominator="${it.metrics.recipeViolations.denominator}" />
+    <build-summary title="Comments"
+      available="${it.metrics.comments.available}"
+      qualified="${it.metrics.comments.qualified}"
+      ratio="${it.metrics.comments.ratio}"
+      numerator="${it.metrics.comments.numerator}"
+      denominator="${it.metrics.comments.denominator}" />
+    <build-summary title="Violations"
+      available="${it.metrics.codeViolations.available}"
+      qualified="${it.metrics.codeViolations.qualified}"
+      ratio="${it.metrics.codeViolations.ratio}"
+      numerator="${it.metrics.codeViolations.numerator}"
+      denominator="${it.metrics.codeViolations.denominator}" />
+    <build-summary title="Complexity"
+      available="${it.metrics.complexity.available}"
+      qualified="${it.metrics.complexity.qualified}"
+      ratio="${it.metrics.complexity.ratio}"
+      numerator="${it.metrics.complexity.numerator}"
+      denominator="${it.metrics.complexity.denominator}" />
+    <build-summary title="Duplications"
+      available="${it.metrics.duplications.available}"
+      qualified="${it.metrics.duplications.qualified}"
+      ratio="${it.metrics.duplications.ratio}"
+      numerator="${it.metrics.duplications.numerator}"
+      denominator="${it.metrics.duplications.denominator}" />
+    <build-summary
+      title="Testing"
+      available="${it.metrics.test.available}"
+      qualified="${it.metrics.test.qualified}"
+      ratio="${it.metrics.test.ratio}"
+      numerator="${it.metrics.test.numerator}"
+      denominator="${it.metrics.test.denominator}" />
+    <build-summary
+      title="Coverage"
+      available="${it.metrics.coverage.available}"
+      qualified="${it.metrics.coverage.qualified}"
+      ratio="${it.metrics.coverage.ratio}"
+      numerator="${it.metrics.coverage.numerator}"
+      denominator="${it.metrics.coverage.denominator}" />
+    <build-summary
+      title="Mutation Test"
+      available="${it.metrics.mutationTest.available}"
+      qualified="${it.metrics.mutationTest.qualified}"
+      ratio="${it.metrics.mutationTest.ratio}"
+      numerator="${it.metrics.mutationTest.numerator}"
+      denominator="${it.metrics.mutationTest.denominator}" />
+  </div>
 </j:jelly>

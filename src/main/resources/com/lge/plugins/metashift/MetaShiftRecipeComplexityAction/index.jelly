@@ -6,21 +6,23 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
       <st:bind var="proxy" value="${it}" />
-      <h1>
-        ${it.run.project.displayName} ${it.run.displayName}
-      </h1>
-      <h2>
-        Complexity [${it.parentAction.displayName}]
-      </h2>
-      <h3>Complexity List</h3>
-      <complexity-files />
-      <complexity-file-view />
+      <div class="metashift">
+        <h1>
+          ${it.run.project.displayName} ${it.run.displayName}
+        </h1>
+        <h2>
+          Complexity [${it.parentAction.displayName}]
+        </h2>
+        <h3>Complexity List</h3>
+        <complexity-files />
+        <complexity-file-view />
+      </div>
       <script type="text/javascript">
       {
         document.querySelector("complexity-files").setAjaxFunc(
           proxy.getRecipeFiles,
           proxy.getFileComplexityDetail
-        );
+        )
       }
       </script>
     </l:main-panel>
