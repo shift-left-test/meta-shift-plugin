@@ -41,15 +41,14 @@ import org.junit.Test;
 public class CoverageDataTest {
 
   private final CoverageData origin =
-      new StatementCoverageData("A-B-C", "a.file", "func1()", 1, true);
+      new StatementCoverageData("A-B-C", "a.file", 1, true);
   private final CoverageData same =
-      new StatementCoverageData("A-B-C", "a.file", "func1()", 1, false);
+      new StatementCoverageData("A-B-C", "a.file", 1, false);
 
   @Test
   public void testInitData() {
     assertEquals("A-B-C", origin.getRecipe());
     assertEquals("a.file", origin.getFile());
-    assertEquals("func1()", origin.getFunction());
     assertEquals(1, origin.getLine());
     assertEquals(0, origin.getIndex());
     assertTrue(origin.isCovered());
@@ -62,48 +61,43 @@ public class CoverageDataTest {
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new BranchCoverageData("A-B-C", "a.file", "func1()", 1, 0, true));
-    assertNotEquals(origin, new StatementCoverageData("B-B-C", "a.file", "func1()", 1, true));
-    assertNotEquals(origin, new StatementCoverageData("A-B-C", "b.file", "func1()", 1, true));
-    assertNotEquals(origin, new StatementCoverageData("A-B-C", "a.file", "func2()", 1, true));
-    assertNotEquals(origin, new StatementCoverageData("A-B-C", "a.file", "func1()", 2, true));
-    assertEquals(origin, new StatementCoverageData("A-B-C", "a.file", "func1()", 1, false));
+    assertNotEquals(origin, new BranchCoverageData("A-B-C", "a.file", 1, 0, true));
+    assertNotEquals(origin, new StatementCoverageData("B-B-C", "a.file", 1, true));
+    assertNotEquals(origin, new StatementCoverageData("A-B-C", "b.file", 1, true));
+    assertNotEquals(origin, new StatementCoverageData("A-B-C", "a.file", 2, true));
+    assertEquals(origin, new StatementCoverageData("A-B-C", "a.file", 1, false));
   }
 
   @Test
   public void testHashCode() {
     assertEquals(origin.hashCode(), same.hashCode());
     assertNotEquals(origin.hashCode(),
-        new BranchCoverageData("A-B-C", "a.file", "func1()", 1, 0, true).hashCode());
+        new BranchCoverageData("A-B-C", "a.file", 1, 0, true).hashCode());
     assertNotEquals(origin.hashCode(),
-        new StatementCoverageData("B-B-C", "a.file", "func1()", 1, true).hashCode());
+        new StatementCoverageData("B-B-C", "a.file", 1, true).hashCode());
     assertNotEquals(origin.hashCode(),
-        new StatementCoverageData("A-B-C", "b.file", "func1()", 1, true).hashCode());
+        new StatementCoverageData("A-B-C", "b.file", 1, true).hashCode());
     assertNotEquals(origin.hashCode(),
-        new StatementCoverageData("A-B-C", "a.file", "func2()", 1, true).hashCode());
-    assertNotEquals(origin.hashCode(),
-        new StatementCoverageData("A-B-C", "a.file", "func1()", 2, true).hashCode());
+        new StatementCoverageData("A-B-C", "a.file", 2, true).hashCode());
     assertEquals(origin.hashCode(),
-        new StatementCoverageData("A-B-C", "a.file", "func1()", 1, false).hashCode());
+        new StatementCoverageData("A-B-C", "a.file", 1, false).hashCode());
   }
 
   @Test
   public void testComparable() {
     List<CoverageData> expected = new ArrayList<>();
-    expected.add(new BranchCoverageData("A-B-C", "a.file", "func1()", 1, 1, true));
-    expected.add(new BranchCoverageData("B-B-C", "a.file", "func1()", 1, 1, true));
-    expected.add(new BranchCoverageData("B-B-C", "b.file", "func1()", 1, 1, true));
-    expected.add(new BranchCoverageData("B-B-C", "b.file", "func2()", 1, 1, true));
-    expected.add(new BranchCoverageData("B-B-C", "b.file", "func2()", 2, 1, true));
-    expected.add(new BranchCoverageData("B-B-C", "b.file", "func2()", 2, 2, true));
+    expected.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, true));
+    expected.add(new BranchCoverageData("B-B-C", "a.file", 1, 1, true));
+    expected.add(new BranchCoverageData("B-B-C", "b.file", 1, 1, true));
+    expected.add(new BranchCoverageData("B-B-C", "b.file", 2, 1, true));
+    expected.add(new BranchCoverageData("B-B-C", "b.file", 2, 2, true));
 
     List<CoverageData> actual = new ArrayList<>();
-    actual.add(new BranchCoverageData("B-B-C", "b.file", "func2()", 2, 2, true));
-    actual.add(new BranchCoverageData("B-B-C", "b.file", "func2()", 2, 1, true));
-    actual.add(new BranchCoverageData("B-B-C", "b.file", "func2()", 1, 1, true));
-    actual.add(new BranchCoverageData("B-B-C", "b.file", "func1()", 1, 1, true));
-    actual.add(new BranchCoverageData("B-B-C", "a.file", "func1()", 1, 1, true));
-    actual.add(new BranchCoverageData("A-B-C", "a.file", "func1()", 1, 1, true));
+    actual.add(new BranchCoverageData("B-B-C", "b.file", 2, 2, true));
+    actual.add(new BranchCoverageData("B-B-C", "b.file", 2, 1, true));
+    actual.add(new BranchCoverageData("B-B-C", "b.file", 1, 1, true));
+    actual.add(new BranchCoverageData("B-B-C", "a.file", 1, 1, true));
+    actual.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, true));
 
     Collections.sort(actual);
     assertEquals(expected, actual);

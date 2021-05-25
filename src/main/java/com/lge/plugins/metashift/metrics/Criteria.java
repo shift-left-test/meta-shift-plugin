@@ -152,6 +152,7 @@ public final class Criteria {
    *
    * @return cache threshold
    */
+  @Deprecated
   public double getCacheThreshold() {
     return cacheThreshold;
   }
@@ -161,6 +162,7 @@ public final class Criteria {
    *
    * @param threshold for the cache availability
    */
+  @Deprecated
   public void setCacheThreshold(final double threshold) {
     cacheThreshold = threshold;
     premirrorCacheThreshold = threshold;
@@ -334,6 +336,7 @@ public final class Criteria {
    *
    * @return overall threshold
    */
+  @Deprecated
   public double getOverallThreshold() {
     return overallThreshold;
   }
@@ -343,6 +346,7 @@ public final class Criteria {
    *
    * @param threshold for the project
    */
+  @Deprecated
   public void setOverallThreshold(final double threshold) {
     overallThreshold = threshold;
   }

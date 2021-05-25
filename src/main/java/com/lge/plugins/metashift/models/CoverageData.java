@@ -42,11 +42,6 @@ public abstract class CoverageData extends Data<CoverageData> {
   private final String file;
 
   /**
-   * Represents the function name.
-   */
-  private final String function;
-
-  /**
    * Represents the line number.
    */
   private final long line;
@@ -69,19 +64,17 @@ public abstract class CoverageData extends Data<CoverageData> {
   /**
    * Default constructor.
    *
-   * @param recipe   name
-   * @param file     name
-   * @param function name
-   * @param line     number
-   * @param index    coverage item index
-   * @param covered  coverage status
-   * @param type     coverage type
+   * @param recipe  name
+   * @param file    name
+   * @param line    number
+   * @param index   coverage item index
+   * @param covered coverage status
+   * @param type    coverage type
    */
-  public CoverageData(final String recipe, final String file, final String function,
-      final long line, final long index, final boolean covered, final String type) {
+  public CoverageData(final String recipe, final String file, final long line, final long index,
+      final boolean covered, final String type) {
     super(recipe);
     this.file = file;
-    this.function = function;
     this.line = line;
     this.index = index;
     this.covered = covered;
@@ -104,7 +97,7 @@ public abstract class CoverageData extends Data<CoverageData> {
 
   @Override
   public int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file, function, line, index);
+    return computeHashCode(getClass(), getRecipe(), file, line, index);
   }
 
   @Override
@@ -112,7 +105,6 @@ public abstract class CoverageData extends Data<CoverageData> {
     return compareEach(
         getRecipe().compareTo(other.getRecipe()),
         file.compareTo(other.file),
-        function.compareTo(other.function),
         Long.compare(line, other.line),
         Long.compare(index, other.index)
     );
@@ -125,15 +117,6 @@ public abstract class CoverageData extends Data<CoverageData> {
    */
   public String getFile() {
     return file;
-  }
-
-  /**
-   * Returns the function name.
-   *
-   * @return function name
-   */
-  public String getFunction() {
-    return function;
   }
 
   /**

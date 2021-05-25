@@ -201,9 +201,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedCoverageData() {
-    recipe.add(new StatementCoverageData("A-B-C", "a.file", "func1()", 1, true));
-    recipe.add(new StatementCoverageData("A-B-C", "b.file", "func1()", 1, false));
-    recipe.add(new BranchCoverageData("A-B-C", "c.file", "func1()", 1, 1, false));
+    recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
+    recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, false));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, false);
@@ -214,9 +214,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedCoverageData() {
-    recipe.add(new StatementCoverageData("A-B-C", "a.file", "func1()", 1, true));
-    recipe.add(new StatementCoverageData("A-B-C", "b.file", "func1()", 1, false));
-    recipe.add(new BranchCoverageData("A-B-C", "c.file", "func1()", 1, 1, true));
+    recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
+    recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, true));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, true);

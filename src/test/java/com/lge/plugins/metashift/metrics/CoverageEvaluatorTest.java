@@ -88,9 +88,9 @@ public class CoverageEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
-    recipe.add(new StatementCoverageData("A-B-C", "a.file", "func1()", 1, true));
-    recipe.add(new StatementCoverageData("A-B-C", "b.file", "func1()", 1, false));
-    recipe.add(new BranchCoverageData("A-B-C", "c.file", "func1()", 1, 1, false));
+    recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
+    recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, false));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -101,9 +101,9 @@ public class CoverageEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
-    recipe.add(new StatementCoverageData("A-B-C", "a.file", "func1()", 1, true));
-    recipe.add(new StatementCoverageData("A-B-C", "b.file", "func1()", 1, false));
-    recipe.add(new BranchCoverageData("A-B-C", "c.file", "func1()", 1, 1, true));
+    recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
+    recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, true));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -114,7 +114,7 @@ public class CoverageEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
-    recipe.add(new StatementCoverageData("A-B-C", "a.file", "func1()", 1, true));
+    recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     assertEquals(1, evaluator.parse(recipe).getDenominator());
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getDenominator());
   }
@@ -132,11 +132,11 @@ public class CoverageEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new StatementCoverageData("A-1.0.0-r0", "a.file", "func1()", 1, true));
+    recipe.add(new StatementCoverageData("A-1.0.0-r0", "a.file", 1, true));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new StatementCoverageData("B-1.0.0-r0", "b.file", "func1()", 1, false));
-    recipe.add(new BranchCoverageData("B-1.0.0-r0", "c.file", "func1()", 1, 1, false));
+    recipe.add(new StatementCoverageData("B-1.0.0-r0", "b.file", 1, false));
+    recipe.add(new BranchCoverageData("B-1.0.0-r0", "c.file", 1, 1, false));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -149,11 +149,11 @@ public class CoverageEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new StatementCoverageData("A-1.0.0-r0", "a.file", "func1()", 1, true));
+    recipe.add(new StatementCoverageData("A-1.0.0-r0", "a.file", 1, true));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new StatementCoverageData("B-1.0.0-r0", "b.file", "func1()", 1, false));
-    recipe.add(new BranchCoverageData("B-1.0.0-r0", "c.file", "func1()", 1, 1, true));
+    recipe.add(new StatementCoverageData("B-1.0.0-r0", "b.file", 1, false));
+    recipe.add(new BranchCoverageData("B-1.0.0-r0", "c.file", 1, 1, true));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -165,7 +165,7 @@ public class CoverageEvaluatorTest {
 
   @Test
   public void testParseRecipesResetValues() {
-    recipe.add(new StatementCoverageData("A-1.0.0-r0", "a.file", "func1()", 1, true));
+    recipe.add(new StatementCoverageData("A-1.0.0-r0", "a.file", 1, true));
     assertEquals(1, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
   }

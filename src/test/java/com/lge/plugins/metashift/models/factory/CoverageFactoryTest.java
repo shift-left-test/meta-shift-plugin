@@ -58,11 +58,10 @@ public class CoverageFactoryTest {
     objects = new ArrayList<>();
   }
 
-  private void assertValues(CoverageData object, String recipe, String file, String function,
-      long line, long index, boolean covered) {
+  private void assertValues(CoverageData object, String recipe, String file, long line, long index,
+      boolean covered) {
     assertEquals(recipe, object.getRecipe());
     assertEquals(file, object.getFile());
-    assertEquals(function, object.getFunction());
     assertEquals(line, object.getLine());
     assertEquals(index, object.getIndex());
     assertEquals(covered, object.isCovered());
@@ -114,63 +113,6 @@ public class CoverageFactoryTest {
   }
 
   @Test
-  public void testCreateWithEmptyMethodData() throws Exception {
-    File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder
-        .append("<class filename='a.cpp'>")
-        .append("  <methods/>")
-        .append("  <lines>")
-        .append("    <line hits='1' number='1'/>")
-        .append("  </lines>")
-        .append("</class>");
-    utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(directory);
-    assertEquals(0, objects.size());
-  }
-
-  @Test
-  public void testCreateWithInsufficientMethodData() throws Exception {
-    File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder
-        .append("<class filename='a.cpp'>")
-        .append("    <methods>")
-        .append("      <method name='func1()'>")
-        .append("        <lines>")
-        .append("          <line number='10'/>")
-        .append("        </lines>")
-        .append("      </method>")
-        .append("    </methods>")
-        .append("  <lines>")
-        .append("    <line hits='1' number='1'/>")
-        .append("  </lines>")
-        .append("</class>");
-    utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(directory);
-    assertEquals(0, objects.size());
-  }
-
-  @Test
-  public void testCreateWithEmptyLineData() throws Exception {
-    File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder
-        .append("<classes>")
-        .append("  <class filename='a.cpp'>")
-        .append("    <methods>")
-        .append("      <method name='func1()'>")
-        .append("        <lines/>")
-        .append("      </method>")
-        .append("    </methods>")
-        .append("    <lines>")
-        .append("      <line branch='false' hits='1' number='2'/>")
-        .append("    </lines>")
-        .append("  </class>")
-        .append("</classes>");
-    utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(directory);
-    assertEquals(0, objects.size());
-  }
-
-  @Test
   public void testCreateWithInsufficientLineData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder
@@ -215,7 +157,7 @@ public class CoverageFactoryTest {
     assertEquals(1, objects.size());
 
     Iterator<CoverageData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C-1.0.0-r0", "a.cpp", "func1()", 2, 0, true);
+    assertValues(iterator.next(), "C-1.0.0-r0", "a.cpp", 2, 0, true);
   }
 
   @Test
@@ -253,10 +195,10 @@ public class CoverageFactoryTest {
     assertEquals(4, objects.size());
 
     Iterator<CoverageData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", "func1()", 1, 0, true);
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", "func1()", 10, 0, false);
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", "func2()", 30, 0, true);
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", "func2()", 30, 1, false);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", 1, 0, true);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", 10, 0, false);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", 30, 0, true);
+    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", 30, 1, false);
   }
 
   @Test
@@ -310,9 +252,9 @@ public class CoverageFactoryTest {
     assertEquals(4, objects.size());
 
     Iterator<CoverageData> iterator = objects.iterator();
-    assertValues(iterator.next(), "E-1.0.0-r0", "a.cpp", "func1()", 1, 0, true);
-    assertValues(iterator.next(), "E-1.0.0-r0", "a.cpp", "func1()", 10, 0, false);
-    assertValues(iterator.next(), "E-1.0.0-r0", "b.cpp", "func2()", 30, 0, true);
-    assertValues(iterator.next(), "E-1.0.0-r0", "b.cpp", "func2()", 30, 1, false);
+    assertValues(iterator.next(), "E-1.0.0-r0", "a.cpp", 1, 0, true);
+    assertValues(iterator.next(), "E-1.0.0-r0", "a.cpp", 10, 0, false);
+    assertValues(iterator.next(), "E-1.0.0-r0", "b.cpp", 30, 0, true);
+    assertValues(iterator.next(), "E-1.0.0-r0", "b.cpp", 30, 1, false);
   }
 }
