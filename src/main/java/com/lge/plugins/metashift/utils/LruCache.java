@@ -35,6 +35,11 @@ import java.util.Map;
 public class LruCache<K, V> extends LinkedHashMap<K, V> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 3817409099024705244L;
+
+  /**
    * Represents the default capacity.
    */
   private static final int DEFAULT_CAPACITY = 15;

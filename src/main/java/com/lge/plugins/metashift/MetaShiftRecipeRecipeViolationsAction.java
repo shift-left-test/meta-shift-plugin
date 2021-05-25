@@ -129,10 +129,9 @@ public class MetaShiftRecipeRecipeViolationsAction extends MetaShiftRecipeAction
    * @param pageIndex page index
    * @param pageSize  page size
    * @return recipe violation list
-   * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize) throws IOException {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize) {
     if (getParentAction().getMetrics().getCodeViolations().isAvailable()) {
       List<RecipeViolationData> recipeViolationDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_RECIPEVIOLATIONLIST);

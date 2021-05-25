@@ -123,7 +123,7 @@ export class RecipeList extends LitElement {
     this.requestFilesFunc = requestFilesFunc;
     this.requestFileDetailFunc = requestFileDetailFunc;
 
-    // just trigging ajaxRequestFunc.  
+    // just triggering ajaxRequestFunc.
     // url('meta-shift') has no meaning, because we replace ajaxRequestFunc.
     this.tabulatorTable.setData("meta-shift");
   }

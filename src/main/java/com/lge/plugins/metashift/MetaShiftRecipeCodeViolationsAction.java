@@ -43,7 +43,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class MetaShiftRecipeCodeViolationsAction
     extends MetaShiftRecipeActionChild {
 
-  static final String STORE_KEY_CODEVIOLATIONLIST = "CodeViloationList";
+  static final String STORE_KEY_CODEVIOLATIONLIST = "CodeViolationList";
 
   /**
    * constructor.

@@ -60,7 +60,7 @@ public abstract class MetaShiftRecipeActionChild implements Action {
   }
 
   /**
-   * save codepath content to DataSource.
+   * save code path content to DataSource.
    */
   public void saveFileContents(JSONObject metadata, String codePath) throws IOException {
     File file = new File(codePath);

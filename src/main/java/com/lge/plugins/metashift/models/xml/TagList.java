@@ -36,6 +36,11 @@ import org.w3c.dom.NodeList;
 public class TagList extends ArrayList<Tag> {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 8964488735187383673L;
+
+  /**
    * Default constructor.
    */
   public TagList() {

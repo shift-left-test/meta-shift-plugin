@@ -38,7 +38,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                 checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Coverage Threshold" field="coverageThreshold">
-      <f:number value="${it.coverageThreshold}" default="${descriptor.cirteria.coverageThreshold}"
+      <f:number value="${it.coverageThreshold}" default="${descriptor.criteria.coverageThreshold}"
                 checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
     <f:entry title="Mutation Test Threshold" field="mutationTestThreshold">

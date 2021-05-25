@@ -129,10 +129,9 @@ public class MetaShiftRecipeComplexityAction
    * @param pageIndex page index
    * @param pageSize  page size
    * @return complexity list
-   * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize) throws IOException {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize) {
     if (getParentAction().getMetrics().getComplexity().isAvailable()) {
       List<ComplexityData> complexityDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_COMPLEXITYLIST);

@@ -90,10 +90,9 @@ public class MetaShiftRecipeDuplicationsAction
    * @param pageIndex page index
    * @param pageSize  page size
    * @return duplication list
-   * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize) throws IOException {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize) {
     if (getParentAction().getMetrics().getDuplications().isAvailable()) {
       List<?> duplicationDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);

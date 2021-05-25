@@ -251,12 +251,12 @@ public class MetaShiftBuildAction extends Actionable
   }
 
   /**
-   * return testedrecipes rate change. 
+   * return tested recipe rate change.
    */
   public double getTestedRecipesDelta() {
     MetaShiftBuildAction previous =
         Optional.ofNullable(getPreviousBuildAction()).orElse(null);
-    
+
     double previousRatio = previous != null ? (double) previous.getTestedRecipes()
         / (double) previous.getMetrics().getCodeSize().getRecipes() : 0;
 
@@ -265,6 +265,7 @@ public class MetaShiftBuildAction extends Actionable
   }
 
   // metrics delta
+
   /**
    * Returns the delta between the previous and current builds.
    *
@@ -283,7 +284,7 @@ public class MetaShiftBuildAction extends Actionable
         Optional.ofNullable(getPreviousMetrics())
             .map(mapper).orElse(null);
     Evaluator<?> current = mapper.apply(getMetrics());
-    
+
     return (previous != null) ? current.getRatio() - previous.getRatio()
         : current.getRatio();
   }
@@ -325,6 +326,7 @@ public class MetaShiftBuildAction extends Actionable
   }
 
   // qualified rate
+
   /**
    * return cache availability qualified recipe rate.
    */
@@ -371,7 +373,7 @@ public class MetaShiftBuildAction extends Actionable
   }
 
   /**
-   * return duplcations qualified recipe rate.
+   * return duplications qualified recipe rate.
    */
   public double getDuplicationsQualifiedRate() {
     return (double) this.getRecipes().stream().filter(
@@ -389,7 +391,7 @@ public class MetaShiftBuildAction extends Actionable
   }
 
   /**
-   * return recipe vioation qualified recipe rate.
+   * return recipe violation qualified recipe rate.
    */
   public double getRecipeViolationsQualifiedRate() {
     return (double) this.getRecipes().stream().filter(

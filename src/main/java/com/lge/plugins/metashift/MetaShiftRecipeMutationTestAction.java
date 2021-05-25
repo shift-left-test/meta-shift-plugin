@@ -103,7 +103,7 @@ public class MetaShiftRecipeMutationTestAction extends MetaShiftRecipeActionChil
   }
 
   /**
-   * return file mutaiontest detail.
+   * return file mutation test detail.
    */
   @JavaScriptMethod
   public JSONObject getFileMutationTestDetail(String recipePath) {

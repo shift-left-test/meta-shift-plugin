@@ -186,10 +186,9 @@ public class MetaShiftRecipeCoverageAction extends MetaShiftRecipeActionChild {
    * @param pageIndex page index
    * @param pageSize  page size
    * @return coverage list
-   * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize) throws IOException {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize) {
     if (getParentAction().getMetrics().getCoverage().isAvailable()) {
       List<CoverageData> coverageDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_COVERAGELIST);

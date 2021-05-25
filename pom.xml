@@ -177,9 +177,6 @@
               <goal>webpack</goal>
             </goals>
             <phase>generate-resources</phase>
-            <configuration>
-              <arguments></arguments>
-            </configuration>
           </execution>
         </executions>
         <configuration>
