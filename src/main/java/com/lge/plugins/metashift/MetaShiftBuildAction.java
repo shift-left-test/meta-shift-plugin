@@ -69,7 +69,7 @@ public class MetaShiftBuildAction extends Actionable
   private final Criteria criteria;
   private Metrics metrics;
 
-  private DataSource dataSource;
+  private final DataSource dataSource;
 
   /**
    * Default constructor.
@@ -163,7 +163,7 @@ public class MetaShiftBuildAction extends Actionable
   public DataSource getDataSource() {
     return this.dataSource;
   }
-  
+
   /**
    * Returns recipeAction list.
    *
@@ -181,7 +181,7 @@ public class MetaShiftBuildAction extends Actionable
    * return paginated recipes list.
    *
    * @param pageIndex page index
-   * @param pageSize page size
+   * @param pageSize  page size
    * @return recipe qualifier list.
    */
   @JavaScriptMethod

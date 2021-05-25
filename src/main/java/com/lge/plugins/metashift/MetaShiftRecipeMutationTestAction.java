@@ -38,20 +38,19 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 /**
  * MetaShift recipe's mutation test detail view action class.
  */
-public class MetaShiftRecipeMutationTestAction
-    extends MetaShiftRecipeActionChild {
+public class MetaShiftRecipeMutationTestAction extends MetaShiftRecipeActionChild {
 
   static final String STORE_KEY_MUTATIONTESTLIST = "MutationTestList";
 
   /**
    * constructor.
    *
-   * @param parent parent action
-   * @param listener logger
-   * @param criteria criteria
+   * @param parent     parent action
+   * @param listener   logger
+   * @param criteria   criteria
    * @param dataSource datasource
-   * @param recipe recipe
-   * @param metadata metadata
+   * @param recipe     recipe
+   * @param metadata   metadata
    */
   public MetaShiftRecipeMutationTestAction(
       MetaShiftRecipeAction parent, TaskListener listener,
@@ -88,13 +87,11 @@ public class MetaShiftRecipeMutationTestAction
    * return paginated mutation test list.
    *
    * @param pageIndex page index
-   * @param pageSize page size
+   * @param pageSize  page size
    * @return mutation test list
-   * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeMutationTests(int pageIndex, int pageSize)
-      throws IOException {
+  public JSONObject getRecipeMutationTests(int pageIndex, int pageSize) {
     if (getParentAction().getMetrics().getMutationTest().isAvailable()) {
       List<MutationTestData> mutationTestDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_MUTATIONTESTLIST);
@@ -109,8 +106,7 @@ public class MetaShiftRecipeMutationTestAction
    * return file mutaiontest detail.
    */
   @JavaScriptMethod
-  public JSONObject getFileMutationTestDetail(String recipePath)
-      throws IOException {
+  public JSONObject getFileMutationTestDetail(String recipePath) {
     JSONObject result = new JSONObject();
 
     List<MutationTestData> mutationTestDataList = this.getDataSource().get(
@@ -118,7 +114,7 @@ public class MetaShiftRecipeMutationTestAction
 
     List<MutationTestData> dataList =
         mutationTestDataList.stream().filter(o -> o.getFile().equals(recipePath))
-        .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
     result.put("dataList", dataList);
     result.put("content", this.readFileContents(recipePath));

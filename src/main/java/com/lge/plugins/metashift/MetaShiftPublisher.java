@@ -122,7 +122,6 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
      * check threshold type field value validation.
      *
      * @param value input value
-     *
      * @return form validation
      */
     public FormValidation doCheckThreshold(@QueryParameter String value) {
@@ -147,7 +146,6 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
      * check limit type field value validation.
      *
      * @param value input value
-     *
      * @return form validation
      */
     public FormValidation doCheckLimit(@QueryParameter String value) {

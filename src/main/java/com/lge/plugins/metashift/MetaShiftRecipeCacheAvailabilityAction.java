@@ -46,12 +46,12 @@ public class MetaShiftRecipeCacheAvailabilityAction
   /**
    * constructor.
    *
-   * @param parent parent action
-   * @param listener logger
-   * @param criteria criteria
+   * @param parent     parent action
+   * @param listener   logger
+   * @param criteria   criteria
    * @param dataSource datasource
-   * @param recipe recipe
-   * @param metadata metadata
+   * @param recipe     recipe
+   * @param metadata   metadata
    */
   public MetaShiftRecipeCacheAvailabilityAction(
       MetaShiftRecipeAction parent, TaskListener listener,
@@ -87,14 +87,12 @@ public class MetaShiftRecipeCacheAvailabilityAction
    * return paginated cache availability list.
    *
    * @param pageIndex page index
-   * @param pageSize page size
+   * @param pageSize  page size
    * @return cache availability list
-   * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeCaches(int pageIndex, int pageSize)
-      throws IOException {
-    List<?> cacheList = this.getDataSource().get(
+  public JSONObject getRecipeCaches(int pageIndex, int pageSize) {
+    List<CacheData> cacheList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CACHELIST);
     return getPagedDataList(pageIndex, pageSize, cacheList);
   }

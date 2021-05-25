@@ -30,6 +30,7 @@ import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,19 +42,19 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 /**
  * MetaShift recipe's coverage detail view action class.
  */
-public class MetaShiftRecipeCoverageAction
-    extends MetaShiftRecipeActionChild {
+public class MetaShiftRecipeCoverageAction extends MetaShiftRecipeActionChild {
+
   static final String STORE_KEY_COVERAGELIST = "CoverageList";
 
   /**
    * constructor.
    *
-   * @param parent parent action
-   * @param listener logger
-   * @param criteria criteria
+   * @param parent     parent action
+   * @param listener   logger
+   * @param criteria   criteria
    * @param dataSource datasource
-   * @param recipe recipe
-   * @param metadata metadata
+   * @param recipe     recipe
+   * @param metadata   metadata
    */
   public MetaShiftRecipeCoverageAction(
       MetaShiftRecipeAction parent, TaskListener listener,
@@ -90,6 +91,7 @@ public class MetaShiftRecipeCoverageAction
    * key for line + index.
    */
   public static class LineIndex {
+
     Long line;
     long index;
 
@@ -101,7 +103,7 @@ public class MetaShiftRecipeCoverageAction
     public long getLine() {
       return this.line;
     }
-    
+
     public long getIndex() {
       return this.index;
     }
@@ -111,21 +113,22 @@ public class MetaShiftRecipeCoverageAction
    * coverage info for each file.
    */
   public static class FileCoverage {
-    private String file;
-    private Set<Long> lines;
-    private Set<Long> coveredLines;
-    private Set<LineIndex> indexs;
-    private Set<LineIndex> coveredIndexs;
+
+    private final String file;
+    private final Set<Long> lines;
+    private final Set<Long> coveredLines;
+    private final Set<LineIndex> indexs;
+    private final Set<LineIndex> coveredIndexs;
 
     /**
      * constructor.
      */
     public FileCoverage(String file) {
       this.file = file;
-      this.lines = new HashSet<Long>();
-      this.coveredLines = new HashSet<Long>();
-      this.indexs = new HashSet<LineIndex>();
-      this.coveredIndexs = new HashSet<LineIndex>();
+      this.lines = new HashSet<>();
+      this.coveredLines = new HashSet<>();
+      this.indexs = new HashSet<>();
+      this.coveredIndexs = new HashSet<>();
     }
 
     public String getFile() {
@@ -139,7 +142,7 @@ public class MetaShiftRecipeCoverageAction
      */
     public double getLineCoverage() {
       if (this.lines.isEmpty()) {
-        return 0;
+        return 0.0;
       }
 
       return (double) this.coveredLines.size() / (double) this.lines.size();
@@ -152,7 +155,7 @@ public class MetaShiftRecipeCoverageAction
      */
     public double getBranchCoverage() {
       if (this.indexs.isEmpty()) {
-        return 0;
+        return 0.0;
       }
 
       return (double) this.coveredIndexs.size() / (double) this.indexs.size();
@@ -161,8 +164,8 @@ public class MetaShiftRecipeCoverageAction
     /**
      * add coverage info.
      *
-     * @param line line
-     * @param index index
+     * @param line    line
+     * @param index   index
      * @param covered is covered
      */
     public void addCoveredInfo(long line, long index, boolean covered) {
@@ -181,18 +184,17 @@ public class MetaShiftRecipeCoverageAction
    * return paginated coverage list.
    *
    * @param pageIndex page index
-   * @param pageSize page size
+   * @param pageSize  page size
    * @return coverage list
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize)
-      throws IOException {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize) throws IOException {
     if (getParentAction().getMetrics().getCoverage().isAvailable()) {
       List<CoverageData> coverageDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_COVERAGELIST);
 
-      HashMap<String, FileCoverage> fileInfo = new HashMap<String, FileCoverage>();
+      HashMap<String, FileCoverage> fileInfo = new HashMap<>();
 
       for (CoverageData coverageData : coverageDataList) {
         String file = coverageData.getFile();
@@ -205,8 +207,7 @@ public class MetaShiftRecipeCoverageAction
         fileInfo.get(file).addCoveredInfo(line, index, coverageData.isCovered());
       }
 
-      return getPagedDataList(pageIndex, pageSize,
-          fileInfo.values().stream().collect(Collectors.toList()));
+      return getPagedDataList(pageIndex, pageSize, new ArrayList<>(fileInfo.values()));
     } else {
       return null;
     }
@@ -216,17 +217,16 @@ public class MetaShiftRecipeCoverageAction
    * return file coverage info.
    */
   @JavaScriptMethod
-  public JSONObject getFileCoverageDetail(String codePath)
-      throws IOException {
+  public JSONObject getFileCoverageDetail(String codePath) {
     JSONObject result = new JSONObject();
 
     List<CoverageData> coverageDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_COVERAGELIST);
-    
+
     List<CoverageData> dataList =
         coverageDataList.stream().filter(o -> o.getFile().equals(codePath))
-        .collect(Collectors.toList());
-    
+            .collect(Collectors.toList());
+
     result.put("dataList", dataList);
     result.put("content", this.readFileContents(codePath));
 

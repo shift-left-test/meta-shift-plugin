@@ -39,11 +39,11 @@ public final class BranchCoverageData extends CoverageData {
   /**
    * Default constructor.
    *
-   * @param recipe   name
-   * @param file     name
-   * @param line     number
-   * @param index    coverage item index
-   * @param covered  coverage status
+   * @param recipe  name
+   * @param file    name
+   * @param line    number
+   * @param index   coverage item index
+   * @param covered coverage status
    */
   public BranchCoverageData(String recipe, String file, long line, long index, boolean covered) {
     super(recipe, file, line, index, covered, "Branch");

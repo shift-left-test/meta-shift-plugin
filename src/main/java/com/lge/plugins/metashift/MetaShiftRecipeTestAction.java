@@ -38,20 +38,19 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 /**
  * MetaShift recipe's test detail view action class.
  */
-public class MetaShiftRecipeTestAction
-    extends MetaShiftRecipeActionChild {
+public class MetaShiftRecipeTestAction extends MetaShiftRecipeActionChild {
 
   static final String STORE_KEY_TESTLIST = "TestList";
 
   /**
    * constructor.
    *
-   * @param parent parent action
-   * @param listener logger
-   * @param criteria criteria
+   * @param parent     parent action
+   * @param listener   logger
+   * @param criteria   criteria
    * @param dataSource datasource
-   * @param recipe recipe
-   * @param metadata metadata
+   * @param recipe     recipe
+   * @param metadata   metadata
    */
   public MetaShiftRecipeTestAction(
       MetaShiftRecipeAction parent, TaskListener listener,
@@ -87,13 +86,11 @@ public class MetaShiftRecipeTestAction
    * return paginated test list.
    *
    * @param pageIndex page index
-   * @param pageSize page size
+   * @param pageSize  page size
    * @return test list
-   * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeTests(int pageIndex, int pageSize)
-      throws IOException {
+  public JSONObject getRecipeTests(int pageIndex, int pageSize) {
     if (getParentAction().getMetrics().getTest().isAvailable()) {
       List<?> testDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_TESTLIST);

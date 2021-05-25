@@ -30,6 +30,7 @@ import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,12 +48,12 @@ public class MetaShiftRecipeCodeViolationsAction
   /**
    * constructor.
    *
-   * @param parent parent action
-   * @param listener logger
-   * @param criteria criteria
+   * @param parent     parent action
+   * @param listener   logger
+   * @param criteria   criteria
    * @param dataSource datasource
-   * @param recipe recipe
-   * @param metadata metadata
+   * @param recipe     recipe
+   * @param metadata   metadata
    */
   public MetaShiftRecipeCodeViolationsAction(
       MetaShiftRecipeAction parent, TaskListener listener,
@@ -90,7 +91,8 @@ public class MetaShiftRecipeCodeViolationsAction
    * code violation for each file.
    */
   public static class FileCodeViolations {
-    private String file;
+
+    private final String file;
     private int major;
     private int minor;
     private int info;
@@ -138,17 +140,16 @@ public class MetaShiftRecipeCodeViolationsAction
    * return paginated code violation list.
    *
    * @param pageIndex page index
-   * @param pageSize page size
+   * @param pageSize  page size
    * @return code violation list
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize)
-      throws IOException {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize) throws IOException {
     List<CodeViolationData> codeViolationDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CODEVIOLATIONLIST);
-    
-    HashMap<String, FileCodeViolations> fileInfo = new HashMap<String, FileCodeViolations>();
+
+    HashMap<String, FileCodeViolations> fileInfo = new HashMap<>();
 
     for (CodeViolationData codeViolationData : codeViolationDataList) {
       String file = codeViolationData.getFile();
@@ -171,24 +172,22 @@ public class MetaShiftRecipeCodeViolationsAction
       }
     }
 
-    return getPagedDataList(pageIndex, pageSize,
-        fileInfo.values().stream().collect(Collectors.toList()));
+    return getPagedDataList(pageIndex, pageSize, new ArrayList<>(fileInfo.values()));
   }
 
   /**
-   * return file code viloation detail.
+   * return file code violation detail.
    */
   @JavaScriptMethod
-  public JSONObject getFileCodeViolationDetail(String codePath)
-      throws IOException {
+  public JSONObject getFileCodeViolationDetail(String codePath) {
     JSONObject result = new JSONObject();
 
     List<CodeViolationData> codeViolationDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CODEVIOLATIONLIST);
-    
+
     List<CodeViolationData> violationDataList =
         codeViolationDataList.stream().filter(o -> o.getFile().equals(codePath))
-        .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
     result.put("dataList", violationDataList);
     result.put("content", this.readFileContents(codePath));

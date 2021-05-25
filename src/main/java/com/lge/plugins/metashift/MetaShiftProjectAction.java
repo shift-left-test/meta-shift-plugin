@@ -43,7 +43,8 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * project action class.
  */
 public class MetaShiftProjectAction implements ProminentProjectAction {
-  private AbstractProject<?, ?> project;
+
+  private final AbstractProject<?, ?> project;
 
   public MetaShiftProjectAction(AbstractProject<?, ?> project) {
     this.project = project;
@@ -174,7 +175,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
 
     List<String> buildNameList = new ArrayList<>();
 
-    for (AbstractBuild<?, ?> b = (AbstractBuild<?, ?>) project.getLastSuccessfulBuild();
+    for (AbstractBuild<?, ?> b = project.getLastSuccessfulBuild();
         b != null; b = b.getPreviousNotFailedBuild()) {
       if (b.getResult() == Result.FAILURE) {
         continue;

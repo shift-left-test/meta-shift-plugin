@@ -39,10 +39,10 @@ public final class StatementCoverageData extends CoverageData {
   /**
    * Default constructor.
    *
-   * @param recipe   name
-   * @param file     name
-   * @param line     number
-   * @param covered  coverage status
+   * @param recipe  name
+   * @param file    name
+   * @param line    number
+   * @param covered coverage status
    */
   public StatementCoverageData(String recipe, String file, long line, boolean covered) {
     super(recipe, file, line, 0, covered, "Statement");

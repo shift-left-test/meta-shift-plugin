@@ -30,6 +30,7 @@ import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,20 +41,19 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 /**
  * MetaShift recipe's recipe violation detail view action class.
  */
-public class MetaShiftRecipeRecipeViolationsAction
-    extends MetaShiftRecipeActionChild {
+public class MetaShiftRecipeRecipeViolationsAction extends MetaShiftRecipeActionChild {
 
   static final String STORE_KEY_RECIPEVIOLATIONLIST = "RecipeViolationList";
 
   /**
    * constructor.
    *
-   * @param parent parent action
-   * @param listener logger
-   * @param criteria criteria
+   * @param parent     parent action
+   * @param listener   logger
+   * @param criteria   criteria
    * @param dataSource datasource
-   * @param recipe recipe
-   * @param metadata metadata
+   * @param recipe     recipe
+   * @param metadata   metadata
    */
   public MetaShiftRecipeRecipeViolationsAction(
       MetaShiftRecipeAction parent, TaskListener listener,
@@ -68,7 +68,7 @@ public class MetaShiftRecipeRecipeViolationsAction
           this.getParentAction().getName(), STORE_KEY_RECIPEVIOLATIONLIST);
 
       for (RecipeViolationData data : recipeViolationList) {
-        this.saveFilecontents(metadata, data.getFile());
+        this.saveFileContents(metadata, data.getFile());
       }
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
@@ -95,6 +95,7 @@ public class MetaShiftRecipeRecipeViolationsAction
    * count for severity.
    */
   public static class RecipeViolationStats {
+
     String file;
     int info = 0;
     int minor = 0;
@@ -131,14 +132,12 @@ public class MetaShiftRecipeRecipeViolationsAction
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize)
-      throws IOException {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize) throws IOException {
     if (getParentAction().getMetrics().getCodeViolations().isAvailable()) {
       List<RecipeViolationData> recipeViolationDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_RECIPEVIOLATIONLIST);
 
-      Map<String, RecipeViolationStats> recipeFilesMap =
-          new HashMap<String, RecipeViolationStats>();
+      Map<String, RecipeViolationStats> recipeFilesMap = new HashMap<>();
 
       for (RecipeViolationData violationData : recipeViolationDataList) {
         if (!recipeFilesMap.containsKey(violationData.getFile())) {
@@ -147,7 +146,7 @@ public class MetaShiftRecipeRecipeViolationsAction
         }
         RecipeViolationStats stats = recipeFilesMap.get(violationData.getFile());
         switch (violationData.getLevel()) {
-          case "MAJOR": 
+          case "MAJOR":
             stats.major++;
             break;
           case "MINOR":
@@ -164,23 +163,20 @@ public class MetaShiftRecipeRecipeViolationsAction
         stats.total++;
       }
 
-      return getPagedDataList(pageIndex, pageSize,
-          recipeFilesMap.values().stream().collect(Collectors.toList()));
+      return getPagedDataList(pageIndex, pageSize, new ArrayList<>(recipeFilesMap.values()));
     } else {
       return null;
     }
   }
-  
+
   /**
    * return file contents and violation list for that file.
    *
    * @param recipePath file path
    * @return json object
-   * @throws IOException invalid file path
    */
   @JavaScriptMethod
-  public JSONObject getFileRecipeViolationDetail(String recipePath)
-      throws IOException {
+  public JSONObject getFileRecipeViolationDetail(String recipePath) {
     JSONObject result = new JSONObject();
 
     List<RecipeViolationData> recipeViolationDataList = this.getDataSource().get(
@@ -188,7 +184,7 @@ public class MetaShiftRecipeRecipeViolationsAction
 
     List<RecipeViolationData> violationDataList =
         recipeViolationDataList.stream().filter(o -> o.getFile().equals(recipePath))
-        .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
     result.put("dataList", violationDataList);
     result.put("content", this.readFileContents(recipePath));

@@ -33,6 +33,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -42,17 +43,17 @@ import org.apache.commons.io.FileUtils;
  */
 public abstract class MetaShiftRecipeActionChild implements Action {
 
-  private MetaShiftRecipeAction parent;
+  private final MetaShiftRecipeAction parent;
 
   /**
    * constructor.
    *
-   * @param parent parent action
-   * @param listener logger
-   * @param criteria criteria
+   * @param parent     parent action
+   * @param listener   logger
+   * @param criteria   criteria
    * @param dataSource datasource
-   * @param recipe recipe
-   * @param metadata metadata
+   * @param recipe     recipe
+   * @param metadata   metadata
    */
   public MetaShiftRecipeActionChild(MetaShiftRecipeAction parent, TaskListener listener,
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
@@ -70,22 +71,20 @@ public abstract class MetaShiftRecipeActionChild implements Action {
   /**
    * save codepath content to DataSource.
    */
-  public void saveFilecontents(JSONObject metadata, String codePath)
-      throws IOException {
+  public void saveFileContents(JSONObject metadata, String codePath) throws IOException {
     File file = new File(codePath);
     String contents;
     if (file.isAbsolute()) {
-      contents = FileUtils.readFileToString(file, "UTF-8");
+      contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
     } else {
       contents = FileUtils.readFileToString(
-          new File(metadata.getString("S"), codePath), "UTF-8");
+          new File(metadata.getString("S"), codePath), StandardCharsets.UTF_8);
     }
     this.getDataSource().put(contents, this.parent.getName(), "FILE", codePath);
   }
 
-  public String readFileContents(String codePath)
-      throws IOException {
-    return this.getDataSource().get(this.parent.getName(), "FILE", codePath);   
+  public String readFileContents(String codePath) {
+    return this.getDataSource().get(this.parent.getName(), "FILE", codePath);
   }
 
   public Run<?, ?> getRun() {

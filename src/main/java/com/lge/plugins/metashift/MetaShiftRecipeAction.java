@@ -49,15 +49,14 @@ import org.kohsuke.stapler.export.ExportedBean;
  * MetaShift recipe action class.
  */
 @ExportedBean
-public class MetaShiftRecipeAction extends Actionable
-    implements Action {
+public class MetaShiftRecipeAction extends Actionable implements Action {
 
   MetaShiftBuildAction parent;
-  private Metrics metrics;
+  private final Metrics metrics;
 
   @Exported(visibility = 999)
   public String name;
-  
+
   /**
    * Default constructor.
    */
@@ -103,7 +102,7 @@ public class MetaShiftRecipeAction extends Actionable
   public Run<?, ?> getRun() {
     return this.parent.getRun();
   }
-  
+
   public Metrics getMetrics() {
     return this.metrics;
   }
@@ -111,7 +110,7 @@ public class MetaShiftRecipeAction extends Actionable
   public String getName() {
     return this.name;
   }
-  
+
   @Override
   public String getIconFileName() {
     return "document.png";

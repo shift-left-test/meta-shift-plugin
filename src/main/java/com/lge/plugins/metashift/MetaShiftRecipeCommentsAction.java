@@ -41,17 +41,17 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class MetaShiftRecipeCommentsAction
     extends MetaShiftRecipeActionChild {
 
-  static final String STORE_KEY_COMMENTLIST = "CommmentList";
+  static final String STORE_KEY_COMMENTLIST = "CommentList";
 
   /**
    * constructor.
    *
-   * @param parent parent action
-   * @param listener logger
-   * @param criteria criteria
+   * @param parent     parent action
+   * @param listener   logger
+   * @param criteria   criteria
    * @param dataSource datasource
-   * @param recipe recipe
-   * @param metadata metadata
+   * @param recipe     recipe
+   * @param metadata   metadata
    */
   public MetaShiftRecipeCommentsAction(
       MetaShiftRecipeAction parent, TaskListener listener,
@@ -87,14 +87,13 @@ public class MetaShiftRecipeCommentsAction
    * return paginated comment list.
    *
    * @param pageIndex page index
-   * @param pageSize page size
+   * @param pageSize  page size
    * @return comment list
    * @throws IOException invalid recipe uri
-   */  
+   */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize)
-      throws IOException {
-    
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize) throws IOException {
+
     List<?> commentDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
 

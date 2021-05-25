@@ -30,6 +30,7 @@ import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +49,12 @@ public class MetaShiftRecipeComplexityAction
   /**
    * constructor.
    *
-   * @param parent parent action
-   * @param listener logger
-   * @param criteria criteria
+   * @param parent     parent action
+   * @param listener   logger
+   * @param criteria   criteria
    * @param dataSource datasource
-   * @param recipe recipe
-   * @param metadata metadata
+   * @param recipe     recipe
+   * @param metadata   metadata
    */
   public MetaShiftRecipeComplexityAction(
       MetaShiftRecipeAction parent, TaskListener listener,
@@ -90,6 +91,7 @@ public class MetaShiftRecipeComplexityAction
    * complexity for each file.
    */
   public static class FileComplexityStats {
+
     String file;
     int functions = 0;
     int complexFunctions = 0;
@@ -101,11 +103,11 @@ public class MetaShiftRecipeComplexityAction
     public String getFile() {
       return this.file;
     }
-    
+
     public int getFunctions() {
       return this.functions;
     }
-    
+
     public int getComplexFunctions() {
       return this.complexFunctions;
     }
@@ -125,18 +127,17 @@ public class MetaShiftRecipeComplexityAction
    * return paginated complexity list.
    *
    * @param pageIndex page index
-   * @param pageSize page size
+   * @param pageSize  page size
    * @return complexity list
-   * @throws IOException  invalid recipe uri
+   * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize)
-      throws IOException {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize) throws IOException {
     if (getParentAction().getMetrics().getComplexity().isAvailable()) {
       List<ComplexityData> complexityDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_COMPLEXITYLIST);
-      
-      Map<String, FileComplexityStats> fileInfo = new HashMap<String, FileComplexityStats>();
+
+      Map<String, FileComplexityStats> fileInfo = new HashMap<>();
 
       for (ComplexityData complexityData : complexityDataList) {
         String file = complexityData.getFile();
@@ -150,8 +151,7 @@ public class MetaShiftRecipeComplexityAction
             > this.getParentAction().getParentAction().getCriteria().getComplexityLevel());
       }
 
-      return getPagedDataList(pageIndex, pageSize, 
-          fileInfo.values().stream().collect(Collectors.toList()));
+      return getPagedDataList(pageIndex, pageSize, new ArrayList<>(fileInfo.values()));
     } else {
       return null;
     }
@@ -161,8 +161,7 @@ public class MetaShiftRecipeComplexityAction
    * return file complexity detail.
    */
   @JavaScriptMethod
-  public JSONObject getFileComplexityDetail(String recipePath)
-      throws IOException {
+  public JSONObject getFileComplexityDetail(String recipePath) {
     JSONObject result = new JSONObject();
 
     List<ComplexityData> complexityDataList = this.getDataSource().get(
@@ -170,7 +169,7 @@ public class MetaShiftRecipeComplexityAction
 
     List<ComplexityData> dataList =
         complexityDataList.stream().filter(o -> o.getFile().equals(recipePath))
-        .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
     result.put("dataList", dataList);
     result.put("content", this.readFileContents(recipePath));
