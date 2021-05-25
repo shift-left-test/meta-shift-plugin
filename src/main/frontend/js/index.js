@@ -1,6 +1,7 @@
 import { BuildSummary } from './build/build-summary';
 import { CodeSize } from './code-size';
 import { MetricsSimpleView } from './metrics-simple-view';
+import { TestedSimpleView } from './tested-simple-view';
 import { RecipeList } from './build/recipe-list';
 import { BuildTrendChart } from './build/build-trend-chart';
 import { CacheAvailabilityList } from './cache-availability/cache-availability-list';
@@ -24,6 +25,7 @@ export {
   BuildSummary,
   CodeSize,
   MetricsSimpleView,
+  TestedSimpleView,
   CacheAvailabilityList,
   RecipeViolationFiles,
   RecipeViolationFileView,

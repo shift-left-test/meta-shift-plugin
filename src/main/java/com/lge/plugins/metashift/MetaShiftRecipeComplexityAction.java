@@ -59,7 +59,7 @@ public class MetaShiftRecipeComplexityAction
   public MetaShiftRecipeComplexityAction(
       MetaShiftRecipeAction parent, TaskListener listener,
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent, listener, criteria, dataSource, recipe, metadata);
+    super(parent);
 
     List<ComplexityData> complexityList =
         recipe.objects(ComplexityData.class).collect(Collectors.toList());

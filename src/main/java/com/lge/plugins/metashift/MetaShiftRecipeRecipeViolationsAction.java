@@ -58,7 +58,7 @@ public class MetaShiftRecipeRecipeViolationsAction extends MetaShiftRecipeAction
   public MetaShiftRecipeRecipeViolationsAction(
       MetaShiftRecipeAction parent, TaskListener listener,
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent, listener, criteria, dataSource, recipe, metadata);
+    super(parent);
 
     List<RecipeViolationData> recipeViolationList =
         recipe.objects(RecipeViolationData.class).collect(Collectors.toList());

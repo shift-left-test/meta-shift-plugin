@@ -3,11 +3,8 @@
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <st:adjunct includes="com.lge.plugins.metashift.front"/>
   <div class="metashift">
-    <h2>MetaShift Summary
-      <span class="${it.metrics.qualified ? 'text-pass':'text-fail'}">
-        ${it.metrics.qualified ? 'Passed' : 'Failed'}
-      </span>
-    </h2>
+    <h2>MetaShift Summary</h2>
+    <a href="metashift_build">show detail...</a>
     <build-summary title="Cache Availability"
       available="${it.metrics.cacheAvailability.available}"
       qualified="${it.metrics.cacheAvailability.qualified}"

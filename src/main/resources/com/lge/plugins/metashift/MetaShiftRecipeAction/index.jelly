@@ -67,7 +67,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
           ratio="${it.metrics.duplications.ratio}"
           numerator="${it.metrics.duplications.numerator}"
           denominator="${it.metrics.duplications.denominator}" />
-        <metrics-simple-view title="Testing"
+        <metrics-simple-view title="Unit Tests"
           url="test"
           available="${it.metrics.test.available}"
           qualified="${it.metrics.test.qualified}"
@@ -81,7 +81,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
           ratio="${it.metrics.coverage.ratio}"
           numerator="${it.metrics.coverage.numerator}"
           denominator="${it.metrics.coverage.denominator}" />
-        <metrics-simple-view title="Mutation Test"
+        <metrics-simple-view title="Mutation Tests"
           url="mutation_test"
           available="${it.metrics.mutationTest.available}"
           qualified="${it.metrics.mutationTest.qualified}"

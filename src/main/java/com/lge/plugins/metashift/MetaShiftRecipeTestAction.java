@@ -55,7 +55,7 @@ public class MetaShiftRecipeTestAction extends MetaShiftRecipeActionChild {
   public MetaShiftRecipeTestAction(
       MetaShiftRecipeAction parent, TaskListener listener,
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent, listener, criteria, dataSource, recipe, metadata);
+    super(parent);
 
     List<TestData> testList = recipe.objects(TestData.class).collect(Collectors.toList());
 

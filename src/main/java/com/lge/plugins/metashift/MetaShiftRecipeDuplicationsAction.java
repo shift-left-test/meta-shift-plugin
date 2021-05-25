@@ -56,7 +56,7 @@ public class MetaShiftRecipeDuplicationsAction
   public MetaShiftRecipeDuplicationsAction(
       MetaShiftRecipeAction parent, TaskListener listener,
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent, listener, criteria, dataSource, recipe, metadata);
+    super(parent);
 
     List<DuplicationData> duplicationList =
         recipe.objects(DuplicationData.class).collect(Collectors.toList());

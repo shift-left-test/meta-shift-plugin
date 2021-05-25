@@ -58,7 +58,7 @@ public class MetaShiftRecipeCodeViolationsAction
   public MetaShiftRecipeCodeViolationsAction(
       MetaShiftRecipeAction parent, TaskListener listener,
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent, listener, criteria, dataSource, recipe, metadata);
+    super(parent);
 
     List<CodeViolationData> codeViolationDataList =
         recipe.objects(CodeViolationData.class).collect(Collectors.toList());

@@ -29,7 +29,6 @@ import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
 import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.metrics.Metrics;
-import com.lge.plugins.metashift.metrics.Queryable;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
@@ -43,12 +42,9 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 import jenkins.model.Jenkins;
 import jenkins.model.RunAction2;
 import net.sf.json.JSONArray;
@@ -61,7 +57,7 @@ import org.kohsuke.stapler.export.ExportedBean;
  */
 @ExportedBean
 public class MetaShiftBuildAction extends Actionable
-    implements RunAction2, Queryable<List<MetaShiftRecipeAction>> {
+    implements RunAction2 {
 
   private transient Run<?, ?> run;
   private transient List<MetaShiftRecipeAction> recipeActions;
@@ -210,115 +206,6 @@ public class MetaShiftBuildAction extends Actionable
     return result;
   }
 
-  /**
-   * trend chart series data class.
-   */
-  public static class TrendChartSeries {
-
-    private final String name;
-    private final String type;
-    private final List<Double> data;
-
-    public String getName() {
-      return this.name;
-    }
-
-    public String getType() {
-      return this.type;
-    }
-
-    public List<Double> getData() {
-      return this.data;
-    }
-
-    /**
-     * add data to series with  evaluator.
-     *
-     * @param evaluator evaluator
-     */
-    public void addData(Evaluator<?> evaluator) {
-      if (evaluator != null && evaluator.isAvailable()) {
-        this.data.add(0, evaluator.getRatio() * 100);
-      } else {
-        this.data.add(0, null);
-      }
-    }
-
-    /**
-     * constructor.
-     *
-     * @param name series name
-     * @param type series type. line, bar, etc...
-     */
-    public TrendChartSeries(String name, String type) {
-      this.name = name;
-      this.type = type;
-      this.data = new ArrayList<>();
-    }
-  }
-
-  /**
-   * return trend chart data.
-   *
-   * @return trend chart model
-   */
-  @JavaScriptMethod
-  public JSONObject getTrendChartModel() {
-    TrendChartSeries seriesCache = new TrendChartSeries("Cache", "line");
-    TrendChartSeries seriesRecipeViolation = new TrendChartSeries("RecipeViolation", "line");
-    TrendChartSeries seriesComment = new TrendChartSeries("Comment", "line");
-    TrendChartSeries seriesCodeViolation = new TrendChartSeries("CodeViolation", "line");
-    TrendChartSeries seriesComplexity = new TrendChartSeries("Complexity", "line");
-    TrendChartSeries seriesDuplication = new TrendChartSeries("Duplication", "line");
-    TrendChartSeries seriesTest = new TrendChartSeries("Test", "line");
-    TrendChartSeries seriesCoverage = new TrendChartSeries("Coverage", "line");
-    TrendChartSeries seriesMutation = new TrendChartSeries("Mutation", "line");
-
-    List<String> buildNameList = new ArrayList<>();
-
-    for (AbstractBuild<?, ?> b = (AbstractBuild<?, ?>) this.run;
-        b != null; b = b.getPreviousNotFailedBuild()) {
-      if (b.getResult() == Result.FAILURE) {
-        continue;
-      }
-
-      MetaShiftBuildAction msAction = b.getAction(MetaShiftBuildAction.class);
-      if (msAction == null) {
-        continue;
-      }
-      buildNameList.add(0, b.getDisplayName());
-
-      seriesCache.addData(msAction.getMetrics().getCacheAvailability());
-      seriesRecipeViolation.addData(msAction.getMetrics().getRecipeViolations());
-      seriesComment.addData(msAction.getMetrics().getComments());
-      seriesCodeViolation.addData(msAction.getMetrics().getCodeViolations());
-      seriesComplexity.addData(msAction.getMetrics().getComplexity());
-      seriesDuplication.addData(msAction.getMetrics().getDuplications());
-      seriesTest.addData(msAction.getMetrics().getTest());
-      seriesCoverage.addData(msAction.getMetrics().getCoverage());
-      seriesMutation.addData(msAction.getMetrics().getMutationTest());
-
-      // TODO: check response series size
-      if (buildNameList.size() >= 10) {
-        break;
-      }
-    }
-
-    JSONObject model = new JSONObject();
-    model.put("legend", new String[]{
-        seriesCache.getName(), seriesRecipeViolation.getName(), seriesComment.getName(),
-        seriesCodeViolation.getName(), seriesComplexity.getName(), seriesDuplication.getName(),
-        seriesTest.getName(), seriesCoverage.getName(), seriesMutation.getName()
-    });
-    model.put("builds", buildNameList);
-    model.put("series", new TrendChartSeries[]{
-        seriesCache, seriesRecipeViolation, seriesComment, seriesCodeViolation,
-        seriesComplexity, seriesDuplication, seriesTest, seriesCoverage, seriesMutation
-    });
-
-    return model;
-  }
-
   private transient MetaShiftBuildAction previousAction;
 
   /**
@@ -354,6 +241,31 @@ public class MetaShiftBuildAction extends Actionable
   }
 
   /**
+   * return recipe count which has available test.
+   *
+   * @return tested recipe count
+   */
+  public long getTestedRecipes() {
+    return this.getRecipes().stream().filter(
+        o -> o.getMetrics().getTest().isAvailable()).count();
+  }
+
+  /**
+   * return testedrecipes rate change. 
+   */
+  public double getTestedRecipesDelta() {
+    MetaShiftBuildAction previous =
+        Optional.ofNullable(getPreviousBuildAction()).orElse(null);
+    
+    double previousRatio = previous != null ? (double) previous.getTestedRecipes()
+        / (double) previous.getMetrics().getCodeSize().getRecipes() : 0;
+
+    return (double) getTestedRecipes() / (double) getMetrics().getCodeSize().getRecipes()
+        - previousRatio;
+  }
+
+  // metrics delta
+  /**
    * Returns the delta between the previous and current builds.
    *
    * @return CodeSizeDelta object
@@ -366,63 +278,131 @@ public class MetaShiftBuildAction extends Actionable
     return CodeSizeDelta.between(previous, current);
   }
 
-  private Collection<MetaShiftRecipeAction> filteredBy(
-      final Predicate<? super MetaShiftRecipeAction> predicate) {
-    return this.getRecipes().stream().filter(predicate).collect(Collectors.toList());
+  private double getRatioDelta(Function<Metrics, Evaluator<?>> mapper) {
+    Evaluator<?> previous =
+        Optional.ofNullable(getPreviousMetrics())
+            .map(mapper).orElse(null);
+    Evaluator<?> current = mapper.apply(getMetrics());
+    
+    return (previous != null) ? current.getRatio() - previous.getRatio()
+        : current.getRatio();
   }
 
-  // Queryable interface
-  @Override
-  public List<MetaShiftRecipeAction> getCacheAvailability() {
-    return new ArrayList<>(filteredBy(o ->
-        o.getMetrics().getCacheAvailability().isQualified()));
+  public double getCacheAvailabilityDelta() {
+    return getRatioDelta(Metrics::getCacheAvailability);
   }
 
-  @Override
-  public ArrayList<MetaShiftRecipeAction> getCodeViolations() {
-    return new ArrayList<>(filteredBy(o ->
-        o.getMetrics().getCodeViolations().isQualified()));
+  public double getCodeViolationsDelta() {
+    return getRatioDelta(Metrics::getCodeViolations);
   }
 
-  @Override
-  public ArrayList<MetaShiftRecipeAction> getComments() {
-    return new ArrayList<>(filteredBy(o ->
-        o.getMetrics().getComments().isQualified()));
+  public double getCommentsDelta() {
+    return getRatioDelta(Metrics::getComments);
   }
 
-  @Override
-  public ArrayList<MetaShiftRecipeAction> getComplexity() {
-    return new ArrayList<>(filteredBy(o ->
-        o.getMetrics().getComplexity().isQualified()));
+  public double getComplexityDelta() {
+    return getRatioDelta(Metrics::getComplexity);
   }
 
-  @Override
-  public ArrayList<MetaShiftRecipeAction> getCoverage() {
-    return new ArrayList<>(filteredBy(o ->
-        o.getMetrics().getCoverage().isQualified()));
+  public double getCoverageDelta() {
+    return getRatioDelta(Metrics::getCoverage);
   }
 
-  @Override
-  public ArrayList<MetaShiftRecipeAction> getDuplications() {
-    return new ArrayList<>(filteredBy(o ->
-        o.getMetrics().getDuplications().isQualified()));
+  public double getDuplicationsDelta() {
+    return getRatioDelta(Metrics::getDuplications);
   }
 
-  @Override
-  public ArrayList<MetaShiftRecipeAction> getMutationTest() {
-    return new ArrayList<>(filteredBy(o ->
-        o.getMetrics().getMutationTest().isQualified()));
+  public double getMutationTestDelta() {
+    return getRatioDelta(Metrics::getMutationTest);
   }
 
-  @Override
-  public ArrayList<MetaShiftRecipeAction> getRecipeViolations() {
-    return new ArrayList<>(filteredBy(o ->
-        o.getMetrics().getRecipeViolations().isQualified()));
+  public double getRecipeViolationsDelta() {
+    return getRatioDelta(Metrics::getRecipeViolations);
   }
 
-  @Override
-  public ArrayList<MetaShiftRecipeAction> getTest() {
-    return new ArrayList<>(filteredBy(o ->
-        o.getMetrics().getTest().isQualified()));
+  public double getTestDelta() {
+    return getRatioDelta(Metrics::getTest);
+  }
+
+  // qualified rate
+  /**
+   * return cache availability qualified recipe rate.
+   */
+  public double getCacheAvailabilityQualifiedRate() {
+    return (double) this.getRecipes().stream().filter(
+        o -> o.getMetrics().getCacheAvailability().isQualified()).count()
+        / (double) this.getRecipes().size();
+  }
+
+  /**
+   * return code violation qualified recipe rate.
+   */
+  public double getCodeViolationsQualifiedRate() {
+    return (double) this.getRecipes().stream().filter(
+        o -> o.getMetrics().getCodeViolations().isQualified()).count()
+        / (double) this.getRecipes().size();
+  }
+
+  /**
+   * return comments qualified recipe rate.
+   */
+  public double getCommentsQualifiedRate() {
+    return (double) this.getRecipes().stream().filter(
+        o -> o.getMetrics().getComments().isQualified()).count()
+        / (double) this.getRecipes().size();
+  }
+
+  /**
+   * return complexity qualified recipe rate.
+   */
+  public double getComplexityQualifiedRate() {
+    return (double) this.getRecipes().stream().filter(
+        o -> o.getMetrics().getComplexity().isQualified()).count()
+        / (double) this.getRecipes().size();
+  }
+
+  /**
+   * return coverage qualified recipe rate.
+   */
+  public double getCoverageQualifiedRate() {
+    return (double) this.getRecipes().stream().filter(
+        o -> o.getMetrics().getCoverage().isQualified()).count()
+        / (double) this.getRecipes().size();
+  }
+
+  /**
+   * return duplcations qualified recipe rate.
+   */
+  public double getDuplicationsQualifiedRate() {
+    return (double) this.getRecipes().stream().filter(
+        o -> o.getMetrics().getDuplications().isQualified()).count()
+        / (double) this.getRecipes().size();
+  }
+
+  /**
+   * return mutation test qualified recipe rate.
+   */
+  public double getMutationTestQualifiedRate() {
+    return (double) this.getRecipes().stream().filter(
+        o -> o.getMetrics().getMutationTest().isQualified()).count()
+        / (double) this.getRecipes().size();
+  }
+
+  /**
+   * return recipe vioation qualified recipe rate.
+   */
+  public double getRecipeViolationsQualifiedRate() {
+    return (double) this.getRecipes().stream().filter(
+        o -> o.getMetrics().getRecipeViolations().isQualified()).count()
+        / (double) this.getRecipes().size();
+  }
+
+  /**
+   * return test qualified recipe rate.
+   */
+  public double getTestQualifiedRate() {
+    return (double) this.getRecipes().stream().filter(
+        o -> o.getMetrics().getTest().isQualified()).count()
+        / (double) this.getRecipes().size();
   }
 }

@@ -56,7 +56,7 @@ public class MetaShiftRecipeCacheAvailabilityAction
   public MetaShiftRecipeCacheAvailabilityAction(
       MetaShiftRecipeAction parent, TaskListener listener,
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent, listener, criteria, dataSource, recipe, metadata);
+    super(parent);
 
     List<CacheData> cacheList = recipe.objects(CacheData.class).collect(Collectors.toList());
 

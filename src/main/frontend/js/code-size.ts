@@ -27,7 +27,7 @@ export class CodeSize extends LitElement {
       <div class="size-item">
         <div class="title">${title}<div>
         <div class="size-number">${size}
-          <span class="size-diff">(${diffDirection}${delta})</span>
+          <span class="size-diff">(${diffDirection}${Math.abs(delta)})</span>
         </div>
       </div>`
     } else{

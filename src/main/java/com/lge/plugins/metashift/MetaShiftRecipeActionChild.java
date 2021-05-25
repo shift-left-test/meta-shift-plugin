@@ -24,13 +24,10 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.metrics.Criteria;
-import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ListUtils;
 import hudson.model.Action;
 import hudson.model.Run;
-import hudson.model.TaskListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -48,15 +45,9 @@ public abstract class MetaShiftRecipeActionChild implements Action {
   /**
    * constructor.
    *
-   * @param parent     parent action
-   * @param listener   logger
-   * @param criteria   criteria
-   * @param dataSource datasource
-   * @param recipe     recipe
-   * @param metadata   metadata
+   * @param parent parent action
    */
-  public MetaShiftRecipeActionChild(MetaShiftRecipeAction parent, TaskListener listener,
-      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
+  public MetaShiftRecipeActionChild(MetaShiftRecipeAction parent) {
     this.parent = parent;
   }
 

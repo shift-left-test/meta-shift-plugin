@@ -137,7 +137,6 @@ code-size {
   }
 }
 
-
 metrics-simple-view {
   display: inline-block;
   
@@ -177,6 +176,16 @@ metrics-simple-view {
 
 metrics-simple-view.has-url:hover {
   transform: scale(1.05);
+}
+
+tested-simple-view {
+  @extend metrics-simple-view;
+
+  background-color: rgb(238, 238, 238);
+
+  .size-number {
+    color: rgb(0, 0, 158);
+  }
 }
 
 .text-na {

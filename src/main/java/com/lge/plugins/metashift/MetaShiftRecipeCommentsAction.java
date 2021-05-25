@@ -56,7 +56,7 @@ public class MetaShiftRecipeCommentsAction
   public MetaShiftRecipeCommentsAction(
       MetaShiftRecipeAction parent, TaskListener listener,
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent, listener, criteria, dataSource, recipe, metadata);
+    super(parent);
 
     List<CommentData> commentList = recipe.objects(CommentData.class).collect(Collectors.toList());
 
