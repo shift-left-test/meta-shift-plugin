@@ -22,13 +22,12 @@ export class MetricsSimpleView extends LitElement {
     var diffDirection = this.delta == 0 ? '' :
         (this.delta > 0 ? '▲' : '▼');
     var textClass = this.available === "true" ? '' : 'text-na';
-
+    var iconClass = this.available === "true" ?
+        (this.qualified === "true" ? 'ico-pass' : 'ico-fail'):'ico-na';
+        
     return html`<div class="board">
       <div class="title">
-        <b class=${this.available === "true" ?
-        (this.qualified === "true" ? 
-          'ico-pass':
-          'ico-fail'):'ico-na'}>${this.title}</b>
+        <b class="${iconClass}">${this.title}</b>
       </div>
       <div class="size-number ${textClass}">
         ${this.available === "true" ?
@@ -42,7 +41,7 @@ export class MetricsSimpleView extends LitElement {
       </div>`
       : html``}
       <div class="description ${textClass}">
-        <b>${this.numerator}</b> out of <b>${this.denominator}</b>
+        <b>${Number(this.numerator).toLocaleString()}</b> out of <b>${Number(this.denominator).toLocaleString()}</b>
       </div>
     </div>
     ${this.qualifiedRate ?

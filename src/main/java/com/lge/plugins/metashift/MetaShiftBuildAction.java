@@ -42,6 +42,8 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -406,5 +408,50 @@ public class MetaShiftBuildAction extends Actionable
     return (double) this.getRecipes().stream().filter(
         o -> o.getMetrics().getTest().isQualified()).count()
         / (double) this.getRecipes().size();
+  }
+
+  /**
+   * return rank of LineOfCode.
+   */
+  public long getRecipeLineOfCodeRank(MetaShiftRecipeAction action) {
+    List<MetaShiftRecipeAction> recipeActionList =
+        new ArrayList<MetaShiftRecipeAction>(this.getRecipes());
+    recipeActionList.sort(new Comparator<MetaShiftRecipeAction>() {
+      public int compare(MetaShiftRecipeAction a, MetaShiftRecipeAction b) {
+        return (int) (b.getLineOfCodeValue() - a.getLineOfCodeValue());
+      }
+    });
+
+    return recipeActionList.indexOf(action) + 1;
+  }
+
+  /**
+   * return rank of build performance.
+   */
+  public long getRecipeBuildPerformanceRank(MetaShiftRecipeAction action) {
+    List<MetaShiftRecipeAction> recipeActionList =
+        new ArrayList<MetaShiftRecipeAction>(this.getRecipes());
+    recipeActionList.sort(new Comparator<MetaShiftRecipeAction>() {
+      public int compare(MetaShiftRecipeAction a, MetaShiftRecipeAction b) {
+        return (int) (b.getBuildPerformanceValue() - a.getBuildPerformanceValue());
+      }
+    });
+
+    return recipeActionList.indexOf(action) + 1;
+  }
+
+  /**
+   * return rank of code quality.
+   */
+  public long getRecipeCodeQualityRank(MetaShiftRecipeAction action) {
+    List<MetaShiftRecipeAction> recipeActionList =
+        new ArrayList<MetaShiftRecipeAction>(this.getRecipes());
+    recipeActionList.sort(new Comparator<MetaShiftRecipeAction>() {
+      public int compare(MetaShiftRecipeAction a, MetaShiftRecipeAction b) {
+        return (int) (b.getCodeQualityValue() - a.getCodeQualityValue());
+      }
+    });
+
+    return recipeActionList.indexOf(action) + 1;
   }
 }

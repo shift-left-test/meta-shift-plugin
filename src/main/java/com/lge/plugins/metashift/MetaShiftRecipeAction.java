@@ -160,4 +160,44 @@ public class MetaShiftRecipeAction extends Actionable implements Action {
     CodeSizeEvaluator current = getMetrics().getCodeSize();
     return CodeSizeDelta.between(previous, current);
   }
+
+  public long getTotalRacipeCount() {
+    return this.parent.getRecipes().size();
+  }
+
+  public long getLineOfCodeRank() {
+    return this.parent.getRecipeLineOfCodeRank(this);
+  }
+
+  public long getBuildPerformanceRank() {
+    return this.parent.getRecipeBuildPerformanceRank(this);
+  }
+
+  public long getCodeQualityRank() {
+    return this.parent.getRecipeCodeQualityRank(this);
+  }
+
+  public double getLineOfCodeValue() {
+    return this.getMetrics().getCodeSize().getLines();
+  }
+
+  public double getBuildPerformanceValue() {
+    return (this.getMetrics().getCacheAvailability().getRatio()
+        - this.getMetrics().getRecipeViolations().getRatio()) * 100;
+  }
+
+  /**
+   * return codequality score for rank.
+   *
+   * @return codequality score
+   */
+  public double getCodeQualityValue() {
+    return (this.getMetrics().getComments().getRatio()
+        - this.getMetrics().getCodeViolations().getRatio()
+        - this.getMetrics().getComplexity().getRatio()
+        - this.getMetrics().getDuplications().getRatio()
+        + this.getMetrics().getTest().getRatio()
+        + this.getMetrics().getCoverage().getRatio()
+        + this.getMetrics().getMutationTest().getRatio()) * 100;
+  }
 }

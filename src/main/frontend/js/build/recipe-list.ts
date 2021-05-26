@@ -18,32 +18,27 @@ export class RecipeList extends LitElement {
 
     this.columns = [ //Define Table Columns
       { title:"Recipes", field:"name", widthGrow:1},
-      { title: "Build Performance",
-        columns: [
-          { title:"Cache", field:"cacheAvailability", hozAlign:"left",
-            formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
-          { title:"Recipe Violation", field:"recipeViolations", hozAlign:"left",
-            formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1}
-        ],
-      },
-      { title: "Code Quality",
-        columns: [
-          { title:"Comment", field:"comments", hozAlign:"left",
-            formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
-          { title:"Code Violation", field:"codeViolations", hozAlign:"left",
-            formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
-          { title:"Complexity", field:"complexity", hozAlign:"left",
-            formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
-          { title:"Duplication", field:"duplications", hozAlign:"left",
-            formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
-          { title:"Test", field:"test", hozAlign:"left",
-            formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
-          { title:"Coverage", field:"coverage", hozAlign:"left",
-            formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
-          { title:"Mutation Test", field:"mutationTest", hozAlign:"left",
-            formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1}
-        ]
-      }
+      { title:"Lines of Code", field: "codeSize",
+        formatter: this.lineOfCodeFormatter.bind(this)},
+      { title:"Premirror"},
+      { title:"SharedState", field:"cacheAvailability", hozAlign:"left",
+        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+      { title:"Recipe Violations", field:"recipeViolations", hozAlign:"left",
+        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+      { title:"Comment", field:"comments", hozAlign:"left",
+        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+      { title:"Code Violations", field:"codeViolations", hozAlign:"left",
+        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+      { title:"Complexity", field:"complexity", hozAlign:"left",
+        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+      { title:"Duplications", field:"duplications", hozAlign:"left",
+        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+      { title:"Unit Tests", field:"test", hozAlign:"left",
+        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+      { title:"Coverage", field:"coverage", hozAlign:"left",
+        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+      { title:"Mutation Tests", field:"mutationTest", hozAlign:"left",
+        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1}
     ];
   }
 
@@ -68,35 +63,35 @@ export class RecipeList extends LitElement {
     });
   }
 
+  private lineOfCodeFormatter(cell, formatterParams, onRendered) {
+    return `<div>${cell.getValue().lines.toLocaleString()}</div>`
+  }
+
   private qualifierCellformatter(cell, formatterParams, onRendered) {
 
     var available = false
     var numerator = "N/A"
     var denominator = "N/A"
     var ratio = 0
-    var qualified = "bg-na"
     
     if (!!cell.getValue()) {
       available = cell.getValue().available;
       numerator = cell.getValue().numerator;
       denominator = cell.getValue().denominator;
       ratio = cell.getValue().ratio * 100;
-      qualified = cell.getValue().qualified ? "bg-pass" : "bg-fail";
     }
 
     if (available) {
       return `
-      <div>N:${numerator} D:${denominator}</div>
-      <span class="float-left">${ratio.toFixed(2)}% </span>
       <div class="progress">
-        <div class="progress-bar ${qualified}"
+        <div class="progress-bar"
           role="progressbar" style="width: ${ratio}%">
+          ${ratio.toFixed(2)}% 
         </div>
       </div>
       `
     } else {
-      return `<div>N/A</div>
-      <span class="float-left">N/A</span>`
+      return `<div>--</div>`
     }
   }
 

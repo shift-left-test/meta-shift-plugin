@@ -28,7 +28,7 @@ export class TestedSimpleView extends LitElement {
       (${diffDirection}${Math.abs((this.delta * 100)).toFixed(0)}%)
       </div>
       <div class="description">
-        <b>${this.tested}</b> out of <b>${this.recipes}</b>
+        <b>${Number(this.tested).toLocaleString()}</b> out of <b>${Number(this.recipes).toLocaleString()}</b>
       </div>
     </div>
     `
