@@ -2,8 +2,8 @@ import { customElement } from 'lit/decorators.js';
 
 import { FilesTable } from '../common/files-table';
 
-@customElement('cache-availability-list')
-export class CacheAvailabilityList extends FilesTable {
+@customElement('shared-state-cache-list')
+export class SharedStateCacheList extends FilesTable {
   constructor() {
     super();
 

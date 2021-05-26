@@ -75,7 +75,9 @@ public class MetaShiftRecipeAction extends Actionable implements Action {
         this.name, "metadata.json");
     JSONObject metadata = JsonUtils.createObject(metadataFile);
 
-    this.addAction(new MetaShiftRecipeCacheAvailabilityAction(
+    this.addAction(new MetaShiftRecipeSharedStateCacheAction(
+        this, listener, criteria, dataSource, recipe, metadata));
+    this.addAction(new MetaShiftRecipePremirrorCacheAction(
         this, listener, criteria, dataSource, recipe, metadata));
     this.addAction(new MetaShiftRecipeCodeViolationsAction(
         this, listener, criteria, dataSource, recipe, metadata));

@@ -9,7 +9,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <h1>${it.run.project.displayName} ${it.run.displayName}</h1>
         <h3>Lines of Code</h3>
         <div class="metrics-row">
-          <div><b>${it.lineOfCodeRank}</b><span class="small-upper">th</span> out of <b>${it.totalRacipeCount}</b> recipes</div>
+          <div>
+            <b>${it.lineOfCodeRank}</b><span class="small-upper">th</span> out of <b>${it.totalRacipeCount}</b> recipes
+          </div>
         </div>
         <div class="metrics-row">
           <code-size
@@ -28,13 +30,20 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
           <div><b>${it.buildPerformanceRank}</b><span class="small-upper">th</span> out of <b>${it.totalRacipeCount}</b> recipes</div>
         </div>
         <div class="metrics-row">
-          <metrics-simple-view title="Cache Availability"
-            url="cache_availability"
-            available="${it.metrics.cacheAvailability.available}"
-            qualified="${it.metrics.cacheAvailability.qualified}"
-            ratio="${it.metrics.cacheAvailability.ratio}"
-            numerator="${it.metrics.cacheAvailability.numerator}"
-            denominator="${it.metrics.cacheAvailability.denominator}" />
+          <metrics-simple-view title="Premirror Cache"
+            url="premirror_cache"
+            available="${it.metrics.premirrorCache.available}"
+            qualified="${it.metrics.premirrorCache.qualified}"
+            ratio="${it.metrics.premirrorCache.ratio}"
+            numerator="${it.metrics.premirrorCache.numerator}"
+            denominator="${it.metrics.premirrorCache.denominator}" />
+          <metrics-simple-view title="Shared State Cache"
+            url="sharedstate_cache"
+            available="${it.metrics.sharedStateCache.available}"
+            qualified="${it.metrics.sharedStateCache.qualified}"
+            ratio="${it.metrics.sharedStateCache.ratio}"
+            numerator="${it.metrics.sharedStateCache.numerator}"
+            denominator="${it.metrics.sharedStateCache.denominator}" />
           <metrics-simple-view title="Recipe Violations"
             url="recipe_violations"
             available="${it.metrics.recipeViolations.available}"

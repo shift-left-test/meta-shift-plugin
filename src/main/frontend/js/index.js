@@ -4,7 +4,8 @@ import { MetricsSimpleView } from './metrics-simple-view';
 import { TestedSimpleView } from './tested-simple-view';
 import { RecipeList } from './build/recipe-list';
 import { BuildTrendChart } from './build/build-trend-chart';
-import { CacheAvailabilityList } from './cache-availability/cache-availability-list';
+import { PremirrorCacheList } from './premirror-cache/premirror-cache-list';
+import { SharedStateCacheList } from './shared-state-cache/shared-state-cache-list';
 import { RecipeViolationFiles } from './recipe-violation/recipe-violation-files';
 import { RecipeViolationFileView } from './recipe-violation/recipe-violation-file-view';
 import { CommentFiles } from './comment/comment-files';
@@ -26,7 +27,8 @@ export {
   CodeSize,
   MetricsSimpleView,
   TestedSimpleView,
-  CacheAvailabilityList,
+  PremirrorCacheList,
+  SharedStateCacheList,
   RecipeViolationFiles,
   RecipeViolationFileView,
   CommentFiles,

@@ -5,12 +5,18 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <div class="metashift">
     <h2>MetaShift Summary</h2>
     <a href="metashift_build">show detail...</a>
-    <build-summary title="Cache Availability"
-      available="${it.metrics.cacheAvailability.available}"
-      qualified="${it.metrics.cacheAvailability.qualified}"
-      ratio="${it.metrics.cacheAvailability.ratio}"
-      numerator="${it.metrics.cacheAvailability.numerator}"
-      denominator="${it.metrics.cacheAvailability.denominator}" />
+    <build-summary title="Premirror Cache"
+      available="${it.metrics.premirrorCache.available}"
+      qualified="${it.metrics.premirrorCache.qualified}"
+      ratio="${it.metrics.premirrorCache.ratio}"
+      numerator="${it.metrics.premirrorCache.numerator}"
+      denominator="${it.metrics.premirrorCache.denominator}" />
+    <build-summary title="Shared State Cache"
+      available="${it.metrics.sharedStateCache.available}"
+      qualified="${it.metrics.sharedStateCache.qualified}"
+      ratio="${it.metrics.sharedStateCache.ratio}"
+      numerator="${it.metrics.sharedStateCache.numerator}"
+      denominator="${it.metrics.sharedStateCache.denominator}" />
     <build-summary title="Recipe Violations"
       available="${it.metrics.recipeViolations.available}"
       qualified="${it.metrics.recipeViolations.qualified}"
@@ -41,22 +47,19 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       ratio="${it.metrics.duplications.ratio}"
       numerator="${it.metrics.duplications.numerator}"
       denominator="${it.metrics.duplications.denominator}" />
-    <build-summary
-      title="Testing"
+    <build-summary title="Unit Tests"
       available="${it.metrics.test.available}"
       qualified="${it.metrics.test.qualified}"
       ratio="${it.metrics.test.ratio}"
       numerator="${it.metrics.test.numerator}"
       denominator="${it.metrics.test.denominator}" />
-    <build-summary
-      title="Coverage"
+    <build-summary title="Coverage"
       available="${it.metrics.coverage.available}"
       qualified="${it.metrics.coverage.qualified}"
       ratio="${it.metrics.coverage.ratio}"
       numerator="${it.metrics.coverage.numerator}"
       denominator="${it.metrics.coverage.denominator}" />
-    <build-summary
-      title="Mutation Test"
+    <build-summary title="Mutation Tests"
       available="${it.metrics.mutationTest.available}"
       qualified="${it.metrics.mutationTest.qualified}"
       ratio="${it.metrics.mutationTest.ratio}"

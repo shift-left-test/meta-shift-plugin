@@ -25,18 +25,24 @@ xmlns:c="/charts">
           />
         </div>
         <h3>Build Performance</h3>
-        <div class="metrics-row">
-          <metrics-simple-view
-            title="Cache Availability"
-            available="${it.metrics.cacheAvailability.available}"
-            qualified="${it.metrics.cacheAvailability.qualified}"
-            ratio="${it.metrics.cacheAvailability.ratio}"
-            numerator="${it.metrics.cacheAvailability.numerator}"
-            denominator="${it.metrics.cacheAvailability.denominator}"
-            delta="${it.cacheAvailabilityDelta}"
-            qualifiedRate="${it.cacheAvailabilityQualifiedRate}" />
-          <metrics-simple-view
-            title="Recipe Violations"
+          <div class="metrics-row">
+            <metrics-simple-view title="Premirror Cache"
+            available="${it.metrics.premirrorCache.available}"
+            qualified="${it.metrics.premirrorCache.qualified}"
+            ratio="${it.metrics.premirrorCache.ratio}"
+            numerator="${it.metrics.premirrorCache.numerator}"
+            denominator="${it.metrics.premirrorCache.denominator}"
+            delta="${it.premirrorCacheDelta}"
+            qualifiedRate="${it.premirrorCacheQualifiedRate}" />
+          <metrics-simple-view title="Shared State Cache"
+            available="${it.metrics.sharedStateCache.available}"
+            qualified="${it.metrics.sharedStateCache.qualified}"
+            ratio="${it.metrics.sharedStateCache.ratio}"
+            numerator="${it.metrics.sharedStateCache.numerator}"
+            denominator="${it.metrics.sharedStateCache.denominator}"
+            delta="${it.sharedStateCacheDelta}"
+            qualifiedRate="${it.sharedStateCacheQualifiedRate}" />
+          <metrics-simple-view title="Recipe Violations"
             available="${it.metrics.recipeViolations.available}"
             qualified="${it.metrics.recipeViolations.qualified}"
             ratio="${it.metrics.recipeViolations.ratio}"
@@ -47,8 +53,7 @@ xmlns:c="/charts">
         </div>
         <h3>Code Quality</h3>
         <div class="metrics-row">
-          <metrics-simple-view
-            title="Comments"
+          <metrics-simple-view title="Comments"
             available="${it.metrics.comments.available}"
             qualified="${it.metrics.comments.qualified}"
             ratio="${it.metrics.comments.ratio}"
@@ -56,8 +61,7 @@ xmlns:c="/charts">
             denominator="${it.metrics.comments.denominator}"
             delta="${it.commentsDelta}"
             qualifiedRate="${it.commentsQualifiedRate}" />
-          <metrics-simple-view
-            title="Violations"
+          <metrics-simple-view title="Violations"
             available="${it.metrics.codeViolations.available}"
             qualified="${it.metrics.codeViolations.qualified}"
             ratio="${it.metrics.codeViolations.ratio}"
@@ -65,8 +69,7 @@ xmlns:c="/charts">
             denominator="${it.metrics.codeViolations.denominator}"
             delta="${it.codeViolationsDelta}"
             qualifiedRate="${it.codeViolationsQualifiedRate}" />
-          <metrics-simple-view
-            title="Complexity"
+          <metrics-simple-view title="Complexity"
             available="${it.metrics.complexity.available}"
             qualified="${it.metrics.complexity.qualified}"
             ratio="${it.metrics.complexity.ratio}"
@@ -74,8 +77,7 @@ xmlns:c="/charts">
             denominator="${it.metrics.complexity.denominator}"
             delta="${it.complexityDelta}"
             qualifiedRate="${it.complexityQualifiedRate}" />
-          <metrics-simple-view
-            title="Duplications"
+          <metrics-simple-view title="Duplications"
             available="${it.metrics.duplications.available}"
             qualified="${it.metrics.duplications.qualified}"
             ratio="${it.metrics.duplications.ratio}"
@@ -85,13 +87,11 @@ xmlns:c="/charts">
             qualifiedRate="${it.duplicationsQualifiedRate}" />
         </div>
         <div class="metrics-row">
-          <tested-simple-view
-            title="Tested Recipes"
+          <tested-simple-view title="Tested Recipes"
             tested="${it.testedRecipes}"
             recipes="${it.metrics.codeSize.recipes}"
             delta="${it.testedRecipesDelta}" />
-          <metrics-simple-view
-            title="Unit Tests"
+          <metrics-simple-view title="Unit Tests"
             available="${it.metrics.test.available}"
             qualified="${it.metrics.test.qualified}"
             ratio="${it.metrics.test.ratio}"
@@ -99,8 +99,7 @@ xmlns:c="/charts">
             denominator="${it.metrics.test.denominator}"
             delta="${it.testDelta}"
             qualifiedRate="${it.testQualifiedRate}" />
-          <metrics-simple-view
-            title="Coverage"
+          <metrics-simple-view title="Coverage"
             available="${it.metrics.coverage.available}"
             qualified="${it.metrics.coverage.qualified}"
             ratio="${it.metrics.coverage.ratio}"
@@ -108,8 +107,7 @@ xmlns:c="/charts">
             denominator="${it.metrics.coverage.denominator}"
             delta="${it.coverageDelta}"
             qualifiedRate="${it.coverageQualifiedRate}" />
-          <metrics-simple-view
-            title="Mutation Tests"
+          <metrics-simple-view title="Mutation Tests"
             available="${it.metrics.mutationTest.available}"
             qualified="${it.metrics.mutationTest.qualified}"
             ratio="${it.metrics.mutationTest.ratio}"

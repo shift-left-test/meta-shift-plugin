@@ -287,12 +287,20 @@ public class MetaShiftBuildAction extends Actionable
             .map(mapper).orElse(null);
     Evaluator<?> current = mapper.apply(getMetrics());
 
+    if (current == null) {
+      return 0;
+    }
+
     return (previous != null) ? current.getRatio() - previous.getRatio()
         : current.getRatio();
   }
 
-  public double getCacheAvailabilityDelta() {
-    return getRatioDelta(Metrics::getCacheAvailability);
+  public double getPremirrorCacheDelta() {
+    return getRatioDelta(Metrics::getPremirrorCache);
+  }
+
+  public double getSharedStateCacheDelta() {
+    return getRatioDelta(Metrics::getSharedStateCache);
   }
 
   public double getCodeViolationsDelta() {
@@ -330,11 +338,22 @@ public class MetaShiftBuildAction extends Actionable
   // qualified rate
 
   /**
-   * return cache availability qualified recipe rate.
+   * return premirror cache qualified recipe rate.
    */
-  public double getCacheAvailabilityQualifiedRate() {
+  public double getPremirrorCacheQualifiedRate() {
     return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getCacheAvailability().isQualified()).count()
+        o -> o.getMetrics().getPremirrorCache() != null
+        && o.getMetrics().getPremirrorCache().isQualified()).count()
+        / (double) this.getRecipes().size();
+  }
+
+  /**
+   * return sharedstate cache availability qualified recipe rate.
+   */
+  public double getSharedStateCacheQualifiedRate() {
+    return (double) this.getRecipes().stream().filter(
+        o -> o.getMetrics().getSharedStateCache() != null
+        && o.getMetrics().getSharedStateCache().isQualified()).count()
         / (double) this.getRecipes().size();
   }
 
@@ -343,7 +362,8 @@ public class MetaShiftBuildAction extends Actionable
    */
   public double getCodeViolationsQualifiedRate() {
     return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getCodeViolations().isQualified()).count()
+        o -> o.getMetrics().getCodeViolations() != null
+        && o.getMetrics().getCodeViolations().isQualified()).count()
         / (double) this.getRecipes().size();
   }
 
@@ -352,7 +372,8 @@ public class MetaShiftBuildAction extends Actionable
    */
   public double getCommentsQualifiedRate() {
     return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getComments().isQualified()).count()
+        o -> o.getMetrics().getComments() != null
+        && o.getMetrics().getComments().isQualified()).count()
         / (double) this.getRecipes().size();
   }
 
@@ -361,7 +382,8 @@ public class MetaShiftBuildAction extends Actionable
    */
   public double getComplexityQualifiedRate() {
     return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getComplexity().isQualified()).count()
+        o -> o.getMetrics().getComplexity() != null
+        && o.getMetrics().getComplexity().isQualified()).count()
         / (double) this.getRecipes().size();
   }
 
@@ -370,7 +392,8 @@ public class MetaShiftBuildAction extends Actionable
    */
   public double getCoverageQualifiedRate() {
     return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getCoverage().isQualified()).count()
+        o -> o.getMetrics().getCoverage() != null
+        && o.getMetrics().getCoverage().isQualified()).count()
         / (double) this.getRecipes().size();
   }
 
@@ -379,7 +402,8 @@ public class MetaShiftBuildAction extends Actionable
    */
   public double getDuplicationsQualifiedRate() {
     return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getDuplications().isQualified()).count()
+        o -> o.getMetrics().getDuplications() != null
+        && o.getMetrics().getDuplications().isQualified()).count()
         / (double) this.getRecipes().size();
   }
 
@@ -388,7 +412,8 @@ public class MetaShiftBuildAction extends Actionable
    */
   public double getMutationTestQualifiedRate() {
     return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getMutationTest().isQualified()).count()
+        o -> o.getMetrics().getMutationTest() != null
+        && o.getMetrics().getMutationTest().isQualified()).count()
         / (double) this.getRecipes().size();
   }
 
@@ -397,7 +422,8 @@ public class MetaShiftBuildAction extends Actionable
    */
   public double getRecipeViolationsQualifiedRate() {
     return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getRecipeViolations().isQualified()).count()
+        o -> o.getMetrics().getRecipeViolations() != null
+        && o.getMetrics().getRecipeViolations().isQualified()).count()
         / (double) this.getRecipes().size();
   }
 
@@ -406,7 +432,8 @@ public class MetaShiftBuildAction extends Actionable
    */
   public double getTestQualifiedRate() {
     return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getTest().isQualified()).count()
+        o -> o.getMetrics().getTest() != null
+        && o.getMetrics().getTest().isQualified()).count()
         / (double) this.getRecipes().size();
   }
 

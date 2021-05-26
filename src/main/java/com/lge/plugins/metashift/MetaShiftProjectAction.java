@@ -163,7 +163,8 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
    */
   @JavaScriptMethod
   public JSONObject getTrendChartModel() {
-    TrendChartSeries seriesCache = new TrendChartSeries("Cache", "line");
+    TrendChartSeries seriesPremirrorCache = new TrendChartSeries("PremirrorCache", "line");
+    TrendChartSeries seriesSharedStateCache = new TrendChartSeries("SharedStateCache", "line");
     TrendChartSeries seriesRecipeViolation = new TrendChartSeries("RecipeViolation", "line");
     TrendChartSeries seriesComment = new TrendChartSeries("Comment", "line");
     TrendChartSeries seriesCodeViolation = new TrendChartSeries("CodeViolation", "line");
@@ -187,7 +188,8 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
       }
       buildNameList.add(0, b.getDisplayName());
 
-      seriesCache.addData(msAction.getMetrics().getCacheAvailability());
+      seriesPremirrorCache.addData(msAction.getMetrics().getPremirrorCache());
+      seriesSharedStateCache.addData(msAction.getMetrics().getSharedStateCache());
       seriesRecipeViolation.addData(msAction.getMetrics().getRecipeViolations());
       seriesComment.addData(msAction.getMetrics().getComments());
       seriesCodeViolation.addData(msAction.getMetrics().getCodeViolations());
@@ -205,13 +207,15 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
 
     JSONObject model = new JSONObject();
     model.put("legend", new String[]{
-        seriesCache.getName(), seriesRecipeViolation.getName(), seriesComment.getName(),
+        seriesSharedStateCache.getName(), seriesPremirrorCache.getName(),
+        seriesRecipeViolation.getName(), seriesComment.getName(),
         seriesCodeViolation.getName(), seriesComplexity.getName(), seriesDuplication.getName(),
         seriesTest.getName(), seriesCoverage.getName(), seriesMutation.getName()
     });
     model.put("builds", buildNameList);
     model.put("series", new TrendChartSeries[]{
-        seriesCache, seriesRecipeViolation, seriesComment, seriesCodeViolation,
+        seriesSharedStateCache, seriesPremirrorCache,
+        seriesRecipeViolation, seriesComment, seriesCodeViolation,
         seriesComplexity, seriesDuplication, seriesTest, seriesCoverage, seriesMutation
     });
 

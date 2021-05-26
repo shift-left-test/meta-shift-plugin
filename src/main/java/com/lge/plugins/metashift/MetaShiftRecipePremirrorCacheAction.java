@@ -25,7 +25,7 @@
 package com.lge.plugins.metashift;
 
 import com.lge.plugins.metashift.metrics.Criteria;
-import com.lge.plugins.metashift.models.CacheData;
+import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.model.TaskListener;
@@ -38,10 +38,10 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 /**
  * MetaShift recipe's cache availability detail view action class.
  */
-public class MetaShiftRecipeCacheAvailabilityAction
+public class MetaShiftRecipePremirrorCacheAction
     extends MetaShiftRecipeActionChild {
 
-  static final String STORE_KEY_CACHELIST = "CacheList";
+  static final String STORE_KEY_CACHELIST = "PremirrorCacheList";
 
   /**
    * constructor.
@@ -53,12 +53,13 @@ public class MetaShiftRecipeCacheAvailabilityAction
    * @param recipe     recipe
    * @param metadata   metadata
    */
-  public MetaShiftRecipeCacheAvailabilityAction(
+  public MetaShiftRecipePremirrorCacheAction(
       MetaShiftRecipeAction parent, TaskListener listener,
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    List<CacheData> cacheList = recipe.objects(CacheData.class).collect(Collectors.toList());
+    List<PremirrorCacheData> cacheList =
+        recipe.objects(PremirrorCacheData.class).collect(Collectors.toList());
 
     try {
       dataSource.put(cacheList, this.getParentAction().getName(), STORE_KEY_CACHELIST);
@@ -75,12 +76,12 @@ public class MetaShiftRecipeCacheAvailabilityAction
 
   @Override
   public String getDisplayName() {
-    return "Cache Availability";
+    return "Premirror Cache";
   }
 
   @Override
   public String getUrlName() {
-    return "cache_availability";
+    return "premirror_cache";
   }
 
   /**
@@ -92,7 +93,7 @@ public class MetaShiftRecipeCacheAvailabilityAction
    */
   @JavaScriptMethod
   public JSONObject getRecipeCaches(int pageIndex, int pageSize) {
-    List<CacheData> cacheList = this.getDataSource().get(
+    List<PremirrorCacheData> cacheList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CACHELIST);
     return getPagedDataList(pageIndex, pageSize, cacheList);
   }
