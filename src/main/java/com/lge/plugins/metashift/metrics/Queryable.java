@@ -36,7 +36,22 @@ public interface Queryable<T> {
    *
    * @return cache availability object
    */
+  @Deprecated
   T getCacheAvailability();
+
+  /**
+   * Returns the premirror cache object.
+   *
+   * @return an evaluator object
+   */
+  T getPremirrorCache();
+
+  /**
+   * Returns the shared state cache object.
+   *
+   * @return an evaluator object
+   */
+  T getSharedStateCache();
 
   /**
    * Returns the code violation object.

@@ -53,7 +53,10 @@ public final class Metrics extends PositiveEvaluator<Metrics> implements Queryab
   public Metrics(final Criteria criteria) {
     super(criteria.getOverallThreshold());
     collection = new HashMap<>();
+    // TODO(sunggon82.kim): TO BE REMOVED
     collection.put(CacheEvaluator.class, new CacheEvaluator(new Criteria()));
+    collection.put(PremirrorCacheEvaluator.class, new PremirrorCacheEvaluator(new Criteria()));
+    collection.put(SharedStateCacheEvaluator.class, new SharedStateCacheEvaluator(new Criteria()));
     collection.put(CodeSizeEvaluator.class, new CodeSizeEvaluator());
     collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(new Criteria()));
     collection.put(CommentEvaluator.class, new CommentEvaluator(new Criteria()));
@@ -66,9 +69,20 @@ public final class Metrics extends PositiveEvaluator<Metrics> implements Queryab
     this.criteria = criteria;
   }
 
+  @Deprecated
   @Override
   public Evaluator<?> getCacheAvailability() {
     return collection.get(CacheEvaluator.class);
+  }
+
+  @Override
+  public Evaluator<?> getPremirrorCache() {
+    return collection.get(PremirrorCacheEvaluator.class);
+  }
+
+  @Override
+  public Evaluator<?> getSharedStateCache() {
+    return collection.get(SharedStateCacheEvaluator.class);
   }
 
   /**
@@ -122,7 +136,11 @@ public final class Metrics extends PositiveEvaluator<Metrics> implements Queryab
 
   @Override
   protected void parseImpl(final Streamable c) {
+    // TODO(sunggon82.kim): TO BE REMOVED
     collection.put(CacheEvaluator.class, new CacheEvaluator(criteria).parse(c));
+    collection.put(PremirrorCacheEvaluator.class, new PremirrorCacheEvaluator(criteria).parse(c));
+    collection.put(SharedStateCacheEvaluator.class,
+        new SharedStateCacheEvaluator(criteria).parse(c));
     collection.put(CodeSizeEvaluator.class, new CodeSizeEvaluator().parse(c));
     collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(criteria).parse(c));
     collection.put(CommentEvaluator.class, new CommentEvaluator(criteria).parse(c));

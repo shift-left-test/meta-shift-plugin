@@ -48,7 +48,17 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
     /**
      * Cache availability counter.
      */
-    CACHE_AVAILABILITY,
+    CACHE_AVAILABILITY,  // TODO(sunggon82.kim): TO BE REMOVED
+
+    /**
+     * Premirror cache counter.
+     */
+    PREMIRROR_CACHE,
+
+    /**
+     * Shared state cache counter.
+     */
+    SHARED_STATE_CACHE,
 
     /**
      * Code violation counter.
@@ -136,7 +146,11 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
    */
   public QualifiedRecipeCounter parse(final Recipes recipes) {
     collection.put(Type.RECIPES, countBy(recipes, new Metrics(criteria)));
+    // TODO(sunggon82.kim): TO BE REMOVED
     collection.put(Type.CACHE_AVAILABILITY, countBy(recipes, new CacheEvaluator(criteria)));
+    collection.put(Type.PREMIRROR_CACHE, countBy(recipes, new PremirrorCacheEvaluator(criteria)));
+    collection.put(Type.SHARED_STATE_CACHE,
+        countBy(recipes, new SharedStateCacheEvaluator(criteria)));
     collection.put(Type.CODE_VIOLATIONS, countBy(recipes, new CodeViolationEvaluator(criteria)));
     collection.put(Type.COMMENTS, countBy(recipes, new CommentEvaluator(criteria)));
     collection.put(Type.COMPLEXITY, countBy(recipes, new ComplexityEvaluator(criteria)));
@@ -158,9 +172,20 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
     return collection.get(Type.RECIPES);
   }
 
+  @Deprecated
   @Override
   public Counter getCacheAvailability() {
     return collection.get(Type.CACHE_AVAILABILITY);
+  }
+
+  @Override
+  public Counter getPremirrorCache() {
+    return collection.get(Type.PREMIRROR_CACHE);
+  }
+
+  @Override
+  public Counter getSharedStateCache() {
+    return collection.get(Type.SHARED_STATE_CACHE);
   }
 
   @Override

@@ -100,27 +100,53 @@ public class MetricsTest {
   }
 
   @Test
-  public void testParseWithUnqualifiedCacheData() {
+  public void testParseWithUnqualifiedPremirrorCacheData() {
     recipe.add(new PremirrorCacheData("A-1.0.0-r0", false));
-    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_package", false));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", false));
+    recipe.add(new PremirrorCacheData("C-1.0.0-r0", true));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
-    assertEvaluator(metrics.getCacheAvailability(), true, false);
-    assertCounter(metrics.getCacheAvailability(), 2, 0, 0.0);
+    assertCounter(metrics, 2, 0, 0.0);
+    assertEvaluator(metrics.getPremirrorCache(), true, false);
+    assertCounter(metrics.getPremirrorCache(), 3, 1, 0.3);
   }
 
   @Test
-  public void testParseWithQualifiedCacheData() {
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", true));
-    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_package", true));
+  public void testParseWithQualifiedPremirrorCacheData() {
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", false));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", true));
     metrics.parse(recipes);
 
     assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 1, 1, 1.0);
-    assertEvaluator(metrics.getCacheAvailability(), true, true);
-    assertCounter(metrics.getCacheAvailability(), 2, 2, 1.0);
+    assertCounter(metrics, 2, 2, 1.0);
+    assertEvaluator(metrics.getPremirrorCache(), true, true);
+    assertCounter(metrics.getPremirrorCache(), 2, 1, 0.5);
+  }
+
+  @Test
+  public void testParseWithUnqualifiedSharedStateCacheData() {
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", false));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", false));
+    recipe.add(new SharedStateCacheData("C-1.0.0-r0", "do_X", true));
+    metrics.parse(recipes);
+
+    assertEvaluator(metrics, true, false);
+    assertCounter(metrics, 2, 0, 0.0);
+    assertEvaluator(metrics.getSharedStateCache(), true, false);
+    assertCounter(metrics.getSharedStateCache(), 3, 1, 0.3);
+  }
+
+  @Test
+  public void testParseWithQualifiedSharedStateCacheData() {
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", false));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", true));
+    metrics.parse(recipes);
+
+    assertEvaluator(metrics, true, true);
+    assertCounter(metrics, 2, 2, 1.0);
+    assertEvaluator(metrics.getSharedStateCache(), true, true);
+    assertCounter(metrics.getSharedStateCache(), 2, 1, 0.5);
   }
 
   @Test
