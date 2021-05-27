@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
@@ -61,6 +62,109 @@ public class RecipeTest {
     utils = new TemporaryFileUtils(folder);
     origin = new Recipe("cmake-project-1.0.0-r0");
     same = new Recipe("cmake-project-1.0.0-r0");
+  }
+
+  private void prepareMetadata(File report, File source) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(String.format("{ 'S': '%s' }", source.getAbsolutePath().replace('\\', '/')));
+    utils.writeLines(sb, report, "metadata.json");
+  }
+
+  private void prepareSourceFiles(File source) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("#include<iostream>").append("int main() {").append("  return 0;").append("}");
+    utils.writeLines(sb, source, "test.cpp");
+
+    sb = new StringBuilder();
+    sb.append("inherit cmake").append("SRC_URI = 'git://path/to/repo'");
+    utils.writeLines(sb, source, "test.bb");
+  }
+
+  private void prepareSageReport(File report, File source) {
+    String absolutePath = source.getAbsolutePath().replace('\\', '/');
+    StringBuilder sb = new StringBuilder();
+    sb
+        .append("{")
+        .append("  'size': [], ")
+        .append("  'violations': [")
+        .append("    {")
+        .append("      'file': '../my-source/test.cpp',")
+        .append("      'line': 1,")
+        .append("      'column': 100,")
+        .append("      'rule': 'NPE',")
+        .append("      'message': 'NPE_message',")
+        .append("      'description': 'NPE_desc',")
+        .append("      'severity': 'error',")
+        .append("      'level': 'major',")
+        .append("      'tool': 'cppcheck'")
+        .append("    }")
+        .append("  ], ")
+        .append("  'complexity': [ ")
+        .append("    {")
+        .append(String.format("      'file': '%s/test.cpp', ", absolutePath))
+        .append("      'function': 'main()', ")
+        .append("      'start': 1, ")
+        .append("      'end': 1, ")
+        .append("      'value': 1 ")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(sb, report, "checkcode", "sage_report.json");
+  }
+
+  private void prepareCoverageFile(File report) {
+    StringBuilder sb = new StringBuilder();
+    sb
+        .append("<classes>")
+        .append("  <class filename='test.cpp'>")
+        .append("    <methods>")
+        .append("      <method name='main()'>")
+        .append("        <lines>")
+        .append("          <line number='1'/>")
+        .append("        </lines>")
+        .append("      </method>")
+        .append("    </methods>")
+        .append("    <lines>")
+        .append("      <line branch='false' hits='1' number='2'/>")
+        .append("    </lines>")
+        .append("  </class>")
+        .append("</classes>");
+    utils.writeLines(sb, report, "coverage", "coverage.xml");
+  }
+
+  private void prepareMutationTestFile(File report) {
+    StringBuilder sb = new StringBuilder();
+    sb
+        .append("<mutations>")
+        .append("  <mutation detected='true'>")
+        .append("    <sourceFile>test.cpp</sourceFile>")
+        .append("    <sourceFilePath>test.cpp</sourceFilePath>")
+        .append("    <mutatedClass>A</mutatedClass>")
+        .append("    <mutatedMethod>main</mutatedMethod>")
+        .append("    <lineNumber>1</lineNumber>")
+        .append("    <mutator>AOR</mutator>")
+        .append("    <killingTest>test1</killingTest>")
+        .append("  </mutation>")
+        .append("</mutations>");
+    utils.writeLines(sb, report, "checktest", "mutations.xml");
+  }
+
+  private void prepareRecipeViolationFile(File report, File source) {
+    String absolutePath = source.getAbsolutePath().replace('\\', '/');
+    StringBuilder sb = new StringBuilder();
+    sb
+        .append("{")
+        .append("  'issues': [")
+        .append("    {")
+        .append(String.format("      'file': '%s/test.bb', ", absolutePath))
+        .append("      'line': 1,")
+        .append("      'rule': 'checksum',")
+        .append("      'severity': 'error',")
+        .append("      'description': 'checksum error'")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(sb, report, "checkrecipe", "recipe_violations.json");
   }
 
   @Test
@@ -164,6 +268,26 @@ public class RecipeTest {
     assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
     assertEquals(0, recipe.objects(Data.class).count());
     assertFalse(recipe.isAvailable(Data.class));
+  }
+
+  @Test
+  public void testParseReport() throws IOException {
+    File report = utils.createDirectory("report", "A-1.0.0-r0");
+    File source = utils.createDirectory("source");
+    prepareMetadata(report, source);
+    prepareSourceFiles(source);
+    prepareSageReport(report, source);
+    prepareCoverageFile(report);
+    prepareMutationTestFile(report);
+    prepareRecipeViolationFile(report, source);
+
+    Recipe recipe = new Recipe(report);
+    assertEquals(5, recipe.objects(Data.class).count());
+    assertTrue(recipe.isAvailable(CodeViolationData.class));
+    assertTrue(recipe.isAvailable(ComplexityData.class));
+    assertTrue(recipe.isAvailable(CoverageData.class));
+    assertTrue(recipe.isAvailable(MutationTestData.class));
+    assertTrue(recipe.isAvailable(RecipeViolationData.class));
   }
 
   @Test
