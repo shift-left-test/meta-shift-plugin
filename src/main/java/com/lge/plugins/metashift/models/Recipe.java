@@ -24,7 +24,6 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.factory.CacheFactory;
 import com.lge.plugins.metashift.models.factory.CodeSizeFactory;
 import com.lge.plugins.metashift.models.factory.CodeViolationFactory;
 import com.lge.plugins.metashift.models.factory.CommentFactory;
@@ -32,7 +31,9 @@ import com.lge.plugins.metashift.models.factory.ComplexityFactory;
 import com.lge.plugins.metashift.models.factory.CoverageFactory;
 import com.lge.plugins.metashift.models.factory.DuplicationFactory;
 import com.lge.plugins.metashift.models.factory.MutationTestFactory;
+import com.lge.plugins.metashift.models.factory.PremirrorCacheFactory;
 import com.lge.plugins.metashift.models.factory.RecipeViolationFactory;
+import com.lge.plugins.metashift.models.factory.SharedStateCacheFactory;
 import com.lge.plugins.metashift.models.factory.TestFactory;
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +46,7 @@ import java.util.stream.Stream;
 import org.apache.commons.io.output.NullPrintStream;
 
 /**
- * Represents a recipe containing various data for metrics.
+ * Represents a recipe containing various data objects for metrics.
  *
  * @author Sung Gon Kim
  */
@@ -121,8 +122,10 @@ public final class Recipe extends Data<Recipe> implements Streamable {
     }
 
     String format = "[Recipe] " + getRecipe() + ": processing the %s data%n";
-    logger.printf(format, "cache availability");
-    addAll(CacheData.class, CacheFactory::create, path);
+    logger.printf(format, "premirror cache");
+    addAll(PremirrorCacheData.class, PremirrorCacheFactory::create, path);
+    logger.printf(format, "shared state cache");
+    addAll(SharedStateCacheData.class, SharedStateCacheFactory::create, path);
     logger.printf(format, "code size");
     addAll(CodeSizeData.class, CodeSizeFactory::create, path);
     logger.printf(format, "code violation");

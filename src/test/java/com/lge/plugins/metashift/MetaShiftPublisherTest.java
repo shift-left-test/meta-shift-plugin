@@ -26,6 +26,7 @@ package com.lge.plugins.metashift;
 
 import com.lge.plugins.metashift.metrics.Criteria;
 import hudson.model.FreeStyleProject;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -41,6 +42,7 @@ public class MetaShiftPublisherTest {
   @Rule
   public final JenkinsRule jenkins = new JenkinsRule();
 
+  @Ignore
   @Test
   public void testConfigureRoundTrip() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();

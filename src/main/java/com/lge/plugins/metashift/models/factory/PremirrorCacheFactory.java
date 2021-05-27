@@ -24,9 +24,7 @@
 
 package com.lge.plugins.metashift.models.factory;
 
-import com.lge.plugins.metashift.models.CacheData;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
-import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.File;
@@ -39,11 +37,11 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 
 /**
- * A factory class for CacheData objects.
+ * A factory class for PremirrorCacheData objects.
  *
  * @author Sung Gon Kim
  */
-public class CacheFactory {
+public class PremirrorCacheFactory {
 
   /**
    * Create a set of objects by parsing a report file from the given path.
@@ -53,9 +51,9 @@ public class CacheFactory {
    * @throws IllegalArgumentException if failed to parse report files
    * @throws IOException              if failed to locate report files
    */
-  public static List<CacheData> create(final File path)
+  public static List<PremirrorCacheData> create(final File path)
       throws IllegalArgumentException, IOException {
-    List<CacheData> list = new ArrayList<>();
+    List<PremirrorCacheData> list = new ArrayList<>();
     String recipe = path.getName();
     File report = FileUtils.getFile(path, "checkcache", "caches.json");
     try {
@@ -65,12 +63,6 @@ public class CacheFactory {
       }
       for (Object o : json.getJSONObject("Premirror").getJSONArray("Missed")) {
         list.add(new PremirrorCacheData(recipe, (String) o, false));
-      }
-      for (Object o : json.getJSONObject("Shared State").getJSONArray("Found")) {
-        list.add(new SharedStateCacheData(recipe, (String) o, true));
-      }
-      for (Object o : json.getJSONObject("Shared State").getJSONArray("Missed")) {
-        list.add(new SharedStateCacheData(recipe, (String) o, false));
       }
     } catch (JSONException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
@@ -88,7 +80,7 @@ public class CacheFactory {
    * @throws IOException              if failed to locate report files
    * @throws InterruptedException     if an interruption occurred
    */
-  public static List<CacheData> create(final FilePath path)
+  public static List<PremirrorCacheData> create(final FilePath path)
       throws IllegalArgumentException, IOException, InterruptedException {
     return create(new File(path.toURI()));
   }

@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * @author Sung Gon Kim
  */
-public final class Metrics extends PositiveEvaluator<Metrics> implements Queryable<Evaluator<?>> {
+public final class Metrics extends NullEvaluator<Metrics> implements Queryable<Evaluator<?>> {
 
   /**
    * Represents the collection of evaluators.
@@ -51,10 +51,8 @@ public final class Metrics extends PositiveEvaluator<Metrics> implements Queryab
    * @param criteria for evaluation
    */
   public Metrics(final Criteria criteria) {
-    super(criteria.getOverallThreshold());
+    super();
     collection = new HashMap<>();
-    // TODO(sunggon82.kim): TO BE REMOVED
-    collection.put(CacheEvaluator.class, new CacheEvaluator(new Criteria()));
     collection.put(PremirrorCacheEvaluator.class, new PremirrorCacheEvaluator(new Criteria()));
     collection.put(SharedStateCacheEvaluator.class, new SharedStateCacheEvaluator(new Criteria()));
     collection.put(CodeSizeEvaluator.class, new CodeSizeEvaluator());
@@ -67,12 +65,6 @@ public final class Metrics extends PositiveEvaluator<Metrics> implements Queryab
     collection.put(RecipeViolationEvaluator.class, new RecipeViolationEvaluator(new Criteria()));
     collection.put(TestEvaluator.class, new TestEvaluator(new Criteria()));
     this.criteria = criteria;
-  }
-
-  @Deprecated
-  @Override
-  public Evaluator<?> getCacheAvailability() {
-    return collection.get(CacheEvaluator.class);
   }
 
   @Override
@@ -136,8 +128,6 @@ public final class Metrics extends PositiveEvaluator<Metrics> implements Queryab
 
   @Override
   protected void parseImpl(final Streamable c) {
-    // TODO(sunggon82.kim): TO BE REMOVED
-    collection.put(CacheEvaluator.class, new CacheEvaluator(criteria).parse(c));
     collection.put(PremirrorCacheEvaluator.class, new PremirrorCacheEvaluator(criteria).parse(c));
     collection.put(SharedStateCacheEvaluator.class,
         new SharedStateCacheEvaluator(criteria).parse(c));
@@ -151,9 +141,5 @@ public final class Metrics extends PositiveEvaluator<Metrics> implements Queryab
     collection.put(RecipeViolationEvaluator.class,
         new RecipeViolationEvaluator(criteria).parse(c));
     collection.put(TestEvaluator.class, new TestEvaluator(criteria).parse(c));
-
-    setAvailable(collection.values().stream().anyMatch(Evaluator::isAvailable));
-    setDenominator(collection.values().stream().filter(Evaluator::isAvailable).count());
-    setNumerator(collection.values().stream().filter(Evaluator::isQualified).count());
   }
 }

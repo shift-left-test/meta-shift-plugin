@@ -139,7 +139,7 @@ public class RecipesTest {
   }
 
   @Test
-  public void testLogging() throws IOException {
+  public void testRecipeLogs() throws IOException {
     File report = utils.createDirectory("report");
     utils.createDirectory(report, "cmake-project-1.0.0-r0");
     utils.createDirectory(report, "qmake5-project-1.0.0-r0");

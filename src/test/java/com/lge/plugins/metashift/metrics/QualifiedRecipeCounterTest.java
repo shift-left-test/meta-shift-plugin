@@ -48,7 +48,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit tests for the QualifiedRecipeCounterTest class.
+ * Unit tests for the QualifiedRecipeCounter class.
  *
  * @author Sung Gon Kim
  */
@@ -80,7 +80,8 @@ public class QualifiedRecipeCounterTest {
 
   @Test
   public void testInitialState() {
-    assertValues(counter.getCacheAvailability(), 0, 0);
+    assertValues(counter.getPremirrorCache(), 0, 0);
+    assertValues(counter.getSharedStateCache(), 0, 0);
     assertValues(counter.getCodeViolations(), 0, 0);
     assertValues(counter.getComments(), 0, 0);
     assertValues(counter.getComplexity(), 0, 0);
@@ -89,23 +90,24 @@ public class QualifiedRecipeCounterTest {
     assertValues(counter.getMutationTest(), 0, 0);
     assertValues(counter.getRecipeViolations(), 0, 0);
     assertValues(counter.getTest(), 0, 0);
-    assertValues(counter.getRecipes(), 0, 0);
   }
 
   @Test
-  public void testParseEmptyRecipes() {
-    assertEquals(0, counter.parse(recipes).getRecipes().getDenominator());
-    assertEquals(0, counter.parse(recipes).getRecipes().getNumerator());
-  }
-
-  @Test
-  public void testGetCacheAvailability() {
+  public void testGetPremirrorCache() {
     recipe1.add(new PremirrorCacheData("A-1.0.0-r0", true));
-    recipe2.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", false));
+    recipe2.add(new PremirrorCacheData("B-1.0.0-r0", false));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
-    assertValues(counter.getCacheAvailability(), 2, 1);
-    assertValues(counter.getRecipes(), 2, 1);
+    assertValues(counter.getPremirrorCache(), 2, 1);
+  }
+
+  @Test
+  public void testGetSharedStateCache() {
+    recipe1.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", false));
+    recipe2.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", true));
+    recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
+    counter.parse(recipes);
+    assertValues(counter.getSharedStateCache(), 2, 1);
   }
 
   @Test
@@ -115,7 +117,6 @@ public class QualifiedRecipeCounterTest {
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
     assertValues(counter.getCodeViolations(), 2, 1);
-    assertValues(counter.getRecipes(), 2, 1);
   }
 
   @Test
@@ -125,7 +126,6 @@ public class QualifiedRecipeCounterTest {
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
     assertValues(counter.getComments(), 2, 1);
-    assertValues(counter.getRecipes(), 2, 1);
   }
 
   @Test
@@ -135,7 +135,6 @@ public class QualifiedRecipeCounterTest {
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
     assertValues(counter.getComplexity(), 2, 1);
-    assertValues(counter.getRecipes(), 2, 1);
   }
 
   @Test
@@ -145,7 +144,6 @@ public class QualifiedRecipeCounterTest {
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
     assertValues(counter.getCoverage(), 2, 1);
-    assertValues(counter.getRecipes(), 2, 1);
   }
 
   @Test
@@ -155,7 +153,6 @@ public class QualifiedRecipeCounterTest {
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
     assertValues(counter.getDuplications(), 2, 1);
-    assertValues(counter.getRecipes(), 2, 1);
   }
 
   @Test
@@ -165,7 +162,6 @@ public class QualifiedRecipeCounterTest {
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
     assertValues(counter.getMutationTest(), 2, 1);
-    assertValues(counter.getRecipes(), 2, 1);
   }
 
   @Test
@@ -175,7 +171,6 @@ public class QualifiedRecipeCounterTest {
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
     assertValues(counter.getRecipeViolations(), 2, 1);
-    assertValues(counter.getRecipes(), 2, 1);
   }
 
   @Test
@@ -185,7 +180,6 @@ public class QualifiedRecipeCounterTest {
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
     assertValues(counter.getTest(), 2, 1);
-    assertValues(counter.getRecipes(), 2, 1);
   }
 
   @Test
@@ -201,7 +195,8 @@ public class QualifiedRecipeCounterTest {
     recipe2.add(new InfoRecipeViolationData("B-1.0.0-r0", "a.file", 1, "info", "info", "info"));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
-    assertValues(counter.getCacheAvailability(), 1, 1);
+    assertValues(counter.getPremirrorCache(), 1, 1);
+    assertValues(counter.getSharedStateCache(), 0, 0);
     assertValues(counter.getCodeViolations(), 1, 1);
     assertValues(counter.getComments(), 1, 1);
     assertValues(counter.getComplexity(), 1, 1);
@@ -210,6 +205,5 @@ public class QualifiedRecipeCounterTest {
     assertValues(counter.getMutationTest(), 1, 1);
     assertValues(counter.getRecipeViolations(), 1, 1);
     assertValues(counter.getTest(), 1, 1);
-    assertValues(counter.getRecipes(), 2, 2);
   }
 }

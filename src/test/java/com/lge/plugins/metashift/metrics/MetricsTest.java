@@ -87,16 +87,33 @@ public class MetricsTest {
 
   @Test
   public void testInitialState() {
-    assertEvaluator(metrics, false, false);
-    assertCounter(metrics, 0, 0, 0.0);
+    assertEvaluator(metrics.getPremirrorCache(), false, false);
+    assertEvaluator(metrics.getSharedStateCache(), false, false);
+    assertEvaluator(metrics.getCodeSize(), false, false);
+    assertEvaluator(metrics.getCodeViolations(), false, false);
+    assertEvaluator(metrics.getComments(), false, false);
+    assertEvaluator(metrics.getComplexity(), false, false);
+    assertEvaluator(metrics.getCoverage(), false, false);
+    assertEvaluator(metrics.getDuplications(), false, false);
+    assertEvaluator(metrics.getMutationTest(), false, false);
+    assertEvaluator(metrics.getRecipeViolations(), false, false);
+    assertEvaluator(metrics.getTest(), false, false);
   }
 
   @Test
   public void testParseEmptyRecipes() {
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, false, false);
-    assertCounter(metrics, 0, 0, 0.0);
+    assertEvaluator(metrics.getPremirrorCache(), false, false);
+    assertEvaluator(metrics.getSharedStateCache(), false, false);
+    assertEvaluator(metrics.getCodeSize(), false, false);
+    assertEvaluator(metrics.getCodeViolations(), false, false);
+    assertEvaluator(metrics.getComments(), false, false);
+    assertEvaluator(metrics.getComplexity(), false, false);
+    assertEvaluator(metrics.getCoverage(), false, false);
+    assertEvaluator(metrics.getDuplications(), false, false);
+    assertEvaluator(metrics.getMutationTest(), false, false);
+    assertEvaluator(metrics.getRecipeViolations(), false, false);
+    assertEvaluator(metrics.getTest(), false, false);
   }
 
   @Test
@@ -105,9 +122,6 @@ public class MetricsTest {
     recipe.add(new PremirrorCacheData("B-1.0.0-r0", false));
     recipe.add(new PremirrorCacheData("C-1.0.0-r0", true));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 2, 0, 0.0);
     assertEvaluator(metrics.getPremirrorCache(), true, false);
     assertCounter(metrics.getPremirrorCache(), 3, 1, 0.3);
   }
@@ -117,9 +131,6 @@ public class MetricsTest {
     recipe.add(new PremirrorCacheData("A-1.0.0-r0", false));
     recipe.add(new PremirrorCacheData("B-1.0.0-r0", true));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 2, 2, 1.0);
     assertEvaluator(metrics.getPremirrorCache(), true, true);
     assertCounter(metrics.getPremirrorCache(), 2, 1, 0.5);
   }
@@ -130,9 +141,6 @@ public class MetricsTest {
     recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", false));
     recipe.add(new SharedStateCacheData("C-1.0.0-r0", "do_X", true));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 2, 0, 0.0);
     assertEvaluator(metrics.getSharedStateCache(), true, false);
     assertCounter(metrics.getSharedStateCache(), 3, 1, 0.3);
   }
@@ -142,9 +150,6 @@ public class MetricsTest {
     recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", false));
     recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", true));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 2, 2, 1.0);
     assertEvaluator(metrics.getSharedStateCache(), true, true);
     assertCounter(metrics.getSharedStateCache(), 2, 1, 0.5);
   }
@@ -154,9 +159,6 @@ public class MetricsTest {
     recipe.add(
         new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getCodeViolations(), true, false);
     assertCounter(metrics.getCodeViolations(), 1, 1, 1.0);
   }
@@ -170,9 +172,6 @@ public class MetricsTest {
     recipe.add(
         new InfoCodeViolationData("A-1.0.0-r0", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 1, 1, 1.0);
     assertEvaluator(metrics.getCodeViolations(), true, true);
     assertCounter(metrics.getCodeViolations(), 3, 1, 0.3);
   }
@@ -182,9 +181,6 @@ public class MetricsTest {
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe.add(new CommentData("B-1.0.0-r0", "b.file", 10, 0));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getComments(), true, false);
     assertCounter(metrics.getComments(), 20, 5, 0.25);
   }
@@ -194,9 +190,6 @@ public class MetricsTest {
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe.add(new CommentData("B-1.0.0-r0", "b.file", 20, 15));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 1, 1, 1.0);
     assertEvaluator(metrics.getComments(), true, true);
     assertCounter(metrics.getComments(), 30, 20, 0.66);
   }
@@ -206,9 +199,6 @@ public class MetricsTest {
     recipe.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     recipe.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getComplexity(), true, false);
     assertCounter(metrics.getComplexity(), 2, 2, 1.0);
   }
@@ -218,9 +208,6 @@ public class MetricsTest {
     recipe.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     recipe.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 0));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 1, 1, 1.0);
     assertEvaluator(metrics.getComplexity(), true, true);
     assertCounter(metrics.getComplexity(), 2, 1, 0.5);
   }
@@ -231,9 +218,6 @@ public class MetricsTest {
     recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
     recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, false));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getCoverage(), true, false);
     assertCounter(metrics.getCoverage(), 3, 1, 0.3);
   }
@@ -244,9 +228,6 @@ public class MetricsTest {
     recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
     recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, true));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 1, 1, 1.0);
     assertEvaluator(metrics.getCoverage(), true, true);
     assertCounter(metrics.getCoverage(), 3, 2, 0.6);
   }
@@ -256,9 +237,6 @@ public class MetricsTest {
     recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 5, 0));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getDuplications(), true, false);
     assertCounter(metrics.getDuplications(), 15, 10, 0.6);
   }
@@ -268,9 +246,6 @@ public class MetricsTest {
     recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 0));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 1, 1, 1.0);
     assertEvaluator(metrics.getDuplications(), true, true);
     assertCounter(metrics.getDuplications(), 30, 10, 0.3);
   }
@@ -281,9 +256,6 @@ public class MetricsTest {
     recipe.add(new SurvivedMutationTestData("A-1.0.0-r0", "b.file", "C", "f()", 1, "AOR", "TC"));
     recipe.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getMutationTest(), true, false);
     assertCounter(metrics.getMutationTest(), 3, 1, 0.3);
   }
@@ -295,9 +267,6 @@ public class MetricsTest {
     recipe.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe.add(new KilledMutationTestData("A-1.0.0-r0", "d.file", "C", "f()", 1, "AOR", "TC"));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 1, 1, 1.0);
     assertEvaluator(metrics.getMutationTest(), true, true);
     assertCounter(metrics.getMutationTest(), 4, 2, 0.5);
   }
@@ -308,9 +277,6 @@ public class MetricsTest {
     recipe.add(new MinorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "minor", "minor", "minor"));
     recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "b.file", 1, "major", "major", "major"));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getRecipeViolations(), true, false);
     assertCounter(metrics.getRecipeViolations(), 3, 2, 0.6);
   }
@@ -322,9 +288,6 @@ public class MetricsTest {
     recipe.add(new InfoRecipeViolationData("A-1.0.0-r0", "a.file", 1, "info", "info", "info"));
     recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "b.file", 1, "major", "major", "major"));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 1, 1, 1.0);
     assertEvaluator(metrics.getRecipeViolations(), true, true);
     assertCounter(metrics.getRecipeViolations(), 4, 2, 0.5);
   }
@@ -334,9 +297,6 @@ public class MetricsTest {
     recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1));
     recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 6, 4, 2));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, false, false);
-    assertCounter(metrics, 0, 0, 0.0);
     assertEquals(1, metrics.getCodeSize().getRecipes());
     assertEquals(2, metrics.getCodeSize().getFiles());
     assertEquals(9, metrics.getCodeSize().getLines());
@@ -351,9 +311,6 @@ public class MetricsTest {
     recipe.add(new ErrorTestData("A-1.0.0-r0", "a.suite", "c.tc", "msg"));
     recipe.add(new SkippedTestData("A-1.0.0-r0", "d.suite", "c.tc", "msg"));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getTest(), true, false);
     assertCounter(metrics.getTest(), 4, 1, 0.25);
   }
@@ -365,9 +322,6 @@ public class MetricsTest {
     recipe.add(new ErrorTestData("A-1.0.0-r0", "a.suite", "c.tc", "msg"));
     recipe.add(new PassedTestData("A-1.0.0-r0", "e.suite", "a.tc", "msg"));
     metrics.parse(recipes);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 1, 1, 1.0);
     assertEvaluator(metrics.getTest(), true, true);
     assertCounter(metrics.getTest(), 4, 2, 0.5);
   }
@@ -383,11 +337,10 @@ public class MetricsTest {
     utils.writeLines(builder, directory, "checkcache", "caches.json");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
-    assertEvaluator(metrics.getCacheAvailability(), true, false);
-    assertCounter(metrics.getCacheAvailability(), 0, 0, 0.0);
+    assertEvaluator(metrics.getPremirrorCache(), true, false);
+    assertCounter(metrics.getPremirrorCache(), 0, 0, 0.0);
+    assertEvaluator(metrics.getSharedStateCache(), true, false);
+    assertCounter(metrics.getSharedStateCache(), 0, 0, 0.0);
   }
 
   @Test
@@ -397,9 +350,6 @@ public class MetricsTest {
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 4, 3, 0.75);
     assertEvaluator(metrics.getCodeSize(), false, false);
     assertCounter(metrics.getCodeSize(), 0, 0, 0.0);
   }
@@ -411,9 +361,6 @@ public class MetricsTest {
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 4, 3, 0.75);
     assertEvaluator(metrics.getCodeViolations(), true, true);
     assertCounter(metrics.getCodeViolations(), 0, 0, 0.0);
   }
@@ -425,9 +372,6 @@ public class MetricsTest {
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 4, 3, 0.75);
     assertEvaluator(metrics.getComments(), true, false);
     assertCounter(metrics.getComments(), 0, 0, 0.0);
   }
@@ -439,9 +383,6 @@ public class MetricsTest {
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 4, 3, 0.75);
     assertEvaluator(metrics.getComplexity(), true, true);
     assertCounter(metrics.getComplexity(), 0, 0, 0.0);
   }
@@ -453,9 +394,6 @@ public class MetricsTest {
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getCoverage(), true, false);
     assertCounter(metrics.getCoverage(), 0, 0, 0.0);
   }
@@ -467,9 +405,6 @@ public class MetricsTest {
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 4, 3, 0.75);
     assertEvaluator(metrics.getDuplications(), true, true);
     assertCounter(metrics.getDuplications(), 0, 0, 0.0);
   }
@@ -481,9 +416,6 @@ public class MetricsTest {
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getMutationTest(), true, false);
     assertCounter(metrics.getMutationTest(), 0, 0, 0.0);
   }
@@ -495,23 +427,17 @@ public class MetricsTest {
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
-
-    assertEvaluator(metrics, true, true);
-    assertCounter(metrics, 1, 1, 1.0);
     assertEvaluator(metrics.getRecipeViolations(), true, true);
     assertCounter(metrics.getRecipeViolations(), 0, 0, 0.0);
   }
 
   @Test
   public void testParseRecipeWithEmptyTestData() throws IOException {
-    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder.append("<testsuites> </testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
-
-    assertEvaluator(metrics, true, false);
-    assertCounter(metrics, 1, 0, 0.0);
     assertEvaluator(metrics.getTest(), true, false);
     assertCounter(metrics.getTest(), 0, 0, 0.0);
   }

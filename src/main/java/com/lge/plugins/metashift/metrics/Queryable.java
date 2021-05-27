@@ -32,14 +32,6 @@ package com.lge.plugins.metashift.metrics;
 public interface Queryable<T> {
 
   /**
-   * Returns the cache availability object.
-   *
-   * @return cache availability object
-   */
-  @Deprecated
-  T getCacheAvailability();
-
-  /**
    * Returns the premirror cache object.
    *
    * @return an evaluator object

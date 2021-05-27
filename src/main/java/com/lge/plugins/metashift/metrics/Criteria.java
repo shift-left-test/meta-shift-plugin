@@ -34,11 +34,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public final class Criteria {
 
   /**
-   * Represents the threshold for the cache availability.
-   */
-  private double cacheThreshold;
-
-  /**
    * Represents the threshold for the premirror cache availability.
    */
   private double premirrorCacheThreshold;
@@ -84,11 +79,6 @@ public final class Criteria {
   private double mutationTestThreshold;
 
   /**
-   * Represents the overall threshold.
-   */
-  private double overallThreshold;
-
-  /**
    * Represents the threshold for the recipe violations.
    */
   private double recipeViolationThreshold;
@@ -102,27 +92,27 @@ public final class Criteria {
    * Default constructor.
    */
   public Criteria() {
-    this(1.0, 0.8, 0.1, 0.3, 0.1, 4, 0.1, 0.1, 0.95, 0.6, 0.85);
+    this(0.8, 0.8, 0.1, 0.3, 0.1, 4, 0.1, 0.1, 0.95, 0.6, 0.85);
   }
 
   /**
    * Default constructor.
    *
-   * @param overallThreshold         overall threshold
-   * @param cacheThreshold           cache availability threshold
-   * @param recipeViolationThreshold recipe violation threshold
-   * @param commentThreshold         comment threshold
-   * @param codeViolationThreshold   code violation threshold
-   * @param complexityLevel          complexity level
-   * @param complexityThreshold      complexity threshold
-   * @param duplicationThreshold     duplication threshold
-   * @param testThreshold            test threshold
-   * @param coverageThreshold        coverage threshold
-   * @param mutationTestThreshold    mutation test threshold
+   * @param premirrorCacheThreshold   premirror cache threshold
+   * @param sharedStateCacheThreshold shared state cache threshold
+   * @param recipeViolationThreshold  recipe violation threshold
+   * @param commentThreshold          comment threshold
+   * @param codeViolationThreshold    code violation threshold
+   * @param complexityLevel           complexity level
+   * @param complexityThreshold       complexity threshold
+   * @param duplicationThreshold      duplication threshold
+   * @param testThreshold             test threshold
+   * @param coverageThreshold         coverage threshold
+   * @param mutationTestThreshold     mutation test threshold
    */
   @DataBoundConstructor
-  public Criteria(final double overallThreshold,
-      final double cacheThreshold,
+  public Criteria(final double premirrorCacheThreshold,
+      final double sharedStateCacheThreshold,
       final double recipeViolationThreshold,
       final double commentThreshold,
       final double codeViolationThreshold,
@@ -132,10 +122,8 @@ public final class Criteria {
       final double testThreshold,
       final double coverageThreshold,
       final double mutationTestThreshold) {
-    this.overallThreshold = overallThreshold;
-    this.cacheThreshold = cacheThreshold;
-    this.premirrorCacheThreshold = cacheThreshold;
-    this.sharedStateCacheThreshold = cacheThreshold;
+    this.premirrorCacheThreshold = premirrorCacheThreshold;
+    this.sharedStateCacheThreshold = sharedStateCacheThreshold;
     this.recipeViolationThreshold = recipeViolationThreshold;
     this.commentThreshold = commentThreshold;
     this.codeViolationThreshold = codeViolationThreshold;
@@ -145,28 +133,6 @@ public final class Criteria {
     this.testThreshold = testThreshold;
     this.coverageThreshold = coverageThreshold;
     this.mutationTestThreshold = mutationTestThreshold;
-  }
-
-  /**
-   * Returns the cache availability threshold.
-   *
-   * @return cache threshold
-   */
-  @Deprecated
-  public double getCacheThreshold() {
-    return cacheThreshold;
-  }
-
-  /**
-   * Sets the cache availability threshold.
-   *
-   * @param threshold for the cache availability
-   */
-  @Deprecated
-  public void setCacheThreshold(final double threshold) {
-    cacheThreshold = threshold;
-    premirrorCacheThreshold = threshold;
-    sharedStateCacheThreshold = threshold;
   }
 
   /**
@@ -329,26 +295,6 @@ public final class Criteria {
    */
   public void setMutationTestThreshold(final double threshold) {
     mutationTestThreshold = threshold;
-  }
-
-  /**
-   * Returns the overall threshold.
-   *
-   * @return overall threshold
-   */
-  @Deprecated
-  public double getOverallThreshold() {
-    return overallThreshold;
-  }
-
-  /**
-   * Sets the overall threshold.
-   *
-   * @param threshold for the project
-   */
-  @Deprecated
-  public void setOverallThreshold(final double threshold) {
-    overallThreshold = threshold;
   }
 
   /**

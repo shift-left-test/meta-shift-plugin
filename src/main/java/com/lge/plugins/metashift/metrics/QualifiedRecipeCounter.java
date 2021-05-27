@@ -40,15 +40,6 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
    * Represents the counter types.
    */
   private enum Type {
-    /**
-     * Recipes counter.
-     */
-    RECIPES,
-
-    /**
-     * Cache availability counter.
-     */
-    CACHE_AVAILABILITY,  // TODO(sunggon82.kim): TO BE REMOVED
 
     /**
      * Premirror cache counter.
@@ -145,9 +136,6 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
    * @return self object
    */
   public QualifiedRecipeCounter parse(final Recipes recipes) {
-    collection.put(Type.RECIPES, countBy(recipes, new Metrics(criteria)));
-    // TODO(sunggon82.kim): TO BE REMOVED
-    collection.put(Type.CACHE_AVAILABILITY, countBy(recipes, new CacheEvaluator(criteria)));
     collection.put(Type.PREMIRROR_CACHE, countBy(recipes, new PremirrorCacheEvaluator(criteria)));
     collection.put(Type.SHARED_STATE_CACHE,
         countBy(recipes, new SharedStateCacheEvaluator(criteria)));
@@ -161,21 +149,6 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
         countBy(recipes, new RecipeViolationEvaluator(criteria)));
     collection.put(Type.TEST, countBy(recipes, new TestEvaluator(criteria)));
     return this;
-  }
-
-  /**
-   * Returns the counter of qualified recipes.
-   *
-   * @return counter object
-   */
-  public Counter getRecipes() {
-    return collection.get(Type.RECIPES);
-  }
-
-  @Deprecated
-  @Override
-  public Counter getCacheAvailability() {
-    return collection.get(Type.CACHE_AVAILABILITY);
   }
 
   @Override

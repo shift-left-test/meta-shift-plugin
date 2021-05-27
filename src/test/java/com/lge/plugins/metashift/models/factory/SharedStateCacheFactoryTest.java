@@ -26,7 +26,7 @@ package com.lge.plugins.metashift.models.factory;
 
 import static org.junit.Assert.assertEquals;
 
-import com.lge.plugins.metashift.models.CacheData;
+import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
 import java.io.IOException;
@@ -38,17 +38,17 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the CacheFactory class.
+ * Unit tests for the SharedStateCacheFactory class.
  *
  * @author Sung Gon Kim
  */
-public class CacheFactoryTest {
+public class SharedStateCacheFactoryTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
   private StringBuilder builder;
-  private List<CacheData> objects;
+  private List<SharedStateCacheData> objects;
 
   @Before
   public void setUp() {
@@ -59,19 +59,19 @@ public class CacheFactoryTest {
 
   @Test(expected = IOException.class)
   public void testCreateWithUnknownPath() throws IOException {
-    CacheFactory.create(utils.getPath("path-to-unknown"));
+    SharedStateCacheFactory.create(utils.getPath("path-to-unknown"));
   }
 
   @Test(expected = IOException.class)
   public void testCreateWithNoTaskDirectory() throws IOException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    CacheFactory.create(directory);
+    SharedStateCacheFactory.create(directory);
   }
 
   @Test(expected = IOException.class)
   public void testCreateWithNoFile() throws IOException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcache").getParentFile();
-    CacheFactory.create(directory);
+    SharedStateCacheFactory.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -79,7 +79,7 @@ public class CacheFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    CacheFactory.create(directory);
+    SharedStateCacheFactory.create(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -91,7 +91,7 @@ public class CacheFactoryTest {
         .append("  'Shared State': { }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    CacheFactory.create(directory);
+    SharedStateCacheFactory.create(directory);
   }
 
   @Test
@@ -103,7 +103,7 @@ public class CacheFactoryTest {
         .append("  'Shared State': { 'Found': [], 'Missed': [] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    objects = CacheFactory.create(directory);
+    objects = SharedStateCacheFactory.create(directory);
     assertEquals(0, objects.size());
   }
 
@@ -112,12 +112,12 @@ public class CacheFactoryTest {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
-        .append("  'Premirror': { 'Found': ['A', 'B'], 'Missed': ['C'] },")
+        .append("  'Premirror': { 'Found': ['A', 'B'], 'Missed': ['C', 'D'] },")
         .append("  'Shared State': { 'Found': [], 'Missed': [] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    objects = CacheFactory.create(directory);
-    assertEquals(3, objects.size());
+    objects = SharedStateCacheFactory.create(directory);
+    assertEquals(0, objects.size());
   }
 
   @Test
@@ -129,7 +129,7 @@ public class CacheFactoryTest {
         .append("  'Shared State': { 'Found': ['D:do_X'], 'Missed': ['E:do_X'] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    objects = CacheFactory.create(directory);
+    objects = SharedStateCacheFactory.create(directory);
     assertEquals(2, objects.size());
   }
 
@@ -138,11 +138,11 @@ public class CacheFactoryTest {
     File directory = utils.createDirectory("report", "E-1.0.0-r0");
     builder
         .append("{")
-        .append("  'Premirror': { 'Found': ['A', 'B'], 'Missed': ['C'] },")
+        .append("  'Premirror': { 'Found': ['A', 'B'], 'Missed': ['C', 'D'] },")
         .append("  'Shared State': { 'Found': ['D:do_X'], 'Missed': ['E:do_X'] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    objects = CacheFactory.create(directory);
-    assertEquals(5, objects.size());
+    objects = SharedStateCacheFactory.create(directory);
+    assertEquals(2, objects.size());
   }
 }

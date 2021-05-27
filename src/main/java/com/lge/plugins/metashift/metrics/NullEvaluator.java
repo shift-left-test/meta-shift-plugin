@@ -33,6 +33,13 @@ public abstract class NullEvaluator<T> extends Evaluator<T> {
 
   /**
    * Default constructor.
+   */
+  public NullEvaluator() {
+    this(0.0);
+  }
+
+  /**
+   * Default constructor.
    *
    * @param threshold for evaluation
    */

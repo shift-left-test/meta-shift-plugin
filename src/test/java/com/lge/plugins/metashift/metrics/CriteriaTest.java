@@ -43,8 +43,8 @@ public class CriteriaTest {
     criteria = new Criteria();
   }
 
-  private void assertValues(double overallThreshold,
-      double cacheThreshold,
+  private void assertValues(double premirrorThreshold,
+      double sharedStateCacheThreshold,
       double recipeViolationThreshold,
       double commentThreshold,
       double codeViolationThreshold,
@@ -54,8 +54,8 @@ public class CriteriaTest {
       double testThreshold,
       double coverageThreshold,
       double mutationTestThreshold) {
-    assertEquals(overallThreshold, criteria.getOverallThreshold(), 0.1);
-    assertEquals(cacheThreshold, criteria.getCacheThreshold(), 0.1);
+    assertEquals(premirrorThreshold, criteria.getPremirrorCacheThreshold(), 0.1);
+    assertEquals(sharedStateCacheThreshold, criteria.getSharedStateCacheThreshold(), 0.1);
     assertEquals(recipeViolationThreshold, criteria.getRecipeViolationThreshold(), 0.1);
     assertEquals(commentThreshold, criteria.getCommentThreshold(), 0.1);
     assertEquals(codeViolationThreshold, criteria.getCodeViolationThreshold(), 0.1);
@@ -69,13 +69,13 @@ public class CriteriaTest {
 
   @Test
   public void testInitData() {
-    assertValues(1.0, 0.8, 0.1, 0.3, 0.1, 4, 0.1, 0.1, 0.95, 0.6, 0.85);
+    assertValues(0.8, 0.8, 0.1, 0.3, 0.1, 4, 0.1, 0.1, 0.95, 0.6, 0.85);
   }
 
   @Test
   public void testSetData() {
-    criteria.setOverallThreshold(0.1);
-    criteria.setCacheThreshold(0.2);
+    criteria.setPremirrorCacheThreshold(0.1);
+    criteria.setSharedStateCacheThreshold(0.2);
     criteria.setRecipeViolationThreshold(0.3);
     criteria.setCommentThreshold(0.4);
     criteria.setCodeViolationThreshold(0.5);

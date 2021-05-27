@@ -167,11 +167,11 @@ public class RecipeTest {
   }
 
   @Test
-  public void testLogging() throws IOException {
+  public void testRecipeLogs() throws IOException {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     PrintStream logger = Mockito.mock(PrintStream.class);
     new Recipe(directory, logger);
-    Mockito.verify(logger, Mockito.times(10))
+    Mockito.verify(logger, Mockito.times(11))
         .printf(Mockito.startsWith("[Recipe] B-1.0.0-r0: processing"), Mockito.anyString());
   }
 }

@@ -63,7 +63,7 @@ public final class CodeSizeEvaluator extends NullEvaluator<CodeSizeEvaluator> {
    * Default constructor.
    */
   public CodeSizeEvaluator() {
-    super(0.0);
+    super();
     recipes = 0;
     files = 0;
     lines = 0;

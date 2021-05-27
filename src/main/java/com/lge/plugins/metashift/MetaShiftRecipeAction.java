@@ -184,7 +184,8 @@ public class MetaShiftRecipeAction extends Actionable implements Action {
   }
 
   public double getBuildPerformanceValue() {
-    return (this.getMetrics().getCacheAvailability().getRatio()
+    return (this.getMetrics().getPremirrorCache().getRatio()
+        + this.getMetrics().getSharedStateCache().getRatio()
         - this.getMetrics().getRecipeViolations().getRatio()) * 100;
   }
 
