@@ -28,8 +28,10 @@ import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
@@ -91,16 +93,68 @@ public class MetaShiftRecipeMutationTestAction extends MetaShiftRecipeActionChil
    * @return mutation test list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeMutationTests(int pageIndex, int pageSize) {
+  public JSONObject getRecipeMutationTests(
+      int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
     if (getParentAction().getMetrics().getMutationTest().isAvailable()) {
       List<MutationTestData> mutationTestDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_MUTATIONTESTLIST);
+
+      if (sortInfos.length > 0) {
+        Comparator<MutationTestData> comparator = this.getComparator(sortInfos[0]);
+
+        for (int i = 1; i < sortInfos.length; i++) {
+          comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
+        }
+  
+        mutationTestDataList.sort(comparator);
+      }
 
       return getPagedDataList(pageIndex, pageSize, mutationTestDataList);
     } else {
       return null;
     }
   }
+
+  private Comparator<MutationTestData> getComparator(TableSortInfo sortInfo) {
+    Comparator<MutationTestData> comparator;
+
+    switch (sortInfo.getField()) {
+      case "file":
+        comparator = Comparator.<MutationTestData, String>comparing(
+            a -> a.getFile());
+        break;
+      case "mutatedMethod":
+        comparator = Comparator.<MutationTestData, String>comparing(
+            a -> a.getMutatedMethod());
+        break;
+      case "line":
+        comparator = Comparator.<MutationTestData, Long>comparing(
+            a -> a.getLine());
+        break;
+      case "mutator":
+        comparator = Comparator.<MutationTestData, String>comparing(
+            a -> a.getMutator());
+        break;
+      case "status":
+        comparator = Comparator.<MutationTestData, String>comparing(
+            a -> a.getStatus());
+        break;
+      case "killingTest":
+        comparator = Comparator.<MutationTestData, String>comparing(
+            a -> a.getKillingTest());
+        break;
+ 
+      default:
+        throw new IllegalArgumentException(
+            String.format("unknown field for mutation test table : %s", sortInfo.getField()));
+    }
+
+    if (sortInfo.getDir().equals("desc")) {
+      comparator = comparator.reversed();
+    }
+
+    return comparator;
+  }  
 
   /**
    * return file mutation test detail.

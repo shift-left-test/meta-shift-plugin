@@ -28,8 +28,10 @@ import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
@@ -92,14 +94,52 @@ public class MetaShiftRecipeDuplicationsAction
    * @return duplication list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize) {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
     if (getParentAction().getMetrics().getDuplications().isAvailable()) {
-      List<?> duplicationDataList = this.getDataSource().get(
+      List<DuplicationData> duplicationDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
+
+      if (sortInfos.length > 0) {
+        Comparator<DuplicationData> comparator = this.getComparator(sortInfos[0]);
+
+        for (int i = 1; i < sortInfos.length; i++) {
+          comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
+        }
+  
+        duplicationDataList.sort(comparator);
+      }
 
       return getPagedDataList(pageIndex, pageSize, duplicationDataList);
     } else {
       return null;
     }
+  }
+
+  private Comparator<DuplicationData> getComparator(TableSortInfo sortInfo) {
+    Comparator<DuplicationData> comparator;
+
+    switch (sortInfo.getField()) {
+      case "file":
+        comparator = Comparator.<DuplicationData, String>comparing(
+            a -> a.getFile());
+        break;
+      case "lines":
+        comparator = Comparator.<DuplicationData, Long>comparing(
+            a -> a.getLines());
+        break;
+      case "duplicatedLines":
+        comparator = Comparator.<DuplicationData, Long>comparing(
+            a -> a.getDuplicatedLines());
+        break;
+      default:
+        throw new IllegalArgumentException(
+            String.format("unknown field for duplications table : %s", sortInfo.getField()));
+    }
+
+    if (sortInfo.getDir().equals("desc")) {
+      comparator = comparator.reversed();
+    }
+
+    return comparator;
   }
 }

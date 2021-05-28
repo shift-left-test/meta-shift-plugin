@@ -28,8 +28,10 @@ import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
@@ -90,14 +92,55 @@ public class MetaShiftRecipeTestAction extends MetaShiftRecipeActionChild {
    * @return test list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeTests(int pageIndex, int pageSize) {
+  public JSONObject getRecipeTests(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
     if (getParentAction().getMetrics().getTest().isAvailable()) {
-      List<?> testDataList = this.getDataSource().get(
+      List<TestData> testDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_TESTLIST);
 
+      if (sortInfos.length > 0) {
+        Comparator<TestData> comparator = this.getComparator(sortInfos[0]);
+
+        for (int i = 1; i < sortInfos.length; i++) {
+          comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
+        }
+
+        testDataList.sort(comparator);
+      }
       return getPagedDataList(pageIndex, pageSize, testDataList);
     } else {
       return null;
     }
+  }
+
+  private Comparator<TestData> getComparator(TableSortInfo sortInfo) {
+    Comparator<TestData> comparator;
+
+    switch (sortInfo.getField()) {
+      case "suite":
+        comparator = Comparator.<TestData, String>comparing(
+            a -> a.getSuite());
+        break;
+      case "name":
+        comparator = Comparator.<TestData, String>comparing(
+            a -> a.getName());
+        break;
+      case "status":
+        comparator = Comparator.<TestData, String>comparing(
+            a -> a.getStatus());
+        break;
+      case "message":
+        comparator = Comparator.<TestData, String>comparing(
+            a -> a.getMessage());
+        break;
+      default:
+        throw new IllegalArgumentException(
+          String.format("unknown field for unit test table : %s", sortInfo.getField()));
+    }
+
+    if (sortInfo.getDir().equals("desc")) {
+      comparator = comparator.reversed();
+    }
+
+    return comparator;
   }
 }

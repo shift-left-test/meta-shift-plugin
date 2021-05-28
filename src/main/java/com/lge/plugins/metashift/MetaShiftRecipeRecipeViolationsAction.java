@@ -28,9 +28,11 @@ import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +133,7 @@ public class MetaShiftRecipeRecipeViolationsAction extends MetaShiftRecipeAction
    * @return recipe violation list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize) {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
     if (getParentAction().getMetrics().getCodeViolations().isAvailable()) {
       List<RecipeViolationData> recipeViolationDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_RECIPEVIOLATIONLIST);
@@ -162,10 +164,57 @@ public class MetaShiftRecipeRecipeViolationsAction extends MetaShiftRecipeAction
         stats.total++;
       }
 
-      return getPagedDataList(pageIndex, pageSize, new ArrayList<>(recipeFilesMap.values()));
+      List<RecipeViolationStats> dataList;
+
+      if (sortInfos.length == 0) {
+        dataList = new ArrayList<>(recipeFilesMap.values());
+      } else {
+        Comparator<RecipeViolationStats> comparator = this.getComparator(sortInfos[0]);
+
+        for (int i = 1; i < sortInfos.length; i++) {
+          comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
+        }
+  
+        dataList = recipeFilesMap.values().stream()
+            .sorted(comparator).collect(Collectors.toList());  
+      }
+
+      return getPagedDataList(pageIndex, pageSize, dataList);
     } else {
       return null;
     }
+  }
+
+  private Comparator<RecipeViolationStats> getComparator(TableSortInfo sortInfo) {
+    Comparator<RecipeViolationStats> comparator;
+
+    switch (sortInfo.getField()) {
+      case "file":
+        comparator = Comparator.<RecipeViolationStats, String>comparing(
+            a -> a.getFile());
+        break;
+      case "major":
+        comparator = Comparator.<RecipeViolationStats, Integer>comparing(
+            a -> a.getMajor());
+        break;
+      case "minor":
+        comparator = Comparator.<RecipeViolationStats, Integer>comparing(
+            a -> a.getMinor());
+        break;
+      case "info":
+        comparator = Comparator.<RecipeViolationStats, Integer>comparing(
+            a -> a.getInfo());
+        break;
+      default:
+        throw new IllegalArgumentException(
+            String.format("unknown field for recipe violations table : %s", sortInfo.getField()));
+    }
+
+    if (sortInfo.getDir().equals("desc")) {
+      comparator = comparator.reversed();
+    }
+
+    return comparator;
   }
 
   /**

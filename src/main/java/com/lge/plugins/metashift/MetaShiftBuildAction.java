@@ -33,6 +33,7 @@ import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ListUtils;
+import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.FilePath;
 import hudson.PluginWrapper;
 import hudson.model.AbstractBuild;
@@ -47,6 +48,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import jenkins.model.Jenkins;
 import jenkins.model.RunAction2;
 import net.sf.json.JSONArray;
@@ -183,18 +185,31 @@ public class MetaShiftBuildAction extends Actionable
    * @return recipe qualifier list.
    */
   @JavaScriptMethod
-  public JSONObject getRecipesTableModel(int pageIndex, int pageSize) {
-    JSONObject result = new JSONObject();
-    JSONArray data = new JSONArray();
+  public JSONObject getRecipesTableModel(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
+    List<MetaShiftRecipeAction> recipeList;
 
-    List<List<MetaShiftRecipeAction>> pagedRecipeAction
-        = ListUtils.partition(this.getRecipes(), pageSize);
+    if (sortInfos.length == 0) {
+      recipeList = this.getRecipes().stream().collect(Collectors.toList());
+    } else {
+      Comparator<MetaShiftRecipeAction> comparator = this.getComparator(sortInfos[0]);
+
+      for (int i = 1; i < sortInfos.length; i++) {
+        comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
+      }
+
+      recipeList = this.getRecipes().stream().sorted(comparator).collect(Collectors.toList());
+    }
+
+    List<List<MetaShiftRecipeAction>> pagedRecipeAction = ListUtils.partition(recipeList, pageSize);
 
     if (pageIndex < 1) {
       pageIndex = 1;
     } else if (pageIndex > pagedRecipeAction.size()) {
       pageIndex = pagedRecipeAction.size();
     }
+
+    JSONObject result = new JSONObject();
+    JSONArray data = new JSONArray();
 
     for (MetaShiftRecipeAction recipe : pagedRecipeAction.get(pageIndex - 1)) {
       JSONObject recipeObj = JSONObject.fromObject(recipe.getMetrics());
@@ -206,6 +221,79 @@ public class MetaShiftBuildAction extends Actionable
     result.put("last_page", pagedRecipeAction.size());
 
     return result;
+  }
+
+  private Comparator<MetaShiftRecipeAction> getComparator(TableSortInfo sortInfo) {
+    Comparator<MetaShiftRecipeAction> comparator;
+
+    switch (sortInfo.getField()) {
+      case "name":
+        comparator = Comparator.comparing(MetaShiftRecipeAction::getName);
+        break;
+      case "codeSize":
+        comparator = Comparator.<MetaShiftRecipeAction, Long>comparing(
+            a -> a.getMetrics().getCodeSize().getLines());
+        break;
+      case "premirrorCache":
+        comparator = Comparator.<MetaShiftRecipeAction, Double>comparing(
+            a -> a.getMetrics().getPremirrorCache() != null
+                ? a.getMetrics().getPremirrorCache().getRatio() : 0);
+        break;
+      case "sharedStateCache":
+        comparator = Comparator.<MetaShiftRecipeAction, Double>comparing(
+            a -> a.getMetrics().getSharedStateCache() != null
+                ? a.getMetrics().getSharedStateCache().getRatio() : 0);
+        break;
+      case "recipeViolations":
+        comparator = Comparator.<MetaShiftRecipeAction, Double>comparing(
+            a -> a.getMetrics().getRecipeViolations() != null
+                ? a.getMetrics().getRecipeViolations().getRatio() : 0);
+        break;
+      case "comments":
+        comparator = Comparator.<MetaShiftRecipeAction, Double>comparing(
+            a -> a.getMetrics().getComments() != null
+                ? a.getMetrics().getComments().getRatio() : 0);
+        break;
+      case "codeViolations":
+        comparator = Comparator.<MetaShiftRecipeAction, Double>comparing(
+            a -> a.getMetrics().getCodeViolations() != null
+                ? a.getMetrics().getCodeViolations().getRatio() : 0);
+        break;
+      case "complexity":
+        comparator = Comparator.<MetaShiftRecipeAction, Double>comparing(
+            a -> a.getMetrics().getComplexity() != null
+                ? a.getMetrics().getComplexity().getRatio() : 0);
+        break;
+      case "duplications":
+        comparator = Comparator.<MetaShiftRecipeAction, Double>comparing(
+            a -> a.getMetrics().getDuplications() != null
+                ? a.getMetrics().getDuplications().getRatio() : 0);
+        break;
+      case "test":
+        comparator = Comparator.<MetaShiftRecipeAction, Double>comparing(
+            a -> a.getMetrics().getTest() != null
+                ? a.getMetrics().getTest().getRatio() : 0);
+        break;
+      case "coverage":
+        comparator = Comparator.<MetaShiftRecipeAction, Double>comparing(
+            a -> a.getMetrics().getCoverage() != null
+                ? a.getMetrics().getCoverage().getRatio() : 0);
+        break;
+      case "mutationTest":
+        comparator = Comparator.<MetaShiftRecipeAction, Double>comparing(
+            a -> a.getMetrics().getMutationTest() != null
+                ? a.getMetrics().getMutationTest().getRatio() : 0);
+        break;
+      default:
+        throw new IllegalArgumentException(
+            String.format("unknown field for recipe table : %s", sortInfo.getField()));
+    }
+    
+    if (sortInfo.getDir().equals("desc")) {
+      comparator = comparator.reversed();
+    }
+
+    return comparator;
   }
 
   private transient MetaShiftBuildAction previousAction;

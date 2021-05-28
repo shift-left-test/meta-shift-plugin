@@ -28,9 +28,11 @@ import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -145,7 +147,8 @@ public class MetaShiftRecipeCodeViolationsAction
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize) throws IOException {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos)
+      throws IOException {
     List<CodeViolationData> codeViolationDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CODEVIOLATIONLIST);
 
@@ -172,7 +175,51 @@ public class MetaShiftRecipeCodeViolationsAction
       }
     }
 
-    return getPagedDataList(pageIndex, pageSize, new ArrayList<>(fileInfo.values()));
+    List<FileCodeViolations>  dataList;
+    if (sortInfos.length == 0) {
+      dataList = new ArrayList<>(fileInfo.values());
+    } else {
+      Comparator<FileCodeViolations> comparator = this.getComparator(sortInfos[0]);
+
+      for (int i = 1; i < sortInfos.length; i++) {
+        comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
+      }
+
+      dataList = fileInfo.values().stream().sorted(comparator).collect(Collectors.toList());
+    }
+    return getPagedDataList(pageIndex, pageSize, dataList);
+  }
+
+  private Comparator<FileCodeViolations> getComparator(TableSortInfo sortInfo) {
+    Comparator<FileCodeViolations> comparator;
+
+    switch (sortInfo.getField()) {
+      case "file":
+        comparator = Comparator.<FileCodeViolations, String>comparing(
+            a -> a.getFile());
+        break;
+      case "major":
+        comparator = Comparator.<FileCodeViolations, Integer>comparing(
+            a -> a.getMajor());
+        break;
+      case "minor":
+        comparator = Comparator.<FileCodeViolations, Integer>comparing(
+            a -> a.getMinor());
+        break;
+      case "info":
+        comparator = Comparator.<FileCodeViolations, Integer>comparing(
+            a -> a.getInfo());
+        break;
+      default:
+        throw new IllegalArgumentException(
+            String.format("unknown field for code violations table : %s", sortInfo.getField()));
+    }
+
+    if (sortInfo.getDir().equals("desc")) {
+      comparator = comparator.reversed();
+    }
+
+    return comparator;
   }
 
   /**

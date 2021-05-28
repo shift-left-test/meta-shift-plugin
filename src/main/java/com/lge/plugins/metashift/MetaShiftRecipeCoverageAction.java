@@ -28,9 +28,11 @@ import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -188,7 +190,7 @@ public class MetaShiftRecipeCoverageAction extends MetaShiftRecipeActionChild {
    * @return coverage list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize) {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
     if (getParentAction().getMetrics().getCoverage().isAvailable()) {
       List<CoverageData> coverageDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_COVERAGELIST);
@@ -206,10 +208,50 @@ public class MetaShiftRecipeCoverageAction extends MetaShiftRecipeActionChild {
         fileInfo.get(file).addCoveredInfo(line, index, coverageData.isCovered());
       }
 
-      return getPagedDataList(pageIndex, pageSize, new ArrayList<>(fileInfo.values()));
+      List<FileCoverage> dataList;
+      if (sortInfos.length == 0) {
+        dataList = new ArrayList<>(fileInfo.values());
+      } else {
+        Comparator<FileCoverage> comparator = this.getComparator(sortInfos[0]);
+
+        for (int i = 1; i < sortInfos.length; i++) {
+          comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
+        }
+  
+        dataList = fileInfo.values().stream().sorted(comparator).collect(Collectors.toList());
+      }
+      return getPagedDataList(pageIndex, pageSize, dataList);
     } else {
       return null;
     }
+  }
+
+  private Comparator<FileCoverage> getComparator(TableSortInfo sortInfo) {
+    Comparator<FileCoverage> comparator;
+
+    switch (sortInfo.getField()) {
+      case "file":
+        comparator = Comparator.<FileCoverage, String>comparing(
+            a -> a.getFile());
+        break;
+      case "lineCoverage":
+        comparator = Comparator.<FileCoverage, Double>comparing(
+            a -> a.getLineCoverage());
+        break;
+      case "branchCoverage":
+        comparator = Comparator.<FileCoverage, Double>comparing(
+            a -> a.getBranchCoverage());
+        break;
+      default:
+        throw new IllegalArgumentException(
+            String.format("unknown field for coverage table : %s", sortInfo.getField()));
+    }
+
+    if (sortInfo.getDir().equals("desc")) {
+      comparator = comparator.reversed();
+    }
+
+    return comparator;
   }
 
   /**

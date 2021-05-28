@@ -183,6 +183,11 @@ public class MetaShiftRecipeAction extends Actionable implements Action {
     return this.getMetrics().getCodeSize().getLines();
   }
 
+  /**
+   * return build performance score for rank.
+   *
+   * @return build performance score
+   */
   public double getBuildPerformanceValue() {
     return (this.getMetrics().getPremirrorCache().getRatio()
         + this.getMetrics().getSharedStateCache().getRatio()

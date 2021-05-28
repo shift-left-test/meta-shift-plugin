@@ -3,10 +3,14 @@
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <j:set var="publisher_class" value="com.lge.plugins.metashift.MetaShiftPublisher"/>
   <f:section title="Build Performance">
-    <f:entry title="Cache Threshold" field="cacheThreshold">
-      <f:number value="${it.cacheThreshold}" default="${descriptor.criteria.cacheThreshold}"
+    <f:entry title="Premirror Cache Threshold" field="premirrorCacheThreshold">
+      <f:number value="${it.premirrorCacheThreshold}" default="${descriptor.criteria.premirrorCacheThreshold}"
                 checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
+    <f:entry title="Shared State Cache Threshold" field="sharedStateCacheThreshold">
+      <f:number value="${it.sharedStateCacheThreshold}" default="${descriptor.criteria.sharedStateCacheThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
+    </f:entry>    
     <f:entry title="Recipe Violation Threshold" field="recipeViolationThreshold">
       <f:number value="${it.recipeViolationThreshold}" default="${descriptor.criteria.recipeViolationThreshold}"
                 checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
@@ -43,10 +47,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     </f:entry>
     <f:entry title="Mutation Test Threshold" field="mutationTestThreshold">
       <f:number value="${it.mutationTestThreshold}" default="${descriptor.criteria.mutationTestThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>
-    <f:entry title="Overall Threshold" field="overallThreshold">
-      <f:number value="${it.overallThreshold}" default="${descriptor.criteria.overallThreshold}"
                 checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
     </f:entry>
   </f:section>

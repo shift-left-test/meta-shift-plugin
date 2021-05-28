@@ -28,8 +28,10 @@ import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
@@ -92,9 +94,44 @@ public class MetaShiftRecipePremirrorCacheAction
    * @return cache availability list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeCaches(int pageIndex, int pageSize) {
+  public JSONObject getRecipeCaches(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
     List<PremirrorCacheData> cacheList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CACHELIST);
+
+    if (sortInfos.length > 0) {
+      Comparator<PremirrorCacheData> comparator = this.getComparator(sortInfos[0]);
+
+      for (int i = 1; i < sortInfos.length; i++) {
+        comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
+      }
+
+      cacheList.sort(comparator);
+    }
+    
     return getPagedDataList(pageIndex, pageSize, cacheList);
+  }
+
+  private Comparator<PremirrorCacheData> getComparator(TableSortInfo sortInfo) {
+    Comparator<PremirrorCacheData> comparator;
+
+    switch (sortInfo.getField()) {
+      case "signature":
+        comparator = Comparator.<PremirrorCacheData, String>comparing(
+            a -> a.getSignature());
+        break;
+      case "available":
+        comparator = Comparator.<PremirrorCacheData, Boolean>comparing(
+            a -> a.isAvailable());
+        break;
+      default:
+        throw new IllegalArgumentException(
+            String.format("unknown field for premirror cache table : %s", sortInfo.getField()));
+    }
+
+    if (sortInfo.getDir().equals("desc")) {
+      comparator = comparator.reversed();
+    }
+
+    return comparator;
   }
 }

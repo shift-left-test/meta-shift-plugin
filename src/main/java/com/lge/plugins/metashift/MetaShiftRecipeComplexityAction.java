@@ -28,9 +28,11 @@ import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +133,7 @@ public class MetaShiftRecipeComplexityAction
    * @return complexity list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize) {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
     if (getParentAction().getMetrics().getComplexity().isAvailable()) {
       List<ComplexityData> complexityDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_COMPLEXITYLIST);
@@ -150,11 +152,52 @@ public class MetaShiftRecipeComplexityAction
             > this.getParentAction().getParentAction().getCriteria().getComplexityLevel());
       }
 
-      return getPagedDataList(pageIndex, pageSize, new ArrayList<>(fileInfo.values()));
+      List<FileComplexityStats> dataList;
+      if (sortInfos.length == 0) {
+        dataList = new ArrayList<>(fileInfo.values());
+      } else {
+        Comparator<FileComplexityStats> comparator = this.getComparator(sortInfos[0]);
+
+        for (int i = 1; i < sortInfos.length; i++) {
+          comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
+        }
+
+        dataList = fileInfo.values().stream().sorted(comparator).collect(Collectors.toList());
+      }
+      return getPagedDataList(pageIndex, pageSize, dataList);
     } else {
       return null;
     }
   }
+
+  private Comparator<FileComplexityStats> getComparator(TableSortInfo sortInfo) {
+    Comparator<FileComplexityStats> comparator;
+
+    switch (sortInfo.getField()) {
+      case "file":
+        comparator = Comparator.<FileComplexityStats, String>comparing(
+            a -> a.getFile());
+        break;
+      case "functions":
+        comparator = Comparator.<FileComplexityStats, Integer>comparing(
+            a -> a.getFunctions());
+        break;
+      case "complexFunctions":
+        comparator = Comparator.<FileComplexityStats, Integer>comparing(
+            a -> a.getComplexFunctions());
+        break;
+      default:
+        throw new IllegalArgumentException(
+            String.format("unknown field for complexity table : %s", sortInfo.getField()));
+    }
+
+    if (sortInfo.getDir().equals("desc")) {
+      comparator = comparator.reversed();
+    }
+
+    return comparator;
+  }
+
 
   /**
    * return file complexity detail.

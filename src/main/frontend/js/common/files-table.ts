@@ -38,7 +38,7 @@ export class FilesTable extends LitElement {
   private _handleAjaxRequest(url, config, params) {
     var self = this;
     return new Promise(function (resolve, reject) {
-      self.requestFilesFunc(params.page, params.size, function (model) {
+      self.requestFilesFunc(params.page, params.size, params.sorters, function (model) {
         console.log(model.responseJSON);
         resolve(model.responseJSON);
       });

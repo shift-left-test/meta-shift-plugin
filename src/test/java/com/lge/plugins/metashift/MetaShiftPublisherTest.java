@@ -26,9 +26,10 @@ package com.lge.plugins.metashift;
 
 import com.lge.plugins.metashift.metrics.Criteria;
 import hudson.model.FreeStyleProject;
-import org.junit.Ignore;
+import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 
@@ -41,13 +42,14 @@ public class MetaShiftPublisherTest {
 
   @Rule
   public final JenkinsRule jenkins = new JenkinsRule();
+  @Rule
+  public final TemporaryFolder folder = new TemporaryFolder();
 
-  @Ignore
   @Test
-  public void testConfigureRoundTrip() throws Exception {
+  public void testConfigureRoundTripWithEmptyDirectory() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
-    String path = project.getRootDir().getAbsolutePath();
-    MetaShiftPublisher before = new MetaShiftPublisher(path, new Criteria());
+    File report = folder.newFolder("path", "to", "report");
+    MetaShiftPublisher before = new MetaShiftPublisher(report.getAbsolutePath(), new Criteria());
     project.getPublishersList().add(before);
 
     // HtmlUnit does not play well with JavaScript
@@ -56,7 +58,8 @@ public class MetaShiftPublisherTest {
 
     jenkins.submit(client.getPage(project, "configure").getFormByName("config"));
 
-    jenkins.assertEqualDataBoundBeans(new MetaShiftPublisher(path, new Criteria()),
+    jenkins.assertEqualDataBoundBeans(
+        new MetaShiftPublisher(report.getAbsolutePath(), new Criteria()),
         project.getPublishersList().get(0));
   }
 }

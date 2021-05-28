@@ -28,8 +28,10 @@ import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
@@ -91,10 +93,48 @@ public class MetaShiftRecipeCommentsAction
    * @return comment list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize) {
-    List<?> commentDataList = this.getDataSource().get(
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
+    List<CommentData> commentDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
 
+    if (sortInfos.length > 0) {
+      Comparator<CommentData> comparator = this.getComparator(sortInfos[0]);
+
+      for (int i = 1; i < sortInfos.length; i++) {
+        comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
+      }
+
+      commentDataList.sort(comparator);
+    }
+
     return getPagedDataList(pageIndex, pageSize, commentDataList);
+  }
+
+  private Comparator<CommentData> getComparator(TableSortInfo sortInfo) {
+    Comparator<CommentData> comparator;
+
+    switch (sortInfo.getField()) {
+      case "file":
+        comparator = Comparator.<CommentData, String>comparing(
+            a -> a.getFile());
+        break;
+      case "lines":
+        comparator = Comparator.<CommentData, Long>comparing(
+            a -> a.getLines());
+        break;
+      case "commentLines":
+        comparator = Comparator.<CommentData, Long>comparing(
+            a -> a.getCommentLines());
+        break;
+      default:
+        throw new IllegalArgumentException(
+            String.format("unknown field for comments table : %s", sortInfo.getField()));
+    }
+
+    if (sortInfo.getDir().equals("desc")) {
+      comparator = comparator.reversed();
+    }
+
+    return comparator;
   }
 }
