@@ -31,6 +31,7 @@ import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -47,6 +48,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class MetaShiftRecipeCoverageAction extends MetaShiftRecipeActionChild {
 
   static final String STORE_KEY_COVERAGELIST = "CoverageList";
+  static final String STORE_KEY_FILECOVERAGESTAT = "FileCoverageStat";
 
   /**
    * constructor.
@@ -63,11 +65,57 @@ public class MetaShiftRecipeCoverageAction extends MetaShiftRecipeActionChild {
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    List<CoverageData> coverageList =
+    List<CoverageData> coverageDataList =
         recipe.objects(CoverageData.class).collect(Collectors.toList());
 
+    HashMap<String, List<CoverageData>> fileCoverageList = new HashMap<>();
+
+    for (CoverageData coverageData : coverageDataList) {
+      String file = coverageData.getFile();
+
+      if (!fileCoverageList.containsKey(file)) {
+        fileCoverageList.put(file, new ArrayList<>());
+      }
+
+      fileCoverageList.get(file).add(coverageData);
+    }
+
+    List<FileCoverageStats> fileCoverageStats = new ArrayList<>();
+
+    fileCoverageList.forEach((file, coverageList) -> {
+      HashSet<Long> lines = new HashSet<>();
+      HashSet<Long> coveredLines = new HashSet<>();
+      HashSet<LineIndex> indexes = new HashSet<>();
+      HashSet<LineIndex> coveredIndexes = new HashSet<>();
+
+      for (CoverageData data : coverageList) {
+        LineIndex lineIndex = new LineIndex(data.getLine(), data.getIndex());
+
+        lines.add(data.getLine());
+        indexes.add(lineIndex);
+        if (data.isCovered()) {
+          coveredLines.add(data.getLine());
+          coveredIndexes.add(lineIndex);
+        }
+      }
+
+      fileCoverageStats.add(new FileCoverageStats(file,
+          lines.size() > 0 ? (double) coveredLines.size() / (double) lines.size() : 0,
+          indexes.size() > 0 ? (double) coveredIndexes.size() / (double) indexes.size() : 0
+      ));
+      try {
+        this.saveFileContents(metadata, file);
+        dataSource.put(coverageList,
+            this.getParentAction().getName(), file, STORE_KEY_COVERAGELIST);
+      } catch (IOException e) {
+        listener.getLogger().println(e.getMessage());
+        e.printStackTrace(listener.getLogger());
+      }
+    });
+
     try {
-      dataSource.put(coverageList, this.getParentAction().getName(), STORE_KEY_COVERAGELIST);
+      dataSource.put(fileCoverageStats,
+          this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -114,71 +162,31 @@ public class MetaShiftRecipeCoverageAction extends MetaShiftRecipeActionChild {
   /**
    * coverage info for each file.
    */
-  public static class FileCoverage {
+  public static class FileCoverageStats implements Serializable {
 
     private final String file;
-    private final Set<Long> lines;
-    private final Set<Long> coveredLines;
-    private final Set<LineIndex> indexs;
-    private final Set<LineIndex> coveredIndexs;
+    private double lineCoverage;
+    private double branchCoverage;
 
     /**
      * constructor.
      */
-    public FileCoverage(String file) {
+    public FileCoverageStats(String file, double lineCoverage, double branchCoverage) {
       this.file = file;
-      this.lines = new HashSet<>();
-      this.coveredLines = new HashSet<>();
-      this.indexs = new HashSet<>();
-      this.coveredIndexs = new HashSet<>();
+      this.lineCoverage = lineCoverage;
+      this.branchCoverage = branchCoverage;
     }
 
     public String getFile() {
       return this.file;
     }
 
-    /**
-     * return line coverage.
-     *
-     * @return line coverage
-     */
     public double getLineCoverage() {
-      if (this.lines.isEmpty()) {
-        return 0.0;
-      }
-
-      return (double) this.coveredLines.size() / (double) this.lines.size();
+      return this.lineCoverage;
     }
 
-    /**
-     * return branch coverage.
-     *
-     * @return branch coverage
-     */
     public double getBranchCoverage() {
-      if (this.indexs.isEmpty()) {
-        return 0.0;
-      }
-
-      return (double) this.coveredIndexs.size() / (double) this.indexs.size();
-    }
-
-    /**
-     * add coverage info.
-     *
-     * @param line    line
-     * @param index   index
-     * @param covered is covered
-     */
-    public void addCoveredInfo(long line, long index, boolean covered) {
-      LineIndex lineIndex = new LineIndex(line, index);
-
-      this.lines.add(line);
-      this.indexs.add(lineIndex);
-      if (covered) {
-        this.coveredLines.add(line);
-        this.coveredIndexs.add(lineIndex);
-      }
+      return this.branchCoverage;
     }
   }
 
@@ -191,55 +199,35 @@ public class MetaShiftRecipeCoverageAction extends MetaShiftRecipeActionChild {
    */
   @JavaScriptMethod
   public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
-    if (getParentAction().getMetrics().getCoverage().isAvailable()) {
-      List<CoverageData> coverageDataList = this.getDataSource().get(
-          this.getParentAction().getName(), STORE_KEY_COVERAGELIST);
+    List<FileCoverageStats> dataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
 
-      HashMap<String, FileCoverage> fileInfo = new HashMap<>();
+    if (sortInfos.length > 0) {
+      Comparator<FileCoverageStats> comparator = this.getComparator(sortInfos[0]);
 
-      for (CoverageData coverageData : coverageDataList) {
-        String file = coverageData.getFile();
-        long index = coverageData.getIndex();
-        long line = coverageData.getLine();
-
-        if (!fileInfo.containsKey(file)) {
-          fileInfo.put(file, new FileCoverage(file));
-        }
-        fileInfo.get(file).addCoveredInfo(line, index, coverageData.isCovered());
+      for (int i = 1; i < sortInfos.length; i++) {
+        comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
       }
 
-      List<FileCoverage> dataList;
-      if (sortInfos.length == 0) {
-        dataList = new ArrayList<>(fileInfo.values());
-      } else {
-        Comparator<FileCoverage> comparator = this.getComparator(sortInfos[0]);
-
-        for (int i = 1; i < sortInfos.length; i++) {
-          comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
-        }
-  
-        dataList = fileInfo.values().stream().sorted(comparator).collect(Collectors.toList());
-      }
-      return getPagedDataList(pageIndex, pageSize, dataList);
-    } else {
-      return null;
+      dataList.sort(comparator);
     }
+    return getPagedDataList(pageIndex, pageSize, dataList);
   }
 
-  private Comparator<FileCoverage> getComparator(TableSortInfo sortInfo) {
-    Comparator<FileCoverage> comparator;
+  private Comparator<FileCoverageStats> getComparator(TableSortInfo sortInfo) {
+    Comparator<FileCoverageStats> comparator;
 
     switch (sortInfo.getField()) {
       case "file":
-        comparator = Comparator.<FileCoverage, String>comparing(
+        comparator = Comparator.<FileCoverageStats, String>comparing(
             a -> a.getFile());
         break;
       case "lineCoverage":
-        comparator = Comparator.<FileCoverage, Double>comparing(
+        comparator = Comparator.<FileCoverageStats, Double>comparing(
             a -> a.getLineCoverage());
         break;
       case "branchCoverage":
-        comparator = Comparator.<FileCoverage, Double>comparing(
+        comparator = Comparator.<FileCoverageStats, Double>comparing(
             a -> a.getBranchCoverage());
         break;
       default:
@@ -261,12 +249,8 @@ public class MetaShiftRecipeCoverageAction extends MetaShiftRecipeActionChild {
   public JSONObject getFileCoverageDetail(String codePath) {
     JSONObject result = new JSONObject();
 
-    List<CoverageData> coverageDataList = this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_COVERAGELIST);
-
-    List<CoverageData> dataList =
-        coverageDataList.stream().filter(o -> o.getFile().equals(codePath))
-            .collect(Collectors.toList());
+    List<CoverageData> dataList = this.getDataSource().get(
+        this.getParentAction().getName(), codePath, STORE_KEY_COVERAGELIST);
 
     result.put("dataList", dataList);
     result.put("content", this.readFileContents(codePath));

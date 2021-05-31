@@ -301,10 +301,18 @@ tested-simple-view {
 
 // monaco editor
 .sourceMarginBlock {
-background: red;
+  background: red;
 }
 .sourceBlock {
-background: lightblue;
+  background: lightblue;
+}
+
+.sourceCovered {
+  background: green;
+}
+
+.sourceUncovered {
+  background: red;
 }
 
 .monaco-editor {
