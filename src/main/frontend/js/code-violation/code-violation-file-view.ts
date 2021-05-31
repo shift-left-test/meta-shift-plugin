@@ -8,25 +8,28 @@ export class CodeViolationFileView extends FileDetail {
   renderDataList() {
     return html`
       <h3>Violation List${this.currentLine !== undefined ? html`- #${this.currentLine}` : html``}</h3>
-      <ul class="overflow-auto list-group">
-        ${this.currentDataList.map(data => html`<li class="border rounded bg-light list-group-item">
+      <div class="list-group">
+        ${this.currentDataList.map(data => html`
+        <div class="list-item">
           <div>
             <span class="badge ${this.getBadgeClass(data.level)}">${data.level}</span>
             <span>${data.rule}</span>
           </div>
-          <div>${data.description}</div>
-        </li>`)}
-      </ul>`;
+          <div>tool: ${data.tool} - <span class="severity">severity: ${data.severity}</span>
+          </div>
+          <div><b>${data.message}</b></div>
+        </div>`)}
+      </div>`;
   }
 
   private getBadgeClass(level) {
     switch(level) {
       case 'MAJOR':
-        return 'badge-danger';
+        return 'bg-major';
       case 'MINOR':
-        return 'badge-warning';
+        return 'bg-minor';
       default:
-        return 'badge-white';
+        return 'bg-info';
     }
   }
 }

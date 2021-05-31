@@ -31,6 +31,7 @@ import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ public class MetaShiftRecipeCodeViolationsAction
     extends MetaShiftRecipeActionChild {
 
   static final String STORE_KEY_CODEVIOLATIONLIST = "CodeViolationList";
+  static final String STORE_KEY_FILECODEVIOLATIONSTAT = "FileCodeViolationStat";
 
   /**
    * constructor.
@@ -59,15 +61,46 @@ public class MetaShiftRecipeCodeViolationsAction
    */
   public MetaShiftRecipeCodeViolationsAction(
       MetaShiftRecipeAction parent, TaskListener listener,
-      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
+      Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata)
+      throws IOException {
     super(parent);
 
     List<CodeViolationData> codeViolationDataList =
         recipe.objects(CodeViolationData.class).collect(Collectors.toList());
 
+    HashMap<String, List<CodeViolationData>> fileCodeViloationList = new HashMap<>();
+
+    for (CodeViolationData codeViolationData : codeViolationDataList) {
+      String file = codeViolationData.getFile();
+
+      if (!fileCodeViloationList.containsKey(file)) {
+        fileCodeViloationList.put(file, new ArrayList<>());
+      }
+
+      fileCodeViloationList.get(file).add(codeViolationData);
+    }
+
+    List<FileCodeViolationStats> fileCodeViolationStats = new ArrayList<>();
+
+    fileCodeViloationList.forEach((file, violationList) -> {
+      fileCodeViolationStats.add(new FileCodeViolationStats(file,
+          violationList.stream().filter(o -> o.getLevel().equals("MAJOR")).count(),
+          violationList.stream().filter(o -> o.getLevel().equals("MINOR")).count(),
+          violationList.stream().filter(o -> o.getLevel().equals("INFO")).count()
+      ));
+      try {
+        this.saveFileContents(metadata, file);
+        dataSource.put(violationList,
+            this.getParentAction().getName(), file, STORE_KEY_CODEVIOLATIONLIST);
+      } catch (IOException e) {
+        listener.getLogger().println(e.getMessage());
+        e.printStackTrace(listener.getLogger());
+      }
+    });
+
     try {
-      dataSource.put(codeViolationDataList,
-          this.getParentAction().getName(), STORE_KEY_CODEVIOLATIONLIST);
+      dataSource.put(fileCodeViolationStats,
+          this.getParentAction().getName(), STORE_KEY_FILECODEVIOLATIONSTAT);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -92,49 +125,37 @@ public class MetaShiftRecipeCodeViolationsAction
   /**
    * code violation for each file.
    */
-  public static class FileCodeViolations {
+  public static class FileCodeViolationStats implements Serializable {
 
     private final String file;
-    private int major;
-    private int minor;
-    private int info;
+    private long major;
+    private long minor;
+    private long info;
 
     /**
      * constructor.
      */
-    public FileCodeViolations(String file) {
+    public FileCodeViolationStats(String file, long major, long minor, long info) {
       this.file = file;
-      this.major = 0;
-      this.minor = 0;
-      this.info = 0;
+      this.major = major;
+      this.minor = minor;
+      this.info = info;
     }
 
     public String getFile() {
       return this.file;
     }
 
-    public int getMajor() {
+    public long getMajor() {
       return this.major;
     }
 
-    public int getMinor() {
+    public long getMinor() {
       return this.minor;
     }
 
-    public int getInfo() {
+    public long getInfo() {
       return this.info;
-    }
-
-    public void addMajor() {
-      this.major++;
-    }
-
-    public void addMinor() {
-      this.minor++;
-    }
-
-    public void addInfo() {
-      this.info++;
     }
   }
 
@@ -149,65 +170,39 @@ public class MetaShiftRecipeCodeViolationsAction
   @JavaScriptMethod
   public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos)
       throws IOException {
-    List<CodeViolationData> codeViolationDataList = this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_CODEVIOLATIONLIST);
+    List<FileCodeViolationStats> dataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_FILECODEVIOLATIONSTAT);
 
-    HashMap<String, FileCodeViolations> fileInfo = new HashMap<>();
-
-    for (CodeViolationData codeViolationData : codeViolationDataList) {
-      String file = codeViolationData.getFile();
-      if (!fileInfo.containsKey(file)) {
-        fileInfo.put(file, new FileCodeViolations(file));
-      }
-      switch (codeViolationData.getLevel()) {
-        case "MAJOR":
-          fileInfo.get(file).addMajor();
-          break;
-        case "MINOR":
-          fileInfo.get(file).addMinor();
-          break;
-        case "INFO":
-          fileInfo.get(file).addInfo();
-          break;
-        default:
-          // TODO: temporary check code
-          throw new IOException("invalid level name");
-      }
-    }
-
-    List<FileCodeViolations>  dataList;
-    if (sortInfos.length == 0) {
-      dataList = new ArrayList<>(fileInfo.values());
-    } else {
-      Comparator<FileCodeViolations> comparator = this.getComparator(sortInfos[0]);
+    if (sortInfos.length > 0) {
+      Comparator<FileCodeViolationStats> comparator = this.getComparator(sortInfos[0]);
 
       for (int i = 1; i < sortInfos.length; i++) {
         comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
       }
 
-      dataList = fileInfo.values().stream().sorted(comparator).collect(Collectors.toList());
+      dataList.sort(comparator);
     }
     return getPagedDataList(pageIndex, pageSize, dataList);
   }
 
-  private Comparator<FileCodeViolations> getComparator(TableSortInfo sortInfo) {
-    Comparator<FileCodeViolations> comparator;
+  private Comparator<FileCodeViolationStats> getComparator(TableSortInfo sortInfo) {
+    Comparator<FileCodeViolationStats> comparator;
 
     switch (sortInfo.getField()) {
       case "file":
-        comparator = Comparator.<FileCodeViolations, String>comparing(
+        comparator = Comparator.<FileCodeViolationStats, String>comparing(
             a -> a.getFile());
         break;
       case "major":
-        comparator = Comparator.<FileCodeViolations, Integer>comparing(
+        comparator = Comparator.<FileCodeViolationStats, Long>comparing(
             a -> a.getMajor());
         break;
       case "minor":
-        comparator = Comparator.<FileCodeViolations, Integer>comparing(
+        comparator = Comparator.<FileCodeViolationStats, Long>comparing(
             a -> a.getMinor());
         break;
       case "info":
-        comparator = Comparator.<FileCodeViolations, Integer>comparing(
+        comparator = Comparator.<FileCodeViolationStats, Long>comparing(
             a -> a.getInfo());
         break;
       default:
@@ -230,13 +225,9 @@ public class MetaShiftRecipeCodeViolationsAction
     JSONObject result = new JSONObject();
 
     List<CodeViolationData> codeViolationDataList = this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_CODEVIOLATIONLIST);
+        this.getParentAction().getName(), codePath, STORE_KEY_CODEVIOLATIONLIST);
 
-    List<CodeViolationData> violationDataList =
-        codeViolationDataList.stream().filter(o -> o.getFile().equals(codePath))
-            .collect(Collectors.toList());
-
-    result.put("dataList", violationDataList);
+    result.put("dataList", codeViolationDataList);
     result.put("content", this.readFileContents(codePath));
 
     return result;

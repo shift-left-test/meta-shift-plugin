@@ -31,11 +31,11 @@ import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -46,6 +46,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class MetaShiftRecipeRecipeViolationsAction extends MetaShiftRecipeActionChild {
 
   static final String STORE_KEY_RECIPEVIOLATIONLIST = "RecipeViolationList";
+  static final String STORE_KEY_FILERECIPEVIOLATIONSTAT = "FileRecipeViolationStat";
 
   /**
    * constructor.
@@ -65,13 +66,39 @@ public class MetaShiftRecipeRecipeViolationsAction extends MetaShiftRecipeAction
     List<RecipeViolationData> recipeViolationList =
         recipe.objects(RecipeViolationData.class).collect(Collectors.toList());
 
-    try {
-      dataSource.put(recipeViolationList,
-          this.getParentAction().getName(), STORE_KEY_RECIPEVIOLATIONLIST);
+    HashMap<String, List<RecipeViolationData>> fileRecipeViolationList = new HashMap<>();
 
-      for (RecipeViolationData data : recipeViolationList) {
-        this.saveFileContents(metadata, data.getFile());
+    for (RecipeViolationData recipeViolationData : recipeViolationList) {
+      String file = recipeViolationData.getFile();
+
+      if (!fileRecipeViolationList.containsKey(file)) {
+        fileRecipeViolationList.put(file, new ArrayList<>());
       }
+
+      fileRecipeViolationList.get(file).add(recipeViolationData);
+    }
+
+    List<FileRecipeViolationStats> fileRecipeViolationStats = new ArrayList<>();
+
+    fileRecipeViolationList.forEach((file, violationList) -> {
+      fileRecipeViolationStats.add(new FileRecipeViolationStats(file,
+          violationList.stream().filter(o -> o.getLevel().equals("MAJOR")).count(),
+          violationList.stream().filter(o -> o.getLevel().equals("MINOR")).count(),
+          violationList.stream().filter(o -> o.getLevel().equals("INFO")).count()
+      ));
+      try {
+        this.saveFileContents(metadata, file);
+        dataSource.put(violationList,
+            this.getParentAction().getName(), file, STORE_KEY_RECIPEVIOLATIONLIST);
+      } catch (IOException e) {
+        listener.getLogger().println(e.getMessage());
+        e.printStackTrace(listener.getLogger());
+      }
+    });
+
+    try {
+      dataSource.put(fileRecipeViolationStats,
+          this.getParentAction().getName(), STORE_KEY_FILERECIPEVIOLATIONSTAT);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -96,31 +123,36 @@ public class MetaShiftRecipeRecipeViolationsAction extends MetaShiftRecipeAction
   /**
    * count for severity.
    */
-  public static class RecipeViolationStats {
+  public static class FileRecipeViolationStats implements Serializable {
 
     String file;
-    int info = 0;
-    int minor = 0;
-    int major = 0;
-    int total = 0;
-
-    public RecipeViolationStats(String file) {
+    private long info;
+    private long minor;
+    private long major;
+    
+    /**
+     * consttructor.
+     */
+    public FileRecipeViolationStats(String file, long major, long minor, long info) {
       this.file = file;
+      this.major = major;
+      this.minor = minor;
+      this.info = info;
     }
 
     public String getFile() {
       return this.file;
     }
 
-    public int getInfo() {
+    public long getInfo() {
       return this.info;
     }
 
-    public int getMinor() {
+    public long getMinor() {
       return this.minor;
     }
 
-    public int getMajor() {
+    public long getMajor() {
       return this.major;
     }
   }
@@ -133,76 +165,42 @@ public class MetaShiftRecipeRecipeViolationsAction extends MetaShiftRecipeAction
    * @return recipe violation list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
-    if (getParentAction().getMetrics().getCodeViolations().isAvailable()) {
-      List<RecipeViolationData> recipeViolationDataList = this.getDataSource().get(
-          this.getParentAction().getName(), STORE_KEY_RECIPEVIOLATIONLIST);
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos)
+      throws IOException {
+    List<FileRecipeViolationStats> dataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_FILERECIPEVIOLATIONSTAT);
 
-      Map<String, RecipeViolationStats> recipeFilesMap = new HashMap<>();
+    if (sortInfos.length > 0) {
+      Comparator<FileRecipeViolationStats> comparator = this.getComparator(sortInfos[0]);
 
-      for (RecipeViolationData violationData : recipeViolationDataList) {
-        if (!recipeFilesMap.containsKey(violationData.getFile())) {
-          recipeFilesMap.put(violationData.getFile(),
-              new RecipeViolationStats(violationData.getFile()));
-        }
-        RecipeViolationStats stats = recipeFilesMap.get(violationData.getFile());
-        switch (violationData.getLevel()) {
-          case "MAJOR":
-            stats.major++;
-            break;
-          case "MINOR":
-            stats.minor++;
-            break;
-          case "INFO":
-            stats.info++;
-            break;
-          default:
-            // TODO: invalid level case?
-            // ignore
-            break;
-        }
-        stats.total++;
+      for (int i = 1; i < sortInfos.length; i++) {
+        comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
       }
 
-      List<RecipeViolationStats> dataList;
-
-      if (sortInfos.length == 0) {
-        dataList = new ArrayList<>(recipeFilesMap.values());
-      } else {
-        Comparator<RecipeViolationStats> comparator = this.getComparator(sortInfos[0]);
-
-        for (int i = 1; i < sortInfos.length; i++) {
-          comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
-        }
-  
-        dataList = recipeFilesMap.values().stream()
-            .sorted(comparator).collect(Collectors.toList());  
-      }
-
-      return getPagedDataList(pageIndex, pageSize, dataList);
-    } else {
-      return null;
+      dataList.sort(comparator);
     }
+
+    return getPagedDataList(pageIndex, pageSize, dataList);
   }
 
-  private Comparator<RecipeViolationStats> getComparator(TableSortInfo sortInfo) {
-    Comparator<RecipeViolationStats> comparator;
+  private Comparator<FileRecipeViolationStats> getComparator(TableSortInfo sortInfo) {
+    Comparator<FileRecipeViolationStats> comparator;
 
     switch (sortInfo.getField()) {
       case "file":
-        comparator = Comparator.<RecipeViolationStats, String>comparing(
+        comparator = Comparator.<FileRecipeViolationStats, String>comparing(
             a -> a.getFile());
         break;
       case "major":
-        comparator = Comparator.<RecipeViolationStats, Integer>comparing(
+        comparator = Comparator.<FileRecipeViolationStats, Long>comparing(
             a -> a.getMajor());
         break;
       case "minor":
-        comparator = Comparator.<RecipeViolationStats, Integer>comparing(
+        comparator = Comparator.<FileRecipeViolationStats, Long>comparing(
             a -> a.getMinor());
         break;
       case "info":
-        comparator = Comparator.<RecipeViolationStats, Integer>comparing(
+        comparator = Comparator.<FileRecipeViolationStats, Long>comparing(
             a -> a.getInfo());
         break;
       default:
@@ -227,12 +225,8 @@ public class MetaShiftRecipeRecipeViolationsAction extends MetaShiftRecipeAction
   public JSONObject getFileRecipeViolationDetail(String recipePath) {
     JSONObject result = new JSONObject();
 
-    List<RecipeViolationData> recipeViolationDataList = this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_RECIPEVIOLATIONLIST);
-
-    List<RecipeViolationData> violationDataList =
-        recipeViolationDataList.stream().filter(o -> o.getFile().equals(recipePath))
-            .collect(Collectors.toList());
+    List<RecipeViolationData> violationDataList = this.getDataSource().get(
+        this.getParentAction().getName(), recipePath, STORE_KEY_RECIPEVIOLATIONLIST);
 
     result.put("dataList", violationDataList);
     result.put("content", this.readFileContents(recipePath));
