@@ -59,11 +59,22 @@ public class MetaShiftRecipeMutationTestAction extends MetaShiftRecipeActionChil
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    List<MutationTestData> cacheList =
+    List<MutationTestData> mutationTestList =
         recipe.objects(MutationTestData.class).collect(Collectors.toList());
 
+    for (MutationTestData mutationTestData : mutationTestList ) {
+      String file = mutationTestData.getFile();
+
+      try {
+        this.saveFileContents(metadata, file);
+      } catch (IOException e) {
+        listener.getLogger().println(e.getMessage());
+        e.printStackTrace(listener.getLogger());
+      }
+    }
+
     try {
-      dataSource.put(cacheList, this.getParentAction().getName(), STORE_KEY_MUTATIONTESTLIST);
+      dataSource.put(mutationTestList, this.getParentAction().getName(), STORE_KEY_MUTATIONTESTLIST);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());

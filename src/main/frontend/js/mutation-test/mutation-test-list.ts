@@ -22,16 +22,16 @@ export class MutationTestList extends FilesTable {
   }
 
   _statusCellFormatter(cell, formatterParams, onRendered) {
-    var statusClass = 'badge badge-secondary'
+    var statusClass = 'badge bg-na'
     switch(cell.getValue()) {
       case 'KILLED':
-        statusClass = 'badge badge-success'
+        statusClass = 'badge bg-pass'
         break;
       case 'SURVIVED':
-        statusClass = 'badge badge-danger'
+        statusClass = 'badge bg-fail'
         break;
       case 'ERROR':
-        statusClass = 'badge badge-warning'
+        statusClass = 'badge bg-error'
         break;
     }
     return `
