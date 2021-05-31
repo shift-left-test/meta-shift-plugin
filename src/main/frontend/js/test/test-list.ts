@@ -1,3 +1,4 @@
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { FilesTable } from '../common/files-table';
@@ -16,16 +17,16 @@ export class TestList extends FilesTable {
   }
 
   _statusCellFormatter(cell, formatterParams, onRendered) {
-    var statusClass = 'badge badge-secondary'
+    var statusClass = 'badge bg-na'
     switch(cell.getValue()) {
       case 'PASSED':
-        statusClass = 'badge badge-success'
+        statusClass = 'badge bg-pass'
         break;
       case 'FAILED':
-        statusClass = 'badge badge-danger'
+        statusClass = 'badge bg-fail'
         break;
       case 'ERROR':
-        statusClass = 'badge badge-warning'
+        statusClass = 'badge bg-error'
         break;
     }
     return `

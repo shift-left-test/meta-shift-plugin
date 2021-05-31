@@ -14,6 +14,7 @@ import { CodeViolationFileView } from './code-violation/code-violation-file-view
 import { ComplexityFiles } from './complexity/complexity-files';
 import { ComplexityFileView } from './complexity/complexity-file-view';
 import { DuplicationFiles } from './duplication/duplication-files';
+import { TestRate } from './test/test-rate';
 import { TestList } from './test/test-list';
 import { CoverageFiles } from './coverage/coverage-files';
 import { CoverageFileView } from './coverage/coverage-file-view';
@@ -39,6 +40,7 @@ export {
   DuplicationFiles,
   RecipeList,
   BuildTrendChart,
+  TestRate,
   TestList,
   CoverageFiles,
   CoverageFileView,

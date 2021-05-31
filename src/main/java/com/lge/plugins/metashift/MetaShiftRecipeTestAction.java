@@ -43,6 +43,9 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class MetaShiftRecipeTestAction extends MetaShiftRecipeActionChild {
 
   static final String STORE_KEY_TESTLIST = "TestList";
+  static final String STORE_KEY_PASSRATE = "PassRate";
+  static final String STORE_KEY_FAILRATE = "FailRate";
+  static final String STORE_KEY_ERRORRATE = "ErrorRate";
 
   /**
    * constructor.
@@ -60,9 +63,20 @@ public class MetaShiftRecipeTestAction extends MetaShiftRecipeActionChild {
     super(parent);
 
     List<TestData> testList = recipe.objects(TestData.class).collect(Collectors.toList());
+    long totalTest = testList.size();
+
+    double passRate = (double) testList.stream().filter(o -> o.getStatus().equals("PASSED"))
+        .count() / (double) totalTest;
+    double failRate = (double) testList.stream().filter(o -> o.getStatus().equals("FAILED"))
+        .count() / (double) totalTest;
+    double errorRate = (double) testList.stream().filter(o -> o.getStatus().equals("ERROR"))
+        .count() / (double) totalTest;
 
     try {
       dataSource.put(testList, this.getParentAction().getName(), STORE_KEY_TESTLIST);
+      dataSource.put(passRate, this.getParentAction().getName(), STORE_KEY_PASSRATE);
+      dataSource.put(failRate, this.getParentAction().getName(), STORE_KEY_FAILRATE);
+      dataSource.put(errorRate, this.getParentAction().getName(), STORE_KEY_ERRORRATE);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -84,6 +98,18 @@ public class MetaShiftRecipeTestAction extends MetaShiftRecipeActionChild {
     return "test";
   }
 
+  public double getPassRate() {
+    return this.getDataSource().get(this.getParentAction().getName(), STORE_KEY_PASSRATE);
+  }
+
+  public double getFailRate() {
+    return this.getDataSource().get(this.getParentAction().getName(), STORE_KEY_FAILRATE);
+  }
+
+  public double getErrorRate() {
+    return this.getDataSource().get(this.getParentAction().getName(), STORE_KEY_ERRORRATE);
+  }
+  
   /**
    * return paginated test list.
    *

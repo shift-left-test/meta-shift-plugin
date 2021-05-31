@@ -13,6 +13,12 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <h2>
           Test [${it.parentAction.displayName}]
         </h2>
+        <h3>Test Statistics</h3>
+        <test-rate
+          passRate="${it.passRate}"
+          failRate="${it.failRate}"
+          errorRate="${it.errorRate}"
+        />
         <h3>Test List</h3>
         <test-list />
       </div>

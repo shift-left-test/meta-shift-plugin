@@ -225,6 +225,34 @@ tested-simple-view {
   }
 }
 
+test-rate {
+  .test-stats {
+    width: 100%;
+    height: 30px;
+    background-color: gray;
+  }
+
+  .rate {
+    height: 30px;
+    float: left;
+  }
+
+  .pass-rate {
+    @extend .rate;
+    background-color: green;
+  }
+
+  .fail-rate {
+    @extend .rate;
+    background-color: red;
+  }
+
+  .error-rate {
+    @extend .rate;
+    background-color: black;
+  }
+}
+
 .text-na {
   color: gray;
 }
@@ -247,6 +275,10 @@ tested-simple-view {
 
 .bg-fail {
   background-color: #ff0000;
+}
+
+.bg-error {
+  background-color: black;
 }
 
 .bg-major {
