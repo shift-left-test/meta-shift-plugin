@@ -31,11 +31,11 @@ import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -47,6 +47,7 @@ public class MetaShiftRecipeComplexityAction
     extends MetaShiftRecipeActionChild {
 
   static final String STORE_KEY_COMPLEXITYLIST = "ComplexityList";
+  static final String STORE_KEY_FILECOMPLEXITYSTAT = "FileComplexityStat";
 
   /**
    * constructor.
@@ -63,11 +64,44 @@ public class MetaShiftRecipeComplexityAction
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    List<ComplexityData> complexityList =
+    List<ComplexityData> complexityDataList =
         recipe.objects(ComplexityData.class).collect(Collectors.toList());
 
+    HashMap<String, List<ComplexityData>> fileComplexityList = new HashMap<>();
+
+    for (ComplexityData complexityData : complexityDataList) {
+      String file = complexityData.getFile();
+
+      if (!fileComplexityList.containsKey(file)) {
+        fileComplexityList.put(file, new ArrayList<>());
+      }
+
+      fileComplexityList.get(file).add(complexityData);
+    }
+
+    List<FileComplexityStats> fileComplexityStats = new ArrayList<>();
+    long complexityThreashold =
+        this.getParentAction().getParentAction().getCriteria().getComplexityLevel();
+
+    fileComplexityList.forEach((file, complexityList) -> {
+      fileComplexityStats.add(new FileComplexityStats(file,
+          complexityList.size(),
+          complexityList.stream().filter(o -> o.getValue() > complexityThreashold).count()
+      ));
+
+      try {
+        this.saveFileContents(metadata, file);
+        dataSource.put(complexityList,
+            this.getParentAction().getName(), file, STORE_KEY_COMPLEXITYLIST);
+      } catch (IOException e) {
+        listener.getLogger().println(e.getMessage());
+        e.printStackTrace(listener.getLogger());
+      }
+    });
+
     try {
-      dataSource.put(complexityList, this.getParentAction().getName(), STORE_KEY_COMPLEXITYLIST);
+      dataSource.put(fileComplexityStats,
+          this.getParentAction().getName(), STORE_KEY_FILECOMPLEXITYSTAT);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -92,36 +126,31 @@ public class MetaShiftRecipeComplexityAction
   /**
    * complexity for each file.
    */
-  public static class FileComplexityStats {
+  public static class FileComplexityStats implements Serializable {
 
     String file;
-    int functions = 0;
-    int complexFunctions = 0;
+    long functions;
+    long complexFunctions;
 
-    public FileComplexityStats(String file) {
+    /**
+     * constructor.
+     */
+    public FileComplexityStats(String file, long functions, long complexFunctions) {
       this.file = file;
+      this.functions = functions;
+      this.complexFunctions = complexFunctions;
     }
 
     public String getFile() {
       return this.file;
     }
 
-    public int getFunctions() {
+    public long getFunctions() {
       return this.functions;
     }
 
-    public int getComplexFunctions() {
+    public long getComplexFunctions() {
       return this.complexFunctions;
-    }
-
-    /**
-     * add function.
-     */
-    public void addFunction(boolean isComplex) {
-      this.functions++;
-      if (isComplex) {
-        this.complexFunctions++;
-      }
     }
   }
 
@@ -134,40 +163,19 @@ public class MetaShiftRecipeComplexityAction
    */
   @JavaScriptMethod
   public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
-    if (getParentAction().getMetrics().getComplexity().isAvailable()) {
-      List<ComplexityData> complexityDataList = this.getDataSource().get(
-          this.getParentAction().getName(), STORE_KEY_COMPLEXITYLIST);
+    List<FileComplexityStats> dataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_FILECOMPLEXITYSTAT);
 
-      Map<String, FileComplexityStats> fileInfo = new HashMap<>();
+    if (sortInfos.length > 0) {
+      Comparator<FileComplexityStats> comparator = this.getComparator(sortInfos[0]);
 
-      for (ComplexityData complexityData : complexityDataList) {
-        String file = complexityData.getFile();
-
-        if (!fileInfo.containsKey(file)) {
-          fileInfo.put(file, new FileComplexityStats(file));
-        }
-
-        // TODO: compare with criteria
-        fileInfo.get(file).addFunction(complexityData.getValue()
-            > this.getParentAction().getParentAction().getCriteria().getComplexityLevel());
+      for (int i = 1; i < sortInfos.length; i++) {
+        comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
       }
 
-      List<FileComplexityStats> dataList;
-      if (sortInfos.length == 0) {
-        dataList = new ArrayList<>(fileInfo.values());
-      } else {
-        Comparator<FileComplexityStats> comparator = this.getComparator(sortInfos[0]);
-
-        for (int i = 1; i < sortInfos.length; i++) {
-          comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
-        }
-
-        dataList = fileInfo.values().stream().sorted(comparator).collect(Collectors.toList());
-      }
-      return getPagedDataList(pageIndex, pageSize, dataList);
-    } else {
-      return null;
+      dataList.sort(comparator);
     }
+    return getPagedDataList(pageIndex, pageSize, dataList);
   }
 
   private Comparator<FileComplexityStats> getComparator(TableSortInfo sortInfo) {
@@ -179,11 +187,11 @@ public class MetaShiftRecipeComplexityAction
             a -> a.getFile());
         break;
       case "functions":
-        comparator = Comparator.<FileComplexityStats, Integer>comparing(
+        comparator = Comparator.<FileComplexityStats, Long>comparing(
             a -> a.getFunctions());
         break;
       case "complexFunctions":
-        comparator = Comparator.<FileComplexityStats, Integer>comparing(
+        comparator = Comparator.<FileComplexityStats, Long>comparing(
             a -> a.getComplexFunctions());
         break;
       default:
@@ -203,18 +211,14 @@ public class MetaShiftRecipeComplexityAction
    * return file complexity detail.
    */
   @JavaScriptMethod
-  public JSONObject getFileComplexityDetail(String recipePath) {
+  public JSONObject getFileComplexityDetail(String codePath) {
     JSONObject result = new JSONObject();
 
-    List<ComplexityData> complexityDataList = this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_COMPLEXITYLIST);
-
-    List<ComplexityData> dataList =
-        complexityDataList.stream().filter(o -> o.getFile().equals(recipePath))
-            .collect(Collectors.toList());
+    List<ComplexityData> dataList = this.getDataSource().get(
+        this.getParentAction().getName(), codePath, STORE_KEY_COMPLEXITYLIST);
 
     result.put("dataList", dataList);
-    result.put("content", this.readFileContents(recipePath));
+    result.put("content", this.readFileContents(codePath));
 
     return result;
   }
