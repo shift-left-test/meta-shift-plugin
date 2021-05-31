@@ -31,6 +31,7 @@ import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.TableSortInfo;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,7 +61,8 @@ public class MetaShiftRecipeCommentsAction
       Criteria criteria, DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    List<CommentData> commentList = recipe.objects(CommentData.class).collect(Collectors.toList());
+    List<CommentRateData> commentList = recipe.objects(CommentData.class)
+        .map(o -> new CommentRateData(o)).collect(Collectors.toList());
 
     try {
       dataSource.put(commentList, this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
@@ -86,6 +88,42 @@ public class MetaShiftRecipeCommentsAction
   }
 
   /**
+   * add comment rate to commentdata.
+   */
+  public static class CommentRateData implements Serializable {
+    private final String file;
+    private final long lines;
+    private final long commentLines;
+    private final double commentRate;
+
+    /**
+     * constructor.
+     */
+    public CommentRateData(CommentData data) {
+      this.file = data.getFile();
+      this.lines = data.getLines();
+      this.commentLines = data.getCommentLines();
+      this.commentRate = (double) this.commentLines / (double) this.lines;
+    }
+
+    public String getFile() {
+      return this.file;
+    }
+
+    public long getLines() {
+      return this.lines;
+    }
+
+    public long getCommentLines() {
+      return this.commentLines;
+    }
+
+    public double getCommentRate() {
+      return this.commentRate;
+    }
+  }
+
+  /**
    * return paginated comment list.
    *
    * @param pageIndex page index
@@ -94,11 +132,11 @@ public class MetaShiftRecipeCommentsAction
    */
   @JavaScriptMethod
   public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
-    List<CommentData> commentDataList = this.getDataSource().get(
+    List<CommentRateData> commentDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
 
     if (sortInfos.length > 0) {
-      Comparator<CommentData> comparator = this.getComparator(sortInfos[0]);
+      Comparator<CommentRateData> comparator = this.getComparator(sortInfos[0]);
 
       for (int i = 1; i < sortInfos.length; i++) {
         comparator = comparator.thenComparing(this.getComparator(sortInfos[i]));
@@ -110,21 +148,25 @@ public class MetaShiftRecipeCommentsAction
     return getPagedDataList(pageIndex, pageSize, commentDataList);
   }
 
-  private Comparator<CommentData> getComparator(TableSortInfo sortInfo) {
-    Comparator<CommentData> comparator;
+  private Comparator<CommentRateData> getComparator(TableSortInfo sortInfo) {
+    Comparator<CommentRateData> comparator;
 
     switch (sortInfo.getField()) {
       case "file":
-        comparator = Comparator.<CommentData, String>comparing(
+        comparator = Comparator.<CommentRateData, String>comparing(
             a -> a.getFile());
         break;
       case "lines":
-        comparator = Comparator.<CommentData, Long>comparing(
+        comparator = Comparator.<CommentRateData, Long>comparing(
             a -> a.getLines());
         break;
       case "commentLines":
-        comparator = Comparator.<CommentData, Long>comparing(
+        comparator = Comparator.<CommentRateData, Long>comparing(
             a -> a.getCommentLines());
+        break;
+      case "commentRate":
+        comparator = Comparator.<CommentRateData, Double>comparing(
+            a -> a.getCommentRate());
         break;
       default:
         throw new IllegalArgumentException(

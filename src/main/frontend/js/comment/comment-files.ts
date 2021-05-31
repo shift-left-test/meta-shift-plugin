@@ -9,8 +9,10 @@ export class CommentFiles extends FilesTable {
 
     this.columns = [ //Define Table Columns
       { title:"File", field:"file", widthGrow:1},
+      { title:"Comment Rate", field: "commentRate",
+        formatter:"progress", formatterParams: {min: 0, max: 1}, width: 200},
       { title:"Lines", field:"lines", width:100},
-      { title:"CommentLines", field:"commentLines", width:200},
+      { title:"Comment Lines", field:"commentLines", width:200},
     ];
   }
 }
