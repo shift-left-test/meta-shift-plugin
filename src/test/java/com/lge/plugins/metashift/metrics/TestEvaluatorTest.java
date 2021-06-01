@@ -51,7 +51,7 @@ public class TestEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria();
+    Criteria criteria = new Criteria(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     criteria.setTestThreshold(0.5);
     evaluator = new TestEvaluator(criteria);
     recipe = new Recipe("A-1.0.0-r0");

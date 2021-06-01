@@ -90,13 +90,6 @@ public final class Criteria {
 
   /**
    * Default constructor.
-   */
-  public Criteria() {
-    this(0.8, 0.8, 0.1, 0.3, 0.1, 4, 0.1, 0.1, 0.95, 0.6, 0.85);
-  }
-
-  /**
-   * Default constructor.
    *
    * @param premirrorCacheThreshold   premirror cache threshold
    * @param sharedStateCacheThreshold shared state cache threshold

@@ -53,17 +53,17 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
   public Metrics(final Criteria criteria) {
     super();
     collection = new HashMap<>();
-    collection.put(PremirrorCacheEvaluator.class, new PremirrorCacheEvaluator(new Criteria()));
-    collection.put(SharedStateCacheEvaluator.class, new SharedStateCacheEvaluator(new Criteria()));
+    collection.put(PremirrorCacheEvaluator.class, new PremirrorCacheEvaluator(criteria));
+    collection.put(SharedStateCacheEvaluator.class, new SharedStateCacheEvaluator(criteria));
     collection.put(CodeSizeEvaluator.class, new CodeSizeEvaluator());
-    collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(new Criteria()));
-    collection.put(CommentEvaluator.class, new CommentEvaluator(new Criteria()));
-    collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(new Criteria()));
-    collection.put(CoverageEvaluator.class, new CoverageEvaluator(new Criteria()));
-    collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(new Criteria()));
-    collection.put(MutationTestEvaluator.class, new MutationTestEvaluator(new Criteria()));
-    collection.put(RecipeViolationEvaluator.class, new RecipeViolationEvaluator(new Criteria()));
-    collection.put(TestEvaluator.class, new TestEvaluator(new Criteria()));
+    collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(criteria));
+    collection.put(CommentEvaluator.class, new CommentEvaluator(criteria));
+    collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(criteria));
+    collection.put(CoverageEvaluator.class, new CoverageEvaluator(criteria));
+    collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(criteria));
+    collection.put(MutationTestEvaluator.class, new MutationTestEvaluator(criteria));
+    collection.put(RecipeViolationEvaluator.class, new RecipeViolationEvaluator(criteria));
+    collection.put(TestEvaluator.class, new TestEvaluator(criteria));
     this.criteria = criteria;
   }
 

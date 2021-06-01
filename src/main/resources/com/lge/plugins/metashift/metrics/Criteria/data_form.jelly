@@ -2,52 +2,209 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <j:set var="publisher_class" value="com.lge.plugins.metashift.MetaShiftPublisher"/>
-  <f:section title="Build Performance">
-    <f:entry title="Premirror Cache Threshold" field="premirrorCacheThreshold">
-      <f:number value="${it.premirrorCacheThreshold}" default="${descriptor.criteria.premirrorCacheThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>
-    <f:entry title="Shared State Cache Threshold" field="sharedStateCacheThreshold">
-      <f:number value="${it.sharedStateCacheThreshold}" default="${descriptor.criteria.sharedStateCacheThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>    
-    <f:entry title="Recipe Violation Threshold" field="recipeViolationThreshold">
-      <f:number value="${it.recipeViolationThreshold}" default="${descriptor.criteria.recipeViolationThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>
-  </f:section>
-  <f:section title="Code Quality">
-    <f:entry title="Comment Threshold" field="commentThreshold">
-      <f:number value="${it.commentThreshold}" default="${descriptor.criteria.commentThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>
-    <f:entry title="Code Violation Threshold" field="codeViolationThreshold">
-      <f:number value="${it.codeViolationThreshold}" default="${descriptor.criteria.codeViolationThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>
-    <f:entry title="Complexity Level" field="complexityLevel">
-      <f:number value="${it.complexityLevel}" default="${descriptor.criteria.complexityLevel}"
-                checkUrl="'descriptorByName/${publisher_class}/checkLimit?value='+escape(this.value)" />
-    </f:entry>
-    <f:entry title="Complexity Threshold" field="complexityThreshold">
-      <f:number value="${it.complexityThreshold}" default="${descriptor.criteria.complexityThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>
-    <f:entry title="Duplication Threshold" field="duplicationThreshold">
-      <f:number value="${it.duplicationThreshold}" default="${descriptor.criteria.duplicationThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>
-    <f:entry title="Test Threshold" field="testThreshold">
-      <f:number value="${it.testThreshold}" default="${descriptor.criteria.testThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>
-    <f:entry title="Coverage Threshold" field="coverageThreshold">
-      <f:number value="${it.coverageThreshold}" default="${descriptor.criteria.coverageThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>
-    <f:entry title="Mutation Test Threshold" field="mutationTestThreshold">
-      <f:number value="${it.mutationTestThreshold}" default="${descriptor.criteria.mutationTestThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)" />
-    </f:entry>
-  </f:section>
+  <style>
+    .rate-input {
+      width: 60px;
+      text-align: right;
+    }
+    .evaluate {
+      width: 100px;
+      display: inline-block;
+    }
+    .title {
+      width: 200px;
+      display: inline-block;
+    }
+    .description {
+      width: 200px;
+      display: inline-block;
+    }
+    .input {
+      display: inline;
+    }
+    .limit {
+      padding-left: 20px;
+      width: 150px;
+      display: inline-block;
+    }
+  </style>
+
+  <f:entry title="Criteria" field="criteria">
+    <div class="evaluate"><b>Mark</b>**</div>
+    <div class="title"><b>Metric</b></div>
+    <div class="description"><b>Operator</b></div>
+    <div class="input"><b>Error</b></div>
+  </f:entry>
+  <f:entry field="PremirrorCache">
+    <div class="evaluate">
+      <f:checkbox field="markUnstablePremirrorCache"
+                  checked="${it.markUnstablePremirrorCache}"
+                  default="${descriptor.configCriteria.markUnstablePremirrorCache}"/>
+    </div>
+    <div class="title">Premirror Cache</div>
+    <div class="description">is less than</div>
+    <div class="input">
+      <f:number field="premirrorCacheThreshold"
+                value="${it.premirrorCacheThreshold}"
+                default="${descriptor.configCriteria.premirrorCacheThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)" 
+                clazz="rate-input" />%
+    </div>
+  </f:entry>
+  <f:entry field="SharedStateCache">
+    <div class="evaluate">
+      <f:checkbox field="markUnstableSharedStateCache"
+                  checked="${it.markUnstableSharedStateCache}"
+                  default="${descriptor.configCriteria.markUnstableSharedStateCache}"/>
+    </div>
+    <div class="title">Shared State Cache</div>
+    <div class="description">is less than</div>
+    <div class="input">
+      <f:number field="sharedStateCacheThreshold"
+                value="${it.sharedStateCacheThreshold}"
+                default="${descriptor.configCriteria.sharedStateCacheThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                clazz="rate-input" />%
+    </div>
+  </f:entry>
+  <f:entry field="RecipeViolation">
+    <div class="evaluate">
+      <f:checkbox field="markUnstableRecipeViolation"
+                  checked="${it.markUnstableRecipeViolation}"
+                  default="${descriptor.configCriteria.markUnstableRecipeViolation}"/>
+    </div>
+    <div class="title">Recipe Violations</div>
+    <div class="description">is greater than</div>
+    <div class="input">
+      <f:number field="recipeViolationThreshold"
+                value="${it.recipeViolationThreshold}"
+                default="${descriptor.configCriteria.recipeViolationThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)"
+                clazz="rate-input" />
+    </div>
+  </f:entry>
+  <f:entry field="Comment">
+      <div class="evaluate">
+        <f:checkbox field="markUnstableComment"
+                    checked="${it.markUnstableComment}"
+                    default="${descriptor.configCriteria.markUnstableComment}"/>
+      </div>
+      <div class="title">Comments</div>
+      <div class="description">is less than</div>
+      <div class="input">
+        <f:number field="commentThreshold"
+                  value="${it.commentThreshold}"
+                  default="${descriptor.configCriteria.commentThreshold}"
+                  checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                  clazz="rate-input" />%
+      </div>
+  </f:entry>
+  <f:entry field="CodeViolation">
+    <div class="evaluate">
+      <f:checkbox field="markUnstableCodeViolation"
+                  checked="${it.markUnstableCodeViolation}"
+                  default="${descriptor.configCriteria.markUnstableCodeViolation}"/>
+    </div>
+    <div class="title">Code Violations</div>
+    <div class="description">is greater than</div>
+    <div class="input">
+      <f:number field="codeViolationThreshold"
+                value="${it.codeViolationThreshold}"
+                default="${descriptor.configCriteria.codeViolationThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)"
+                clazz="rate-input" />
+    </div>
+  </f:entry>
+  <f:entry field="Complexity">
+    <div class="evaluate">
+      <f:checkbox field="markUnstableComplexity"
+                  checked="${it.markUnstableComplexity}"
+                  default="${descriptor.configCriteria.markUnstableComplexity}"/>
+    </div>
+    <div class="title">Complexity</div>
+    <div class="description">is greater than</div>
+    <div class="input">
+      <f:number field="complexityThreshold"
+                value="${it.complexityThreshold}"
+                default="${descriptor.configCriteria.complexityThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                clazz="rate-input" />%
+    </div>
+    <div class="limit">Complex limit</div>
+    <div class="input">
+      <f:number field="complexityLevel"
+                value="${it.complexityLevel}"
+                default="${descriptor.configCriteria.complexityLevel}"
+                checkUrl="'descriptorByName/${publisher_class}/checkLimit?value='+escape(this.value)"
+                clazz="rate-input" />
+    </div>
+  </f:entry>
+  <f:entry field="Duplication">
+    <div class="evaluate">
+      <f:checkbox field="markUnstableDuplication"
+                  checked="${it.markUnstableDuplication}"
+                  default="${descriptor.configCriteria.markUnstableDuplication}"/>
+    </div>
+    <div class="title">Duplications</div>
+    <div class="description">is greater than</div>
+    <div class="input">
+      <f:number field="duplicationThreshold"
+                value="${it.duplicationThreshold}"
+                default="${descriptor.configCriteria.duplicationThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                clazz="rate-input" />%
+    </div>
+  </f:entry>
+  <f:entry field="UnitTest">
+    <div class="evaluate">
+      <f:checkbox field="markUnstableTest"
+                  checked="${it.markUnstableTest}"
+                  default="${descriptor.configCriteria.markUnstableTest}"/>
+    </div>
+    <div class="title">Unit Tests</div>
+    <div class="description">is less than</div>
+    <div class="input">
+      <f:number field="testThreshold"
+                value="${it.testThreshold}"
+                default="${descriptor.configCriteria.testThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                clazz="rate-input" />%
+    </div>
+  </f:entry>
+  <f:entry field="Coverage">
+    <div class="evaluate">
+      <f:checkbox field="markUnstableCoverage"
+                  checked="${it.markUnstableCoverage}"
+                  default="${descriptor.configCriteria.markUnstableCoverage}"/>
+    </div>
+    <div class="title">Coverage</div>
+    <div class="description">is less than</div>
+    <div class="input">
+      <f:number field="coverageThreshold"
+                value="${it.coverageThreshold}"
+                default="${descriptor.configCriteria.coverageThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                clazz="rate-input" />%
+    </div>
+  </f:entry>
+  <f:entry field="MutationTest">
+    <div class="evaluate">
+      <f:checkbox field="markUnstableMutationTest"
+                  checked="${it.markUnstableMutationTest}"
+                  default="${descriptor.configCriteria.markUnstableMutationTest}"/>
+    </div>
+    <div class="title">Mutation Tests</div>
+    <div class="description">is less than</div>
+    <div class="input">
+      <f:number field="mutationTestThreshold"
+                value="${it.mutationTestThreshold}"
+                default="${descriptor.configCriteria.mutationTestThreshold}"
+                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                clazz="rate-input" />%
+    </div>
+  </f:entry>
+  <div>
+    ** Mark a build as "UNSTABLE" on the metric evaluation failure.
+  </div>
+
 </j:jelly>

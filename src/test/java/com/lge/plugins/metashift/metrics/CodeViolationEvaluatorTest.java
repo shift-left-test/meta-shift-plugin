@@ -51,7 +51,7 @@ public class CodeViolationEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria();
+    Criteria criteria = new Criteria(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     criteria.setCodeViolationThreshold(0.5);
     evaluator = new CodeViolationEvaluator(criteria);
     recipe = new Recipe("A-1.0.0-r0");

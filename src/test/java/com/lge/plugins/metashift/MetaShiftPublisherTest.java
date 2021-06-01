@@ -24,7 +24,8 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.metrics.ConfigCriteria;
+
 import hudson.model.FreeStyleProject;
 import java.io.File;
 import org.junit.Rule;
@@ -49,7 +50,7 @@ public class MetaShiftPublisherTest {
   public void testConfigureRoundTripWithEmptyDirectory() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
     File report = folder.newFolder("path", "to", "report");
-    MetaShiftPublisher before = new MetaShiftPublisher(report.getAbsolutePath(), new Criteria());
+    MetaShiftPublisher before = new MetaShiftPublisher(report.getAbsolutePath(), new ConfigCriteria());
     project.getPublishersList().add(before);
 
     // HtmlUnit does not play well with JavaScript
@@ -59,7 +60,7 @@ public class MetaShiftPublisherTest {
     jenkins.submit(client.getPage(project, "configure").getFormByName("config"));
 
     jenkins.assertEqualDataBoundBeans(
-        new MetaShiftPublisher(report.getAbsolutePath(), new Criteria()),
+        new MetaShiftPublisher(report.getAbsolutePath(), new ConfigCriteria()),
         project.getPublishersList().get(0));
   }
 }

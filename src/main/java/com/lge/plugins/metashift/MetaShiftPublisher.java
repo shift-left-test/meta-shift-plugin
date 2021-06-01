@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift;
 
-import com.lge.plugins.metashift.metrics.Criteria;
+import com.lge.plugins.metashift.metrics.ConfigCriteria;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.Extension;
 import hudson.FilePath;
@@ -55,13 +55,13 @@ import org.kohsuke.stapler.StaplerRequest;
 public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
   private final String reportRoot;
-  private final Criteria localCriteria;
+  private final ConfigCriteria localCriteria;
 
   /**
    * Default constructor.
    */
   @DataBoundConstructor
-  public MetaShiftPublisher(String reportRoot, Criteria localCriteria) {
+  public MetaShiftPublisher(String reportRoot, ConfigCriteria localCriteria) {
     this.reportRoot = reportRoot;
     this.localCriteria = localCriteria;
   }
@@ -74,7 +74,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     return this.localCriteria != null;
   }
 
-  public Criteria getLocalCriteria() {
+  public ConfigCriteria getLocalCriteria() {
     return this.localCriteria;
   }
 
@@ -90,7 +90,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
     // global criteria variable
-    private Criteria criteria;
+    private ConfigCriteria configCriteria;
 
     /**
      * Default constructor.
@@ -112,14 +112,14 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
     @Override
     public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-      req.bindJSON(this.getCriteria(), formData);
+      req.bindJSON(this.getConfigCriteria(), formData);
       save();
 
       return super.configure(req, formData);
     }
 
     /**
-     * check threshold type field value validation.
+     * check double type threshold value validation.
      *
      * @param value input value
      * @return form validation
@@ -133,17 +133,38 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       try {
         float threshold = Float.parseFloat(thresholdStr);
 
-        if (threshold < 0 || threshold > 1) {
-          return FormValidation.error("Value must be a real value between 0 and 1.");
+        if (threshold < 0) {
+          return FormValidation.error("Value must be a positive real value.");
         }
         return FormValidation.ok();
       } catch (Exception e) {
-        return FormValidation.error("Value must be a real value between 0 and 1.");
+        return FormValidation.error("Value must be a real number.");
       }
     }
 
     /**
-     * check limit type field value validation.
+     * check percent type threshold value validation.
+     */
+    public FormValidation doCheckPrecentThreshold(@QueryParameter String value) {
+      String thresholdStr = Util.fixEmptyAndTrim(value);
+      if (thresholdStr == null) {
+        return FormValidation.error("Value cannot be empty");
+      }
+
+      try {
+        int threshold = Integer.parseInt(thresholdStr);
+
+        if (threshold < 0 || threshold > 100) {
+          return FormValidation.error("Value must be a value between 0 and 100.");
+        }
+        return FormValidation.ok();
+      } catch (Exception e) {
+        return FormValidation.error("Value must be integer number.");
+      }
+    }
+
+    /**
+     * check int type limit value validation.
      *
      * @param value input value
      * @return form validation
@@ -171,12 +192,12 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
      *
      * @return criteria
      */
-    public Criteria getCriteria() {
-      if (this.criteria == null) {
-        this.criteria = new Criteria();
+    public ConfigCriteria getConfigCriteria() {
+      if (this.configCriteria == null) {
+        this.configCriteria = new ConfigCriteria();
       }
 
-      return this.criteria;
+      return this.configCriteria;
     }
   }
 
@@ -189,23 +210,54 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       FilePath reportPath = workspace.child(this.reportRoot);
       if (reportPath.exists()) {
         // load criteria.
-        Criteria criteria = (this.localCriteria == null)
-            ? ((DescriptorImpl) getDescriptor()).getCriteria() : this.localCriteria;
+        ConfigCriteria configCriteria = (this.localCriteria == null)
+            ? ((DescriptorImpl) getDescriptor()).getConfigCriteria() : this.localCriteria;
 
         FilePath buildPath = new FilePath(run.getRootDir());
         DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
 
         // create action.
-        MetaShiftBuildAction buildAction =
-            new MetaShiftBuildAction(run, listener, criteria, reportPath, dataSource);
+        MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
+            run, listener, configCriteria.getCriteria(), reportPath, dataSource);
         run.addAction(buildAction);
 
-        // if not qualified, set result to UNSTABLE
-        if (!buildAction.getMetrics().isQualified()) {
+        boolean isStable = true;
+
+        if (configCriteria.isMarkUnstablePremirrorCache()) {
+          isStable &= buildAction.getMetrics().getPremirrorCache().isQualified();
+        }
+        if (configCriteria.isMarkUnstableSharedStateCache()) {
+          isStable &= buildAction.getMetrics().getSharedStateCache().isQualified();
+        }
+        if (configCriteria.isMarkUnstableRecipeViolation()) {
+          isStable &= buildAction.getMetrics().getRecipeViolations().isQualified();
+        }
+        if (configCriteria.isMarkUnstableComment()) {
+          isStable &= buildAction.getMetrics().getComments().isQualified();
+        }
+        if (configCriteria.isMarkUnstableCodeViolation()) {
+          isStable &= buildAction.getMetrics().getCodeViolations().isQualified();
+        }
+        if (configCriteria.isMarkUnstableComplexity()) {
+          isStable &= buildAction.getMetrics().getComplexity().isQualified();
+        }
+        if (configCriteria.isMarkUnstableDuplication()) {
+          isStable &= buildAction.getMetrics().getDuplications().isQualified();
+        }
+        if (configCriteria.isMarkUnstableTest()) {
+          isStable &= buildAction.getMetrics().getTest().isQualified();
+        }
+        if (configCriteria.isMarkUnstableCoverage()) {
+          isStable &= buildAction.getMetrics().getCoverage().isQualified();
+        }
+        if (configCriteria.isMarkUnstableMutationTest()) {
+          isStable &= buildAction.getMetrics().getMutationTest().isQualified();
+        }
+
+        if (!isStable) {
           run.setResult(Result.UNSTABLE);
         }
       } else {
-        // TODO: how to report invalid report path issue?
         listener.getLogger().println("Meta Shift Error: report path is not exist!!!");
       }
     }

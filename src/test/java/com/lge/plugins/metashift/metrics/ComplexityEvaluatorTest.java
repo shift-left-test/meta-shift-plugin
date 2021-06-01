@@ -48,7 +48,7 @@ public class ComplexityEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria();
+    Criteria criteria = new Criteria(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     criteria.setComplexityLevel(5);
     criteria.setComplexityThreshold(0.5);
     evaluator = new ComplexityEvaluator(criteria);

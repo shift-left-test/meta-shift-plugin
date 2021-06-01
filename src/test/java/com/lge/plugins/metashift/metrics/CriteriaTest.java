@@ -40,7 +40,8 @@ public class CriteriaTest {
 
   @Before
   public void setUp() {
-    criteria = new Criteria();
+    ConfigCriteria configCritera = new ConfigCriteria();
+    criteria = configCritera.getCriteria();
   }
 
   private void assertValues(double premirrorThreshold,

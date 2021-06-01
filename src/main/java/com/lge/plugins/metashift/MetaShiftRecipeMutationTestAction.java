@@ -62,7 +62,7 @@ public class MetaShiftRecipeMutationTestAction extends MetaShiftRecipeActionChil
     List<MutationTestData> mutationTestList =
         recipe.objects(MutationTestData.class).collect(Collectors.toList());
 
-    for (MutationTestData mutationTestData : mutationTestList ) {
+    for (MutationTestData mutationTestData : mutationTestList) {
       String file = mutationTestData.getFile();
 
       try {
@@ -74,7 +74,8 @@ public class MetaShiftRecipeMutationTestAction extends MetaShiftRecipeActionChil
     }
 
     try {
-      dataSource.put(mutationTestList, this.getParentAction().getName(), STORE_KEY_MUTATIONTESTLIST);
+      dataSource.put(mutationTestList,
+          this.getParentAction().getName(), STORE_KEY_MUTATIONTESTLIST);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
