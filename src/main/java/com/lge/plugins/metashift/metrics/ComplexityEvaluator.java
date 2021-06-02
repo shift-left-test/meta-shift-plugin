@@ -48,7 +48,7 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
    * @param criteria for evaluation
    */
   public ComplexityEvaluator(final Criteria criteria) {
-    super(criteria.getComplexityThreshold());
+    super((double) criteria.getComplexityThreshold() / 100.0);
     threshold = criteria.getComplexityLevel();
   }
 

@@ -48,9 +48,9 @@ public class ComplexityEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    Criteria criteria = new Criteria();
     criteria.setComplexityLevel(5);
-    criteria.setComplexityThreshold(0.5);
+    criteria.setComplexityThreshold(50);
     evaluator = new ComplexityEvaluator(criteria);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();

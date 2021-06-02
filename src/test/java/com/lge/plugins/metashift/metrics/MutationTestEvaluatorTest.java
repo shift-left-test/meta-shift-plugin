@@ -50,8 +50,8 @@ public class MutationTestEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    criteria.setMutationTestThreshold(0.5);
+    Criteria criteria = new Criteria();
+    criteria.setMutationTestThreshold(50);
     evaluator = new MutationTestEvaluator(criteria);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();

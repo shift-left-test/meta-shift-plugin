@@ -313,16 +313,16 @@ public class ConfigCriteria {
    */
   public Criteria getCriteria() {
     return new Criteria(
-        this.premirrorCacheThreshold / 100.0,
-        this.sharedStateCacheThreshold / 100.0,
+        this.premirrorCacheThreshold,
+        this.sharedStateCacheThreshold,
         this.recipeViolationThreshold,
-        this.commentThreshold / 100.0,
+        this.commentThreshold,
         this.codeViolationThreshold,
         this.complexityLevel,
-        this.complexityThreshold / 100.0,
-        this.duplicationThreshold / 100.0,
-        this.testThreshold / 100.0,
-        this.coverageThreshold / 100.0,
-        this.mutationTestThreshold / 100.0);
+        this.complexityThreshold,
+        this.duplicationThreshold,
+        this.testThreshold,
+        this.coverageThreshold,
+        this.mutationTestThreshold);
   }
 }

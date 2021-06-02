@@ -40,7 +40,7 @@ public final class CommentEvaluator extends PositiveEvaluator<CommentEvaluator> 
    * @param criteria for evaluation
    */
   public CommentEvaluator(final Criteria criteria) {
-    super(criteria.getCommentThreshold());
+    super((double) criteria.getCommentThreshold() / 100.0);
   }
 
   @Override

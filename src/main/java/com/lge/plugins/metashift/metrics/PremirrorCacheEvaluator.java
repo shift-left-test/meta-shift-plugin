@@ -40,7 +40,7 @@ public class PremirrorCacheEvaluator extends PositiveEvaluator<PremirrorCacheEva
    * @param criteria for evaluation
    */
   public PremirrorCacheEvaluator(final Criteria criteria) {
-    super(criteria.getPremirrorCacheThreshold());
+    super((double) criteria.getPremirrorCacheThreshold() / 100.0);
   }
 
   @Override

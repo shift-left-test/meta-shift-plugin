@@ -40,7 +40,7 @@ public class SharedStateCacheEvaluator extends PositiveEvaluator<SharedStateCach
    * @param criteria for evaluation
    */
   public SharedStateCacheEvaluator(final Criteria criteria) {
-    super(criteria.getSharedStateCacheThreshold());
+    super((double) criteria.getSharedStateCacheThreshold() / 100.0);
   }
 
   @Override

@@ -48,8 +48,8 @@ public class DuplicationEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    criteria.setDuplicationThreshold(0.5);
+    Criteria criteria = new Criteria();
+    criteria.setDuplicationThreshold(50);
     evaluator = new DuplicationEvaluator(criteria);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();

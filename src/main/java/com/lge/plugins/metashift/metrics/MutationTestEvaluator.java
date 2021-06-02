@@ -71,7 +71,7 @@ public final class MutationTestEvaluator extends PositiveEvaluator<MutationTestE
    * @param criteria for evaluation
    */
   public MutationTestEvaluator(final Criteria criteria) {
-    super(criteria.getMutationTestThreshold());
+    super((double) criteria.getMutationTestThreshold() / 100.0);
     collection = new EnumMap<>(Type.class);
     Stream.of(Type.values()).forEach(type -> collection.put(type, new Counter()));
   }

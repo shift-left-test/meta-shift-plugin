@@ -65,7 +65,7 @@ public final class CoverageEvaluator extends PositiveEvaluator<CoverageEvaluator
    * @param criteria for evaluation
    */
   public CoverageEvaluator(final Criteria criteria) {
-    super(criteria.getCoverageThreshold());
+    super((double) criteria.getCoverageThreshold() / 100.0);
     collection = new EnumMap<>(Type.class);
     Stream.of(Type.values()).forEach(type -> collection.put(type, new Counter()));
   }

@@ -78,7 +78,18 @@ public class MetricsTest {
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    Criteria criteria = new Criteria(0.5, 0.5, 0.5, 0.5, 0.5, 5, 0.5, 0.5, 0.5, 0.5, 0.5);
+    Criteria criteria = new Criteria();
+    criteria.setPremirrorCacheThreshold(50);
+    criteria.setSharedStateCacheThreshold(50);
+    criteria.setRecipeViolationThreshold(0.5);
+    criteria.setCommentThreshold(50);
+    criteria.setCodeViolationThreshold(0.5);
+    criteria.setComplexityLevel(5);
+    criteria.setComplexityThreshold(50);
+    criteria.setDuplicationThreshold(50);
+    criteria.setTestThreshold(50);
+    criteria.setCoverageThreshold(50);
+    criteria.setMutationTestThreshold(50);
     metrics = new Metrics(criteria);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();

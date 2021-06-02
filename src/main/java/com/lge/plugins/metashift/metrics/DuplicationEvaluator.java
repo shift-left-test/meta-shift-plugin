@@ -40,7 +40,7 @@ public final class DuplicationEvaluator extends NegativeEvaluator<DuplicationEva
    * @param criteria for evaluation
    */
   public DuplicationEvaluator(final Criteria criteria) {
-    super(criteria.getDuplicationThreshold());
+    super((double) criteria.getDuplicationThreshold() / 100.0);
   }
 
   @Override

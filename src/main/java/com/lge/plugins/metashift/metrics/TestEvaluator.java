@@ -77,7 +77,7 @@ public final class TestEvaluator extends PositiveEvaluator<TestEvaluator> {
    * @param criteria for evaluation
    */
   public TestEvaluator(final Criteria criteria) {
-    super(criteria.getTestThreshold());
+    super((double) criteria.getTestThreshold() / 100.0);
     collection = new EnumMap<>(Type.class);
     Stream.of(Type.values()).forEach(type -> collection.put(type, new Counter()));
   }
