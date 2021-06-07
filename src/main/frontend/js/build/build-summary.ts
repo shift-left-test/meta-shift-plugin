@@ -5,12 +5,19 @@ import * as echarts from 'echarts';
 
 @customElement('build-summary')
 export class BuildSummary extends LitElement {
+  @property() isPercent
   @property() available
   @property() qualified
   @property() ratio
   @property() numerator
   @property() denominator
   @property() title
+
+  constructor() {
+    super();
+
+    this.isPercent = "true";
+  }
 
   createRenderRoot() {
     return this;
@@ -23,16 +30,14 @@ export class BuildSummary extends LitElement {
     return html`
       <div class="title"><b>${this.title}</b></div>
       <div class="ratio"><b>${this.available === "true" ?
-        html`${ratio_percentage.toFixed(2)}%` :
+        (this.isPercent === "true" ? html`${ratio_percentage.toFixed(2)}%`:
+          html`${Number(this.ratio).toFixed(2)}`) :
         html`N/A`}</b></div>
-      <div class="description">
-      <p class="text-white description">${this.available === "true" ?
-        html`${this.numerator} / ${this.denominator}` :
-        html` -- / -- `}</p></div>
-      <div class="progress">
+      ${this.isPercent === "true" ? 
+      html`<div class="progress">
         <div class="progress-bar ${qualified}" style="width: ${ratio_percentage}%">
         </div>
-      </div>
+      </div>` : html ``}
     `
   }
 }

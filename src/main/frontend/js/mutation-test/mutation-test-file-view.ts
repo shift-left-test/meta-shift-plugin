@@ -8,6 +8,31 @@ export class MutationTestFileView extends FileDetail {
 
   renderDataList() {
     return html`
-      `;
+      <h3>Violation List${this.currentLine !== undefined ? html`- #${this.currentLine}` : html``}</h3>
+      <div class="list-group">
+        ${this.currentDataList.map(data => html`
+        <div class="list-item">
+          <div>
+            <span class="badge ${this.getBadgeClass(data.status)}">${data.status}</span>
+            <span>${data.mutator}</span>
+          </div>
+          <div>mutated class: ${data.mutatedClass}
+          </div>
+          <div>mutated method: ${data.mutatedMethod}
+          </div>
+          <div>killing test: <b>${data.killingTest}</b></div>
+        </div>`)}
+      </div>`;
+  }
+
+  private getBadgeClass(status) {
+    switch(status) {
+      case 'KILLED':
+        return 'bg-pass';
+      case 'SURVIVED':
+        return 'bg-fail';
+      default:
+        return 'bg-na';
+    }
   }
 }

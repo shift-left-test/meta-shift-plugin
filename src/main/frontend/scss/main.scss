@@ -24,6 +24,10 @@
 .metashift {
   font-family: 'MetaShift';
   
+  .page {
+    margin-right: 100px;
+  }
+
   h1 {
     margin-top: 30px;
   }
@@ -33,13 +37,14 @@
   }
   
   h3 {
-    margin-top: 10px;
-    margin-left: 20px;
+    margin-top: 20px;
+    margin-left: 10px;
   }
   
   h4 {
     margin-top: 10px;
-    font-size: 24px;
+    margin-left: 30px;
+    font-size: 20px;
   }
 
   .small-upper {
@@ -48,7 +53,11 @@
   }
 
   .metrics-row {
-    padding: 10px 20px 0px 20px;
+    padding: 0px 30px 0px 30px;
+  }
+
+  .metrics-scale {
+    font-size: 40px;
   }
 
   .badge {
@@ -127,13 +136,13 @@ build-summary {
   }
 
   .progress {
-    width: 33%;
-    height: 10px;
+    width: 60%;
+    height: 20px;
     background-color: gray;
   }
 
   .progress-bar {
-    height: 10px;
+    height: 20px;
   }
 }
 
@@ -196,19 +205,17 @@ metrics-simple-view {
     margin-top: 2px;
     width: 100%;
     height: 10px;
-    background-color: gray;
+    background-color: $metrics-simple-view-progress-bg-color;
   }
 
   .progress-bar {
     height: 10px;
-    background-color: rgb(0, 53, 151);
+    background-color: $metrics-simple-view-progress-color;
   }
 }
 
 metrics-simple-view.has-url:hover {
-  transform: scale(1.05);
-  background-color: rgb(49, 49, 49);
-  color: white;
+  transform: scale(1.1);
 }
 
 tested-simple-view {
@@ -225,31 +232,104 @@ tested-simple-view {
   }
 }
 
-test-rate {
+statistics-bar {
   .test-stats {
     width: 100%;
-    height: 30px;
-    background-color: gray;
+    height: 10px;
+    background-color: $invalid-color;
   }
 
   .rate {
-    height: 30px;
+    height: 10px;
     float: left;
   }
 
-  .pass-rate {
+  .valid-good {
     @extend .rate;
-    background-color: green;
+    background-color: $valid-good-color;
   }
 
-  .fail-rate {
+  .valid-bad {
     @extend .rate;
-    background-color: red;
+    background-color: $valid-bad-color;
   }
 
-  .error-rate {
+  .valid-error {
     @extend .rate;
-    background-color: black;
+    background-color: $valid-error-color;
+  }
+
+  .invalid {
+    @extend .rate;
+    background-color: $invalid-color;
+  }
+
+  .major {
+    @extend .rate;
+    background-color: $major-color;
+  }
+
+  .minor {
+    @extend .rate;
+    background-color: $minor-color;
+  }
+
+  .informational {
+    @extend .rate;
+    background-color: $info-color;
+  }
+  
+  .legend {
+    display: flex;
+    font-size: 24px;
+    width: 100%;
+
+    .label {
+      background-color: white;
+      display: inline-block;
+    }
+
+    .spacer {
+      flex-grow: 1;
+    }
+
+    .valid-good {
+      color: $valid-good-color;
+    }
+  
+    .valid-bad {
+      color: $valid-bad-color;
+    }
+  
+    .valid-error {
+      color: $valid-error-color;
+    }
+  
+    .invalid {
+      color: $invalid-color;
+    }
+  
+    .major {
+      color: $major-color;
+    }
+  
+    .minor {
+      color: $minor-color;
+    }
+  
+    .informational {
+      color: $info-color;
+    }
+  }
+}
+
+test-rate {
+  @extend statistics-bar;
+}
+
+recipe-treemap {
+  .chart {
+    height: 300px;
   }
 }
 
@@ -306,8 +386,13 @@ test-rate {
     text-align: center;
     font-weight: bold;
     font-size: 16px;
-    background-color: rgb(145, 161, 177);
+    background-color: $progress-bar-color;
   }
+}
+
+.tabulator-header {
+  color: white;
+  background-color: black;
 }
 
 .circle {

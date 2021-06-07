@@ -1,0 +1,36 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <l:layout title="Meta-Shift Report">
+    <st:adjunct includes="com.lge.plugins.metashift.front"/>
+    <st:include it="${it.run}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <st:bind var="proxy" value="${it}" />
+      <div class="metashift">
+      <div class="page">
+        <h1>
+          ${it.run.project.displayName} ${it.run.displayName}
+        </h1>
+        <h2>
+          Coverage [${it.parentAction.displayName}]
+        </h2>
+        <h3>Scale <span class="metrics-scale">${it.scale}%</span></h3>
+        <h3>Statistics</h3>
+        <statistics-bar 
+          items='${it.statistics}'/>
+        <h3>Details</h3>
+        <coverage-files editorId="source-editor" />
+        <coverage-file-view />
+      </div>
+      </div>
+      <script type="text/javascript">
+      {
+        document.querySelector("coverage-files").setAjaxFunc(
+          proxy.getRecipeFiles,
+          proxy.getFileCoverageDetail
+        )
+      }
+      </script>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

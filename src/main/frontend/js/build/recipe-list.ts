@@ -2,8 +2,6 @@ import { html, css, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import Tabulator from 'tabulator-tables';
 
-import 'tabulator-tables/dist/css/tabulator.min.css';
-
 @customElement('recipe-list')
 export class RecipeList extends LitElement {
   @query("#recipes-table") recipesTable;
@@ -18,28 +16,28 @@ export class RecipeList extends LitElement {
 
     this.columns = [ //Define Table Columns
       { title:"Recipes", field:"name", widthGrow:1},
-      { title:"Lines of Code", field: "codeSize",
+      { title:"Lines of Code", field: "lines",
         formatter: this.lineOfCodeFormatter.bind(this)},
       { title:"Premirror Cache", field:"premirrorCache", hozAlign:"left",
-        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+        formatter: this.qualifierPercentCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
       { title:"Shared State Cache", field:"sharedStateCache", hozAlign:"left",
-        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+        formatter: this.qualifierPercentCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
       { title:"Recipe Violations", field:"recipeViolations", hozAlign:"left",
         formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
       { title:"Comment", field:"comments", hozAlign:"left",
-        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+        formatter: this.qualifierPercentCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
       { title:"Code Violations", field:"codeViolations", hozAlign:"left",
         formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
       { title:"Complexity", field:"complexity", hozAlign:"left",
-        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+        formatter: this.qualifierPercentCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
       { title:"Duplications", field:"duplications", hozAlign:"left",
-        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+        formatter: this.qualifierPercentCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
       { title:"Unit Tests", field:"test", hozAlign:"left",
-        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+        formatter: this.qualifierPercentCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
       { title:"Coverage", field:"coverage", hozAlign:"left",
-        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
+        formatter: this.qualifierPercentCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1},
       { title:"Mutation Tests", field:"mutationTest", hozAlign:"left",
-        formatter: this.qualifierCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1}
+        formatter: this.qualifierPercentCellformatter.bind(this), sorter: this.compareCounter.bind(this), widthGrow:1}
     ];
   }
 
@@ -65,20 +63,37 @@ export class RecipeList extends LitElement {
   }
 
   private lineOfCodeFormatter(cell, formatterParams, onRendered) {
-    return `<div>${cell.getValue().lines.toLocaleString()}</div>`
+    return `<div>${cell.getValue().toLocaleString()}</div>`
   }
 
   private qualifierCellformatter(cell, formatterParams, onRendered) {
 
     var available = false
-    var numerator = "N/A"
-    var denominator = "N/A"
     var ratio = 0
     
     if (!!cell.getValue()) {
       available = cell.getValue().available;
-      numerator = cell.getValue().numerator;
-      denominator = cell.getValue().denominator;
+      ratio = cell.getValue().ratio;
+    }
+
+    if (available) {
+      return `
+      <div>
+          ${ratio.toFixed(2)}
+      </div>
+      `
+    } else {
+      return `<div>N/A</div>`
+    }
+  }
+
+  private qualifierPercentCellformatter(cell, formatterParams, onRendered) {
+
+    var available = false
+    var ratio = 0
+    
+    if (!!cell.getValue()) {
+      available = cell.getValue().available;
       ratio = cell.getValue().ratio * 100;
     }
 
@@ -92,7 +107,7 @@ export class RecipeList extends LitElement {
       </div>
       `
     } else {
-      return `<div>--</div>`
+      return `<div>N/A</div>`
     }
   }
 

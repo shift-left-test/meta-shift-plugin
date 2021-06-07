@@ -1,4 +1,15 @@
-$theme-colors: (
-  "primary": #0074d9,
-  //"danger": #f836ff
-);
+$valid-good-color: #1f5384;
+$valid-bad-color: #e8671a;
+$valid-error-color: #fdb55a;
+$invalid-color: #e9ecea;
+
+$major-color: $valid-bad-color;
+$minor-color: $valid-error-color;
+$info-color: $invalid-color;
+
+$metrics-simple-view-progress-color: #1f5384;
+$metrics-simple-view-progress-bg-color: #f2f2f2;
+
+$progress-bar-color: #a8c2d9;
+
+$test-simple-text-color: #1f5384;

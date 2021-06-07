@@ -3,8 +3,6 @@ import { customElement, property, query } from 'lit/decorators.js';
 import Tabulator from 'tabulator-tables';
 import { FileDetail } from './file-detail';
 
-import 'tabulator-tables/dist/css/tabulator.min.css';
-
 export class FilesTable extends LitElement {
   @property() fileView
 

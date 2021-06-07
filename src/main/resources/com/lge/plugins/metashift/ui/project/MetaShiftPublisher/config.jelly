@@ -1,0 +1,15 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:section title="Environment">
+    <f:entry title="Report Root Path" field="reportRoot">
+      <f:textbox />
+    </f:entry>
+  </f:section>
+  <f:block>
+    <f:optionalBlock name="localCriteria" title="Use local criteria"
+      checked="${instance.useLocalCriteria}" field="localCriteria" >
+      <st:include page="data_form.jelly" it="${instance.localCriteria}"
+        class="com.lge.plugins.metashift.ui.models.CriteriaWithOptions"/>
+    </f:optionalBlock>
+  </f:block>
+</j:jelly>

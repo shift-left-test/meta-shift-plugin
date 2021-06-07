@@ -31,7 +31,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @author Sung Gon Kim
  */
-public final class Criteria {
+public class Criteria {
 
   /**
    * Represents the threshold for the premirror cache availability.

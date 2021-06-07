@@ -22,10 +22,10 @@ export class TestedSimpleView extends LitElement {
         <b>${this.title}</b>
       </div>
       <div class="size-number">
-       ${(this.tested / this.recipes * 100).toFixed(0)}%
+       ${Math.floor(this.tested / this.recipes * 100)}%
       </div>
       <div class="size-diff">
-      (${diffDirection}${Math.abs((this.delta * 100)).toFixed(0)}%)
+      (${diffDirection}${Math.floor(Math.abs((this.delta * 100)))}%)
       </div>
       <div class="description">
         <b>${Number(this.tested).toLocaleString()}</b> out of <b>${Number(this.recipes).toLocaleString()}</b>

@@ -3,6 +3,8 @@ import { customElement, property } from 'lit/decorators.js';
 
 @customElement('metrics-simple-view')
 export class MetricsSimpleView extends LitElement {
+  @property() isPercent
+
   @property() title
   @property() available
   @property() qualified
@@ -12,6 +14,12 @@ export class MetricsSimpleView extends LitElement {
   @property() url
   @property() delta
   @property() qualifiedRate
+
+  constructor() {
+    super();
+
+    this.isPercent = "true";
+  }
 
   createRenderRoot() {
     return this;
@@ -31,13 +39,15 @@ export class MetricsSimpleView extends LitElement {
       </div>
       <div class="size-number ${textClass}">
         ${this.available === "true" ?
-        html`${(this.ratio * 100).toFixed(0)}%` :
-        html`0%`}
+        (this.isPercent === "true" ?
+          html`${Math.floor(this.ratio * 100)}%`:
+          html`${Number(this.ratio).toFixed(2)}`):
+        html`N/A`}
       </div>
       ${this.delta ? 
         html`
       <div class="size-diff ${textClass}">
-      (${diffDirection}${Math.abs(this.delta * 100).toFixed(0)}%)
+      (${diffDirection}${Math.floor(Math.abs(this.delta * 100))}%)
       </div>`
       : html``}
       <div class="description ${textClass}">

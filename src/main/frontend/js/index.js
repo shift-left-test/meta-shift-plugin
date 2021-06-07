@@ -2,8 +2,10 @@ import { BuildSummary } from './build/build-summary';
 import { CodeSize } from './code-size';
 import { MetricsSimpleView } from './metrics-simple-view';
 import { TestedSimpleView } from './tested-simple-view';
+import { RecipeTreemap } from './build/recipe-treemap';
 import { RecipeList } from './build/recipe-list';
 import { BuildTrendChart } from './build/build-trend-chart';
+import { StatisticsBar } from './common/statistics-bar';
 import { PremirrorCacheList } from './premirror-cache/premirror-cache-list';
 import { SharedStateCacheList } from './shared-state-cache/shared-state-cache-list';
 import { RecipeViolationFiles } from './recipe-violation/recipe-violation-files';
@@ -21,6 +23,7 @@ import { CoverageFileView } from './coverage/coverage-file-view';
 import { MutationTestList } from './mutation-test/mutation-test-list';
 import { MutationTestFileView } from './mutation-test/mutation-test-file-view';
 
+import 'tabulator-tables/src/scss/tabulator.scss';
 import '../scss/main.scss';
 
 export {
@@ -38,8 +41,10 @@ export {
   ComplexityFiles,
   ComplexityFileView,
   DuplicationFiles,
+  RecipeTreemap,
   RecipeList,
   BuildTrendChart,
+  StatisticsBar,
   TestRate,
   TestList,
   CoverageFiles,
