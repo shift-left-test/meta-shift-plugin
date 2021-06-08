@@ -33,6 +33,7 @@ import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import com.lge.plugins.metashift.ui.models.TableSortInfo;
 import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +62,7 @@ public class RecipeComplexityAction
    * @param metadata   metadata
    */
   public RecipeComplexityAction(
-      RecipeAction parent, TaskListener listener,
+      RecipeAction parent, TaskListener listener, VirtualChannel channel,
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
@@ -91,10 +92,10 @@ public class RecipeComplexityAction
       ));
 
       try {
-        this.saveFileContents(metadata, file);
+        this.saveFileContents(channel, metadata, file);
         dataSource.put(complexityList,
             this.getParentAction().getName(), file, STORE_KEY_COMPLEXITYLIST);
-      } catch (IOException e) {
+      } catch (IOException | InterruptedException e) {
         listener.getLogger().println(e.getMessage());
         e.printStackTrace(listener.getLogger());
       }

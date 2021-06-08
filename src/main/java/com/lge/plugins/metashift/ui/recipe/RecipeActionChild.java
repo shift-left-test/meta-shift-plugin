@@ -25,8 +25,12 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import com.lge.plugins.metashift.persistence.DataSource;
+
+import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.Run;
+import hudson.remoting.VirtualChannel;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -61,16 +65,22 @@ public abstract class RecipeActionChild implements Action {
   /**
    * save code path content to DataSource.
    */
-  public void saveFileContents(JSONObject metadata, String codePath) throws IOException {
-    // TODO: if the file is already exists, must not save again.(don't read file again)
-    File file = new File(codePath);
-    String contents;
-    if (file.isAbsolute()) {
-      contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-    } else {
-      contents = FileUtils.readFileToString(
-          new File(metadata.getString("S"), codePath), StandardCharsets.UTF_8);
+  public void saveFileContents(VirtualChannel channel, JSONObject metadata, String codePath)
+      throws IOException, InterruptedException {
+    if (this.getDataSource().has(this.parent.getName(), "FILE", codePath)) {
+      return;
     }
+
+    FilePath file;
+    // if not absolute path, append recipe root.
+    if (codePath.startsWith("/")) {
+      file = new FilePath(channel, codePath);
+    } else {
+      file = new FilePath(new FilePath(channel, metadata.getString("S")), codePath);
+    }
+    
+    String contents = file.readToString();
+
     this.getDataSource().put(contents, this.parent.getName(), "FILE", codePath);
   }
 

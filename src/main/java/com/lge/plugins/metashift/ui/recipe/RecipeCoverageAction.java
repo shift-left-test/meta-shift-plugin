@@ -33,6 +33,7 @@ import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import com.lge.plugins.metashift.ui.models.TableSortInfo;
 import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +62,7 @@ public class RecipeCoverageAction extends RecipeActionChild {
    * @param metadata   metadata
    */
   public RecipeCoverageAction(
-      RecipeAction parent, TaskListener listener,
+      RecipeAction parent, TaskListener listener, VirtualChannel channel,
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
@@ -104,10 +105,10 @@ public class RecipeCoverageAction extends RecipeActionChild {
           indexes.size() > 0 ? (double) coveredIndexes.size() / (double) indexes.size() : 0
       ));
       try {
-        this.saveFileContents(metadata, file);
+        this.saveFileContents(channel, metadata, file);
         dataSource.put(coverageList,
             this.getParentAction().getName(), file, STORE_KEY_COVERAGELIST);
-      } catch (IOException e) {
+      } catch (IOException | InterruptedException e) {
         listener.getLogger().println(e.getMessage());
         e.printStackTrace(listener.getLogger());
       }

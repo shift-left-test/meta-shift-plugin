@@ -32,6 +32,7 @@ import com.lge.plugins.metashift.ui.models.TableSortInfo;
 import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import com.lge.plugins.metashift.ui.models.TestTableItem;
 import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,7 +63,7 @@ public class RecipeTestAction extends RecipeActionChild {
    * @param metadata   metadata
    */
   public RecipeTestAction(
-      RecipeAction parent, TaskListener listener,
+      RecipeAction parent, TaskListener listener, VirtualChannel channel,
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 

@@ -33,6 +33,7 @@ import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import com.lge.plugins.metashift.ui.models.TableSortInfo;
 import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,7 +59,7 @@ public class RecipeSharedStateCacheAction
    * @param metadata   metadata
    */
   public RecipeSharedStateCacheAction(
-      RecipeAction parent, TaskListener listener,
+      RecipeAction parent, TaskListener listener, VirtualChannel channel,
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 

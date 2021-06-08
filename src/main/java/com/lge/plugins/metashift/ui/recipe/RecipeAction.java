@@ -72,30 +72,29 @@ public class RecipeAction extends Actionable implements Action {
     this.metrics.parse(recipe);
 
     // parse metadata.json
-    File metadataFile = FileUtils.getFile(new File(reportRoot.toURI()),
-        this.name, "metadata.json");
-    JSONObject metadata = JsonUtils.createObject(metadataFile);
+    JSONObject metadata = JSONObject.fromObject(
+        reportRoot.child(this.name).child("metadata.json").readToString());
 
     this.addAction(new RecipeSharedStateCacheAction(
-        this, listener, dataSource, recipe, metadata));
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     this.addAction(new RecipePremirrorCacheAction(
-        this, listener, dataSource, recipe, metadata));
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     this.addAction(new RecipeCodeViolationsAction(
-        this, listener, dataSource, recipe, metadata));
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     this.addAction(new RecipeCommentsAction(
-        this, listener, dataSource, recipe, metadata));
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     this.addAction(new RecipeComplexityAction(
-        this, listener, dataSource, recipe, metadata));
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     this.addAction(new RecipeCoverageAction(
-        this, listener, dataSource, recipe, metadata));
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     this.addAction(new RecipeDuplicationsAction(
-        this, listener, dataSource, recipe, metadata));
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     this.addAction(new RecipeMutationTestAction(
-        this, listener, dataSource, recipe, metadata));
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     this.addAction(new RecipeRecipeViolationsAction(
-        this, listener, dataSource, recipe, metadata));
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     this.addAction(new RecipeTestAction(
-        this, listener, dataSource, recipe, metadata));
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
   }
 
   public MetaShiftBuildAction getParentAction() {

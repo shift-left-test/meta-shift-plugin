@@ -32,6 +32,7 @@ import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import com.lge.plugins.metashift.ui.models.TableSortInfo;
 import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +65,7 @@ public class RecipeMutationTestAction extends RecipeActionChild {
    * @param metadata   metadata
    */
   public RecipeMutationTestAction(
-      RecipeAction parent, TaskListener listener,
+      RecipeAction parent, TaskListener listener, VirtualChannel channel,
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
@@ -101,10 +102,10 @@ public class RecipeMutationTestAction extends RecipeActionChild {
           testList.stream().filter(o -> o.getStatus().equals("ERROR")).count()
       ));
       try {
-        this.saveFileContents(metadata, file);
+        this.saveFileContents(channel, metadata, file);
         dataSource.put(testList,
             this.getParentAction().getName(), file, STORE_KEY_MUTATIONTESTLIST);
-      } catch (IOException e) {
+      } catch (IOException | InterruptedException e) {
         listener.getLogger().println(e.getMessage());
         e.printStackTrace(listener.getLogger());
       }

@@ -32,6 +32,7 @@ import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import com.lge.plugins.metashift.ui.models.TableSortInfo;
 import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,7 +66,7 @@ public class RecipeCodeViolationsAction
    * @param metadata   metadata
    */
   public RecipeCodeViolationsAction(
-      RecipeAction parent, TaskListener listener,
+      RecipeAction parent, TaskListener listener, VirtualChannel channel,
       DataSource dataSource, Recipe recipe, JSONObject metadata)
       throws IOException {
     super(parent);
@@ -102,10 +103,10 @@ public class RecipeCodeViolationsAction
           violationList.stream().filter(o -> o.getLevel().equals("INFO")).count()
       ));
       try {
-        this.saveFileContents(metadata, file);
+        this.saveFileContents(channel, metadata, file);
         dataSource.put(violationList,
             this.getParentAction().getName(), file, STORE_KEY_CODEVIOLATIONLIST);
-      } catch (IOException e) {
+      } catch (IOException | InterruptedException e) {
         listener.getLogger().println(e.getMessage());
         e.printStackTrace(listener.getLogger());
       }
