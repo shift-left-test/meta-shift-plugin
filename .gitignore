@@ -281,6 +281,7 @@ tags
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,visualstudiocode,eclipse,emacs,vim,java,maven
 
 /work
-/node_modules
+/src/main/frontend/node
+/src/main/frontend/node_modules
 /src/main/webapp/js
-/node
+

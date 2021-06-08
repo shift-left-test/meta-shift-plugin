@@ -9,3 +9,12 @@ The meta-shift plugin for Jenkins
 ## LICENSE
 
 Licensed under MIT, see [LICENSE](LICENSE.md)
+
+## Build
+
+### how to run webpack-dev-server
+
+> cd src/main/frontend
+> ./node/npm run serve
+
+access localhost:9000/jenkins

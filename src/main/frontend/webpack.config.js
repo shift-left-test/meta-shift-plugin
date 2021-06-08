@@ -4,7 +4,7 @@ const path = require('path')
 const rewrite = require('express-urlrewrite')
 
 module.exports = {
-  entry: './src/main/frontend/js/index.js',
+  entry: './js/index.js',
   module: {
     rules: [
       {
@@ -43,9 +43,9 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    path: path.resolve(__dirname, 'src/main/webapp/js'),
+    path: path.resolve(__dirname, '../webapp/js'),
     filename: 'bundle.js',
-    library: 'metashift'
+    clean: true
   },
   plugins: [
     new MonacoWebpackPlugin()
@@ -59,7 +59,7 @@ module.exports = {
         target: 'http://localhost:8080'
       }
     },
-    contentBase: path.join(__dirname, 'src/main/webapp/js'),
+    contentBase: path.join(__dirname, '../webapp/js'),
     publicPath: '/metashift/js/',
     hot: true,
     compress: true,

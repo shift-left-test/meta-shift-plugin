@@ -180,8 +180,9 @@
           </execution>
         </executions>
         <configuration>
+          <workingDirectory>src/main/frontend</workingDirectory>
           <nodeVersion>v12.20.0</nodeVersion>
-          <npmVersion>6.14.12</npmVersion>
+          <npmVersion>6.14.12</npmVersion>        
         </configuration>
       </plugin>
     </plugins>
