@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.ui.project;
 
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.models.CriteriaWithOptions;
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -208,7 +209,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     Result result = run.getResult();
 
     if (result != null && result.isBetterOrEqualTo(Result.UNSTABLE)) {
-      FilePath reportPath = workspace.child(this.reportRoot);
+      EnvVars env = run.getEnvironment(listener);
+      FilePath reportPath = workspace.child(env.expand(this.reportRoot));
       if (reportPath.exists()) {
         // load criteria.
         CriteriaWithOptions criteria = (this.localCriteria == null)
@@ -259,7 +261,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
           run.setResult(Result.UNSTABLE);
         }
       } else {
-        listener.getLogger().println("Meta Shift Error: report path is not exist!!!");
+        listener.getLogger().printf("Meta Shift Error: report path[%s] does not exist!!!",
+            reportPath.toURI().toString());
       }
     }
   }
