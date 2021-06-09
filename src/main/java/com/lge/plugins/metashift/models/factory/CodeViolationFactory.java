@@ -29,7 +29,6 @@ import com.lge.plugins.metashift.models.InfoCodeViolationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.MinorCodeViolationData;
 import com.lge.plugins.metashift.utils.JsonUtils;
-import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,20 +68,6 @@ public class CodeViolationFactory {
     }
     Collections.sort(list);
     return list;
-  }
-
-  /**
-   * Create a set of objects by parsing a report file from the given path.
-   *
-   * @param path to the report directory
-   * @return a list of objects
-   * @throws IllegalArgumentException if failed to parse report files
-   * @throws IOException              if failed to locate report files
-   * @throws InterruptedException     if an interruption occurred
-   */
-  public static List<CodeViolationData> create(final FilePath path)
-      throws IllegalArgumentException, IOException, InterruptedException {
-    return create(new File(path.toURI()));
   }
 
   /**

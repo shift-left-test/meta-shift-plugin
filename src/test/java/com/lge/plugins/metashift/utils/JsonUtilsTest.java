@@ -28,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
-import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -59,12 +58,12 @@ public class JsonUtilsTest {
 
   @Test
   public void testCreateWithNullFile() throws IOException {
-    assertEquals(JsonUtils.EMPTY, JsonUtils.createObject((File) null));
+    assertEquals(JsonUtils.EMPTY, JsonUtils.createObject(null));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    JsonUtils.createObject(new FilePath(utils.getPath("path-to-unknown")));
+  public void testCreateWithUnknownPath() throws IOException {
+    JsonUtils.createObject(utils.getPath("path-to-unknown"));
   }
 
   @Test(expected = IOException.class)
@@ -108,12 +107,12 @@ public class JsonUtilsTest {
   }
 
   @Test
-  public void testSaveAs() throws IOException, InterruptedException {
+  public void testSaveAs() throws IOException {
     JSONObject object = new JSONObject();
     object.put("A", "1");
     object.put("B", "2");
     File file = utils.getPath("path", "to", "file.json");
-    JsonUtils.saveAs(object, new FilePath(file));
+    JsonUtils.saveAs(object, file);
     assertEquals("{\n  \"A\": \"1\",\n  \"B\": \"2\"\n}",
         FileUtils.readFileToString(file, StandardCharsets.UTF_8));
   }

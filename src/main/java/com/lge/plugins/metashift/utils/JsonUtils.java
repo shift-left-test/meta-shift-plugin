@@ -24,7 +24,6 @@
 
 package com.lge.plugins.metashift.utils;
 
-import hudson.FilePath;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,17 +69,6 @@ public class JsonUtils {
   }
 
   /**
-   * Create a JSONObject using the given file.
-   *
-   * @param file to a json file
-   * @return a JSON object
-   */
-  public static JSONObject createObject(final FilePath file)
-      throws IOException, InterruptedException {
-    return createObject(new File(file.toURI()));
-  }
-
-  /**
    * Returns a JSON object using the file.
    *
    * @param file to parse
@@ -102,18 +90,5 @@ public class JsonUtils {
   public static void saveAs(final JSONObject object, final File file) throws IOException {
     FileUtils.forceMkdirParent(file);
     FileUtils.writeStringToFile(file, object.toString(2), StandardCharsets.UTF_8);
-  }
-
-  /**
-   * Saves the JSON object as the file.
-   *
-   * @param object to save
-   * @param file   to save
-   * @throws IOException          if failed to operate with the file
-   * @throws InterruptedException if an interruption occurred
-   */
-  public static void saveAs(final JSONObject object, final FilePath file)
-      throws IOException, InterruptedException {
-    saveAs(object, new File(file.toURI()));
   }
 }
