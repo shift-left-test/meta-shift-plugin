@@ -6,9 +6,10 @@
 <!--- List of features and bugfixes included -->
 *  
 *  
-*  
+* 
 
 
+/wip
 /label ~enhancement
-/label ~bugfix
+/milestone %"0.2.0"
 /assign @sunggon82.kim

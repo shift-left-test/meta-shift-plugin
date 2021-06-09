@@ -6,8 +6,12 @@
 <!--- Tasks to accomplish the feature -->
 * [ ]  
 * [ ]  
-* [ ]  
+* [ ] 
 
 
+CC: @sunggon82.kim
+
+/due in 20 days
+/estimate 2w
 /label ~enhancement
-/assign @sunggon82.kim
+/milestone %"0.2.0"

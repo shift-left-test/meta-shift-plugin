@@ -20,5 +20,10 @@
 <!--- If you can, link to the line of code that might be responsible for the problem -->
 
 
+
+CC: @sunggon82.kim
+
+/due in 20 days
+/estimate 2w
 /label ~bug
-/assign @sunggon82.kim
+/milestone %"0.2.0"
