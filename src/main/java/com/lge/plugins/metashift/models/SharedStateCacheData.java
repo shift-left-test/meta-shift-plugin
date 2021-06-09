@@ -40,10 +40,11 @@ public final class SharedStateCacheData extends CacheData {
    * Default constructor.
    *
    * @param recipe    name
-   * @param task      name
+   * @param signature name
    * @param available the cache availability
    */
-  public SharedStateCacheData(final String recipe, final String task, final boolean available) {
-    super(recipe, task, available, "SharedState");
+  public SharedStateCacheData(final String recipe, final String signature,
+      final boolean available) {
+    super(recipe, signature, available, "SharedState");
   }
 }

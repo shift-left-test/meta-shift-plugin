@@ -40,20 +40,10 @@ public final class PremirrorCacheData extends CacheData {
    * Default constructor.
    *
    * @param recipe    name
+   * @param signature name
    * @param available the cache availability
    */
-  public PremirrorCacheData(final String recipe, final boolean available) {
-    this(recipe, "", available);
-  }
-
-  /**
-   * Default constructor.
-   *
-   * @param recipe    name
-   * @param task      name
-   * @param available the cache availability
-   */
-  public PremirrorCacheData(final String recipe, final String task, final boolean available) {
-    super(recipe, task, available, "Premirror");
+  public PremirrorCacheData(final String recipe, final String signature, final boolean available) {
+    super(recipe, signature, available, "Premirror");
   }
 }

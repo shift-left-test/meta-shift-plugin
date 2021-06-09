@@ -129,9 +129,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedPremirrorCacheData() {
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", false));
-    recipe.add(new PremirrorCacheData("B-1.0.0-r0", false));
-    recipe.add(new PremirrorCacheData("C-1.0.0-r0", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", false));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "X", false));
+    recipe.add(new PremirrorCacheData("C-1.0.0-r0", "X", true));
     metrics.parse(recipes);
     assertEvaluator(metrics.getPremirrorCache(), true, false);
     assertCounter(metrics.getPremirrorCache(), 3, 1, 0.3);
@@ -139,8 +139,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedPremirrorCacheData() {
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", false));
-    recipe.add(new PremirrorCacheData("B-1.0.0-r0", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", false));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "X", true));
     metrics.parse(recipes);
     assertEvaluator(metrics.getPremirrorCache(), true, true);
     assertCounter(metrics.getPremirrorCache(), 2, 1, 0.5);

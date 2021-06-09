@@ -105,8 +105,8 @@ public class QualifiedRecipeCounterTest {
 
   @Test
   public void testGetPremirrorCache() {
-    recipe1.add(new PremirrorCacheData("A-1.0.0-r0", true));
-    recipe2.add(new PremirrorCacheData("B-1.0.0-r0", false));
+    recipe1.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
+    recipe2.add(new PremirrorCacheData("B-1.0.0-r0", "X", false));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
     assertValues(counter.getPremirrorCache(), 2, 1);
@@ -195,7 +195,7 @@ public class QualifiedRecipeCounterTest {
 
   @Test
   public void testWithMultipleData() {
-    recipe1.add(new PremirrorCacheData("A-1.0.0-r0", true));
+    recipe1.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
     recipe1.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     recipe1.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
