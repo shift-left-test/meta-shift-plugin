@@ -147,24 +147,24 @@ public class RecipeCoverageAction extends RecipeActionChild {
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getCoverage();
 
-    StatisticsItem [] result = new StatisticsItem [] {
-      new StatisticsItem(
-          "Covered",
-          (int) (evaluator.getRatio() * 100),
-          (int) evaluator.getNumerator(),
-          "valid-good"
-      ),
-      new StatisticsItem(
-          "UnCovered",
-          (int) ((1 - evaluator.getRatio()) * 100),
-          (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-          "invalid"
-      )
+    StatisticsItem[] result = new StatisticsItem[]{
+        new StatisticsItem(
+            "Covered",
+            (int) (evaluator.getRatio() * 100),
+            (int) evaluator.getNumerator(),
+            "valid-good"
+        ),
+        new StatisticsItem(
+            "UnCovered",
+            (int) ((1 - evaluator.getRatio()) * 100),
+            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
+            "invalid"
+        )
     };
 
     return JSONArray.fromObject(result);
   }
-  
+
   /**
    * key for line + index.
    */
@@ -195,7 +195,7 @@ public class RecipeCoverageAction extends RecipeActionChild {
    * @return coverage list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
     List<FileCoverageTableItem> dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
 

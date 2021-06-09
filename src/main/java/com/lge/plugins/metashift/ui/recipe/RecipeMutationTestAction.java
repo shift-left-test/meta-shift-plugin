@@ -51,9 +51,9 @@ public class RecipeMutationTestAction extends RecipeActionChild {
   static final String STORE_KEY_FILEMUTATIONTESTSTAT = "FileMutationTestStat";
 
   // statistics data
-  private long killedCount;
-  private long survivedCount;
-  private long skippedCount;
+  private final long killedCount;
+  private final long survivedCount;
+  private final long skippedCount;
 
   /**
    * constructor.
@@ -71,7 +71,7 @@ public class RecipeMutationTestAction extends RecipeActionChild {
 
     List<MutationTestData> mutationTestList =
         recipe.objects(MutationTestData.class).collect(Collectors.toList());
-    
+
     // get data for statistics
     this.killedCount = mutationTestList.stream().filter(
         o -> o.getStatus().equals("KILLED")).count();
@@ -143,26 +143,26 @@ public class RecipeMutationTestAction extends RecipeActionChild {
   @Override
   public JSONArray getStatistics() {
     long allCount = killedCount + survivedCount + skippedCount;
-    
-    StatisticsItem [] result = new StatisticsItem [] {
-      new StatisticsItem(
-          "Killed",
-          allCount > 0 ? (int) killedCount * 100 / allCount : 0,
-          (int) killedCount,
-          "valid-good"
-      ),
-      new StatisticsItem(
-          "Survived",
-          allCount > 0 ? (int) survivedCount * 100 / allCount : 0,
-          (int) survivedCount,
-          "valid-bad"
-      ),
-      new StatisticsItem(
-          "Skipped",
-          allCount > 0 ? (int) skippedCount * 100 / allCount : 0,
-          (int) skippedCount,
-          "invalid"
-      )
+
+    StatisticsItem[] result = new StatisticsItem[]{
+        new StatisticsItem(
+            "Killed",
+            allCount > 0 ? killedCount * 100 / allCount : 0,
+            killedCount,
+            "valid-good"
+        ),
+        new StatisticsItem(
+            "Survived",
+            allCount > 0 ? survivedCount * 100 / allCount : 0,
+            survivedCount,
+            "valid-bad"
+        ),
+        new StatisticsItem(
+            "Skipped",
+            allCount > 0 ? skippedCount * 100 / allCount : 0,
+            skippedCount,
+            "invalid"
+        )
     };
 
     return JSONArray.fromObject(result);
@@ -177,7 +177,7 @@ public class RecipeMutationTestAction extends RecipeActionChild {
    */
   @JavaScriptMethod
   public JSONObject getRecipeMutationTests(
-      int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
+      int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
     List<FileMutationTestTableItem> dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILEMUTATIONTESTSTAT);
 

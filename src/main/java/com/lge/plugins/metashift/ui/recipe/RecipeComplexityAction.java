@@ -134,19 +134,19 @@ public class RecipeComplexityAction
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getComplexity();
 
-    StatisticsItem [] result = new StatisticsItem [] {
-      new StatisticsItem(
-          "Complex",
-          (int) (evaluator.getRatio() * 100),
-          (int) evaluator.getNumerator(),
-          "valid-bad"
-      ),
-      new StatisticsItem(
-          "Normal",
-          (int) ((1 - evaluator.getRatio()) * 100),
-          (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-          "invalid"
-      )
+    StatisticsItem[] result = new StatisticsItem[]{
+        new StatisticsItem(
+            "Complex",
+            (int) (evaluator.getRatio() * 100),
+            (int) evaluator.getNumerator(),
+            "valid-bad"
+        ),
+        new StatisticsItem(
+            "Normal",
+            (int) ((1 - evaluator.getRatio()) * 100),
+            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
+            "invalid"
+        )
     };
 
     return JSONArray.fromObject(result);
@@ -160,7 +160,7 @@ public class RecipeComplexityAction
    * @return complexity list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
     List<FileComplexityTableItem> dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECOMPLEXITYSTAT);
 

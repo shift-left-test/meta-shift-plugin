@@ -64,7 +64,7 @@ public class RecipeCommentsAction
     super(parent);
 
     List<FileCommentTableItem> commentList = recipe.objects(CommentData.class)
-        .map(o -> new FileCommentTableItem(o)).collect(Collectors.toList());
+        .map(FileCommentTableItem::new).collect(Collectors.toList());
 
     try {
       dataSource.put(commentList, this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
@@ -98,19 +98,19 @@ public class RecipeCommentsAction
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getComments();
 
-    StatisticsItem [] result = new StatisticsItem [] {
-      new StatisticsItem(
-          "Comments",
-          (int) (evaluator.getRatio() * 100),
-          (int) evaluator.getNumerator(),
-          "valid-good"
-      ),
-      new StatisticsItem(
-          "Code",
-          (int) ((1 - evaluator.getRatio()) * 100),
-          (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-          "invalid"
-      )
+    StatisticsItem[] result = new StatisticsItem[]{
+        new StatisticsItem(
+            "Comments",
+            (int) (evaluator.getRatio() * 100),
+            (int) evaluator.getNumerator(),
+            "valid-good"
+        ),
+        new StatisticsItem(
+            "Code",
+            (int) ((1 - evaluator.getRatio()) * 100),
+            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
+            "invalid"
+        )
     };
 
     return JSONArray.fromObject(result);
@@ -124,7 +124,7 @@ public class RecipeCommentsAction
    * @return comment list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
     List<FileCommentTableItem> commentDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
 
@@ -135,5 +135,5 @@ public class RecipeCommentsAction
     return TabulatorUtils.getPage(pageIndex, pageSize, commentDataList);
   }
 
-  
+
 }

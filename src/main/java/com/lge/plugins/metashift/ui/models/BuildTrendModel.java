@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
  * trend chart model.
  */
 public class BuildTrendModel {
+
   /**
    * trend chart series data class.
    */
@@ -43,7 +44,7 @@ public class BuildTrendModel {
     private final String name;
     private final String type;
     private final List<Double> data;
-    private Function<Metrics, Evaluator<?>> mapper;
+    private final Function<Metrics, Evaluator<?>> mapper;
 
     public String getName() {
       return this.name;
@@ -80,14 +81,13 @@ public class BuildTrendModel {
       this.name = name;
       this.type = type;
       this.mapper = mapper;
-
       this.data = new ArrayList<>();
     }
   }
 
-  private int maxBuildCount;
-  private List<String> buildNameList;
-  private List<BuildTrendSeries> seriesList;
+  private final int maxBuildCount;
+  private final List<String> buildNameList;
+  private final List<BuildTrendSeries> seriesList;
 
   /**
    * constructor.
@@ -97,7 +97,7 @@ public class BuildTrendModel {
   public BuildTrendModel(int maxBuildCount) {
     this.maxBuildCount = maxBuildCount;
 
-    this.buildNameList = new ArrayList<String>();
+    this.buildNameList = new ArrayList<>();
     this.seriesList = new ArrayList<>();
 
     this.seriesList.add(new BuildTrendSeries(
@@ -123,33 +123,30 @@ public class BuildTrendModel {
   }
 
   public List<String> getLegend() {
-    return this.seriesList.stream().map(o -> o.getName()).collect(Collectors.toList());
+    return seriesList.stream().map(BuildTrendSeries::getName).collect(Collectors.toList());
   }
 
   public List<String> getBuilds() {
-    return this.buildNameList;
+    return buildNameList;
   }
 
   public List<BuildTrendSeries> getSeries() {
-    return this.seriesList;
+    return seriesList;
   }
 
   /**
    * add data to trend chart.
    *
    * @param buildName build name
-   * @param metrics metrics
+   * @param metrics   metrics
    * @return is exceeded max build count.
    */
   public boolean addData(String buildName, Metrics metrics) {
-    if (this.buildNameList.size() >= this.maxBuildCount) {
+    if (buildNameList.size() >= this.maxBuildCount) {
       return false;
     }
-
     buildNameList.add(0, buildName);
-
-    this.seriesList.stream().forEach(o -> o.addData(metrics));
-
+    seriesList.forEach(o -> o.addData(metrics));
     return true;
   }
 }

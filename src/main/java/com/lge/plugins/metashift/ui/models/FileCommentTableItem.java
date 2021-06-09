@@ -27,68 +27,63 @@ package com.lge.plugins.metashift.ui.models;
 import com.lge.plugins.metashift.models.CommentData;
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * comment for each file.
  */
 public class FileCommentTableItem implements Serializable {
+
+  private static final long serialVersionUID = -5041608534135525261L;
+  private static final Map<String, Comparator<FileCommentTableItem>> comparators;
   private final String file;
   private final long lines;
   private final long commentLines;
   private final double commentRate;
 
+  static {
+    comparators = new HashMap<>();
+    comparators.put("file", Comparator.comparing(FileCommentTableItem::getFile));
+    comparators.put("lines", Comparator.comparing(FileCommentTableItem::getLines));
+    comparators.put("commentLines", Comparator.comparing(FileCommentTableItem::getCommentLines));
+    comparators.put("commentRate", Comparator.comparing(FileCommentTableItem::getCommentRate));
+  }
+
   /**
    * constructor.
    */
   public FileCommentTableItem(CommentData data) {
-    this.file = data.getFile();
-    this.lines = data.getLines();
-    this.commentLines = data.getCommentLines();
-    this.commentRate = (double) this.commentLines / (double) this.lines;
+    file = data.getFile();
+    lines = data.getLines();
+    commentLines = data.getCommentLines();
+    commentRate = (double) commentLines / (double) lines;
   }
 
   public String getFile() {
-    return this.file;
+    return file;
   }
 
   public long getLines() {
-    return this.lines;
+    return lines;
   }
 
   public long getCommentLines() {
-    return this.commentLines;
+    return commentLines;
   }
 
   public double getCommentRate() {
-    return this.commentRate;
+    return commentRate;
   }
 
   private static Comparator<FileCommentTableItem> createComparator(TableSortInfo sortInfo) {
-    Comparator<FileCommentTableItem> comparator;
-
-    switch (sortInfo.getField()) {
-      case "file":
-        comparator = Comparator.comparing(FileCommentTableItem::getFile);
-        break;
-      case "lines":
-        comparator = Comparator.comparing(FileCommentTableItem::getLines);
-        break;
-      case "commentLines":
-        comparator = Comparator.comparing(FileCommentTableItem::getCommentLines);
-        break;
-      case "commentRate":
-        comparator = Comparator.comparing(FileCommentTableItem::getCommentRate);
-        break;
-      default:
-        throw new IllegalArgumentException(
-            String.format("unknown field for comments table : %s", sortInfo.getField()));
+    String field = sortInfo.getField();
+    if (!comparators.containsKey(field)) {
+      String message = String.format("unknown field for comments table : %s", field);
+      throw new IllegalArgumentException(message);
     }
-
-    if (sortInfo.getDir().equals("desc")) {
-      comparator = comparator.reversed();
-    }
-
-    return comparator;
+    Comparator<FileCommentTableItem> comparator = comparators.get(field);
+    return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
 
   /**
@@ -97,13 +92,11 @@ public class FileCommentTableItem implements Serializable {
    * @param sortInfos sort info
    * @return comparator
    */
-  public static Comparator<FileCommentTableItem> createComparator(TableSortInfo [] sortInfos) {
+  public static Comparator<FileCommentTableItem> createComparator(TableSortInfo[] sortInfos) {
     Comparator<FileCommentTableItem> comparator = createComparator(sortInfos[0]);
-
     for (int i = 1; i < sortInfos.length; i++) {
       comparator = comparator.thenComparing(createComparator(sortInfos[i]));
     }
-
     return comparator;
   }
 }

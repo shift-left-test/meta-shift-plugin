@@ -31,18 +31,15 @@ import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
-import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.Actionable;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 

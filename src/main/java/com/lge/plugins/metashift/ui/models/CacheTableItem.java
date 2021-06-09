@@ -27,47 +27,46 @@ package com.lge.plugins.metashift.ui.models;
 import com.lge.plugins.metashift.models.CacheData;
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Cache Table Item.
  */
 public class CacheTableItem implements Serializable {
-  private String signature;
-  private boolean available;
+
+  private static final long serialVersionUID = -396700679379276827L;
+  private static final Map<String, Comparator<CacheTableItem>> comparators;
+  private final String signature;
+  private final boolean available;
+
+  static {
+    comparators = new HashMap<>();
+    comparators.put("signature", Comparator.comparing(CacheTableItem::getSignature));
+    comparators.put("available", Comparator.comparing(CacheTableItem::isAvailable));
+  }
 
   public CacheTableItem(CacheData cacheData) {
-    this.signature = cacheData.getSignature();
-    this.available = cacheData.isAvailable();
+    signature = cacheData.getSignature();
+    available = cacheData.isAvailable();
   }
 
   public String getSignature() {
-    return this.signature;
+    return signature;
   }
 
   public boolean isAvailable() {
-    return this.available;
+    return available;
   }
 
   private static Comparator<CacheTableItem> createComparator(TableSortInfo sortInfo) {
-    Comparator<CacheTableItem> comparator;
-
-    switch (sortInfo.getField()) {
-      case "signature":
-        comparator = Comparator.comparing(CacheTableItem::getSignature);
-        break;
-      case "available":
-        comparator = Comparator.<CacheTableItem, Boolean>comparing(CacheTableItem::isAvailable);
-        break;
-      default:
-        throw new IllegalArgumentException(
-            String.format("unknown field for premirror cache table : %s", sortInfo.getField()));
+    String field = sortInfo.getField();
+    if (!comparators.containsKey(field)) {
+      String message = String.format("unknown field for premirror cache table : %s", field);
+      throw new IllegalArgumentException(message);
     }
-
-    if (sortInfo.getDir().equals("desc")) {
-      comparator = comparator.reversed();
-    }
-
-    return comparator;
+    Comparator<CacheTableItem> comparator = comparators.get(field);
+    return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
 
   /**
@@ -76,13 +75,11 @@ public class CacheTableItem implements Serializable {
    * @param sortInfos sort info
    * @return comparator
    */
-  public static Comparator<CacheTableItem> createComparator(TableSortInfo [] sortInfos) {
+  public static Comparator<CacheTableItem> createComparator(TableSortInfo[] sortInfos) {
     Comparator<CacheTableItem> comparator = createComparator(sortInfos[0]);
-
     for (int i = 1; i < sortInfos.length; i++) {
       comparator = comparator.thenComparing(createComparator(sortInfos[i]));
     }
-
     return comparator;
   }
 }

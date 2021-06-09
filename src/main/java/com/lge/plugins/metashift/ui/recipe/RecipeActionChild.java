@@ -25,18 +25,13 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import com.lge.plugins.metashift.persistence.DataSource;
-
 import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.Run;
 import hudson.remoting.VirtualChannel;
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 
 /**
  * MetaShift recipe's detail view common feature class.
@@ -78,7 +73,7 @@ public abstract class RecipeActionChild implements Action {
     } else {
       file = new FilePath(new FilePath(channel, metadata.getString("S")), codePath);
     }
-    
+
     String contents = file.readToString();
 
     this.getDataSource().put(contents, this.parent.getName(), "FILE", codePath);

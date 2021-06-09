@@ -26,14 +26,27 @@ package com.lge.plugins.metashift.ui.models;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * complexity for each file.
  */
 public class FileComplexityTableItem implements Serializable {
+
+  private static final long serialVersionUID = 8975343139553009115L;
+  private static final Map<String, Comparator<FileComplexityTableItem>> comparators;
   String file;
   long functions;
   long complexFunctions;
+
+  static {
+    comparators = new HashMap<>();
+    comparators.put("file", Comparator.comparing(FileComplexityTableItem::getFile));
+    comparators.put("functions", Comparator.comparing(FileComplexityTableItem::getFunctions));
+    comparators.put("complexFunctions",
+        Comparator.comparing(FileComplexityTableItem::getComplexFunctions));
+  }
 
   /**
    * constructor.
@@ -45,40 +58,25 @@ public class FileComplexityTableItem implements Serializable {
   }
 
   public String getFile() {
-    return this.file;
+    return file;
   }
 
   public long getFunctions() {
-    return this.functions;
+    return functions;
   }
 
   public long getComplexFunctions() {
-    return this.complexFunctions;
+    return complexFunctions;
   }
 
   private static Comparator<FileComplexityTableItem> createComparator(TableSortInfo sortInfo) {
-    Comparator<FileComplexityTableItem> comparator;
-
-    switch (sortInfo.getField()) {
-      case "file":
-        comparator = Comparator.comparing(FileComplexityTableItem::getFile);
-        break;
-      case "functions":
-        comparator = Comparator.comparing(FileComplexityTableItem::getFunctions);
-        break;
-      case "complexFunctions":
-        comparator = Comparator.comparing(FileComplexityTableItem::getComplexFunctions);
-        break;
-      default:
-        throw new IllegalArgumentException(
-            String.format("unknown field for complexity table : %s", sortInfo.getField()));
+    String field = sortInfo.getField();
+    if (!comparators.containsKey(field)) {
+      String message = String.format("unknown field for complexity table : %s", field);
+      throw new IllegalArgumentException(message);
     }
-
-    if (sortInfo.getDir().equals("desc")) {
-      comparator = comparator.reversed();
-    }
-
-    return comparator;
+    Comparator<FileComplexityTableItem> comparator = comparators.get(field);
+    return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
 
   /**
@@ -87,13 +85,11 @@ public class FileComplexityTableItem implements Serializable {
    * @param sortInfos sort info
    * @return comparator
    */
-  public static Comparator<FileComplexityTableItem> createComparator(TableSortInfo [] sortInfos) {
+  public static Comparator<FileComplexityTableItem> createComparator(TableSortInfo[] sortInfos) {
     Comparator<FileComplexityTableItem> comparator = createComparator(sortInfos[0]);
-
     for (int i = 1; i < sortInfos.length; i++) {
       comparator = comparator.thenComparing(createComparator(sortInfos[i]));
     }
-
     return comparator;
-  }  
+  }
 }

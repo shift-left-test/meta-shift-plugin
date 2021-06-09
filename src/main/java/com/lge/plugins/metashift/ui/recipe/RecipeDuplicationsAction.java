@@ -64,7 +64,7 @@ public class RecipeDuplicationsAction
     super(parent);
 
     List<FileDuplicationTableItem> duplicationList = recipe.objects(DuplicationData.class)
-        .map(o -> new FileDuplicationTableItem(o)).collect(Collectors.toList());
+        .map(FileDuplicationTableItem::new).collect(Collectors.toList());
 
     try {
       dataSource.put(duplicationList, this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
@@ -98,24 +98,24 @@ public class RecipeDuplicationsAction
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getDuplications();
 
-    StatisticsItem [] result = new StatisticsItem [] {
-      new StatisticsItem(
-          "Duplicated",
-          (int) (evaluator.getRatio() * 100),
-          (int) evaluator.getNumerator(),
-          "valid-bad"
-      ),
-      new StatisticsItem(
-          "Code",
-          (int) ((1 - evaluator.getRatio()) * 100),
-          (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-          "invalid"
-      )
+    StatisticsItem[] result = new StatisticsItem[]{
+        new StatisticsItem(
+            "Duplicated",
+            (int) (evaluator.getRatio() * 100),
+            (int) evaluator.getNumerator(),
+            "valid-bad"
+        ),
+        new StatisticsItem(
+            "Code",
+            (int) ((1 - evaluator.getRatio()) * 100),
+            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
+            "invalid"
+        )
     };
 
     return JSONArray.fromObject(result);
   }
-  
+
   /**
    * return paginated duplication list.
    *
@@ -124,7 +124,7 @@ public class RecipeDuplicationsAction
    * @return duplication list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
     if (getParentAction().getMetrics().getDuplications().isAvailable()) {
       List<FileDuplicationTableItem> duplicationDataList = this.getDataSource().get(
           this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);

@@ -26,15 +26,28 @@ package com.lge.plugins.metashift.ui.models;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * mutation test for each file.
  */
 public class FileMutationTestTableItem implements Serializable {
-  private String file;
-  private long killed;
-  private long survived;
-  private long skipped;
+
+  private static final long serialVersionUID = 6776920372143480891L;
+  private static final Map<String, Comparator<FileMutationTestTableItem>> comparators;
+  private final String file;
+  private final long killed;
+  private final long survived;
+  private final long skipped;
+
+  static {
+    comparators = new HashMap<>();
+    comparators.put("file", Comparator.comparing(FileMutationTestTableItem::getFile));
+    comparators.put("killed", Comparator.comparing(FileMutationTestTableItem::getKilled));
+    comparators.put("survived", Comparator.comparing(FileMutationTestTableItem::getSurvived));
+    comparators.put("skipped", Comparator.comparing(FileMutationTestTableItem::getSkipped));
+  }
 
   /**
    * constructor.
@@ -47,47 +60,29 @@ public class FileMutationTestTableItem implements Serializable {
   }
 
   public String getFile() {
-    return this.file;
+    return file;
   }
 
   public long getKilled() {
-    return this.killed;
+    return killed;
   }
 
   public long getSurvived() {
-    return this.survived;
+    return survived;
   }
 
   public long getSkipped() {
-    return this.skipped;
+    return skipped;
   }
 
   private static Comparator<FileMutationTestTableItem> createComparator(TableSortInfo sortInfo) {
-    Comparator<FileMutationTestTableItem> comparator;
-
-    switch (sortInfo.getField()) {
-      case "file":
-        comparator = Comparator.comparing(FileMutationTestTableItem::getFile);
-        break;
-      case "killed":
-        comparator = Comparator.comparing(FileMutationTestTableItem::getKilled);
-        break;
-      case "survived":
-        comparator = Comparator.comparing(FileMutationTestTableItem::getSurvived);
-        break;
-      case "skipped":
-        comparator = Comparator.comparing(FileMutationTestTableItem::getSkipped);
-        break;
-      default:
-        throw new IllegalArgumentException(
-            String.format("unknown field for mutation test table : %s", sortInfo.getField()));
+    String field = sortInfo.getField();
+    if (!comparators.containsKey(field)) {
+      String message = String.format("unknown field for mutation test table : %s", field);
+      throw new IllegalArgumentException(message);
     }
-
-    if (sortInfo.getDir().equals("desc")) {
-      comparator = comparator.reversed();
-    }
-
-    return comparator;
+    Comparator<FileMutationTestTableItem> comparator = comparators.get(field);
+    return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
 
   /**
@@ -96,13 +91,11 @@ public class FileMutationTestTableItem implements Serializable {
    * @param sortInfos sort info
    * @return comparator
    */
-  public static Comparator<FileMutationTestTableItem> createComparator(TableSortInfo [] sortInfos) {
+  public static Comparator<FileMutationTestTableItem> createComparator(TableSortInfo[] sortInfos) {
     Comparator<FileMutationTestTableItem> comparator = createComparator(sortInfos[0]);
-
     for (int i = 1; i < sortInfos.length; i++) {
       comparator = comparator.thenComparing(createComparator(sortInfos[i]));
     }
-
     return comparator;
   }
 }

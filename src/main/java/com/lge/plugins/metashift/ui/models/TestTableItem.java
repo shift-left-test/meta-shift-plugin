@@ -27,30 +27,43 @@ package com.lge.plugins.metashift.ui.models;
 import com.lge.plugins.metashift.models.TestData;
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * test table item.
  */
 public class TestTableItem implements Serializable {
-  private String suite;
-  private String name;
-  private String status;
-  private String message;
+
+  private static final long serialVersionUID = 8885990883871159178L;
+  private static final Map<String, Comparator<TestTableItem>> comparators;
+  private final String suite;
+  private final String name;
+  private final String status;
+  private final String message;
+
+  static {
+    comparators = new HashMap<>();
+    comparators.put("suite", Comparator.comparing(TestTableItem::getSuite));
+    comparators.put("name", Comparator.comparing(TestTableItem::getName));
+    comparators.put("status", Comparator.comparing(TestTableItem::getStatus));
+    comparators.put("message", Comparator.comparing(TestTableItem::getMessage));
+  }
 
   public String getSuite() {
-    return this.suite;
+    return suite;
   }
 
   public String getName() {
-    return this.name;
+    return name;
   }
 
   public String getStatus() {
-    return this.status;
+    return status;
   }
 
   public String getMessage() {
-    return this.message;
+    return message;
   }
 
   /**
@@ -64,31 +77,13 @@ public class TestTableItem implements Serializable {
   }
 
   private static Comparator<TestTableItem> createComparator(TableSortInfo sortInfo) {
-    Comparator<TestTableItem> comparator;
-
-    switch (sortInfo.getField()) {
-      case "suite":
-        comparator = Comparator.comparing(TestTableItem::getSuite);
-        break;
-      case "name":
-        comparator = Comparator.comparing(TestTableItem::getName);
-        break;
-      case "status":
-        comparator = Comparator.comparing(TestTableItem::getStatus);
-        break;
-      case "message":
-        comparator = Comparator.comparing(TestTableItem::getMessage);
-        break;
-      default:
-        throw new IllegalArgumentException(
-          String.format("unknown field for unit test table : %s", sortInfo.getField()));
+    String field = sortInfo.getField();
+    if (!comparators.containsKey(field)) {
+      String message = String.format("unknown field for unit test table : %s", field);
+      throw new IllegalArgumentException(message);
     }
-
-    if (sortInfo.getDir().equals("desc")) {
-      comparator = comparator.reversed();
-    }
-
-    return comparator;
+    Comparator<TestTableItem> comparator = comparators.get(field);
+    return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
 
   /**
@@ -97,13 +92,11 @@ public class TestTableItem implements Serializable {
    * @param sortInfos sort info
    * @return comparator
    */
-  public static Comparator<TestTableItem> createComparator(TableSortInfo [] sortInfos) {
+  public static Comparator<TestTableItem> createComparator(TableSortInfo[] sortInfos) {
     Comparator<TestTableItem> comparator = createComparator(sortInfos[0]);
-
     for (int i = 1; i < sortInfos.length; i++) {
       comparator = comparator.thenComparing(createComparator(sortInfos[i]));
     }
-
     return comparator;
   }
 }

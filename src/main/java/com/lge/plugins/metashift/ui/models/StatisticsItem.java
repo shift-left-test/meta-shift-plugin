@@ -28,10 +28,11 @@ package com.lge.plugins.metashift.ui.models;
  * recipe statistics info.
  */
 public class StatisticsItem {
-  private String label;
-  private long width;
-  private long count;
-  private String clazz;
+
+  private final String label;
+  private final long width;
+  private final long count;
+  private final String clazz;
 
   /**
    * constructor.
@@ -44,18 +45,18 @@ public class StatisticsItem {
   }
 
   public String getLabel() {
-    return this.label;
+    return label;
   }
 
   public long getWidth() {
-    return this.width;
+    return width;
   }
 
   public long getCount() {
-    return this.count;
+    return count;
   }
 
   public String getClazz() {
-    return this.clazz;
+    return clazz;
   }
 }

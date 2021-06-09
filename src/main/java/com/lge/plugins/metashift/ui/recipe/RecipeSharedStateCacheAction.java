@@ -64,7 +64,7 @@ public class RecipeSharedStateCacheAction
     super(parent);
 
     List<CacheTableItem> cacheList = recipe.objects(SharedStateCacheData.class)
-        .map(o -> new CacheTableItem(o)).collect(Collectors.toList());
+        .map(CacheTableItem::new).collect(Collectors.toList());
 
     try {
       dataSource.put(cacheList, this.getParentAction().getName(), STORE_KEY_CACHELIST);
@@ -98,19 +98,19 @@ public class RecipeSharedStateCacheAction
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getSharedStateCache();
 
-    StatisticsItem [] result = new StatisticsItem [] {
-      new StatisticsItem(
-          "Cached",
-          (int) (evaluator.getRatio() * 100),
-          (int) evaluator.getNumerator(),
-          "valid-good"
-      ),
-      new StatisticsItem(
-          "Uncached",
-          (int) ((1 - evaluator.getRatio()) * 100),
-          (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-          "invalid"
-      )
+    StatisticsItem[] result = new StatisticsItem[]{
+        new StatisticsItem(
+            "Cached",
+            (int) (evaluator.getRatio() * 100),
+            (int) evaluator.getNumerator(),
+            "valid-good"
+        ),
+        new StatisticsItem(
+            "Uncached",
+            (int) ((1 - evaluator.getRatio()) * 100),
+            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
+            "invalid"
+        )
     };
 
     return JSONArray.fromObject(result);
@@ -124,7 +124,7 @@ public class RecipeSharedStateCacheAction
    * @return cache availability list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeCaches(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
+  public JSONObject getRecipeCaches(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
     List<CacheTableItem> cacheList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CACHELIST);
 

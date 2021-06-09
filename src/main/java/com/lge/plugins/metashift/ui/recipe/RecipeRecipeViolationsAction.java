@@ -51,10 +51,10 @@ public class RecipeRecipeViolationsAction extends RecipeActionChild {
   static final String STORE_KEY_FILERECIPEVIOLATIONSTAT = "FileRecipeViolationStat";
 
   // statistics data
-  private long majorCount;
-  private long minorCount;
-  private long infoCount;
-  
+  private final long majorCount;
+  private final long minorCount;
+  private final long infoCount;
+
   /**
    * constructor.
    *
@@ -133,7 +133,7 @@ public class RecipeRecipeViolationsAction extends RecipeActionChild {
   public String getUrlName() {
     return "recipe_violations";
   }
-  
+
   @Override
   public int getScale() {
     return (int) (this.getParentAction().getMetrics().getRecipeViolations().getRatio() * 100);
@@ -143,30 +143,30 @@ public class RecipeRecipeViolationsAction extends RecipeActionChild {
   public JSONArray getStatistics() {
     long allCount = majorCount + minorCount + infoCount;
 
-    StatisticsItem [] result = new StatisticsItem [] {
-      new StatisticsItem(
-          "Major",
-          allCount > 0 ? (int) majorCount * 100 / allCount : 0,
-          (int) majorCount,
-          "major"
-      ),
-      new StatisticsItem(
-          "Minor",
-          allCount > 0 ? (int) minorCount * 100 / allCount : 0,
-          (int) minorCount,
-          "minor"
-      ),
-      new StatisticsItem(
-          "Info",
-          allCount > 0 ? (int) infoCount * 100 / allCount : 0,
-          (int) infoCount,
-          "informational"
-      )
+    StatisticsItem[] result = new StatisticsItem[]{
+        new StatisticsItem(
+            "Major",
+            allCount > 0 ? majorCount * 100 / allCount : 0,
+            majorCount,
+            "major"
+        ),
+        new StatisticsItem(
+            "Minor",
+            allCount > 0 ? minorCount * 100 / allCount : 0,
+            minorCount,
+            "minor"
+        ),
+        new StatisticsItem(
+            "Info",
+            allCount > 0 ? infoCount * 100 / allCount : 0,
+            infoCount,
+            "informational"
+        )
     };
 
     return JSONArray.fromObject(result);
   }
-  
+
   /**
    * return paginated recipe violation list.
    *
@@ -175,7 +175,7 @@ public class RecipeRecipeViolationsAction extends RecipeActionChild {
    * @return recipe violation list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo [] sortInfos)
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo[] sortInfos)
       throws IOException {
     List<FileViolationTableItem> dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILERECIPEVIOLATIONSTAT);

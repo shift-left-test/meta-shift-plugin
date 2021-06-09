@@ -27,11 +27,12 @@ package com.lge.plugins.metashift.ui.models;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * Frontend Table sorting infomation class.
+ * Frontend Table sorting information class.
  */
 public class TableSortInfo {
-  private String dir;
-  private String field;
+
+  private final String dir;
+  private final String field;
 
   @DataBoundConstructor
   public TableSortInfo(String dir, String field) {
@@ -40,10 +41,10 @@ public class TableSortInfo {
   }
 
   public String getDir() {
-    return this.dir;
+    return dir;
   }
 
   public String getField() {
-    return this.field;
+    return field;
   }
 }

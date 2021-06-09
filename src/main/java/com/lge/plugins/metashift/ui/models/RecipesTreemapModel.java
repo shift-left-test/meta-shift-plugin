@@ -36,10 +36,11 @@ public class RecipesTreemapModel {
    * treemap data item.
    */
   public static class TreemapData {
-    private int value;
-    private int quality;
-    private String name;
-    private String path;
+
+    private final int value;
+    private final int quality;
+    private final String name;
+    private final String path;
 
     /**
      * constructor.
@@ -51,20 +52,20 @@ public class RecipesTreemapModel {
       this.quality = quality;
     }
 
-    public int [] getValue() {
-      return new int [] { this.value, this.quality };
+    public int[] getValue() {
+      return new int[]{value, quality};
     }
 
     public String getName() {
-      return this.name;
+      return name;
     }
 
     public String getPath() {
-      return this.path;
+      return path;
     }
   }
 
-  private List<TreemapData> series;
+  private final List<TreemapData> series;
 
   /**
    * constructor.
@@ -78,10 +79,10 @@ public class RecipesTreemapModel {
   }
 
   public void add(String name, String path, int value, int quality) {
-    this.series.add(new TreemapData(name, path, value, quality));
+    series.add(new TreemapData(name, path, value, quality));
   }
 
   public List<TreemapData> getSeries() {
-    return this.series;
+    return series;
   }
 }

@@ -64,7 +64,7 @@ public class RecipePremirrorCacheAction
     super(parent);
 
     List<CacheTableItem> cacheList = recipe.objects(PremirrorCacheData.class)
-        .map(o -> new CacheTableItem(o)).collect(Collectors.toList());
+        .map(CacheTableItem::new).collect(Collectors.toList());
 
     try {
       dataSource.put(cacheList, this.getParentAction().getName(), STORE_KEY_CACHELIST);
@@ -98,24 +98,24 @@ public class RecipePremirrorCacheAction
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getPremirrorCache();
 
-    StatisticsItem [] result = new StatisticsItem [] {
-      new StatisticsItem(
-          "Cached",
-          (int) (evaluator.getRatio() * 100),
-          (int) evaluator.getNumerator(),
-          "valid-good"
-      ),
-      new StatisticsItem(
-          "Uncached",
-          (int) ((1 - evaluator.getRatio()) * 100),
-          (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-          "invalid"
-      )
+    StatisticsItem[] result = new StatisticsItem[]{
+        new StatisticsItem(
+            "Cached",
+            (int) (evaluator.getRatio() * 100),
+            (int) evaluator.getNumerator(),
+            "valid-good"
+        ),
+        new StatisticsItem(
+            "Uncached",
+            (int) ((1 - evaluator.getRatio()) * 100),
+            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
+            "invalid"
+        )
     };
 
     return JSONArray.fromObject(result);
   }
-  
+
   /**
    * return paginated cache availability list.
    *
@@ -124,7 +124,7 @@ public class RecipePremirrorCacheAction
    * @return cache availability list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeCaches(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
+  public JSONObject getRecipeCaches(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
     List<CacheTableItem> cacheList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CACHELIST);
 
@@ -132,7 +132,7 @@ public class RecipePremirrorCacheAction
 
       cacheList.sort(CacheTableItem.createComparator(sortInfos));
     }
-    
+
     return TabulatorUtils.getPage(pageIndex, pageSize, cacheList);
   }
 }

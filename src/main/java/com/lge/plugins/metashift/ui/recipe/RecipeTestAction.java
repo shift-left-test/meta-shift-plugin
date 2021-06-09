@@ -46,12 +46,12 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class RecipeTestAction extends RecipeActionChild {
 
   static final String STORE_KEY_TESTLIST = "TestList";
-  
+
   // statistics data
-  private long passedCount;
-  private long failedCount;
-  private long errorCount;
-  private long skippedCount;
+  private final long passedCount;
+  private final long failedCount;
+  private final long errorCount;
+  private final long skippedCount;
 
   /**
    * constructor.
@@ -68,8 +68,8 @@ public class RecipeTestAction extends RecipeActionChild {
     super(parent);
 
     List<TestTableItem> testList = recipe.objects(TestData.class)
-        .map(o -> new TestTableItem(o)).collect(Collectors.toList());
-    
+        .map(TestTableItem::new).collect(Collectors.toList());
+
     passedCount = testList.stream().filter(o -> o.getStatus().equals("PASSED")).count();
     failedCount = testList.stream().filter(o -> o.getStatus().equals("FAILED")).count();
     errorCount = testList.stream().filter(o -> o.getStatus().equals("ERROR")).count();
@@ -106,32 +106,32 @@ public class RecipeTestAction extends RecipeActionChild {
   @Override
   public JSONArray getStatistics() {
     long allCount = passedCount + failedCount + errorCount + skippedCount;
-    
-    StatisticsItem [] result = new StatisticsItem [] {
-      new StatisticsItem(
-          "Passed",
-          allCount > 0 ? (int) passedCount * 100 / allCount : 0,
-          (int) passedCount,
-          "valid-good"
-      ),
-      new StatisticsItem(
-          "Failed",
-          allCount > 0 ? (int) failedCount * 100 / allCount : 0,
-          (int) failedCount,
-          "valid-bad"
-      ),
-      new StatisticsItem(
-          "Error",
-          allCount > 0 ? (int) errorCount * 100 / allCount : 0,
-          (int) errorCount,
-          "valid-error"
-      ),
-      new StatisticsItem(
-          "Skipped",
-          allCount > 0 ? (int) skippedCount * 100 / allCount : 0,
-          (int) skippedCount,
-          "invalid"
-      )
+
+    StatisticsItem[] result = new StatisticsItem[]{
+        new StatisticsItem(
+            "Passed",
+            allCount > 0 ? passedCount * 100 / allCount : 0,
+            passedCount,
+            "valid-good"
+        ),
+        new StatisticsItem(
+            "Failed",
+            allCount > 0 ? failedCount * 100 / allCount : 0,
+            failedCount,
+            "valid-bad"
+        ),
+        new StatisticsItem(
+            "Error",
+            allCount > 0 ? errorCount * 100 / allCount : 0,
+            errorCount,
+            "valid-error"
+        ),
+        new StatisticsItem(
+            "Skipped",
+            allCount > 0 ? skippedCount * 100 / allCount : 0,
+            skippedCount,
+            "invalid"
+        )
     };
 
     return JSONArray.fromObject(result);
@@ -145,7 +145,7 @@ public class RecipeTestAction extends RecipeActionChild {
    * @return test list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeTests(int pageIndex, int pageSize, TableSortInfo [] sortInfos) {
+  public JSONObject getRecipeTests(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
     List<TestTableItem> testDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_TESTLIST);
 

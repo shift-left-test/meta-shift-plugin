@@ -57,7 +57,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
   private final String reportRoot;
   private final CriteriaWithOptions localCriteria;
-  
+
   /**
    * Default constructor.
    */

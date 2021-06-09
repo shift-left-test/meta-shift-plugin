@@ -26,14 +26,27 @@ package com.lge.plugins.metashift.ui.models;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * coverage for each file.
  */
 public class FileCoverageTableItem implements Serializable {
+
+  private static final long serialVersionUID = -7175754091249866685L;
+  private static final Map<String, Comparator<FileCoverageTableItem>> comparators;
   private final String file;
-  private double lineCoverage;
-  private double branchCoverage;
+  private final double lineCoverage;
+  private final double branchCoverage;
+
+  static {
+    comparators = new HashMap<>();
+    comparators.put("file", Comparator.comparing(FileCoverageTableItem::getFile));
+    comparators.put("lineCoverage", Comparator.comparing(FileCoverageTableItem::getLineCoverage));
+    comparators.put("branchCoverage",
+        Comparator.comparing(FileCoverageTableItem::getBranchCoverage));
+  }
 
   /**
    * constructor.
@@ -45,40 +58,25 @@ public class FileCoverageTableItem implements Serializable {
   }
 
   public String getFile() {
-    return this.file;
+    return file;
   }
 
   public double getLineCoverage() {
-    return this.lineCoverage;
+    return lineCoverage;
   }
 
   public double getBranchCoverage() {
-    return this.branchCoverage;
+    return branchCoverage;
   }
 
   private static Comparator<FileCoverageTableItem> createComparator(TableSortInfo sortInfo) {
-    Comparator<FileCoverageTableItem> comparator;
-
-    switch (sortInfo.getField()) {
-      case "file":
-        comparator = Comparator.comparing(FileCoverageTableItem::getFile);
-        break;
-      case "lineCoverage":
-        comparator = Comparator.comparing(FileCoverageTableItem::getLineCoverage);
-        break;
-      case "branchCoverage":
-        comparator = Comparator.comparing(FileCoverageTableItem::getBranchCoverage);
-        break;
-      default:
-        throw new IllegalArgumentException(
-            String.format("unknown field for coverage table : %s", sortInfo.getField()));
+    String field = sortInfo.getField();
+    if (!comparators.containsKey(field)) {
+      String message = String.format("unknown field for coverage table : %s", field);
+      throw new IllegalArgumentException(message);
     }
-
-    if (sortInfo.getDir().equals("desc")) {
-      comparator = comparator.reversed();
-    }
-
-    return comparator;
+    Comparator<FileCoverageTableItem> comparator = comparators.get(field);
+    return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
 
   /**
@@ -87,13 +85,11 @@ public class FileCoverageTableItem implements Serializable {
    * @param sortInfos sort info
    * @return comparator
    */
-  public static Comparator<FileCoverageTableItem> createComparator(TableSortInfo [] sortInfos) {
+  public static Comparator<FileCoverageTableItem> createComparator(TableSortInfo[] sortInfos) {
     Comparator<FileCoverageTableItem> comparator = createComparator(sortInfos[0]);
-
     for (int i = 1; i < sortInfos.length; i++) {
       comparator = comparator.thenComparing(createComparator(sortInfos[i]));
     }
-
     return comparator;
   }
 }
