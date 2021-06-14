@@ -167,6 +167,21 @@ public class RecipeTest {
     utils.writeLines(sb, report, "checkrecipe", "recipe_violations.json");
   }
 
+  private void prepareRecipeSizeFile(File report, File source) {
+    String absolutePath = source.getAbsolutePath().replace('\\', '/');
+    StringBuilder sb = new StringBuilder();
+    sb
+        .append("{")
+        .append("  'lines_of_code': [")
+        .append("    {")
+        .append(String.format("      'file': '%s/test.bb', ", absolutePath))
+        .append("      'code_lines': 3")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(sb, report, "checkrecipe", "files.json");
+  }
+
   @Test
   public void testInitialState() {
     assertEquals("cmake-project-1.0.0-r0", origin.getRecipe());
@@ -279,10 +294,11 @@ public class RecipeTest {
     prepareSageReport(report, source);
     prepareCoverageFile(report);
     prepareMutationTestFile(report);
+    prepareRecipeSizeFile(report, source);
     prepareRecipeViolationFile(report, source);
 
     Recipe recipe = new Recipe(report);
-    assertEquals(5, recipe.objects(Data.class).count());
+    assertEquals(6, recipe.objects(Data.class).count());
     assertTrue(recipe.isAvailable(CodeViolationData.class));
     assertTrue(recipe.isAvailable(ComplexityData.class));
     assertTrue(recipe.isAvailable(CoverageData.class));
@@ -295,7 +311,7 @@ public class RecipeTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     PrintStream logger = Mockito.mock(PrintStream.class);
     new Recipe(directory, logger);
-    Mockito.verify(logger, Mockito.times(11))
+    Mockito.verify(logger, Mockito.times(12))
         .printf(Mockito.startsWith("[Recipe] B-1.0.0-r0: processing"), Mockito.anyString());
   }
 }

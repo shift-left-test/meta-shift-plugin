@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift.models.factory;
 
-import com.lge.plugins.metashift.models.CodeSizeData;
+import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import java.io.File;
 import java.io.IOException;
@@ -36,11 +36,11 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 
 /**
- * A factory class for the CodeSizeData objects.
+ * A factory class for RecipeSizeData objects.
  *
  * @author Sung Gon Kim
  */
-public class CodeSizeFactory {
+public class RecipeSizeFactory {
 
   /**
    * Create a set of objects by parsing a report file from the given path.
@@ -50,19 +50,17 @@ public class CodeSizeFactory {
    * @throws IllegalArgumentException if failed to parse report files
    * @throws IOException              if failed to locate report files
    */
-  public static List<CodeSizeData> create(final File path)
+  public static List<RecipeSizeData> create(final File path)
       throws IllegalArgumentException, IOException {
-    List<CodeSizeData> list = new ArrayList<>();
+    List<RecipeSizeData> list = new ArrayList<>();
     String recipe = path.getName();
-    File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
+    File report = FileUtils.getFile(path, "checkrecipe", "files.json");
     try {
       JSONObject json = JsonUtils.createObject(report);
-      for (Object o : json.getJSONArray("size")) {
-        list.add(new CodeSizeData(recipe,
+      for (Object o : json.getJSONArray("lines_of_code")) {
+        list.add(new RecipeSizeData(recipe,
             ((JSONObject) o).getString("file"),
-            ((JSONObject) o).getLong("total_lines"),
-            ((JSONObject) o).getLong("functions"),
-            ((JSONObject) o).getLong("classes")
+            ((JSONObject) o).getLong("code_lines")
         ));
       }
     } catch (JSONException e) {

@@ -32,6 +32,7 @@ import com.lge.plugins.metashift.models.factory.CoverageFactory;
 import com.lge.plugins.metashift.models.factory.DuplicationFactory;
 import com.lge.plugins.metashift.models.factory.MutationTestFactory;
 import com.lge.plugins.metashift.models.factory.PremirrorCacheFactory;
+import com.lge.plugins.metashift.models.factory.RecipeSizeFactory;
 import com.lge.plugins.metashift.models.factory.RecipeViolationFactory;
 import com.lge.plugins.metashift.models.factory.SharedStateCacheFactory;
 import com.lge.plugins.metashift.models.factory.TestFactory;
@@ -140,6 +141,8 @@ public final class Recipe extends Data<Recipe> implements Streamable {
     addAll(DuplicationData.class, DuplicationFactory::create, path);
     logger.printf(format, "mutation test");
     addAll(MutationTestData.class, MutationTestFactory::create, path);
+    logger.printf(format, "recipe size");
+    addAll(RecipeSizeData.class, RecipeSizeFactory::create, path);
     logger.printf(format, "recipe violation");
     addAll(RecipeViolationData.class, RecipeViolationFactory::create, path);
     logger.printf(format, "test");

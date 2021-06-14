@@ -47,34 +47,6 @@ import org.xml.sax.SAXException;
 public class MutationTestFactory {
 
   /**
-   * Parse the tag to create a data object.
-   *
-   * @param recipe name
-   * @param tag    to parse
-   * @return an object
-   */
-  private static MutationTestData createInstance(final String recipe, final Tag tag) {
-    String detected = tag.getAttribute("detected");
-    String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
-    String mutatedClass = tag.getChildNodes("mutatedClass").first().getTextContent();
-    String mutatedMethod = tag.getChildNodes("mutatedMethod").first().getTextContent();
-    long line = Long.parseLong(tag.getChildNodes("lineNumber").first().getTextContent());
-    String mutator = tag.getChildNodes("mutator").first().getTextContent();
-    String killingTest = tag.getChildNodes("killingTest").first().getTextContent();
-    switch (detected.toLowerCase()) {
-      case "true":
-        return new KilledMutationTestData(recipe, file, mutatedClass, mutatedMethod, line, mutator,
-            killingTest);
-      case "false":
-        return new SurvivedMutationTestData(recipe, file, mutatedClass, mutatedMethod, line,
-            mutator, killingTest);
-      default:
-        return new SkippedMutationTestData(recipe, file, mutatedClass, mutatedMethod, line, mutator,
-            killingTest);
-    }
-  }
-
-  /**
    * Create a set of objects by parsing a report file from the given path.
    *
    * @param path to the report directory
@@ -100,5 +72,33 @@ public class MutationTestFactory {
     }
     Collections.sort(list);
     return list;
+  }
+
+  /**
+   * Parse the tag to create a data object.
+   *
+   * @param recipe name
+   * @param tag    to parse
+   * @return an object
+   */
+  private static MutationTestData createInstance(final String recipe, final Tag tag) {
+    String detected = tag.getAttribute("detected");
+    String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
+    String mutatedClass = tag.getChildNodes("mutatedClass").first().getTextContent();
+    String mutatedMethod = tag.getChildNodes("mutatedMethod").first().getTextContent();
+    long line = Long.parseLong(tag.getChildNodes("lineNumber").first().getTextContent());
+    String mutator = tag.getChildNodes("mutator").first().getTextContent();
+    String killingTest = tag.getChildNodes("killingTest").first().getTextContent();
+    switch (detected.toLowerCase()) {
+      case "true":
+        return new KilledMutationTestData(recipe, file, mutatedClass, mutatedMethod, line, mutator,
+            killingTest);
+      case "false":
+        return new SurvivedMutationTestData(recipe, file, mutatedClass, mutatedMethod, line,
+            mutator, killingTest);
+      default:
+        return new SkippedMutationTestData(recipe, file, mutatedClass, mutatedMethod, line, mutator,
+            killingTest);
+    }
   }
 }
