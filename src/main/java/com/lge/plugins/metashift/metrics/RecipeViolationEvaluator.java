@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.metrics;
 import com.lge.plugins.metashift.models.InfoRecipeViolationData;
 import com.lge.plugins.metashift.models.MajorRecipeViolationData;
 import com.lge.plugins.metashift.models.MinorRecipeViolationData;
+import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.models.Streamable;
 import java.util.EnumMap;
@@ -118,8 +119,8 @@ public final class RecipeViolationEvaluator extends NegativeEvaluator<RecipeViol
         c.objects(InfoRecipeViolationData.class).count()
     ));
 
-    setAvailable(c.isAvailable(RecipeViolationData.class));
-    setDenominator(getMajor().getDenominator());
-    setNumerator(getMajor().getNumerator());
+    setAvailable(c.isAvailable(RecipeSizeData.class) && c.isAvailable(RecipeViolationData.class));
+    setDenominator(c.objects(RecipeSizeData.class).mapToLong(RecipeSizeData::getLines).sum());
+    setNumerator(getMajor().getNumerator() + getMinor().getNumerator() + getInfo().getNumerator());
   }
 }

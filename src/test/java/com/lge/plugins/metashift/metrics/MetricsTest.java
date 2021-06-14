@@ -36,7 +36,6 @@ import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.InfoCodeViolationData;
-import com.lge.plugins.metashift.models.InfoRecipeViolationData;
 import com.lge.plugins.metashift.models.KilledMutationTestData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.MajorRecipeViolationData;
@@ -45,6 +44,7 @@ import com.lge.plugins.metashift.models.MinorRecipeViolationData;
 import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.models.SkippedMutationTestData;
@@ -284,23 +284,23 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedRecipeViolationData() {
+    recipe.add(new RecipeSizeData("A-1.0.0-r0", "a.file", 5));
     recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
     recipe.add(new MinorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "minor", "minor", "minor"));
     recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "b.file", 1, "major", "major", "major"));
     metrics.parse(recipes);
     assertEvaluator(metrics.getRecipeViolations(), true, false);
-    assertCounter(metrics.getRecipeViolations(), 3, 2, 0.6);
+    assertCounter(metrics.getRecipeViolations(), 5, 3, 0.6);
   }
 
   @Test
   public void testParseWithQualifiedRecipeViolationData() {
+    recipe.add(new RecipeSizeData("A-1.0.0-r0", "a.file", 5));
     recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
     recipe.add(new MinorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "minor", "minor", "minor"));
-    recipe.add(new InfoRecipeViolationData("A-1.0.0-r0", "a.file", 1, "info", "info", "info"));
-    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "b.file", 1, "major", "major", "major"));
     metrics.parse(recipes);
     assertEvaluator(metrics.getRecipeViolations(), true, true);
-    assertCounter(metrics.getRecipeViolations(), 4, 2, 0.5);
+    assertCounter(metrics.getRecipeViolations(), 5, 2, 0.4);
   }
 
   @Test
@@ -434,8 +434,12 @@ public class MetricsTest {
   @Test
   public void testParseRecipeWithEmptyRecipeViolationData() throws IOException {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder = new StringBuilder();
     builder.append("{ 'issues': [ ] }");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    builder = new StringBuilder();
+    builder.append("{ 'lines_of_code' : [ ] }");
+    utils.writeLines(builder, directory, "checkrecipe", "files.json");
     recipe = new Recipe(directory);
     metrics.parse(recipe);
     assertEvaluator(metrics.getRecipeViolations(), true, true);

@@ -40,6 +40,7 @@ import com.lge.plugins.metashift.models.MajorRecipeViolationData;
 import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.models.SkippedMutationTestData;
@@ -177,11 +178,13 @@ public class QualifiedRecipeCounterTest {
 
   @Test
   public void testGetRecipeViolations() {
+    recipe1.add(new RecipeSizeData("A-1.0.0-r0", "a.file", 2));
     recipe1.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "info", "info", "info"));
+    recipe2.add(new RecipeSizeData("B-1.0.0-r0", "a.file", 2));
     recipe2.add(new InfoRecipeViolationData("B-1.0.0-r0", "a.file", 1, "info", "info", "info"));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
-    assertValues(counter.getRecipeViolations(), 2, 1);
+    assertValues(counter.getRecipeViolations(), 2, 2);
   }
 
   @Test
@@ -203,6 +206,7 @@ public class QualifiedRecipeCounterTest {
     recipe2.add(new InfoCodeViolationData("B-1.0.0-r0", "a.file", 1, 2, "r", "m", "d", "E", "t"));
     recipe2.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 1));
     recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 5, 0));
+    recipe2.add(new RecipeSizeData("B-1.0.0-r0", "a.file", 5));
     recipe2.add(new InfoRecipeViolationData("B-1.0.0-r0", "a.file", 1, "info", "info", "info"));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
