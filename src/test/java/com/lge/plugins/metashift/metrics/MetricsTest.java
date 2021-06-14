@@ -167,6 +167,7 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedCodeViolationData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 1, 1, 1));
     recipe.add(
         new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     metrics.parse(recipes);
@@ -176,6 +177,7 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedCodeViolationData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(
         new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe.add(
@@ -184,7 +186,7 @@ public class MetricsTest {
         new InfoCodeViolationData("A-1.0.0-r0", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     metrics.parse(recipes);
     assertEvaluator(metrics.getCodeViolations(), true, true);
-    assertCounter(metrics.getCodeViolations(), 3, 1, 0.3);
+    assertCounter(metrics.getCodeViolations(), 10, 3, 0.3);
   }
 
   @Test

@@ -124,11 +124,13 @@ public class QualifiedRecipeCounterTest {
 
   @Test
   public void testGetCodeViolations() {
+    recipe1.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 1, 1));
     recipe1.add(new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 1, "r", "m", "d", "E", "t"));
+    recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 3, 1, 1));
     recipe2.add(new InfoCodeViolationData("B-1.0.0-r0", "a.file", 1, 2, "r", "m", "d", "E", "t"));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
-    assertValues(counter.getCodeViolations(), 2, 1);
+    assertValues(counter.getCodeViolations(), 2, 2);
   }
 
   @Test
@@ -203,6 +205,7 @@ public class QualifiedRecipeCounterTest {
     recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     recipe1.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe1.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 5, 1, 1));
     recipe2.add(new InfoCodeViolationData("B-1.0.0-r0", "a.file", 1, 2, "r", "m", "d", "E", "t"));
     recipe2.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 1));
     recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 5, 0));

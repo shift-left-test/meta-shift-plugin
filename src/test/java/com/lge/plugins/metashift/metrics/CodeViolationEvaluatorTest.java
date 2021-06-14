@@ -29,6 +29,7 @@ import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.InfoCodeViolationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.MinorCodeViolationData;
@@ -92,20 +93,37 @@ public class CodeViolationEvaluatorTest {
   }
 
   @Test
-  public void testParseRecipeWithUnqualifiedData() {
+  public void testParseRecipeWithNoCodeSizeData() {
     recipe.add(
         new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
 
-    assertEvaluator(evaluator, true, false);
-    assertCounter(evaluator, 1, 1, 1.0);
+    assertEvaluator(evaluator, false, false);
+    assertCounter(evaluator, 0, 1, 0.0);
     assertCounter(evaluator.getMajor(), 1, 1, 1.0);
     assertCounter(evaluator.getMinor(), 1, 0, 0.0);
     assertCounter(evaluator.getInfo(), 1, 0, 0.0);
   }
 
   @Test
+  public void testParseRecipeWithUnqualifiedData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 1, 1));
+    recipe.add(
+        new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MinorCodeViolationData("A-1.0.0-r0", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    evaluator.parse(recipe);
+
+    assertEvaluator(evaluator, true, false);
+    assertCounter(evaluator, 3, 2, 0.6);
+    assertCounter(evaluator.getMajor(), 2, 1, 0.5);
+    assertCounter(evaluator.getMinor(), 2, 1, 0.5);
+    assertCounter(evaluator.getInfo(), 2, 0, 0.0);
+  }
+
+  @Test
   public void testParseRecipeWithQualifiedData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(
         new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe.add(
@@ -115,7 +133,7 @@ public class CodeViolationEvaluatorTest {
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
-    assertCounter(evaluator, 3, 1, 0.3);
+    assertCounter(evaluator, 10, 3, 0.3);
     assertCounter(evaluator.getMajor(), 3, 1, 0.3);
     assertCounter(evaluator.getMinor(), 3, 1, 0.3);
     assertCounter(evaluator.getInfo(), 3, 1, 0.3);
@@ -123,10 +141,14 @@ public class CodeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 2, 1, 1));
     recipe.add(
         new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    assertEquals(1, evaluator.parse(recipe).getDenominator());
+    assertEquals(2, evaluator.parse(recipe).getDenominator());
+    assertEquals(1, evaluator.parse(recipe).getNumerator());
+    recipe = new Recipe("A-1.0.0-r0");
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getDenominator());
+    assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getNumerator());
   }
 
   @Test
@@ -143,10 +165,12 @@ public class CodeViolationEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 2, 1, 1));
     recipe.add(
         new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "a.file", 3, 1, 1));
     recipe.add(
         new MajorCodeViolationData("B-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe.add(
@@ -155,7 +179,7 @@ public class CodeViolationEvaluatorTest {
     evaluator.parse(recipes);
 
     assertEvaluator(evaluator, true, false);
-    assertCounter(evaluator, 3, 2, 0.6);
+    assertCounter(evaluator, 5, 3, 0.6);
     assertCounter(evaluator.getMajor(), 3, 2, 0.6);
     assertCounter(evaluator.getMinor(), 3, 1, 0.3);
     assertCounter(evaluator.getInfo(), 3, 0, 0.0);
@@ -164,12 +188,14 @@ public class CodeViolationEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 5, 1, 1));
     recipe.add(
         new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe.add(
         new InfoCodeViolationData("B-1.0.0-r0", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "a.file", 5, 1, 1));
     recipe.add(
         new MajorCodeViolationData("B-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     recipe.add(
@@ -178,7 +204,7 @@ public class CodeViolationEvaluatorTest {
     evaluator.parse(recipes);
 
     assertEvaluator(evaluator, true, true);
-    assertCounter(evaluator, 4, 2, 0.5);
+    assertCounter(evaluator, 10, 4, 0.4);
     assertCounter(evaluator.getMajor(), 4, 2, 0.5);
     assertCounter(evaluator.getMinor(), 4, 1, 0.25);
     assertCounter(evaluator.getInfo(), 4, 1, 0.25);
@@ -186,9 +212,13 @@ public class CodeViolationEvaluatorTest {
 
   @Test
   public void testParseRecipesResetValues() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 2, 1, 1));
     recipe.add(
         new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
-    assertEquals(1, evaluator.parse(recipes).getDenominator());
-    assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
+    assertEquals(2, evaluator.parse(recipes).getDenominator());
+    assertEquals(1, evaluator.parse(recipes).getNumerator());
+    recipes = new Recipes();
+    assertEquals(0, evaluator.parse(recipes).getDenominator());
+    assertEquals(0, evaluator.parse(recipes).getNumerator());
   }
 }

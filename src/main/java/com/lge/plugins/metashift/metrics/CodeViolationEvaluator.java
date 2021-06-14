@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.models.InfoCodeViolationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
@@ -118,8 +119,8 @@ public final class CodeViolationEvaluator extends NegativeEvaluator<CodeViolatio
         c.objects(InfoCodeViolationData.class).count()
     ));
 
-    setAvailable(c.isAvailable(CodeViolationData.class));
-    setDenominator(getMajor().getDenominator());
-    setNumerator(getMajor().getNumerator());
+    setAvailable(c.isAvailable(CodeSizeData.class) && c.isAvailable(CodeViolationData.class));
+    setDenominator(c.objects(CodeSizeData.class).mapToLong(CodeSizeData::getLines).sum());
+    setNumerator(getMajor().getNumerator() + getMinor().getNumerator() + getInfo().getNumerator());
   }
 }
