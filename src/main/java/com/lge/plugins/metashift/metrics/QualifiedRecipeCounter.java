@@ -90,6 +90,11 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
      * Test counter.
      */
     TEST,
+
+    /**
+     * Tested recipe counter.
+     */
+    TESTED_RECIPES,
   }
 
   /**
@@ -148,6 +153,7 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
     collection.put(Type.RECIPE_VIOLATIONS,
         countBy(recipes, new RecipeViolationEvaluator(criteria)));
     collection.put(Type.TEST, countBy(recipes, new TestEvaluator(criteria)));
+    collection.put(Type.TESTED_RECIPES, new Counter(recipes.size(), getTest().getDenominator()));
     return this;
   }
 
@@ -199,5 +205,14 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
   @Override
   public Counter getTest() {
     return collection.get(Type.TEST);
+  }
+
+  /**
+   * Returns the tested recipe counter object.
+   *
+   * @return counter object
+   */
+  public Counter getTestedRecipes() {
+    return collection.get(Type.TESTED_RECIPES);
   }
 }

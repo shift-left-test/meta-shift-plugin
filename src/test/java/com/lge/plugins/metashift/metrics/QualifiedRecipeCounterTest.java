@@ -102,6 +102,7 @@ public class QualifiedRecipeCounterTest {
     assertValues(counter.getMutationTest(), 0, 0);
     assertValues(counter.getRecipeViolations(), 0, 0);
     assertValues(counter.getTest(), 0, 0);
+    assertValues(counter.getTestedRecipes(), 0, 0);
   }
 
   @Test
@@ -199,6 +200,14 @@ public class QualifiedRecipeCounterTest {
   }
 
   @Test
+  public void testGetTestedRecipes() {
+    recipe1.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    recipe2.add(new FailedTestData("B-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    counter.parse(recipes);
+    assertValues(counter.getTestedRecipes(), 3, 2);
+  }
+
+  @Test
   public void testWithMultipleData() {
     recipe1.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
     recipe1.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
@@ -223,5 +232,6 @@ public class QualifiedRecipeCounterTest {
     assertValues(counter.getMutationTest(), 1, 1);
     assertValues(counter.getRecipeViolations(), 1, 1);
     assertValues(counter.getTest(), 1, 1);
+    assertValues(counter.getTestedRecipes(), 3, 1);
   }
 }
