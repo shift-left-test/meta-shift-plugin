@@ -141,5 +141,8 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
     collection.put(RecipeViolationEvaluator.class,
         new RecipeViolationEvaluator(criteria).parse(c));
     collection.put(TestEvaluator.class, new TestEvaluator(criteria).parse(c));
+
+    setDenominator(collection.values().stream().filter(Evaluator::isAvailable).count());
+    setNumerator(collection.values().stream().filter(Evaluator::isQualified).count());
   }
 }

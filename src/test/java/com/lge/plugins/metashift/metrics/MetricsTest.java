@@ -109,6 +109,7 @@ public class MetricsTest {
     assertEvaluator(metrics.getMutationTest(), false, false);
     assertEvaluator(metrics.getRecipeViolations(), false, false);
     assertEvaluator(metrics.getTest(), false, false);
+    assertCounter(metrics, 0, 0, 0.0);
   }
 
   @Test
@@ -125,6 +126,7 @@ public class MetricsTest {
     assertEvaluator(metrics.getMutationTest(), false, false);
     assertEvaluator(metrics.getRecipeViolations(), false, false);
     assertEvaluator(metrics.getTest(), false, false);
+    assertCounter(metrics, 0, 0, 0.0);
   }
 
   @Test
@@ -337,6 +339,16 @@ public class MetricsTest {
     metrics.parse(recipes);
     assertEvaluator(metrics.getTest(), true, true);
     assertCounter(metrics.getTest(), 4, 2, 0.5);
+  }
+
+  @Test
+  public void testGetRatioWithMultipleData() {
+    recipe.add(new SkippedMutationTestData("A-1.0.0-r0", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new RecipeSizeData("A-1.0.0-r0", "a.file", 5));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    metrics.parse(recipe);
+    assertCounter(metrics, 3, 2, 0.6);
   }
 
   @Test
