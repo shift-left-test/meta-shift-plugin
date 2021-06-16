@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image "cart.lge.com/swte/yocto:18.04"
+            image "cart.lge.com/swte/jenkins-dev:latest"
         }
     }
     stages {

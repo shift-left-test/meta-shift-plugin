@@ -26,79 +26,15 @@ package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.Recipes;
 import java.util.DoubleSummaryStatistics;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Represents the group of statistics for each metric.
  *
  * @author Sung Gon Kim
  */
-public class MetricStatistics implements Queryable<DoubleSummaryStatistics> {
-
-  /**
-   * Represents the statistics types.
-   */
-  private enum Type {
-
-    /**
-     * Premirror cache type.
-     */
-    PREMIRROR_CACHE,
-
-    /**
-     * Shared state cache type.
-     */
-    SHARED_STATE_CACHE,
-
-    /**
-     * Code violation type.
-     */
-    CODE_VIOLATIONS,
-
-    /**
-     * Comment type.
-     */
-    COMMENTS,
-
-    /**
-     * Complexity type.
-     */
-    COMPLEXITY,
-
-    /**
-     * Coverage type.
-     */
-    COVERAGE,
-
-    /**
-     * Duplication type.
-     */
-    DUPLICATIONS,
-
-    /**
-     * Mutation test type.
-     */
-    MUTATION_TEST,
-
-    /**
-     * Recipe violation type.
-     */
-    RECIPE_VIOLATIONS,
-
-    /**
-     * Test type.
-     */
-    TEST,
-  }
-
-  /**
-   * Represents the counter objects.
-   */
-  private final Map<MetricStatistics.Type, DoubleSummaryStatistics> collection;
+public class MetricStatistics extends GroupParser<DoubleSummaryStatistics> {
 
   /**
    * Represents the criteria object.
@@ -111,133 +47,68 @@ public class MetricStatistics implements Queryable<DoubleSummaryStatistics> {
    * @param criteria for evaluation
    */
   public MetricStatistics(final Criteria criteria) {
-    collection = new EnumMap<>(MetricStatistics.Type.class);
-    Stream.of(MetricStatistics.Type.values())
-        .forEach(type -> collection.put(type, new DoubleSummaryStatistics()));
+    super(new DoubleSummaryStatistics());
     this.criteria = criteria;
   }
 
-  /**
-   * Parses the given recipes to create metric statistics.
-   *
-   * @param recipes to parse
-   * @return self object
-   */
-  public MetricStatistics parse(final Recipes recipes) {
+  @Override
+  public void parse(final Recipes recipes) {
     List<Metrics> metrics = recipes.stream()
         .map(recipe -> new Metrics(criteria).parse(recipe))
         .collect(Collectors.toList());
-
-    collection.put(Type.PREMIRROR_CACHE,
-        metrics.stream()
-            .map(Metrics::getPremirrorCache)
-            .filter(Evaluator::isAvailable)
-            .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
-
-    collection.put(Type.SHARED_STATE_CACHE,
-        metrics.stream()
-            .map(Metrics::getSharedStateCache)
-            .filter(Evaluator::isAvailable)
-            .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
-
-    collection.put(Type.CODE_VIOLATIONS,
-        metrics.stream()
-            .map(Metrics::getCodeViolations)
-            .filter(Evaluator::isAvailable)
-            .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
-
-    collection.put(Type.COMMENTS,
-        metrics.stream()
-            .map(Metrics::getComments)
-            .filter(Evaluator::isAvailable)
-            .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
-
-    collection.put(Type.COMPLEXITY,
-        metrics.stream()
-            .map(Metrics::getComplexity)
-            .filter(Evaluator::isAvailable)
-            .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
-
-    collection.put(Type.COVERAGE,
-        metrics.stream()
-            .map(Metrics::getCoverage)
-            .filter(Evaluator::isAvailable)
-            .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
-
-    collection.put(Type.DUPLICATIONS,
-        metrics.stream()
-            .map(Metrics::getDuplications)
-            .filter(Evaluator::isAvailable)
-            .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
-
-    collection.put(Type.MUTATION_TEST,
-        metrics.stream()
-            .map(Metrics::getMutationTest)
-            .filter(Evaluator::isAvailable)
-            .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
-
-    collection.put(Type.RECIPE_VIOLATIONS,
-        metrics.stream()
-            .map(Metrics::getRecipeViolations)
-            .filter(Evaluator::isAvailable)
-            .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
-
-    collection.put(Type.TEST,
-        metrics.stream()
-            .map(Metrics::getTest)
-            .filter(Evaluator::isAvailable)
-            .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
-
-    return this;
+    parse(metrics);
   }
 
   @Override
-  public DoubleSummaryStatistics getPremirrorCache() {
-    return collection.get(Type.PREMIRROR_CACHE);
-  }
+  public void parse(final List<Metrics> metrics) {
+    setPremirrorCache(metrics.stream()
+        .map(Metrics::getPremirrorCache)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
 
-  @Override
-  public DoubleSummaryStatistics getSharedStateCache() {
-    return collection.get(Type.SHARED_STATE_CACHE);
-  }
+    setSharedStateCache(metrics.stream()
+        .map(Metrics::getSharedStateCache)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
 
-  @Override
-  public DoubleSummaryStatistics getCodeViolations() {
-    return collection.get(Type.CODE_VIOLATIONS);
-  }
+    setCodeViolations(metrics.stream()
+        .map(Metrics::getCodeViolations)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
 
-  @Override
-  public DoubleSummaryStatistics getComments() {
-    return collection.get(Type.COMMENTS);
-  }
+    setComments(metrics.stream()
+        .map(Metrics::getComments)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
 
-  @Override
-  public DoubleSummaryStatistics getComplexity() {
-    return collection.get(Type.COMPLEXITY);
-  }
+    setComplexity(metrics.stream()
+        .map(Metrics::getComplexity)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
 
-  @Override
-  public DoubleSummaryStatistics getCoverage() {
-    return collection.get(Type.COVERAGE);
-  }
+    setCoverage(metrics.stream()
+        .map(Metrics::getCoverage)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
 
-  @Override
-  public DoubleSummaryStatistics getDuplications() {
-    return collection.get(Type.DUPLICATIONS);
-  }
+    setDuplications(metrics.stream()
+        .map(Metrics::getDuplications)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
 
-  @Override
-  public DoubleSummaryStatistics getMutationTest() {
-    return collection.get(Type.MUTATION_TEST);
-  }
+    setMutationTest(metrics.stream()
+        .map(Metrics::getMutationTest)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
 
-  @Override
-  public DoubleSummaryStatistics getRecipeViolations() {
-    return collection.get(Type.RECIPE_VIOLATIONS);
-  }
+    setRecipeViolations(metrics.stream()
+        .map(Metrics::getRecipeViolations)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
 
-  @Override
-  public DoubleSummaryStatistics getTest() {
-    return collection.get(Type.TEST);
+    setTest(metrics.stream()
+        .map(Metrics::getTest)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
   }
 }

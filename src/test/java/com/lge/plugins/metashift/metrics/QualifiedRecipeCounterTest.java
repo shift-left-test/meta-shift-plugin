@@ -45,6 +45,8 @@ import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.models.SkippedMutationTestData;
 import com.lge.plugins.metashift.models.StatementCoverageData;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,6 +57,7 @@ import org.junit.Test;
  */
 public class QualifiedRecipeCounterTest {
 
+  private Criteria criteria;
   private QualifiedRecipeCounter counter;
   private Recipe recipe1;
   private Recipe recipe2;
@@ -63,7 +66,7 @@ public class QualifiedRecipeCounterTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria();
+    criteria = new Criteria();
     criteria.setPremirrorCacheThreshold(50);
     criteria.setSharedStateCacheThreshold(50);
     criteria.setRecipeViolationThreshold(0.5);
@@ -208,7 +211,7 @@ public class QualifiedRecipeCounterTest {
   }
 
   @Test
-  public void testWithMultipleData() {
+  public void testParseRecipesWithMultipleData() {
     recipe1.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
     recipe1.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
@@ -221,7 +224,42 @@ public class QualifiedRecipeCounterTest {
     recipe2.add(new RecipeSizeData("B-1.0.0-r0", "a.file", 5));
     recipe2.add(new InfoRecipeViolationData("B-1.0.0-r0", "a.file", 1, "info", "info", "info"));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
+
     counter.parse(recipes);
+
+    assertValues(counter.getPremirrorCache(), 1, 1);
+    assertValues(counter.getSharedStateCache(), 0, 0);
+    assertValues(counter.getCodeViolations(), 1, 1);
+    assertValues(counter.getComments(), 1, 1);
+    assertValues(counter.getComplexity(), 1, 1);
+    assertValues(counter.getCoverage(), 1, 1);
+    assertValues(counter.getDuplications(), 1, 1);
+    assertValues(counter.getMutationTest(), 1, 1);
+    assertValues(counter.getRecipeViolations(), 1, 1);
+    assertValues(counter.getTest(), 1, 1);
+    assertValues(counter.getTestedRecipes(), 3, 1);
+  }
+
+  @Test
+  public void testParseMetricsWithMultipleData() {
+    recipe1.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
+    recipe1.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe1.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
+    recipe1.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 5, 1, 1));
+    recipe2.add(new InfoCodeViolationData("B-1.0.0-r0", "a.file", 1, 2, "r", "m", "d", "E", "t"));
+    recipe2.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 1));
+    recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 5, 0));
+    recipe2.add(new RecipeSizeData("B-1.0.0-r0", "a.file", 5));
+    recipe2.add(new InfoRecipeViolationData("B-1.0.0-r0", "a.file", 1, "info", "info", "info"));
+    recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
+
+    List<Metrics> metrics = recipes.stream()
+        .map(recipe -> new Metrics(criteria).parse(recipe))
+        .collect(Collectors.toList());
+    counter.parse(metrics);
+
     assertValues(counter.getPremirrorCache(), 1, 1);
     assertValues(counter.getSharedStateCache(), 0, 0);
     assertValues(counter.getCodeViolations(), 1, 1);

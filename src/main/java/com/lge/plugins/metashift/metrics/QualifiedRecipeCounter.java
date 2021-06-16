@@ -25,82 +25,19 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.Recipes;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.stream.Stream;
+import java.util.List;
 
 /**
  * Counts the number of qualified recipes based on the given criteria.
  *
  * @author Sung Gon Kim
  */
-public final class QualifiedRecipeCounter implements Queryable<Counter> {
+public final class QualifiedRecipeCounter extends GroupParser<Counter> {
 
   /**
-   * Represents the counter types.
+   * Represents the tested recipe counter.
    */
-  private enum Type {
-
-    /**
-     * Premirror cache counter.
-     */
-    PREMIRROR_CACHE,
-
-    /**
-     * Shared state cache counter.
-     */
-    SHARED_STATE_CACHE,
-
-    /**
-     * Code violation counter.
-     */
-    CODE_VIOLATIONS,
-
-    /**
-     * Comment counter.
-     */
-    COMMENTS,
-
-    /**
-     * Complexity counter.
-     */
-    COMPLEXITY,
-
-    /**
-     * Coverage counter.
-     */
-    COVERAGE,
-
-    /**
-     * Duplication counter.
-     */
-    DUPLICATIONS,
-
-    /**
-     * Mutation test counter.
-     */
-    MUTATION_TEST,
-
-    /**
-     * Recipe violation counter.
-     */
-    RECIPE_VIOLATIONS,
-
-    /**
-     * Test counter.
-     */
-    TEST,
-
-    /**
-     * Tested recipe counter.
-     */
-    TESTED_RECIPES,
-  }
-
-  /**
-   * Represents the counter objects.
-   */
-  private final Map<Type, Counter> collection;
+  private Counter testedRecipes;
 
   /**
    * Represents the criteria object.
@@ -113,9 +50,18 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
    * @param criteria for collection
    */
   public QualifiedRecipeCounter(final Criteria criteria) {
-    collection = new EnumMap<>(Type.class);
-    Stream.of(Type.values()).forEach(type -> collection.put(type, new Counter()));
+    super(new Counter());
+    testedRecipes = new Counter();
     this.criteria = criteria;
+  }
+
+  /**
+   * Returns the tested recipe counter object.
+   *
+   * @return counter object
+   */
+  public Counter getTestedRecipes() {
+    return testedRecipes;
   }
 
   /**
@@ -134,85 +80,63 @@ public final class QualifiedRecipeCounter implements Queryable<Counter> {
     );
   }
 
-  /**
-   * Parses the given recipes to count the number of qualified recipes.
-   *
-   * @param recipes to parse
-   * @return self object
-   */
-  public QualifiedRecipeCounter parse(final Recipes recipes) {
-    collection.put(Type.PREMIRROR_CACHE, countBy(recipes, new PremirrorCacheEvaluator(criteria)));
-    collection.put(Type.SHARED_STATE_CACHE,
-        countBy(recipes, new SharedStateCacheEvaluator(criteria)));
-    collection.put(Type.CODE_VIOLATIONS, countBy(recipes, new CodeViolationEvaluator(criteria)));
-    collection.put(Type.COMMENTS, countBy(recipes, new CommentEvaluator(criteria)));
-    collection.put(Type.COMPLEXITY, countBy(recipes, new ComplexityEvaluator(criteria)));
-    collection.put(Type.COVERAGE, countBy(recipes, new CoverageEvaluator(criteria)));
-    collection.put(Type.DUPLICATIONS, countBy(recipes, new DuplicationEvaluator(criteria)));
-    collection.put(Type.MUTATION_TEST, countBy(recipes, new MutationTestEvaluator(criteria)));
-    collection.put(Type.RECIPE_VIOLATIONS,
-        countBy(recipes, new RecipeViolationEvaluator(criteria)));
-    collection.put(Type.TEST, countBy(recipes, new TestEvaluator(criteria)));
-    collection.put(Type.TESTED_RECIPES, new Counter(recipes.size(), getTest().getDenominator()));
-    return this;
+  @Override
+  public void parse(final Recipes recipes) {
+    setPremirrorCache(countBy(recipes, new PremirrorCacheEvaluator(criteria)));
+    setSharedStateCache(countBy(recipes, new SharedStateCacheEvaluator(criteria)));
+    setCodeViolations(countBy(recipes, new CodeViolationEvaluator(criteria)));
+    setComments(countBy(recipes, new CommentEvaluator(criteria)));
+    setComplexity(countBy(recipes, new ComplexityEvaluator(criteria)));
+    setCoverage(countBy(recipes, new CoverageEvaluator(criteria)));
+    setDuplications(countBy(recipes, new DuplicationEvaluator(criteria)));
+    setMutationTest(countBy(recipes, new MutationTestEvaluator(criteria)));
+    setRecipeViolations(countBy(recipes, new RecipeViolationEvaluator(criteria)));
+    setTest(countBy(recipes, new TestEvaluator(criteria)));
+    testedRecipes = new Counter(recipes.size(), getTest().getDenominator());
   }
 
   @Override
-  public Counter getPremirrorCache() {
-    return collection.get(Type.PREMIRROR_CACHE);
-  }
-
-  @Override
-  public Counter getSharedStateCache() {
-    return collection.get(Type.SHARED_STATE_CACHE);
-  }
-
-  @Override
-  public Counter getCodeViolations() {
-    return collection.get(Type.CODE_VIOLATIONS);
-  }
-
-  @Override
-  public Counter getComments() {
-    return collection.get(Type.COMMENTS);
-  }
-
-  @Override
-  public Counter getComplexity() {
-    return collection.get(Type.COMPLEXITY);
-  }
-
-  @Override
-  public Counter getCoverage() {
-    return collection.get(Type.COVERAGE);
-  }
-
-  @Override
-  public Counter getDuplications() {
-    return collection.get(Type.DUPLICATIONS);
-  }
-
-  @Override
-  public Counter getMutationTest() {
-    return collection.get(Type.MUTATION_TEST);
-  }
-
-  @Override
-  public Counter getRecipeViolations() {
-    return collection.get(Type.RECIPE_VIOLATIONS);
-  }
-
-  @Override
-  public Counter getTest() {
-    return collection.get(Type.TEST);
-  }
-
-  /**
-   * Returns the tested recipe counter object.
-   *
-   * @return counter object
-   */
-  public Counter getTestedRecipes() {
-    return collection.get(Type.TESTED_RECIPES);
+  public void parse(final List<Metrics> metrics) {
+    setPremirrorCache(new Counter(
+        metrics.stream().map(Metrics::getPremirrorCache).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getPremirrorCache).filter(Evaluator::isQualified).count()
+    ));
+    setSharedStateCache(new Counter(
+        metrics.stream().map(Metrics::getSharedStateCache).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getSharedStateCache).filter(Evaluator::isQualified).count()
+    ));
+    setCodeViolations(new Counter(
+        metrics.stream().map(Metrics::getCodeViolations).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getCodeViolations).filter(Evaluator::isQualified).count()
+    ));
+    setComments(new Counter(
+        metrics.stream().map(Metrics::getComments).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getComments).filter(Evaluator::isQualified).count()
+    ));
+    setComplexity(new Counter(
+        metrics.stream().map(Metrics::getComplexity).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getComplexity).filter(Evaluator::isQualified).count()
+    ));
+    setCoverage(new Counter(
+        metrics.stream().map(Metrics::getCoverage).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getCoverage).filter(Evaluator::isQualified).count()
+    ));
+    setDuplications(new Counter(
+        metrics.stream().map(Metrics::getDuplications).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getDuplications).filter(Evaluator::isQualified).count()
+    ));
+    setMutationTest(new Counter(
+        metrics.stream().map(Metrics::getMutationTest).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getMutationTest).filter(Evaluator::isQualified).count()
+    ));
+    setRecipeViolations(new Counter(
+        metrics.stream().map(Metrics::getRecipeViolations).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getRecipeViolations).filter(Evaluator::isQualified).count()
+    ));
+    setTest(new Counter(
+        metrics.stream().map(Metrics::getTest).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getTest).filter(Evaluator::isQualified).count()
+    ));
+    testedRecipes = new Counter(metrics.size(), getTest().getDenominator());
   }
 }
