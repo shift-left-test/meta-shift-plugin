@@ -149,27 +149,27 @@ public class Configuration implements Criteria, BuildStatus {
   /**
    * Default constructor.
    *
-   * @param premirrorCacheThreshold         threshold
-   * @param sharedStateCacheThreshold       threshold
-   * @param recipeViolationThreshold        threshold
-   * @param commentThreshold                threshold
-   * @param codeViolationThreshold          threshold
-   * @param complexityLevel                 complexity level
-   * @param complexityThreshold             threshold
-   * @param duplicationThreshold            threshold
-   * @param testThreshold                   threshold
-   * @param coverageThreshold               threshold
-   * @param mutationTestThreshold           threshold
-   * @param premirrorCacheAsUnstable        marks a build as unstable if unsatisfied
-   * @param sharedStateCacheAsUnstable      marks a build as unstable if unsatisfied
-   * @param recipeViolationsAsUnstable      marks a build as unstable if unsatisfied
-   * @param commentsAsUnstable              marks a build as unstable if unsatisfied
-   * @param codeViolationsAsUnstable        marks a build as unstable if unsatisfied
-   * @param complexityAsUnstable            marks a build as unstable if unsatisfied
-   * @param duplicationsAsUnstable          marks a build as unstable if unsatisfied
-   * @param testAsUnstable                  marks a build as unstable if unsatisfied
-   * @param coverageAsUnstable              marks a build as unstable if unsatisfied
-   * @param mutationTestAsUnstable          marks a build as unstable if unsatisfied
+   * @param premirrorCacheThreshold    threshold
+   * @param sharedStateCacheThreshold  threshold
+   * @param recipeViolationThreshold   threshold
+   * @param commentThreshold           threshold
+   * @param codeViolationThreshold     threshold
+   * @param complexityLevel            complexity level
+   * @param complexityThreshold        threshold
+   * @param duplicationThreshold       threshold
+   * @param testThreshold              threshold
+   * @param coverageThreshold          threshold
+   * @param mutationTestThreshold      threshold
+   * @param premirrorCacheAsUnstable   marks a build as unstable if unsatisfied
+   * @param sharedStateCacheAsUnstable marks a build as unstable if unsatisfied
+   * @param recipeViolationsAsUnstable marks a build as unstable if unsatisfied
+   * @param commentsAsUnstable         marks a build as unstable if unsatisfied
+   * @param codeViolationsAsUnstable   marks a build as unstable if unsatisfied
+   * @param complexityAsUnstable       marks a build as unstable if unsatisfied
+   * @param duplicationsAsUnstable     marks a build as unstable if unsatisfied
+   * @param testAsUnstable             marks a build as unstable if unsatisfied
+   * @param coverageAsUnstable         marks a build as unstable if unsatisfied
+   * @param mutationTestAsUnstable     marks a build as unstable if unsatisfied
    */
   @DataBoundConstructor
   public Configuration(final int premirrorCacheThreshold,
@@ -413,7 +413,7 @@ public class Configuration implements Criteria, BuildStatus {
 
   @Override
   public void setRecipeViolationsAsUnstable(boolean allowed) {
-    recipeViolationsAsUnstable= allowed;
+    recipeViolationsAsUnstable = allowed;
   }
 
   @Override
