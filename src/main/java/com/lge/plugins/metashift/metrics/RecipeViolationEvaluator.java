@@ -31,41 +31,13 @@ import com.lge.plugins.metashift.models.MinorRecipeViolationData;
 import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.models.Streamable;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * RecipeViolationEvaluator class.
  *
  * @author Sung Gon Kim
  */
-public final class RecipeViolationEvaluator extends NegativeEvaluator<RecipeViolationEvaluator> {
-
-  /**
-   * Represents the recipe violation types.
-   */
-  private enum Type {
-    /**
-     * Major violations.
-     */
-    MAJOR,
-
-    /**
-     * Minor violations.
-     */
-    MINOR,
-
-    /**
-     * Info violations.
-     */
-    INFO,
-  }
-
-  /**
-   * Represents the counter objects.
-   */
-  private final Map<Type, Counter> collection;
+public final class RecipeViolationEvaluator extends ViolationEvaluator<RecipeViolationEvaluator> {
 
   /**
    * Default constructor.
@@ -74,48 +46,19 @@ public final class RecipeViolationEvaluator extends NegativeEvaluator<RecipeViol
    */
   public RecipeViolationEvaluator(final Criteria criteria) {
     super(criteria.getRecipeViolationThreshold());
-    collection = new EnumMap<>(Type.class);
-    Stream.of(Type.values()).forEach(type -> collection.put(type, new Counter()));
-  }
-
-  /**
-   * Returns the major violation counter.
-   *
-   * @return counter object
-   */
-  public Counter getMajor() {
-    return collection.get(Type.MAJOR);
-  }
-
-  /**
-   * Returns the minor violation counter.
-   *
-   * @return counter object
-   */
-  public Counter getMinor() {
-    return collection.get(Type.MINOR);
-  }
-
-  /**
-   * Returns the info violation counter.
-   *
-   * @return counter object
-   */
-  public Counter getInfo() {
-    return collection.get(Type.INFO);
   }
 
   @Override
   protected void parseImpl(final Streamable c) {
-    collection.put(Type.MAJOR, new Counter(
+    setMajor(new Counter(
         c.objects(RecipeViolationData.class).count(),
         c.objects(MajorRecipeViolationData.class).count()
     ));
-    collection.put(Type.MINOR, new Counter(
+    setMinor(new Counter(
         c.objects(RecipeViolationData.class).count(),
         c.objects(MinorRecipeViolationData.class).count()
     ));
-    collection.put(Type.INFO, new Counter(
+    setInfo(new Counter(
         c.objects(RecipeViolationData.class).count(),
         c.objects(InfoRecipeViolationData.class).count()
     ));

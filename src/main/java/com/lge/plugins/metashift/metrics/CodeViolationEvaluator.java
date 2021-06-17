@@ -31,41 +31,13 @@ import com.lge.plugins.metashift.models.InfoCodeViolationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.MinorCodeViolationData;
 import com.lge.plugins.metashift.models.Streamable;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * CodeViolationEvaluator class.
  *
  * @author Sung Gon Kim
  */
-public final class CodeViolationEvaluator extends NegativeEvaluator<CodeViolationEvaluator> {
-
-  /**
-   * Represents the code violation types.
-   */
-  private enum Type {
-    /**
-     * Major violations.
-     */
-    MAJOR,
-
-    /**
-     * Minor violations.
-     */
-    MINOR,
-
-    /**
-     * Info violations.
-     */
-    INFO,
-  }
-
-  /**
-   * Represents the counter objects.
-   */
-  private final Map<Type, Counter> collection;
+public final class CodeViolationEvaluator extends ViolationEvaluator<CodeViolationEvaluator> {
 
   /**
    * Default constructor.
@@ -74,48 +46,19 @@ public final class CodeViolationEvaluator extends NegativeEvaluator<CodeViolatio
    */
   public CodeViolationEvaluator(final Criteria criteria) {
     super(criteria.getCodeViolationThreshold());
-    collection = new EnumMap<>(Type.class);
-    Stream.of(Type.values()).forEach(type -> collection.put(type, new Counter()));
-  }
-
-  /**
-   * Returns the major code violation counter object.
-   *
-   * @return counter object
-   */
-  public Counter getMajor() {
-    return collection.get(Type.MAJOR);
-  }
-
-  /**
-   * Returns the minor code violation counter object.
-   *
-   * @return counter object
-   */
-  public Counter getMinor() {
-    return collection.get(Type.MINOR);
-  }
-
-  /**
-   * Returns the info code violation counter object.
-   *
-   * @return counter object
-   */
-  public Counter getInfo() {
-    return collection.get(Type.INFO);
   }
 
   @Override
   protected void parseImpl(final Streamable c) {
-    collection.put(Type.MAJOR, new Counter(
+    setMajor(new Counter(
         c.objects(CodeViolationData.class).count(),
         c.objects(MajorCodeViolationData.class).count()
     ));
-    collection.put(Type.MINOR, new Counter(
+    setMinor(new Counter(
         c.objects(CodeViolationData.class).count(),
         c.objects(MinorCodeViolationData.class).count()
     ));
-    collection.put(Type.INFO, new Counter(
+    setInfo(new Counter(
         c.objects(CodeViolationData.class).count(),
         c.objects(InfoCodeViolationData.class).count()
     ));
