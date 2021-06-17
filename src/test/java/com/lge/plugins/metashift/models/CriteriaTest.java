@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.metrics;
+package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit tests for the Criteria class.
+ * Unit tests for the Criteria interface.
  *
  * @author Sung Gon Kim
  */
@@ -40,7 +40,7 @@ public class CriteriaTest {
 
   @Before
   public void setUp() {
-    criteria = new Criteria();
+    criteria = new Configuration();
   }
 
   private void assertValues(int premirrorThreshold,

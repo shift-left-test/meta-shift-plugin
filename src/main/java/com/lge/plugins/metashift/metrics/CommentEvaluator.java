@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.CommentData;
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Streamable;
 
 /**

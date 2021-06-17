@@ -9,7 +9,7 @@
     <f:optionalBlock name="localCriteria" title="Use local criteria"
       checked="${instance.useLocalCriteria}" field="localCriteria" >
       <st:include page="data_form.jelly" it="${instance.localCriteria}"
-        class="com.lge.plugins.metashift.ui.models.CriteriaWithOptions"/>
+        class="com.lge.plugins.metashift.models.Configuration"/>
     </f:optionalBlock>
   </f:block>
 </j:jelly>

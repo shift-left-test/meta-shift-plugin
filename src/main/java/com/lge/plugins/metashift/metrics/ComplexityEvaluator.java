@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.ComplexityData;
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Streamable;
 import java.util.Comparator;
 import java.util.List;

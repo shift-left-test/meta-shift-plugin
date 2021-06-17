@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CodeViolationData;
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.InfoCodeViolationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.MinorCodeViolationData;

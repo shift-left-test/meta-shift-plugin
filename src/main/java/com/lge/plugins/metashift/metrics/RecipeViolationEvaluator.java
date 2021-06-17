@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.InfoRecipeViolationData;
 import com.lge.plugins.metashift.models.MajorRecipeViolationData;
 import com.lge.plugins.metashift.models.MinorRecipeViolationData;

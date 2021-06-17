@@ -28,6 +28,8 @@ import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.KilledMutationTestData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
@@ -50,7 +52,7 @@ public class MutationTestEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria();
+    Criteria criteria = new Configuration();
     criteria.setMutationTestThreshold(50);
     evaluator = new MutationTestEvaluator(criteria);
     recipe = new Recipe("A-1.0.0-r0");

@@ -29,6 +29,8 @@ import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.ComplexityData;
+import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
@@ -48,7 +50,7 @@ public class ComplexityEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria();
+    Criteria criteria = new Configuration();
     criteria.setComplexityLevel(5);
     criteria.setComplexityThreshold(50);
     evaluator = new ComplexityEvaluator(criteria);

@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.PassedTestData;

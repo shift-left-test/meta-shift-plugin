@@ -3,7 +3,7 @@
   <f:section title="Meta Shift">
     <f:block name="criteria">
       <st:include page="data_form.jelly"  it="${instance.criteria}"
-        class="com.lge.plugins.metashift.ui.models.CriteriaWithOptions"/>
+        class="com.lge.plugins.metashift.models.Configuration"/>
     </f:block>
   </f:section>
 </j:jelly>

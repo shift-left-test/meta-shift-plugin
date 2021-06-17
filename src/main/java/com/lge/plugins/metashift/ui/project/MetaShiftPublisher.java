@@ -24,8 +24,8 @@
 
 package com.lge.plugins.metashift.ui.project;
 
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.CriteriaWithOptions;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -56,13 +56,13 @@ import org.kohsuke.stapler.StaplerRequest;
 public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
   private final String reportRoot;
-  private final CriteriaWithOptions localCriteria;
+  private final Configuration localCriteria;
 
   /**
    * Default constructor.
    */
   @DataBoundConstructor
-  public MetaShiftPublisher(String reportRoot, CriteriaWithOptions localCriteria) {
+  public MetaShiftPublisher(String reportRoot, Configuration localCriteria) {
     this.reportRoot = reportRoot;
     this.localCriteria = localCriteria;
   }
@@ -75,7 +75,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     return this.localCriteria != null;
   }
 
-  public CriteriaWithOptions getLocalCriteria() {
+  public Configuration getLocalCriteria() {
     return this.localCriteria;
   }
 
@@ -91,7 +91,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
     // global criteria variable
-    private CriteriaWithOptions criteria;
+    private Configuration criteria;
 
     /**
      * Default constructor.
@@ -194,9 +194,9 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
      *
      * @return criteria
      */
-    public CriteriaWithOptions getCriteria() {
+    public Configuration getCriteria() {
       if (this.criteria == null) {
-        this.criteria = new CriteriaWithOptions();
+        this.criteria = new Configuration();
       }
 
       return this.criteria;
@@ -213,7 +213,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       FilePath reportPath = workspace.child(env.expand(this.reportRoot));
       if (reportPath.exists()) {
         // load criteria.
-        CriteriaWithOptions criteria = (this.localCriteria == null)
+        Configuration criteria = (this.localCriteria == null)
             ? ((DescriptorImpl) getDescriptor()).getCriteria() : this.localCriteria;
 
         FilePath buildPath = new FilePath(run.getRootDir());
@@ -226,34 +226,34 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
         boolean isStable = true;
 
-        if (criteria.isMarkUnstablePremirrorCache()) {
+        if (criteria.isPremirrorCacheAsUnstable()) {
           isStable &= buildAction.getMetrics().getPremirrorCache().isQualified();
         }
-        if (criteria.isMarkUnstableSharedStateCache()) {
+        if (criteria.isSharedStateCacheAsUnstable()) {
           isStable &= buildAction.getMetrics().getSharedStateCache().isQualified();
         }
-        if (criteria.isMarkUnstableRecipeViolation()) {
+        if (criteria.isRecipeViolationsAsUnstable()) {
           isStable &= buildAction.getMetrics().getRecipeViolations().isQualified();
         }
-        if (criteria.isMarkUnstableComment()) {
+        if (criteria.isCommentsAsUnstable()) {
           isStable &= buildAction.getMetrics().getComments().isQualified();
         }
-        if (criteria.isMarkUnstableCodeViolation()) {
+        if (criteria.isCodeViolationsAsUnstable()) {
           isStable &= buildAction.getMetrics().getCodeViolations().isQualified();
         }
-        if (criteria.isMarkUnstableComplexity()) {
+        if (criteria.isComplexityAsUnstable()) {
           isStable &= buildAction.getMetrics().getComplexity().isQualified();
         }
-        if (criteria.isMarkUnstableDuplication()) {
+        if (criteria.isDuplicationsAsUnstable()) {
           isStable &= buildAction.getMetrics().getDuplications().isQualified();
         }
-        if (criteria.isMarkUnstableTest()) {
+        if (criteria.isTestAsUnstable()) {
           isStable &= buildAction.getMetrics().getTest().isQualified();
         }
-        if (criteria.isMarkUnstableCoverage()) {
+        if (criteria.isCoverageAsUnstable()) {
           isStable &= buildAction.getMetrics().getCoverage().isQualified();
         }
-        if (criteria.isMarkUnstableMutationTest()) {
+        if (criteria.isMutationTestAsUnstable()) {
           isStable &= buildAction.getMetrics().getMutationTest().isQualified();
         }
 

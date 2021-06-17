@@ -28,6 +28,8 @@ import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
@@ -48,7 +50,7 @@ public class DuplicationEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria();
+    Criteria criteria = new Configuration();
     criteria.setDuplicationThreshold(50);
     evaluator = new DuplicationEvaluator(criteria);
     recipe = new Recipe("A-1.0.0-r0");

@@ -26,8 +26,8 @@ package com.lge.plugins.metashift.ui.recipe;
 
 import com.lge.plugins.metashift.metrics.CodeSizeDelta;
 import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
-import com.lge.plugins.metashift.metrics.Criteria;
 import com.lge.plugins.metashift.metrics.Metrics;
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;

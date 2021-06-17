@@ -28,6 +28,8 @@ import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
@@ -48,7 +50,7 @@ public class SharedStateCacheEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Criteria();
+    Criteria criteria = new Configuration();
     criteria.setSharedStateCacheThreshold(50);
     evaluator = new SharedStateCacheEvaluator(criteria);
     recipe = new Recipe("A-1.0.0-r0");

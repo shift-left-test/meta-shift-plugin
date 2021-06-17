@@ -37,9 +37,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
   <f:entry field="PremirrorCache">
     <div class="evaluate">
-      <f:checkbox field="markUnstablePremirrorCache"
-                  checked="${it.markUnstablePremirrorCache}"
-                  default="${descriptor.criteria.markUnstablePremirrorCache}"/>
+      <f:checkbox field="premirrorCacheAsUnstable"
+                  checked="${it.premirrorCacheAsUnstable}"
+                  default="${descriptor.criteria.premirrorCacheAllowedAsUnstable}"/>
     </div>
     <div class="title">Premirror Cache</div>
     <div class="description">is less than</div>
@@ -53,9 +53,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
   <f:entry field="SharedStateCache">
     <div class="evaluate">
-      <f:checkbox field="markUnstableSharedStateCache"
-                  checked="${it.markUnstableSharedStateCache}"
-                  default="${descriptor.criteria.markUnstableSharedStateCache}"/>
+      <f:checkbox field="sharedStateCacheAsUnstable"
+                  checked="${it.sharedStateCacheAsUnstable}"
+                  default="${descriptor.criteria.sharedStateCacheAllowedAsUnstable}"/>
     </div>
     <div class="title">Shared State Cache</div>
     <div class="description">is less than</div>
@@ -69,9 +69,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
   <f:entry field="RecipeViolation">
     <div class="evaluate">
-      <f:checkbox field="markUnstableRecipeViolation"
-                  checked="${it.markUnstableRecipeViolation}"
-                  default="${descriptor.criteria.markUnstableRecipeViolation}"/>
+      <f:checkbox field="recipeViolationsAsUnstable"
+                  checked="${it.recipeViolationsAsUnstable}"
+                  default="${descriptor.criteria.recipeViolationsAllowedAsUnstable}"/>
     </div>
     <div class="title">Recipe Violations</div>
     <div class="description">is greater than</div>
@@ -85,9 +85,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
   <f:entry field="Comment">
       <div class="evaluate">
-        <f:checkbox field="markUnstableComment"
-                    checked="${it.markUnstableComment}"
-                    default="${descriptor.criteria.markUnstableComment}"/>
+        <f:checkbox field="commentsAsUnstable"
+                    checked="${it.commentsAsUnstable}"
+                    default="${descriptor.criteria.commentsAllowedAsUnstable}"/>
       </div>
       <div class="title">Comments</div>
       <div class="description">is less than</div>
@@ -101,9 +101,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
   <f:entry field="CodeViolation">
     <div class="evaluate">
-      <f:checkbox field="markUnstableCodeViolation"
-                  checked="${it.markUnstableCodeViolation}"
-                  default="${descriptor.criteria.markUnstableCodeViolation}"/>
+      <f:checkbox field="codeViolationsAsUnstable"
+                  checked="${it.codeViolationsAsUnstable}"
+                  default="${descriptor.criteria.codeViolationsAllowedAsUnstable}"/>
     </div>
     <div class="title">Code Violations</div>
     <div class="description">is greater than</div>
@@ -117,9 +117,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
   <f:entry field="Complexity">
     <div class="evaluate">
-      <f:checkbox field="markUnstableComplexity"
-                  checked="${it.markUnstableComplexity}"
-                  default="${descriptor.criteria.markUnstableComplexity}"/>
+      <f:checkbox field="complexityAsUnstable"
+                  checked="${it.complexityAsUnstable}"
+                  default="${descriptor.criteria.complexityAllowedAsUnstable}"/>
     </div>
     <div class="title">Complexity</div>
     <div class="description">is greater than</div>
@@ -141,9 +141,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
   <f:entry field="Duplication">
     <div class="evaluate">
-      <f:checkbox field="markUnstableDuplication"
-                  checked="${it.markUnstableDuplication}"
-                  default="${descriptor.criteria.markUnstableDuplication}"/>
+      <f:checkbox field="duplicationsAsUnstable"
+                  checked="${it.duplicationsAsUnstable}"
+                  default="${descriptor.criteria.duplicationsAllowedAsUnstable}"/>
     </div>
     <div class="title">Duplications</div>
     <div class="description">is greater than</div>
@@ -157,9 +157,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
   <f:entry field="UnitTest">
     <div class="evaluate">
-      <f:checkbox field="markUnstableTest"
-                  checked="${it.markUnstableTest}"
-                  default="${descriptor.criteria.markUnstableTest}"/>
+      <f:checkbox field="testAsUnstable"
+                  checked="${it.testAsUnstable}"
+                  default="${descriptor.criteria.testAllowedAsUnstable}"/>
     </div>
     <div class="title">Unit Tests</div>
     <div class="description">is less than</div>
@@ -173,9 +173,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
   <f:entry field="Coverage">
     <div class="evaluate">
-      <f:checkbox field="markUnstableCoverage"
-                  checked="${it.markUnstableCoverage}"
-                  default="${descriptor.criteria.markUnstableCoverage}"/>
+      <f:checkbox field="coverageAsUnstable"
+                  checked="${it.coverageAsUnstable}"
+                  default="${descriptor.criteria.coverageAllowedAsUnstable}"/>
     </div>
     <div class="title">Coverage</div>
     <div class="description">is less than</div>
@@ -189,9 +189,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
   <f:entry field="MutationTest">
     <div class="evaluate">
-      <f:checkbox field="markUnstableMutationTest"
-                  checked="${it.markUnstableMutationTest}"
-                  default="${descriptor.criteria.markUnstableMutationTest}"/>
+      <f:checkbox field="mutationTestAsUnstable"
+                  checked="${it.mutationTestAsUnstable}"
+                  default="${descriptor.criteria.mutationTestAllowedAsUnstable}"/>
     </div>
     <div class="title">Mutation Tests</div>
     <div class="description">is less than</div>

@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.CoverageData;
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.Streamable;
 import java.util.EnumMap;

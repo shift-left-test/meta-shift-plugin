@@ -30,6 +30,8 @@ import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.ComplexityData;
+import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.InfoCodeViolationData;
@@ -67,7 +69,7 @@ public class MetricStatisticsTest {
 
   @Before
   public void setUp() {
-    criteria = new Criteria();
+    criteria = new Configuration();
     criteria.setPremirrorCacheThreshold(50);
     criteria.setSharedStateCacheThreshold(50);
     criteria.setRecipeViolationThreshold(0.5);
