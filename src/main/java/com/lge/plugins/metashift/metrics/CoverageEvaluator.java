@@ -29,6 +29,7 @@ import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.Streamable;
+import com.lge.plugins.metashift.models.TestData;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -100,7 +101,7 @@ public final class CoverageEvaluator extends PositiveEvaluator<CoverageEvaluator
         c.objects(BranchCoverageData.class).filter(CoverageData::isCovered).count()
     ));
 
-    setAvailable(c.isAvailable(CoverageData.class));
+    setAvailable(c.isAvailable(TestData.class) && c.isAvailable(CoverageData.class));
     setDenominator(collection.values().stream().mapToLong(Counter::getDenominator).sum());
     setNumerator(collection.values().stream().mapToLong(Counter::getNumerator).sum());
   }

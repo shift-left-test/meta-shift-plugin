@@ -32,6 +32,7 @@ import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
+import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.StatementCoverageData;
@@ -89,7 +90,21 @@ public class CoverageEvaluatorTest {
   }
 
   @Test
+  public void testParseRecipeWithoutTestData() {
+    recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
+    recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, false));
+    evaluator.parse(recipe);
+
+    assertEvaluator(evaluator, false, false);
+    assertCounter(evaluator, 3, 1, 0.3);
+    assertCounter(evaluator.getStatement(), 2, 1, 0.5);
+    assertCounter(evaluator.getBranch(), 1, 0, 0.0);
+  }
+
+  @Test
   public void testParseRecipeWithUnqualifiedData() {
+    recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
     recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, false));
@@ -103,6 +118,7 @@ public class CoverageEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
+    recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
     recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, true));
@@ -134,9 +150,11 @@ public class CoverageEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new PassedTestData("A-1.0.0-r0", "test", "test", ""));
     recipe.add(new StatementCoverageData("A-1.0.0-r0", "a.file", 1, true));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(new PassedTestData("B-1.0.0-r0", "test", "test", ""));
     recipe.add(new StatementCoverageData("B-1.0.0-r0", "b.file", 1, false));
     recipe.add(new BranchCoverageData("B-1.0.0-r0", "c.file", 1, 1, false));
     recipes.add(recipe);
@@ -151,9 +169,11 @@ public class CoverageEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new PassedTestData("A-1.0.0-r0", "test", "test", ""));
     recipe.add(new StatementCoverageData("A-1.0.0-r0", "a.file", 1, true));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(new PassedTestData("B-1.0.0-r0", "test", "test", ""));
     recipe.add(new StatementCoverageData("B-1.0.0-r0", "b.file", 1, false));
     recipe.add(new BranchCoverageData("B-1.0.0-r0", "c.file", 1, 1, true));
     recipes.add(recipe);

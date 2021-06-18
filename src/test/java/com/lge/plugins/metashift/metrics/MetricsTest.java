@@ -231,6 +231,7 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedCoverageData() {
+    recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
     recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, false));
@@ -241,6 +242,7 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedCoverageData() {
+    recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
     recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, true));
@@ -419,7 +421,10 @@ public class MetricsTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<classes> </classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
+
     recipe = new Recipe(directory);
+    recipe.add(new PassedTestData("B-1.0.0-r0", "test", "test", ""));
+
     metrics.parse(recipe);
     assertEvaluator(metrics.getCoverage(), true, false);
     assertCounter(metrics.getCoverage(), 0, 0, 0.0);

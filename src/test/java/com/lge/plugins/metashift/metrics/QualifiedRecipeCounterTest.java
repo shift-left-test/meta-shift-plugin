@@ -159,7 +159,9 @@ public class QualifiedRecipeCounterTest {
 
   @Test
   public void testGetCoverage() {
+    recipe1.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe2.add(new PassedTestData("B-B-C", "test", "test", ""));
     recipe2.add(new BranchCoverageData("B-B-C", "a.file", 1, 1, false));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
