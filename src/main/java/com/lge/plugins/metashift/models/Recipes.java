@@ -58,7 +58,7 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
    * @param path to directory
    * @throws IllegalArgumentException if the path is invalid
    */
-  public Recipes(final File path) {
+  public Recipes(final File path) throws IllegalArgumentException {
     this(path, NullPrintStream.NULL_PRINT_STREAM);
   }
 
@@ -69,7 +69,7 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
    * @param logger object
    * @throws IllegalArgumentException if the path is invalid
    */
-  public Recipes(final File path, final PrintStream logger) {
+  public Recipes(final File path, final PrintStream logger) throws IllegalArgumentException {
     this();
     if (!path.exists()) {
       throw new IllegalArgumentException("Directory not found: " + path);
