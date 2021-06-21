@@ -287,12 +287,12 @@ public class MetaShiftBuildAction extends Actionable
    *
    * @return CodeSizeDelta object
    */
-  public CodeSizeDelta getCodeSizeDelta() {
+  public JSONObject getCodeSizeDeltaJson() {
     CodeSizeEvaluator previous =
         Optional.ofNullable(getPreviousMetrics())
             .map(Metrics::getCodeSize).orElse(null);
     CodeSizeEvaluator current = getMetrics().getCodeSize();
-    return CodeSizeDelta.between(previous, current);
+    return JSONObject.fromObject(CodeSizeDelta.between(previous, current));
   }
 
   private double getRatioDelta(Function<Metrics, Evaluator<?>> mapper) {
@@ -309,6 +309,51 @@ public class MetaShiftBuildAction extends Actionable
         : current.getRatio();
   }
 
+  public JSONObject getCodeSizeJson() {
+    return JSONObject.fromObject(this.metrics.getCodeSize());
+  }
+
+  public JSONObject getPremirrorCacheJson() {
+    return JSONObject.fromObject(this.metrics.getPremirrorCache());
+  }
+
+  public JSONObject getSharedStateCacheJson() {
+    return JSONObject.fromObject(this.metrics.getSharedStateCache());
+  }
+
+  public JSONObject getCodeViolationsJson() {
+    return JSONObject.fromObject(this.metrics.getCodeViolations());
+  }
+
+  public JSONObject getCommentsJson() {
+    return JSONObject.fromObject(this.metrics.getComments());
+  }
+
+  public JSONObject getComplexityJson() {
+    return JSONObject.fromObject(this.metrics.getComplexity());
+  }
+
+  public JSONObject getCoverageJson() {
+    return JSONObject.fromObject(this.metrics.getCoverage());
+  }
+
+  public JSONObject getDuplicationsJson() {
+    return JSONObject.fromObject(this.metrics.getDuplications());
+  }
+
+  public JSONObject getMutationTestJson() {
+    return JSONObject.fromObject(this.metrics.getMutationTest());
+  }
+
+  public JSONObject getRecipeViolationsJson() {
+    return JSONObject.fromObject(this.metrics.getRecipeViolations());
+  }
+
+  public JSONObject getTestJson() {
+    return JSONObject.fromObject(this.metrics.getTest());
+  }
+
+  // ratio delta
   public double getPremirrorCacheDelta() {
     return getRatioDelta(Metrics::getPremirrorCache);
   }

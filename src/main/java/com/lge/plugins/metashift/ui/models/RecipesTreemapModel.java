@@ -40,6 +40,7 @@ public class RecipesTreemapModel {
     private final int value;
     private final int quality;
     private final String name;
+    private final String link;
     private final String path;
 
     /**
@@ -47,6 +48,7 @@ public class RecipesTreemapModel {
      */
     public TreemapData(String name, String path, int value, int quality) {
       this.name = name;
+      this.link = name;
       this.path = path;
       this.value = value;
       this.quality = quality;
@@ -58,6 +60,10 @@ public class RecipesTreemapModel {
 
     public String getName() {
       return name;
+    }
+
+    public String getLink() {
+      return link;
     }
 
     public String getPath() {

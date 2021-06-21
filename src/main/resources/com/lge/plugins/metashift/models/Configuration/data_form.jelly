@@ -33,7 +33,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <div class="evaluate"><b>Mark</b>**</div>
     <div class="title"><b>Metric</b></div>
     <div class="description"><b>Operator</b></div>
-    <div class="input"><b>Error</b></div>
+    <div class="input"><b>Threshold</b></div>
   </f:entry>
   <f:entry field="PremirrorCache">
     <div class="evaluate">

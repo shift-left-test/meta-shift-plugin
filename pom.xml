@@ -178,6 +178,26 @@
             </goals>
             <phase>generate-resources</phase>
           </execution>
+          <execution>
+            <id>frontend lint</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>generate-test-resources</phase>
+            <configuration>
+              <arguments>run lint</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>frontend test</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <arguments>t</arguments>
+            </configuration>
+          </execution>
         </executions>
         <configuration>
           <workingDirectory>src/main/frontend</workingDirectory>

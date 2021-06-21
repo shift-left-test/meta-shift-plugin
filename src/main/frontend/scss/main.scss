@@ -388,6 +388,13 @@ recipe-treemap {
     font-size: 16px;
     background-color: $progress-bar-color;
   }
+
+  .progress-bar-legend {
+    position: absolute;
+    top: 5px;
+    text-align: center;
+    width: 100%;
+  }
 }
 
 .tabulator-header {

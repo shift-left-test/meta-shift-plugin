@@ -11,14 +11,13 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <h1>
           ${it.run.project.displayName} ${it.run.displayName}
         </h1>
-        <h2>
-          Comments [${it.parentAction.displayName}]
-        </h2>
-        <h3>Scale <span class="metrics-scale">${it.scale}%</span></h3>
-        <h3>Statistics</h3>
+        <h2>${it.parentAction.displayName}</h2>
+        <h3>Comments</h3>
+        <h4>Scale <span class="metrics-scale">${it.scale}%</span></h4>
+        <h4>Statistics</h4>
         <statistics-bar 
           items='${it.statistics}'/>
-        <h3>Details</h3>
+        <h4>Details</h4>
         <comment-files />
       </div>
       </div>

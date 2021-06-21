@@ -13,80 +13,42 @@ xmlns:c="/charts">
         <h3>Lines of Code</h3>
         <div class="metrics-row">
           <code-size
-            recipeSize="${it.metrics.codeSize.recipes}"
-            recipeSizeDelta="${it.codeSizeDelta.recipes}"
-            lineSize="${it.metrics.codeSize.lines}"
-            lineSizeDelta="${it.codeSizeDelta.lines}"
-            functionSize="${it.metrics.codeSize.functions}"
-            functionSizeDelta="${it.codeSizeDelta.functions}"
-            classSize="${it.metrics.codeSize.classes}"
-            classSizeDelta="${it.codeSizeDelta.classes}"
-            fileSize="${it.metrics.codeSize.files}"
-            fileSizeDelta="${it.codeSizeDelta.files}"
+            codeSize="${it.codeSizeJson}"
+            codeSizeDelta="${it.codeSizeDeltaJson}"
           />
         </div>
         <h3>Build Performance</h3>
-          <div class="metrics-row">
-            <metrics-simple-view title="Premirror Cache"
-            available="${it.metrics.premirrorCache.available}"
-            qualified="${it.metrics.premirrorCache.qualified}"
-            ratio="${it.metrics.premirrorCache.ratio}"
-            numerator="${it.metrics.premirrorCache.numerator}"
-            denominator="${it.metrics.premirrorCache.denominator}"
+        <div class="metrics-row">
+          <metrics-simple-view title="Premirror Cache" class="percent"
+            metricsValue="${it.premirrorCacheJson}"
             delta="${it.premirrorCacheDelta}"
             qualifiedRate="${it.premirrorCacheQualifiedRate}" />
-          <metrics-simple-view title="Shared State Cache"
-            available="${it.metrics.sharedStateCache.available}"
-            qualified="${it.metrics.sharedStateCache.qualified}"
-            ratio="${it.metrics.sharedStateCache.ratio}"
-            numerator="${it.metrics.sharedStateCache.numerator}"
-            denominator="${it.metrics.sharedStateCache.denominator}"
+          <metrics-simple-view title="Shared State Cache" class="percent"
+            metricsValue="${it.sharedStateCacheJson}"
             delta="${it.sharedStateCacheDelta}"
             qualifiedRate="${it.sharedStateCacheQualifiedRate}" />
           <metrics-simple-view title="Recipe Violations"
-            isPercent="false"
-            available="${it.metrics.recipeViolations.available}"
-            qualified="${it.metrics.recipeViolations.qualified}"
-            ratio="${it.metrics.recipeViolations.ratio}"
-            numerator="${it.metrics.recipeViolations.numerator}"
-            denominator="${it.metrics.recipeViolations.denominator}"
+            metricsValue="${it.recipeViolationsJson}"
             delta="${it.recipeViolationsDelta}"
             qualifiedRate="${it.recipeViolationsQualifiedRate}" />
         </div>
         <h3>Code Quality</h3>
         <h4>Static Analysis</h4>
         <div class="metrics-row">
-          <metrics-simple-view title="Comments"
-            available="${it.metrics.comments.available}"
-            qualified="${it.metrics.comments.qualified}"
-            ratio="${it.metrics.comments.ratio}"
-            numerator="${it.metrics.comments.numerator}"
-            denominator="${it.metrics.comments.denominator}"
+          <metrics-simple-view title="Comments" class="percent"
+            metricsValue="${it.commentsJson}"
             delta="${it.commentsDelta}"
             qualifiedRate="${it.commentsQualifiedRate}" />
           <metrics-simple-view title="Code Violations"
-            isPercent="false"
-            available="${it.metrics.codeViolations.available}"
-            qualified="${it.metrics.codeViolations.qualified}"
-            ratio="${it.metrics.codeViolations.ratio}"
-            numerator="${it.metrics.codeViolations.numerator}"
-            denominator="${it.metrics.codeViolations.denominator}"
+            metricsValue="${it.codeViolationsJson}"
             delta="${it.codeViolationsDelta}"
             qualifiedRate="${it.codeViolationsQualifiedRate}" />
-          <metrics-simple-view title="Complexity"
-            available="${it.metrics.complexity.available}"
-            qualified="${it.metrics.complexity.qualified}"
-            ratio="${it.metrics.complexity.ratio}"
-            numerator="${it.metrics.complexity.numerator}"
-            denominator="${it.metrics.complexity.denominator}"
+          <metrics-simple-view title="Complexity" class="percent"
+            metricsValue="${it.complexityJson}"
             delta="${it.complexityDelta}"
             qualifiedRate="${it.complexityQualifiedRate}" />
-          <metrics-simple-view title="Duplications"
-            available="${it.metrics.duplications.available}"
-            qualified="${it.metrics.duplications.qualified}"
-            ratio="${it.metrics.duplications.ratio}"
-            numerator="${it.metrics.duplications.numerator}"
-            denominator="${it.metrics.duplications.denominator}"
+          <metrics-simple-view title="Duplications" class="percent"
+            metricsValue="${it.duplicationsJson}"
             delta="${it.duplicationsDelta}"
             qualifiedRate="${it.duplicationsQualifiedRate}" />
         </div>
@@ -96,28 +58,16 @@ xmlns:c="/charts">
             tested="${it.testedRecipes}"
             recipes="${it.metrics.codeSize.recipes}"
             delta="${it.testedRecipesDelta}" />
-          <metrics-simple-view title="Unit Tests"
-            available="${it.metrics.test.available}"
-            qualified="${it.metrics.test.qualified}"
-            ratio="${it.metrics.test.ratio}"
-            numerator="${it.metrics.test.numerator}"
-            denominator="${it.metrics.test.denominator}"
+          <metrics-simple-view title="Unit Tests" class="percent"
+            metricsValue="${it.testJson}"
             delta="${it.testDelta}"
             qualifiedRate="${it.testQualifiedRate}" />
-          <metrics-simple-view title="Coverage"
-            available="${it.metrics.coverage.available}"
-            qualified="${it.metrics.coverage.qualified}"
-            ratio="${it.metrics.coverage.ratio}"
-            numerator="${it.metrics.coverage.numerator}"
-            denominator="${it.metrics.coverage.denominator}"
+          <metrics-simple-view title="Coverage" class="percent"
+            metricsValue="${it.coverageJson}"
             delta="${it.coverageDelta}"
             qualifiedRate="${it.coverageQualifiedRate}" />
-          <metrics-simple-view title="Mutation Tests"
-            available="${it.metrics.mutationTest.available}"
-            qualified="${it.metrics.mutationTest.qualified}"
-            ratio="${it.metrics.mutationTest.ratio}"
-            numerator="${it.metrics.mutationTest.numerator}"
-            denominator="${it.metrics.mutationTest.denominator}"
+          <metrics-simple-view title="Mutation Tests" class="percent"
+            metricsValue="${it.mutationTestJson}"
             delta="${it.mutationTestDelta}"
             qualifiedRate="${it.mutationTestQualifiedRate}" />
         </div>

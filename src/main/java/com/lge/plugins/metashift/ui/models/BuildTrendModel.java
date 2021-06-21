@@ -45,6 +45,22 @@ public class BuildTrendModel {
     private final String type;
     private final List<Double> data;
     private final Function<Metrics, Evaluator<?>> mapper;
+    private final boolean isPercent;
+
+    /**
+     * constructor.
+     *
+     * @param name series name
+     * @param type series type. line, bar, etc...
+     */
+    public BuildTrendSeries(String name, String type, boolean isPercent,
+        Function<Metrics, Evaluator<?>> mapper) {
+      this.name = name;
+      this.type = type;
+      this.isPercent = isPercent;
+      this.mapper = mapper;
+      this.data = new ArrayList<>();
+    }
 
     public String getName() {
       return this.name;
@@ -58,6 +74,10 @@ public class BuildTrendModel {
       return this.data;
     }
 
+    public int getyAxisIndex() {
+      return this.isPercent ? 0 : 1;
+    }
+
     /**
      * add data to series with  evaluator.
      */
@@ -65,23 +85,14 @@ public class BuildTrendModel {
       Evaluator<?> evaluator = this.mapper.apply(metrics);
 
       if (evaluator != null && evaluator.isAvailable()) {
-        this.data.add(0, evaluator.getRatio() * 100);
+        if (isPercent) {
+          this.data.add(0, evaluator.getRatio() * 100);
+        } else {
+          this.data.add(0, evaluator.getRatio());
+        }
       } else {
         this.data.add(0, null);
       }
-    }
-
-    /**
-     * constructor.
-     *
-     * @param name series name
-     * @param type series type. line, bar, etc...
-     */
-    public BuildTrendSeries(String name, String type, Function<Metrics, Evaluator<?>> mapper) {
-      this.name = name;
-      this.type = type;
-      this.mapper = mapper;
-      this.data = new ArrayList<>();
     }
   }
 
@@ -101,25 +112,25 @@ public class BuildTrendModel {
     this.seriesList = new ArrayList<>();
 
     this.seriesList.add(new BuildTrendSeries(
-        "PremirrorCache", "line", Metrics::getPremirrorCache));
+        "PremirrorCache", "line", true, Metrics::getPremirrorCache));
     this.seriesList.add(new BuildTrendSeries(
-        "SharedStateCache", "line", Metrics::getSharedStateCache));
+        "SharedStateCache", "line", true, Metrics::getSharedStateCache));
     this.seriesList.add(new BuildTrendSeries(
-        "RecipeViolation", "line", Metrics::getRecipeViolations));
+        "RecipeViolation", "line", false, Metrics::getRecipeViolations));
     this.seriesList.add(new BuildTrendSeries(
-        "Comment", "line", Metrics::getComments));
+        "Comment", "line", true, Metrics::getComments));
     this.seriesList.add(new BuildTrendSeries(
-        "CodeViolation", "line", Metrics::getCodeViolations));
+        "CodeViolation", "line", false, Metrics::getCodeViolations));
     this.seriesList.add(new BuildTrendSeries(
-        "Complexity", "line", Metrics::getComplexity));
+        "Complexity", "line", true, Metrics::getComplexity));
     this.seriesList.add(new BuildTrendSeries(
-        "Duplication", "line", Metrics::getDuplications));
+        "Duplication", "line", true, Metrics::getDuplications));
     this.seriesList.add(new BuildTrendSeries(
-        "Test", "line", Metrics::getTest));
+        "Test", "line", true, Metrics::getTest));
     this.seriesList.add(new BuildTrendSeries(
-        "Coverage", "line", Metrics::getCoverage));
+        "Coverage", "line", true, Metrics::getCoverage));
     this.seriesList.add(new BuildTrendSeries(
-        "Mutation", "line", Metrics::getMutationTest));
+        "Mutation", "line", true, Metrics::getMutationTest));
   }
 
   public List<String> getLegend() {
