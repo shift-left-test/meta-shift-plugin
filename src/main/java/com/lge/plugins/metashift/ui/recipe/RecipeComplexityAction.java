@@ -88,7 +88,7 @@ public class RecipeComplexityAction
     fileComplexityList.forEach((file, complexityList) -> {
       fileComplexityStats.add(new FileComplexityTableItem(file,
           complexityList.size(),
-          complexityList.stream().filter(o -> o.getValue() > complexityThreashold).count()
+          complexityList.stream().filter(o -> o.getValue() >= complexityThreashold).count()
       ));
 
       try {
