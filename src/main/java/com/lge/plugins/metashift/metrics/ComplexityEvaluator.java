@@ -39,9 +39,9 @@ import java.util.stream.Collectors;
 public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvaluator> {
 
   /**
-   * Represents the complexity threshold.
+   * Represents the complexity level.
    */
-  private final long threshold;
+  private final long level;
 
   /**
    * Default constructor.
@@ -50,7 +50,7 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
    */
   public ComplexityEvaluator(final Criteria criteria) {
     super((double) criteria.getComplexityThreshold() / 100.0);
-    threshold = criteria.getComplexityLevel();
+    level = criteria.getComplexityLevel();
   }
 
   @Override
@@ -61,6 +61,6 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
 
     setAvailable(c.isAvailable(ComplexityData.class));
     setDenominator(objects.stream().distinct().count());
-    setNumerator(objects.stream().distinct().filter(o -> o.getValue() >= threshold).count());
+    setNumerator(objects.stream().distinct().filter(o -> o.getValue() >= level).count());
   }
 }
