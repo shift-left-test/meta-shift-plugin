@@ -18,7 +18,7 @@ export class CoverageFileView extends FileDetail {
     return html`
       <h3>Branch Coverage${this.currentLine !== undefined ? html`
       - #${this.currentLine}` : html``}</h3>
-      <div class="list-group">
+      <div class="list-group metashift-code">
         ${this.currentDataList.map((data) => data.type === 'Branch' ?
           html`
         <div class="list-item ${data.covered === true ?

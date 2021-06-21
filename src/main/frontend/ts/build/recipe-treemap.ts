@@ -23,7 +23,16 @@ export class RecipeTreemap extends LitElement {
    * @return {unknown}
    */
   render() : unknown {
-    return html`<div id="treemap-chart" class="chart"></div>`;
+    return html`<div id="treemap-chart" class="chart"></div>
+    <div class="legend">
+      <span class="legend-7">▉</span>
+      <span class="legend-6">▉</span>
+      <span class="legend-5">▉</span>
+      <span class="legend-4">▉</span>
+      <span class="legend-3">▉</span>
+      <span class="legend-2">▉</span>
+      <span class="legend-1">▉</span>
+    </div>`;
   }
 
   /**
@@ -73,18 +82,20 @@ export class RecipeTreemap extends LitElement {
           label: {
             show: true,
             formatter: '{b}',
-            color: '#000',
+            color: '#fff',
           },
           itemStyle: {
             borderColor: '#fff',
           },
           levels: [{
             color: [
-              '#dc511d',
-              '#e28565',
-              '#eee1d6',
-              '#c5daa7',
-              '#6cb559',
+              '#e83336',
+              '#b83b40',
+              '#6e3d44',
+              '#575866',
+              '#306946',
+              '#33a653',
+              '#30cf3a',
             ],
             colorMappingBy: 'value',
             itemStyle: {

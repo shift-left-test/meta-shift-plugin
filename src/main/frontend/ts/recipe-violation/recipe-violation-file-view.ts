@@ -16,7 +16,7 @@ export class RecipeViolationFileView extends FileDetail {
     return html`
       <h3>Violation List${this.currentLine !== undefined ? html`
         - #${this.currentLine}` : html``}</h3>
-      <div class="list-group">
+      <div class="list-group metashift-code">
         ${this.currentDataList.map((data) => html`
         <div class="list-item">
           <div>

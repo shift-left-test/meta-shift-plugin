@@ -37,7 +37,7 @@ export class MetricsSimpleView extends LitElement {
     const evaluator = JSON.parse(this.metricsValue);
     const isPercent = this.classList.contains('percent');
 
-    const diffDirection = this.delta == 0 ? '' :
+    const diffDirection = this.delta == 0 ? null :
         (this.delta > 0 ? '▲' : '▼');
     const textClass = evaluator.available ? '' : 'text-na';
     const iconClass = evaluator.available ?
@@ -57,8 +57,7 @@ export class MetricsSimpleView extends LitElement {
       ${this.delta ?
         html`
           <div class="size-diff ${textClass}">
-            (${diffDirection}
-             ${isPercent ?
+            (${diffDirection}${isPercent ?
               html`${Math.floor(Math.abs(this.delta * 100))}%`:
               html`${Number(Math.abs(this.delta)).toFixed(2)}`})
           </div>` :

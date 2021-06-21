@@ -41,8 +41,8 @@ export class CodeSize extends LitElement {
       return html`
       <div class="size-item">
         <div class="title">${title}<div>
-        <div class="size-number">${Number(size).toLocaleString()}
-          <span class="size-diff">
+        <div class="size-number">${Number(size).toLocaleString()}</div>
+        <div><span class="size-diff">
             (${diffDirection}${(Math.abs(delta)).toLocaleString()})</span>
         </div>
       </div>`;
