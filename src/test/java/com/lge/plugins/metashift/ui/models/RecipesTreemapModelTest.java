@@ -24,27 +24,36 @@
 
 package com.lge.plugins.metashift.ui.models;
 
-import org.kohsuke.stapler.DataBoundConstructor;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-/**
- * Frontend Table sorting information class.
- */
-public class TableSortInfo {
+import java.util.Arrays;
 
-  private final String dir;
-  private final String field;
+import org.junit.Test;
 
-  @DataBoundConstructor
-  public TableSortInfo(String dir, String field) {
-    this.dir = dir;
-    this.field = field;
+import net.sf.json.JSONArray;
+
+public class RecipesTreemapModelTest {
+  @Test
+  public void testInitData() {
+    RecipesTreemapModel model = new RecipesTreemapModel();
+
+    assertEquals(JSONArray.fromObject(
+      "[{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,0]},"
+      + "{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,100]}]"),
+      JSONArray.fromObject(model.getSeries()));
   }
 
-  public String getDir() {
-    return dir;
-  }
+  @Test
+  public void testAdd() {
+    RecipesTreemapModel model = new RecipesTreemapModel();
 
-  public String getField() {
-    return field;
+    model.add("test", "testpath", 1, 2);
+    System.out.println(JSONArray.fromObject(model.getSeries()));
+    int [] values = {1, 2};
+
+    assertNotNull(model.getSeries().stream().filter(o -> o.getName() == "test" 
+        && o.getPath() == "testpath" && Arrays.equals(o.getValue(), values))
+        .findAny().orElse(null));
   }
 }

@@ -28,10 +28,9 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileComplexityTableItem;
+import com.lge.plugins.metashift.ui.models.FileComplexitySortableItemList;
+import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
-import com.lge.plugins.metashift.ui.models.TableSortInfo;
-import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -81,15 +80,15 @@ public class RecipeComplexityAction
       fileComplexityList.get(file).add(complexityData);
     }
 
-    List<FileComplexityTableItem> fileComplexityStats = new ArrayList<>();
+    FileComplexitySortableItemList fileComplexityStats = new FileComplexitySortableItemList();
     long complexityThreashold =
         this.getParentAction().getParentAction().getCriteria().getComplexityLevel();
 
     fileComplexityList.forEach((file, complexityList) -> {
-      fileComplexityStats.add(new FileComplexityTableItem(file,
+      fileComplexityStats.addItem(file,
           complexityList.size(),
           complexityList.stream().filter(o -> o.getValue() >= complexityThreashold).count()
-      ));
+      );
 
       try {
         this.saveFileContents(channel, metadata, file);
@@ -160,15 +159,16 @@ public class RecipeComplexityAction
    * @return complexity list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
-    List<FileComplexityTableItem> dataList = this.getDataSource().get(
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
+      SortableItemList.SortInfo[] sortInfos) {
+    FileComplexitySortableItemList dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECOMPLEXITYSTAT);
 
-    if (sortInfos.length > 0) {
-
-      dataList.sort(FileComplexityTableItem.createComparator(sortInfos));
+    if (dataList != null) {
+      return dataList.sort(sortInfos).getPage(pageIndex, pageSize);
+    } else {
+      return null;
     }
-    return TabulatorUtils.getPage(pageIndex, pageSize, dataList);
   }
 
   /**

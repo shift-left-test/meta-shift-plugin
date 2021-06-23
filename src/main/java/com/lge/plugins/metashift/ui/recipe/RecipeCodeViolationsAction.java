@@ -27,10 +27,9 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileViolationTableItem;
+import com.lge.plugins.metashift.ui.models.FileViolationSortableItemList;
+import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
-import com.lge.plugins.metashift.ui.models.TableSortInfo;
-import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -93,14 +92,14 @@ public class RecipeCodeViolationsAction
       fileCodeViloationList.get(file).add(codeViolationData);
     }
 
-    List<FileViolationTableItem> fileCodeViolationStats = new ArrayList<>();
+    FileViolationSortableItemList fileCodeViolationStats = new FileViolationSortableItemList();
 
     fileCodeViloationList.forEach((file, violationList) -> {
-      fileCodeViolationStats.add(new FileViolationTableItem(file,
+      fileCodeViolationStats.addItem(file,
           violationList.stream().filter(o -> o.getLevel().equals("MAJOR")).count(),
           violationList.stream().filter(o -> o.getLevel().equals("MINOR")).count(),
           violationList.stream().filter(o -> o.getLevel().equals("INFO")).count()
-      ));
+      );
       try {
         this.saveFileContents(channel, metadata, file);
         dataSource.put(violationList,
@@ -177,15 +176,16 @@ public class RecipeCodeViolationsAction
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo[] sortInfos)
-      throws IOException {
-    List<FileViolationTableItem> dataList = this.getDataSource().get(
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
+      SortableItemList.SortInfo[] sortInfos) throws IOException {
+    FileViolationSortableItemList dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECODEVIOLATIONSTAT);
 
-    if (sortInfos.length > 0) {
-      dataList.sort(FileViolationTableItem.createComparator(sortInfos));
+    if (dataList != null) {
+      return dataList.sort(sortInfos).getPage(pageIndex, pageSize);
+    } else {
+      return null;
     }
-    return TabulatorUtils.getPage(pageIndex, pageSize, dataList);
   }
 
   /**

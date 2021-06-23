@@ -25,19 +25,73 @@
 package com.lge.plugins.metashift.ui.models;
 
 import com.lge.plugins.metashift.utils.ListUtils;
+import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * tabulator page utils.
+ * Sortableitem list class.
  */
-public class TabulatorUtils {
+public abstract class SortableItemList<T> implements Serializable {
+  /**
+   * column sort info.
+   */
+  public static class SortInfo {
+    private final String dir;
+    private final String field;
+  
+    @DataBoundConstructor
+    public SortInfo(String dir, String field) {
+      this.dir = dir;
+      this.field = field;
+    }
+  
+    public String getDir() {
+      return dir;
+    }
+  
+    public String getField() {
+      return field;
+    }
+  }
+
+  protected List<T> items;
+
+  public SortableItemList(List<T> items) {
+    this.items = items;
+  }
+
+  public List<T> getItems() {
+    return items;
+  }
+
+  abstract Comparator<T> createComparator(SortInfo sortInfo);
+
+  /**
+   * return comparator for CacheTableItem.
+   *
+   * @param sortInfos sort info
+   * @return comparator
+   */
+  public SortableItemList<T> sort(SortInfo[] sortInfos) {
+    if (sortInfos.length > 0) {
+      Comparator<T> comparator = this.createComparator(sortInfos[0]);
+      for (int i = 1; i < sortInfos.length; i++) {
+        comparator = comparator.thenComparing(this.createComparator(sortInfos[i]));
+      }
+      this.items.sort(comparator);
+    }
+
+    return this;
+  }
 
   /**
    * return requested page.
    */
-  public static <T> JSONObject getPage(int pageIndex, int pageSize, List<T> dataList) {
-    List<List<T>> pagedDataList = ListUtils.partition(dataList, pageSize);
+  public JSONObject getPage(int pageIndex, int pageSize) {
+    List<List<T>> pagedDataList = ListUtils.partition(this.items, pageSize);
     if (pageIndex < 1) {
       pageIndex = 1;
     } else if (pageIndex > pagedDataList.size()) {

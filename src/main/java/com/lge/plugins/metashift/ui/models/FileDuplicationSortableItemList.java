@@ -28,69 +28,68 @@ import com.lge.plugins.metashift.models.DuplicationData;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * duplication for each file.
+ * Duplications metrics sortableitem list class.
  */
-public class FileDuplicationTableItem implements Serializable {
-
-  private static final long serialVersionUID = -2150956341341431329L;
-  private static final Map<String, Comparator<FileDuplicationTableItem>> comparators;
-  private final String file;
-  private final long lines;
-  private final long duplicatedLines;
-
+public class FileDuplicationSortableItemList
+    extends SortableItemList<FileDuplicationSortableItemList.Item> {
+  private static final long serialVersionUID = 1L;
+  private static final Map<String, Comparator<Item>> comparators;
+  
   static {
     comparators = new HashMap<>();
-    comparators.put("file", Comparator.comparing(FileDuplicationTableItem::getFile));
-    comparators.put("lines", Comparator.comparing(FileDuplicationTableItem::getLines));
+    comparators.put("file", Comparator.comparing(Item::getFile));
+    comparators.put("lines", Comparator.comparing(Item::getLines));
     comparators.put("duplicatedLines",
-        Comparator.comparing(FileDuplicationTableItem::getDuplicatedLines));
+        Comparator.comparing(Item::getDuplicatedLines));
   }
 
-  public String getFile() {
-    return file;
+  public FileDuplicationSortableItemList(List<Item> items) {
+    super(items);
   }
 
-  public long getLines() {
-    return lines;
-  }
-
-  public long getDuplicatedLines() {
-    return duplicatedLines;
-  }
-
-  /**
-   * constructor.
-   */
-  public FileDuplicationTableItem(DuplicationData data) {
-    this.file = data.getFile();
-    this.lines = data.getLines();
-    this.duplicatedLines = data.getDuplicatedLines();
-  }
-
-  private static Comparator<FileDuplicationTableItem> createComparator(TableSortInfo sortInfo) {
+  protected Comparator<Item> createComparator(SortInfo sortInfo) {
     String field = sortInfo.getField();
     if (!comparators.containsKey(field)) {
       String message = String.format("unknown field for duplications table : %s", field);
       throw new IllegalArgumentException(message);
     }
-    Comparator<FileDuplicationTableItem> comparator = comparators.get(field);
+    Comparator<Item> comparator = comparators.get(field);
     return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
 
   /**
-   * return comparator for FileDuplicationTableItem.
-   *
-   * @param sortInfos sort info
-   * @return comparator
+   * duplication for each file.
    */
-  public static Comparator<FileDuplicationTableItem> createComparator(TableSortInfo[] sortInfos) {
-    Comparator<FileDuplicationTableItem> comparator = createComparator(sortInfos[0]);
-    for (int i = 1; i < sortInfos.length; i++) {
-      comparator = comparator.thenComparing(createComparator(sortInfos[i]));
+  public static class Item implements Serializable {
+
+    private static final long serialVersionUID = -2150956341341431329L;
+    private final String file;
+    private final long lines;
+    private final long duplicatedLines;
+
+    public String getFile() {
+      return file;
     }
-    return comparator;
+
+    public long getLines() {
+      return lines;
+    }
+
+    public long getDuplicatedLines() {
+      return duplicatedLines;
+    }
+
+    /**
+     * constructor.
+     */
+    public Item(DuplicationData data) {
+      this.file = data.getFile();
+      this.lines = data.getLines();
+      this.duplicatedLines = data.getDuplicatedLines();
+    }
   }
 }

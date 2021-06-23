@@ -28,14 +28,12 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileDuplicationTableItem;
+import com.lge.plugins.metashift.ui.models.FileDuplicationSortableItemList;
+import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
-import com.lge.plugins.metashift.ui.models.TableSortInfo;
-import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -63,8 +61,9 @@ public class RecipeDuplicationsAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    List<FileDuplicationTableItem> duplicationList = recipe.objects(DuplicationData.class)
-        .map(FileDuplicationTableItem::new).collect(Collectors.toList());
+    FileDuplicationSortableItemList duplicationList =
+        new FileDuplicationSortableItemList(recipe.objects(DuplicationData.class)
+        .map(FileDuplicationSortableItemList.Item::new).collect(Collectors.toList()));
 
     try {
       dataSource.put(duplicationList, this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
@@ -124,16 +123,13 @@ public class RecipeDuplicationsAction
    * @return duplication list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
-    if (getParentAction().getMetrics().getDuplications().isAvailable()) {
-      List<FileDuplicationTableItem> duplicationDataList = this.getDataSource().get(
-          this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
+      SortableItemList.SortInfo[] sortInfos) {
+    FileDuplicationSortableItemList duplicationDataList = this.getDataSource().get(
+        this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
 
-      if (sortInfos.length > 0) {
-        duplicationDataList.sort(FileDuplicationTableItem.createComparator(sortInfos));
-      }
-
-      return TabulatorUtils.getPage(pageIndex, pageSize, duplicationDataList);
+    if (duplicationDataList != null) {
+      return duplicationDataList.sort(sortInfos).getPage(pageIndex, pageSize);
     } else {
       return null;
     }

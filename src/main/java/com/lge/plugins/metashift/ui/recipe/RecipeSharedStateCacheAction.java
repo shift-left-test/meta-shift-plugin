@@ -28,14 +28,12 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.CacheTableItem;
+import com.lge.plugins.metashift.ui.models.CacheSortableItemList;
+import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
-import com.lge.plugins.metashift.ui.models.TableSortInfo;
-import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -63,8 +61,9 @@ public class RecipeSharedStateCacheAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    List<CacheTableItem> cacheList = recipe.objects(SharedStateCacheData.class)
-        .map(CacheTableItem::new).collect(Collectors.toList());
+    CacheSortableItemList cacheList = new CacheSortableItemList(
+        recipe.objects(SharedStateCacheData.class)
+            .map(CacheSortableItemList.Item::new).collect(Collectors.toList()));
 
     try {
       dataSource.put(cacheList, this.getParentAction().getName(), STORE_KEY_CACHELIST);
@@ -124,14 +123,15 @@ public class RecipeSharedStateCacheAction
    * @return cache availability list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeCaches(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
-    List<CacheTableItem> cacheList = this.getDataSource().get(
+  public JSONObject getRecipeCaches(int pageIndex, int pageSize,
+      SortableItemList.SortInfo[] sortInfos) {
+    CacheSortableItemList cacheList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CACHELIST);
 
-    if (sortInfos.length > 0) {
-      cacheList.sort(CacheTableItem.createComparator(sortInfos));
+    if (cacheList != null) {
+      return cacheList.sort(sortInfos).getPage(pageIndex, pageSize);
+    } else {
+      return null;
     }
-
-    return TabulatorUtils.getPage(pageIndex, pageSize, cacheList);
   }
 }

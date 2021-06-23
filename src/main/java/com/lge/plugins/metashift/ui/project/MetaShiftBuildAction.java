@@ -28,14 +28,14 @@ import com.lge.plugins.metashift.metrics.CodeSizeDelta;
 import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.metrics.Metrics;
+import com.lge.plugins.metashift.metrics.QualifiedRecipeCounter;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.RecipeMetricsTableItem;
+import com.lge.plugins.metashift.ui.models.RecipeMetricsSortableItemList;
 import com.lge.plugins.metashift.ui.models.RecipesTreemapModel;
-import com.lge.plugins.metashift.ui.models.TableSortInfo;
-import com.lge.plugins.metashift.ui.models.TabulatorUtils;
+import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import hudson.FilePath;
 import hudson.PluginWrapper;
@@ -46,7 +46,6 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -69,6 +68,7 @@ public class MetaShiftBuildAction extends Actionable
   private transient List<RecipeAction> recipeActions;
 
   private final Criteria criteria;
+  private final QualifiedRecipeCounter qualifiedRecipeCounter;
   private Metrics metrics;
 
   private final DataSource dataSource;
@@ -91,14 +91,18 @@ public class MetaShiftBuildAction extends Actionable
     this.metrics = new Metrics(criteria);
     this.metrics.parse(recipes);
 
-    List<RecipeMetricsTableItem> recipeMetricsList = new ArrayList<>();
+    this.qualifiedRecipeCounter = new QualifiedRecipeCounter(criteria);
+    this.qualifiedRecipeCounter.parse(recipes);
+
+    RecipeMetricsSortableItemList recipeMetricsList = new RecipeMetricsSortableItemList();
 
     for (Recipe recipe : recipes) {
       RecipeAction recipeAction = new RecipeAction(
           this, listener, criteria, reportRoot, dataSource, recipe);
       this.addAction(recipeAction);
-      recipeMetricsList.add(
-          new RecipeMetricsTableItem(recipeAction.getName(), recipeAction.getMetrics()));
+      long codeLines = recipeAction.getMetrics().getCodeSize() != null
+          ? recipeAction.getMetrics().getCodeSize().getLines() : 0;
+      recipeMetricsList.addItem(recipeAction.getName(), codeLines, recipeAction.getMetrics());
     }
 
     try {
@@ -173,6 +177,10 @@ public class MetaShiftBuildAction extends Actionable
     return this.metrics;
   }
 
+  public QualifiedRecipeCounter getQualifiedRecipeCounter() {
+    return this.qualifiedRecipeCounter;
+  }
+
   public DataSource getDataSource() {
     return this.dataSource;
   }
@@ -200,7 +208,7 @@ public class MetaShiftBuildAction extends Actionable
     for (RecipeAction recipeAction : this.getRecipes()) {
       model.add(recipeAction.getName(), "",
           (int) recipeAction.getMetrics().getCodeSize().getLines(),
-          recipeAction.getRecipeScore());
+          (int) (recipeAction.getMetrics().getRatio() * 100));
     }
     return JSONObject.fromObject(model);
   }
@@ -213,46 +221,13 @@ public class MetaShiftBuildAction extends Actionable
    * @return recipe qualifier list.
    */
   @JavaScriptMethod
-  public JSONObject getRecipesTableModel(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
-    List<RecipeMetricsTableItem> recipeMetricsList = this.getDataSource().get(
+  public JSONObject getRecipesTableModel(int pageIndex, int pageSize,
+      SortableItemList.SortInfo[] sortInfos) {
+    RecipeMetricsSortableItemList recipeMetricsList = this.getDataSource().get(
         STORE_KEY_RECIPEMETRICSLIST);
 
-    if (sortInfos.length > 0) {
-      recipeMetricsList.sort(RecipeMetricsTableItem.createComparator(sortInfos));
-    }
-
-    return TabulatorUtils.getPage(pageIndex, pageSize, recipeMetricsList);
-  }
-
-  private transient MetaShiftBuildAction previousAction;
-
-  /**
-   * return previous not failed build action.
-   *
-   * @return metashift build action
-   */
-  public MetaShiftBuildAction getPreviousBuildAction() {
-    if (previousAction != null) {
-      return previousAction;
-    }
-
-    AbstractBuild<?, ?> build = ((AbstractBuild<?, ?>) this.run)
-        .getPreviousNotFailedBuild();
-    while (build != null) {
-      if (build.getResult() != Result.FAILURE) {
-        previousAction = build.getAction(MetaShiftBuildAction.class);
-        if (previousAction != null) {
-          return previousAction;
-        }
-      }
-      build = build.getPreviousNotFailedBuild();
-    }
-    return null;
-  }
-
-  private Metrics getPreviousMetrics() {
-    if (getPreviousBuildAction() != null) {
-      return getPreviousBuildAction().getMetrics();
+    if (recipeMetricsList != null) {
+      return recipeMetricsList.sort(sortInfos).getPage(pageIndex, pageSize);
     } else {
       return null;
     }
@@ -266,47 +241,6 @@ public class MetaShiftBuildAction extends Actionable
   public long getTestedRecipes() {
     return this.getRecipes().stream().filter(
         o -> o.getMetrics().getTest().isAvailable()).count();
-  }
-
-  /**
-   * return tested recipe rate change.
-   */
-  public double getTestedRecipesDelta() {
-    MetaShiftBuildAction previous =
-        Optional.ofNullable(getPreviousBuildAction()).orElse(null);
-
-    double previousRatio = previous != null ? (double) previous.getTestedRecipes()
-        / (double) previous.getMetrics().getCodeSize().getRecipes() : 0;
-
-    return (double) getTestedRecipes() / (double) getMetrics().getCodeSize().getRecipes()
-        - previousRatio;
-  }
-
-  /**
-   * Returns the delta between the previous and current builds.
-   *
-   * @return CodeSizeDelta object
-   */
-  public JSONObject getCodeSizeDeltaJson() {
-    CodeSizeEvaluator previous =
-        Optional.ofNullable(getPreviousMetrics())
-            .map(Metrics::getCodeSize).orElse(null);
-    CodeSizeEvaluator current = getMetrics().getCodeSize();
-    return JSONObject.fromObject(CodeSizeDelta.between(previous, current));
-  }
-
-  private double getRatioDelta(Function<Metrics, Evaluator<?>> mapper) {
-    Evaluator<?> previous =
-        Optional.ofNullable(getPreviousMetrics())
-            .map(mapper).orElse(null);
-    Evaluator<?> current = mapper.apply(getMetrics());
-
-    if (current == null) {
-      return 0;
-    }
-
-    return (previous != null) ? current.getRatio() - previous.getRatio()
-        : current.getRatio();
   }
 
   public JSONObject getCodeSizeJson() {
@@ -353,6 +287,81 @@ public class MetaShiftBuildAction extends Actionable
     return JSONObject.fromObject(this.metrics.getTest());
   }
 
+  private transient MetaShiftBuildAction previousAction;
+
+  /**
+   * return previous not failed build action.
+   *
+   * @return metashift build action
+   */
+  public MetaShiftBuildAction getPreviousBuildAction() {
+    if (previousAction != null) {
+      return previousAction;
+    }
+
+    AbstractBuild<?, ?> build = ((AbstractBuild<?, ?>) this.run)
+        .getPreviousNotFailedBuild();
+    while (build != null) {
+      if (build.getResult() != Result.FAILURE) {
+        previousAction = build.getAction(MetaShiftBuildAction.class);
+        if (previousAction != null) {
+          return previousAction;
+        }
+      }
+      build = build.getPreviousNotFailedBuild();
+    }
+    return null;
+  }
+
+  private Metrics getPreviousMetrics() {
+    if (getPreviousBuildAction() != null) {
+      return getPreviousBuildAction().getMetrics();
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * return tested recipe rate change.
+   */
+  public double getTestedRecipesDelta() {
+    MetaShiftBuildAction previous =
+        Optional.ofNullable(getPreviousBuildAction()).orElse(null);
+
+    double previousRatio = previous != null ? (double) previous.getTestedRecipes()
+        / (double) previous.getMetrics().getCodeSize().getRecipes() : 0;
+
+    return (double) getTestedRecipes() / (double) getMetrics().getCodeSize().getRecipes()
+        - previousRatio;
+  }
+
+  /**
+   * Returns the delta between the previous and current builds.
+   *
+   * @return CodeSizeDelta object
+   */
+  public JSONObject getCodeSizeDeltaJson() {
+    CodeSizeEvaluator previous =
+        Optional.ofNullable(getPreviousMetrics())
+            .map(Metrics::getCodeSize).orElse(null);
+    CodeSizeEvaluator current = getMetrics().getCodeSize();
+    return JSONObject.fromObject(CodeSizeDelta.between(previous, current));
+  }
+
+  private double getRatioDelta(Function<Metrics, Evaluator<?>> mapper) {
+    Evaluator<?> previous =
+        Optional.ofNullable(getPreviousMetrics())
+            .map(mapper).orElse(null);
+    Evaluator<?> current = mapper.apply(getMetrics());
+
+    if (current == null) {
+      return 0;
+    }
+
+    return (previous != null) ? current.getRatio() - previous.getRatio()
+        : current.getRatio();
+  }
+
   // ratio delta
   public double getPremirrorCacheDelta() {
     return getRatioDelta(Metrics::getPremirrorCache);
@@ -392,105 +401,5 @@ public class MetaShiftBuildAction extends Actionable
 
   public double getTestDelta() {
     return getRatioDelta(Metrics::getTest);
-  }
-
-  /**
-   * return premirror cache qualified recipe rate.
-   */
-  public double getPremirrorCacheQualifiedRate() {
-    return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getPremirrorCache() != null
-            && o.getMetrics().getPremirrorCache().isQualified()).count()
-        / (double) this.getRecipes().size();
-  }
-
-  /**
-   * return sharedstate cache availability qualified recipe rate.
-   */
-  public double getSharedStateCacheQualifiedRate() {
-    return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getSharedStateCache() != null
-            && o.getMetrics().getSharedStateCache().isQualified()).count()
-        / (double) this.getRecipes().size();
-  }
-
-  /**
-   * return code violation qualified recipe rate.
-   */
-  public double getCodeViolationsQualifiedRate() {
-    return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getCodeViolations() != null
-            && o.getMetrics().getCodeViolations().isQualified()).count()
-        / (double) this.getRecipes().size();
-  }
-
-  /**
-   * return comments qualified recipe rate.
-   */
-  public double getCommentsQualifiedRate() {
-    return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getComments() != null
-            && o.getMetrics().getComments().isQualified()).count()
-        / (double) this.getRecipes().size();
-  }
-
-  /**
-   * return complexity qualified recipe rate.
-   */
-  public double getComplexityQualifiedRate() {
-    return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getComplexity() != null
-            && o.getMetrics().getComplexity().isQualified()).count()
-        / (double) this.getRecipes().size();
-  }
-
-  /**
-   * return coverage qualified recipe rate.
-   */
-  public double getCoverageQualifiedRate() {
-    return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getCoverage() != null
-            && o.getMetrics().getCoverage().isQualified()).count()
-        / (double) this.getRecipes().size();
-  }
-
-  /**
-   * return duplications qualified recipe rate.
-   */
-  public double getDuplicationsQualifiedRate() {
-    return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getDuplications() != null
-            && o.getMetrics().getDuplications().isQualified()).count()
-        / (double) this.getRecipes().size();
-  }
-
-  /**
-   * return mutation test qualified recipe rate.
-   */
-  public double getMutationTestQualifiedRate() {
-    return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getMutationTest() != null
-            && o.getMetrics().getMutationTest().isQualified()).count()
-        / (double) this.getRecipes().size();
-  }
-
-  /**
-   * return recipe violation qualified recipe rate.
-   */
-  public double getRecipeViolationsQualifiedRate() {
-    return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getRecipeViolations() != null
-            && o.getMetrics().getRecipeViolations().isQualified()).count()
-        / (double) this.getRecipes().size();
-  }
-
-  /**
-   * return test qualified recipe rate.
-   */
-  public double getTestQualifiedRate() {
-    return (double) this.getRecipes().stream().filter(
-        o -> o.getMetrics().getTest() != null
-            && o.getMetrics().getTest().isQualified()).count()
-        / (double) this.getRecipes().size();
   }
 }

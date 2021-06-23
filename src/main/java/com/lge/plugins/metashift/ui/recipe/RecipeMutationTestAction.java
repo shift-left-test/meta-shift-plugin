@@ -27,10 +27,9 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileMutationTestTableItem;
+import com.lge.plugins.metashift.ui.models.FileMutationTestSortableItemList;
+import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
-import com.lge.plugins.metashift.ui.models.TableSortInfo;
-import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -92,15 +91,15 @@ public class RecipeMutationTestAction extends RecipeActionChild {
       fileMutationTestList.get(file).add(mutationTestData);
     }
 
-    List<FileMutationTestTableItem> fileMutationTestStats = new ArrayList<>();
+    FileMutationTestSortableItemList fileMutationTestStats = new FileMutationTestSortableItemList();
 
     // TODO: need to check that skipped is 'ERROR' status.
     fileMutationTestList.forEach((file, testList) -> {
-      fileMutationTestStats.add(new FileMutationTestTableItem(file,
+      fileMutationTestStats.addItem(file,
           testList.stream().filter(o -> o.getStatus().equals("KILLED")).count(),
           testList.stream().filter(o -> o.getStatus().equals("SURVIVED")).count(),
           testList.stream().filter(o -> o.getStatus().equals("ERROR")).count()
-      ));
+      );
       try {
         this.saveFileContents(channel, metadata, file);
         dataSource.put(testList,
@@ -177,15 +176,15 @@ public class RecipeMutationTestAction extends RecipeActionChild {
    */
   @JavaScriptMethod
   public JSONObject getRecipeMutationTests(
-      int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
-    List<FileMutationTestTableItem> dataList = this.getDataSource().get(
+      int pageIndex, int pageSize, SortableItemList.SortInfo[] sortInfos) {
+    FileMutationTestSortableItemList dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILEMUTATIONTESTSTAT);
 
-    if (sortInfos.length > 0) {
-      dataList.sort(FileMutationTestTableItem.createComparator(sortInfos));
+    if (dataList != null) {
+      return dataList.sort(sortInfos).getPage(pageIndex, pageSize);
+    } else {
+      return null;
     }
-
-    return TabulatorUtils.getPage(pageIndex, pageSize, dataList);
   }
 
   /**

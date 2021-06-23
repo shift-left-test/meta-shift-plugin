@@ -25,71 +25,74 @@
 package com.lge.plugins.metashift.ui.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * coverage for each file.
+ * Coverage metrics sortableitem list class.
  */
-public class FileCoverageTableItem implements Serializable {
-
-  private static final long serialVersionUID = -7175754091249866685L;
-  private static final Map<String, Comparator<FileCoverageTableItem>> comparators;
-  private final String file;
-  private final double lineCoverage;
-  private final double branchCoverage;
-
+public class FileCoverageSortableItemList
+    extends SortableItemList<FileCoverageSortableItemList.Item> {
+  private static final long serialVersionUID = 1L;
+  private static final Map<String, Comparator<Item>> comparators;
+  
   static {
     comparators = new HashMap<>();
-    comparators.put("file", Comparator.comparing(FileCoverageTableItem::getFile));
-    comparators.put("lineCoverage", Comparator.comparing(FileCoverageTableItem::getLineCoverage));
+    comparators.put("file", Comparator.comparing(Item::getFile));
+    comparators.put("lineCoverage", Comparator.comparing(Item::getLineCoverage));
     comparators.put("branchCoverage",
-        Comparator.comparing(FileCoverageTableItem::getBranchCoverage));
+        Comparator.comparing(Item::getBranchCoverage));
   }
 
-  /**
-   * constructor.
-   */
-  public FileCoverageTableItem(String file, double lineCoverage, double branchCoverage) {
-    this.file = file;
-    this.lineCoverage = lineCoverage;
-    this.branchCoverage = branchCoverage;
+  public FileCoverageSortableItemList() {
+    super(new ArrayList<>());
   }
 
-  public String getFile() {
-    return file;
+  public void addItem(String file, double lineCoverage, double branchCoverage) {
+    this.items.add(new Item(file, lineCoverage, branchCoverage));
   }
-
-  public double getLineCoverage() {
-    return lineCoverage;
-  }
-
-  public double getBranchCoverage() {
-    return branchCoverage;
-  }
-
-  private static Comparator<FileCoverageTableItem> createComparator(TableSortInfo sortInfo) {
+  
+  protected Comparator<Item> createComparator(SortInfo sortInfo) {
     String field = sortInfo.getField();
     if (!comparators.containsKey(field)) {
       String message = String.format("unknown field for coverage table : %s", field);
       throw new IllegalArgumentException(message);
     }
-    Comparator<FileCoverageTableItem> comparator = comparators.get(field);
+    Comparator<Item> comparator = comparators.get(field);
     return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
 
   /**
-   * return comparator for FileCoverageTableItem.
-   *
-   * @param sortInfos sort info
-   * @return comparator
+   * coverage for each file.
    */
-  public static Comparator<FileCoverageTableItem> createComparator(TableSortInfo[] sortInfos) {
-    Comparator<FileCoverageTableItem> comparator = createComparator(sortInfos[0]);
-    for (int i = 1; i < sortInfos.length; i++) {
-      comparator = comparator.thenComparing(createComparator(sortInfos[i]));
+  public static class Item implements Serializable {
+
+    private static final long serialVersionUID = -7175754091249866685L;
+    private final String file;
+    private final double lineCoverage;
+    private final double branchCoverage;
+
+    /**
+     * constructor.
+     */
+    public Item(String file, double lineCoverage, double branchCoverage) {
+      this.file = file;
+      this.lineCoverage = lineCoverage;
+      this.branchCoverage = branchCoverage;
     }
-    return comparator;
+
+    public String getFile() {
+      return file;
+    }
+
+    public double getLineCoverage() {
+      return lineCoverage;
+    }
+
+    public double getBranchCoverage() {
+      return branchCoverage;
+    }
   }
 }

@@ -28,10 +28,9 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileCoverageTableItem;
+import com.lge.plugins.metashift.ui.models.FileCoverageSortableItemList;
+import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
-import com.lge.plugins.metashift.ui.models.TableSortInfo;
-import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -81,7 +80,7 @@ public class RecipeCoverageAction extends RecipeActionChild {
       fileCoverageList.get(file).add(coverageData);
     }
 
-    List<FileCoverageTableItem> fileCoverageStats = new ArrayList<>();
+    FileCoverageSortableItemList fileCoverageStats = new FileCoverageSortableItemList();
 
     fileCoverageList.forEach((file, coverageList) -> {
       HashSet<Long> lines = new HashSet<>();
@@ -100,10 +99,10 @@ public class RecipeCoverageAction extends RecipeActionChild {
         }
       }
 
-      fileCoverageStats.add(new FileCoverageTableItem(file,
+      fileCoverageStats.addItem(file,
           lines.size() > 0 ? (double) coveredLines.size() / (double) lines.size() : 0,
           indexes.size() > 0 ? (double) coveredIndexes.size() / (double) indexes.size() : 0
-      ));
+      );
       try {
         this.saveFileContents(channel, metadata, file);
         dataSource.put(coverageList,
@@ -195,14 +194,16 @@ public class RecipeCoverageAction extends RecipeActionChild {
    * @return coverage list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
-    List<FileCoverageTableItem> dataList = this.getDataSource().get(
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
+      SortableItemList.SortInfo[] sortInfos) {
+    FileCoverageSortableItemList dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
 
-    if (sortInfos.length > 0) {
-      dataList.sort(FileCoverageTableItem.createComparator(sortInfos));
+    if (dataList != null) {
+      return dataList.sort(sortInfos).getPage(pageIndex, pageSize);
+    } else {
+      return null;
     }
-    return TabulatorUtils.getPage(pageIndex, pageSize, dataList);
   }
 
   /**

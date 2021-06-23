@@ -28,58 +28,57 @@ import com.lge.plugins.metashift.models.CacheData;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Cache Table Item.
+ * Cache metrics sortableitem list class.
  */
-public class CacheTableItem implements Serializable {
-
-  private static final long serialVersionUID = -396700679379276827L;
-  private static final Map<String, Comparator<CacheTableItem>> comparators;
-  private final String signature;
-  private final boolean available;
-
+public class CacheSortableItemList
+    extends SortableItemList<CacheSortableItemList.Item> {
+  private static final long serialVersionUID = 1L;
+  private static final Map<String, Comparator<Item>> comparators;
+  
   static {
     comparators = new HashMap<>();
-    comparators.put("signature", Comparator.comparing(CacheTableItem::getSignature));
-    comparators.put("available", Comparator.comparing(CacheTableItem::isAvailable));
+    comparators.put("signature", Comparator.comparing(Item::getSignature));
+    comparators.put("available", Comparator.comparing(Item::isAvailable));
   }
 
-  public CacheTableItem(CacheData cacheData) {
-    signature = cacheData.getSignature();
-    available = cacheData.isAvailable();
+  public CacheSortableItemList(List<Item> items) {
+    super(items);
   }
 
-  public String getSignature() {
-    return signature;
-  }
-
-  public boolean isAvailable() {
-    return available;
-  }
-
-  private static Comparator<CacheTableItem> createComparator(TableSortInfo sortInfo) {
+  protected Comparator<Item> createComparator(SortInfo sortInfo) {
     String field = sortInfo.getField();
     if (!comparators.containsKey(field)) {
       String message = String.format("unknown field for premirror cache table : %s", field);
       throw new IllegalArgumentException(message);
     }
-    Comparator<CacheTableItem> comparator = comparators.get(field);
+    Comparator<Item> comparator = comparators.get(field);
     return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
 
   /**
-   * return comparator for CacheTableItem.
-   *
-   * @param sortInfos sort info
-   * @return comparator
+   * Cache Table Item class.
    */
-  public static Comparator<CacheTableItem> createComparator(TableSortInfo[] sortInfos) {
-    Comparator<CacheTableItem> comparator = createComparator(sortInfos[0]);
-    for (int i = 1; i < sortInfos.length; i++) {
-      comparator = comparator.thenComparing(createComparator(sortInfos[i]));
+  public static class Item implements Serializable {
+
+    private static final long serialVersionUID = -396700679379276827L;
+    private final String signature;
+    private final boolean available;
+  
+    public Item(CacheData cacheData) {
+      signature = cacheData.getSignature();
+      available = cacheData.isAvailable();
     }
-    return comparator;
+  
+    public String getSignature() {
+      return signature;
+    }
+  
+    public boolean isAvailable() {
+      return available;
+    }
   }
 }

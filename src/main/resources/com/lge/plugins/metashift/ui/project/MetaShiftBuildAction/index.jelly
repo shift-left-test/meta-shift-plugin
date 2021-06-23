@@ -26,11 +26,11 @@ xmlns:c="/charts">
           <metrics-simple-view title="Shared State Cache" class="percent"
             metricsValue="${it.sharedStateCacheJson}"
             delta="${it.sharedStateCacheDelta}"
-            qualifiedRate="${it.sharedStateCacheQualifiedRate}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.sharedStateCache.ratio}" />
           <metrics-simple-view title="Recipe Violations"
             metricsValue="${it.recipeViolationsJson}"
             delta="${it.recipeViolationsDelta}"
-            qualifiedRate="${it.recipeViolationsQualifiedRate}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.recipeViolations.ratio}" />
         </div>
         <h3>Code Quality</h3>
         <h4>Static Analysis</h4>
@@ -38,7 +38,7 @@ xmlns:c="/charts">
           <metrics-simple-view title="Comments" class="percent"
             metricsValue="${it.commentsJson}"
             delta="${it.commentsDelta}"
-            qualifiedRate="${it.commentsQualifiedRate}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.comments.ratio}" />
           <metrics-simple-view title="Code Violations"
             metricsValue="${it.codeViolationsJson}"
             delta="${it.codeViolationsDelta}"
@@ -50,7 +50,7 @@ xmlns:c="/charts">
           <metrics-simple-view title="Duplications" class="percent"
             metricsValue="${it.duplicationsJson}"
             delta="${it.duplicationsDelta}"
-            qualifiedRate="${it.duplicationsQualifiedRate}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.duplications.ratio}" />
         </div>
         <h4>Dynamic Testing</h4>
         <div class="metrics-row">
@@ -69,7 +69,7 @@ xmlns:c="/charts">
           <metrics-simple-view title="Mutation Tests" class="percent"
             metricsValue="${it.mutationTestJson}"
             delta="${it.mutationTestDelta}"
-            qualifiedRate="${it.mutationTestQualifiedRate}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.mutationTest.ratio}" />
         </div>
         <h3>Recipes</h3>
         <div>

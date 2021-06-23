@@ -28,14 +28,12 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileCommentTableItem;
+import com.lge.plugins.metashift.ui.models.FileCommentSortableItemList;
+import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
-import com.lge.plugins.metashift.ui.models.TableSortInfo;
-import com.lge.plugins.metashift.ui.models.TabulatorUtils;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -63,8 +61,9 @@ public class RecipeCommentsAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    List<FileCommentTableItem> commentList = recipe.objects(CommentData.class)
-        .map(FileCommentTableItem::new).collect(Collectors.toList());
+    FileCommentSortableItemList commentList = new FileCommentSortableItemList(
+        recipe.objects(CommentData.class)
+            .map(FileCommentSortableItemList.Item::new).collect(Collectors.toList()));
 
     try {
       dataSource.put(commentList, this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
@@ -124,16 +123,15 @@ public class RecipeCommentsAction
    * @return comment list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
-    List<FileCommentTableItem> commentDataList = this.getDataSource().get(
+  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
+      SortableItemList.SortInfo[] sortInfos) {
+    FileCommentSortableItemList commentDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
 
-    if (sortInfos.length > 0) {
-      commentDataList.sort(FileCommentTableItem.createComparator(sortInfos));
+    if (commentDataList != null) {
+      return commentDataList.sort(sortInfos).getPage(pageIndex, pageSize);
+    } else {
+      return null;
     }
-
-    return TabulatorUtils.getPage(pageIndex, pageSize, commentDataList);
   }
-
-
 }

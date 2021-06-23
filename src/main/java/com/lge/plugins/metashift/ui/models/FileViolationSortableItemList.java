@@ -25,77 +25,81 @@
 package com.lge.plugins.metashift.ui.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * violation stats for each file.
+ * Code and Recipe violations metrics sortableitem list class.
  */
-public class FileViolationTableItem implements Serializable {
-
-  private static final long serialVersionUID = -8604715878738466132L;
-  private static final Map<String, Comparator<FileViolationTableItem>> comparators;
-  private final String file;
-  private final long major;
-  private final long minor;
-  private final long info;
+public class FileViolationSortableItemList
+    extends SortableItemList<FileViolationSortableItemList.Item> {
+  private static final long serialVersionUID = 1L;
+  private static final Map<String, Comparator<Item>> comparators;
 
   static {
     comparators = new HashMap<>();
-    comparators.put("file", Comparator.comparing(FileViolationTableItem::getFile));
-    comparators.put("major", Comparator.comparing(FileViolationTableItem::getMajor));
-    comparators.put("minor", Comparator.comparing(FileViolationTableItem::getMinor));
-    comparators.put("info", Comparator.comparing(FileViolationTableItem::getInfo));
+    comparators.put("file", Comparator.comparing(Item::getFile));
+    comparators.put("major", Comparator.comparing(Item::getMajor));
+    comparators.put("minor", Comparator.comparing(Item::getMinor));
+    comparators.put("info", Comparator.comparing(Item::getInfo));
   }
 
-  /**
-   * constructor.
-   */
-  public FileViolationTableItem(String file, long major, long minor, long info) {
-    this.file = file;
-    this.major = major;
-    this.minor = minor;
-    this.info = info;
+  public FileViolationSortableItemList() {
+    super(new ArrayList<Item>());
   }
 
-  public String getFile() {
-    return file;
+  public void addItem(String file, long major, long minor, long info) {
+    this.items.add(new Item(file, major, minor, info));
   }
 
-  public long getMajor() {
-    return major;
-  }
-
-  public long getMinor() {
-    return minor;
-  }
-
-  public long getInfo() {
-    return info;
-  }
-
-  private static Comparator<FileViolationTableItem> createComparator(TableSortInfo sortInfo) {
+  protected Comparator<Item> createComparator(SortInfo sortInfo) {
     String field = sortInfo.getField();
     if (!comparators.containsKey(field)) {
       String message = String.format("unknown field for recipe violations table : %s", field);
       throw new IllegalArgumentException(message);
     }
-    Comparator<FileViolationTableItem> comparator = comparators.get(field);
+    Comparator<Item> comparator = comparators.get(field);
     return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
 
   /**
-   * return comparator for FileViolationTableItem.
-   *
-   * @param sortInfos sort info
-   * @return comparator
+   * violation stats for each file.
    */
-  public static Comparator<FileViolationTableItem> createComparator(TableSortInfo[] sortInfos) {
-    Comparator<FileViolationTableItem> comparator = createComparator(sortInfos[0]);
-    for (int i = 1; i < sortInfos.length; i++) {
-      comparator = comparator.thenComparing(createComparator(sortInfos[i]));
+  public static class Item implements Serializable {
+
+    private static final long serialVersionUID = -8604715878738466132L;
+   
+    private final String file;
+    private final long major;
+    private final long minor;
+    private final long info;
+
+    /**
+     * constructor.
+     */
+    public Item(String file, long major, long minor, long info) {
+      this.file = file;
+      this.major = major;
+      this.minor = minor;
+      this.info = info;
     }
-    return comparator;
+
+    public String getFile() {
+      return file;
+    }
+
+    public long getMajor() {
+      return major;
+    }
+
+    public long getMinor() {
+      return minor;
+    }
+
+    public long getInfo() {
+      return info;
+    }
   }
 }

@@ -27,14 +27,12 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
-import com.lge.plugins.metashift.ui.models.TableSortInfo;
-import com.lge.plugins.metashift.ui.models.TabulatorUtils;
-import com.lge.plugins.metashift.ui.models.TestTableItem;
+import com.lge.plugins.metashift.ui.models.TestSortableItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -67,13 +65,17 @@ public class RecipeTestAction extends RecipeActionChild {
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    List<TestTableItem> testList = recipe.objects(TestData.class)
-        .map(TestTableItem::new).collect(Collectors.toList());
+    TestSortableItemList testList = new TestSortableItemList(recipe.objects(TestData.class)
+        .map(TestSortableItemList.Item::new).collect(Collectors.toList()));
 
-    passedCount = testList.stream().filter(o -> o.getStatus().equals("PASSED")).count();
-    failedCount = testList.stream().filter(o -> o.getStatus().equals("FAILED")).count();
-    errorCount = testList.stream().filter(o -> o.getStatus().equals("ERROR")).count();
-    skippedCount = testList.stream().filter(o -> o.getStatus().equals("SKIPPED")).count();
+    passedCount = testList.getItems().stream()
+        .filter(o -> o.getStatus().equals("PASSED")).count();
+    failedCount = testList.getItems().stream()
+        .filter(o -> o.getStatus().equals("FAILED")).count();
+    errorCount = testList.getItems().stream()
+        .filter(o -> o.getStatus().equals("ERROR")).count();
+    skippedCount = testList.getItems().stream()
+        .filter(o -> o.getStatus().equals("SKIPPED")).count();
 
     try {
       dataSource.put(testList, this.getParentAction().getName(), STORE_KEY_TESTLIST);
@@ -145,13 +147,15 @@ public class RecipeTestAction extends RecipeActionChild {
    * @return test list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeTests(int pageIndex, int pageSize, TableSortInfo[] sortInfos) {
-    List<TestTableItem> testDataList = this.getDataSource().get(
+  public JSONObject getRecipeTests(int pageIndex, int pageSize,
+      SortableItemList.SortInfo[] sortInfos) {
+    TestSortableItemList testDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_TESTLIST);
 
-    if (sortInfos.length > 0) {
-      testDataList.sort(TestTableItem.createComparator(sortInfos));
+    if (testDataList != null) {
+      return testDataList.sort(sortInfos).getPage(pageIndex, pageSize);
+    } else {
+      return null;
     }
-    return TabulatorUtils.getPage(pageIndex, pageSize, testDataList);
   }
 }

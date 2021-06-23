@@ -22,10 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift;
+package com.lge.plugins.metashift.ui.project;
 
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
 import hudson.model.FreeStyleProject;
 import java.io.File;
 import org.junit.Rule;
