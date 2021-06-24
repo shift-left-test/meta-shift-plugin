@@ -15,17 +15,32 @@ export class CoverageFileView extends FileDetail {
    * @return {unknown}
    */
   renderDataList() : unknown {
+    const branchCoverages = this.currentDataList.filter(
+        (o) => o.type === 'Branch').length;
+    const coveredBranchCoverages = this.currentDataList.filter(
+        (o) => o.covered === true && o.type === 'Branch').length;
+
+    if (branchCoverages === 0) {
+      return html ``;
+    }
+
     return html`
       <h3>Branch Coverage${this.currentLine !== undefined ? html`
       - #${this.currentLine}` : html``}</h3>
       <div class="list-group metashift-code">
-        ${this.currentDataList.map((data) => data.type === 'Branch' ?
-          html`
-        <div class="list-item ${data.covered === true ?
-          'sourceCovered' : 'sourceUncovered'}">
-        ${data.index}
-        </div>
-        ` : html ``)}
+        <table class="branch-coverage">
+          <tr>
+            <th>Branches</th>
+            <th>Covered</th>
+            <th>%</th>
+          </tr>
+          <tr>
+            <td>${branchCoverages}</td>
+            <td>${coveredBranchCoverages}</td>
+            <td>${Math.floor(coveredBranchCoverages /
+              branchCoverages * 100)}</td>
+          </tr>
+        </table>
       </div>
       `;
   }

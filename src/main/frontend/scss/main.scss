@@ -537,3 +537,17 @@ background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQM
 .gutter.gutter-horizontal {
 background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
 }
+
+coverage-file-view {
+  table.branch-coverage {
+    width: 100%;
+    border: 1px solid;
+    text-align: center;
+    th {
+      background-color: rgb(201, 201, 201);
+    }
+    th,td{
+      border: 1px solid;
+    }
+  }
+}
