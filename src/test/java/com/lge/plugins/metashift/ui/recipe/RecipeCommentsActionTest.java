@@ -89,8 +89,8 @@ public class RecipeCommentsActionTest {
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
     RecipeCommentsAction action = recipeAction.getAction(RecipeCommentsAction.class);
 
-    int scale = action.getScale();
-    assertEquals(75, scale);
+    String scale = action.getScale();
+    assertEquals("75%", scale);
 
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray.fromObject("[{\"count\":137,\"width\":75,\"label\":\"Comments\",\"clazz\":\"valid-good\"},"

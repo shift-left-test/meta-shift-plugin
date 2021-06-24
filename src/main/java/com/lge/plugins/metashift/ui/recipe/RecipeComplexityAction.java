@@ -125,8 +125,13 @@ public class RecipeComplexityAction
   }
 
   @Override
-  public int getScale() {
-    return (int) (this.getParentAction().getMetrics().getComplexity().getRatio() * 100);
+  public String getScale() {
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getComplexity();
+    
+    if (evaluator.isAvailable()) {
+      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
+    }
+    return "N/A";
   }
 
   @Override

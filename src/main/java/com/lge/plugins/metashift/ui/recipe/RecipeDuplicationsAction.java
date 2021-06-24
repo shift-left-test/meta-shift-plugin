@@ -89,8 +89,12 @@ public class RecipeDuplicationsAction
   }
 
   @Override
-  public int getScale() {
-    return (int) (this.getParentAction().getMetrics().getDuplications().getRatio() * 100);
+  public String getScale() {
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getDuplications();
+    if (evaluator.isAvailable()) {
+      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
+    }
+    return "N/A";
   }
 
   @Override

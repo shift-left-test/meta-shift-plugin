@@ -88,8 +88,8 @@ public class RecipeCoverageActionTest {
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
     RecipeCoverageAction action = recipeAction.getAction(RecipeCoverageAction.class);
 
-    int scale = action.getScale();
-    assertEquals(43, scale);
+    String scale = action.getScale();
+    assertEquals("43%", scale);
 
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray.fromObject("[{\"count\":26,\"width\":43,\"label\":\"Covered\",\"clazz\":\"valid-good\"},"

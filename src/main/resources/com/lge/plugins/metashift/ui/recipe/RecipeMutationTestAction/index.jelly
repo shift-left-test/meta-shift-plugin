@@ -13,7 +13,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         </h1>
         <h2>${it.parentAction.displayName}</h2>
         <h3>Mutation Test</h3>
-        <h4>Scale <span class="metrics-scale">${it.scale}%</span></h4>
+        <h4>Scale <span class="metrics-scale">${it.scale}</span></h4>
         <h4>Statistics</h4>
         <statistics-bar 
           items='${it.statistics}'/>

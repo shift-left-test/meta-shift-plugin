@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
+import org.springframework.expression.spel.ast.Elvis;
 
 /**
  * MetaShift recipe's cache availability detail view action class.
@@ -89,8 +90,13 @@ public class RecipePremirrorCacheAction
   }
 
   @Override
-  public int getScale() {
-    return (int) (this.getParentAction().getMetrics().getPremirrorCache().getRatio() * 100);
+  public String getScale() {
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getPremirrorCache();
+    if (evaluator.isAvailable()) {
+      return String.format("%d%%",
+          (long) (evaluator.getRatio() * 100));
+    }
+    return "N/A";
   }
 
   @Override

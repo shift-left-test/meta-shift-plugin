@@ -87,7 +87,7 @@ public abstract class RecipeActionChild implements Action {
     return this.parent.getRun();
   }
 
-  public abstract int getScale();
+  public abstract String getScale();
 
   public abstract JSONArray getStatistics();
 }

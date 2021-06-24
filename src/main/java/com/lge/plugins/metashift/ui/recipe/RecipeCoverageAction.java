@@ -138,8 +138,12 @@ public class RecipeCoverageAction extends RecipeActionChild {
   }
 
   @Override
-  public int getScale() {
-    return (int) (this.getParentAction().getMetrics().getCoverage().getRatio() * 100);
+  public String getScale() {
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getCoverage();
+    if (evaluator.isAvailable()) {
+      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
+    }
+    return "N/A";
   }
 
   @Override

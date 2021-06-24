@@ -88,8 +88,8 @@ public class RecipeRecipeViolationsActionTest {
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
     RecipeRecipeViolationsAction action = recipeAction.getAction(RecipeRecipeViolationsAction.class);
 
-    int scale = action.getScale();
-    assertEquals(21, scale);
+    String scale = action.getScale();
+    assertEquals("0.21", scale);
 
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray.fromObject("[{\"count\":0,\"width\":0,\"label\":\"Major\",\"clazz\":\"major\"},"

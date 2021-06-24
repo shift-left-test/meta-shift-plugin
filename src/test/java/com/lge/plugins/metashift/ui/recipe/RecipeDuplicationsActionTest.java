@@ -88,8 +88,8 @@ public class RecipeDuplicationsActionTest {
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
     RecipeDuplicationsAction action = recipeAction.getAction(RecipeDuplicationsAction.class);
 
-    int scale = action.getScale();
-    assertEquals(0, scale);
+    String scale = action.getScale();
+    assertEquals("0%", scale);
 
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray.fromObject("[{\"count\":0,\"width\":0,\"label\":\"Duplicated\",\"clazz\":\"valid-bad\"},"

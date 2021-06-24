@@ -88,8 +88,8 @@ public class RecipePremirrorCacheActionTest {
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
     RecipePremirrorCacheAction action = recipeAction.getAction(RecipePremirrorCacheAction.class);
 
-    int scale = action.getScale();
-    assertEquals(100, scale);
+    String scale = action.getScale();
+    assertEquals("100%", scale);
 
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray.fromObject("[{\"count\":100,\"width\":100,\"label\":\"Cached\",\"clazz\":\"valid-good\"},"

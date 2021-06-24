@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.ui.recipe;
 
+import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
@@ -135,8 +136,12 @@ public class RecipeMutationTestAction extends RecipeActionChild {
   }
 
   @Override
-  public int getScale() {
-    return (int) (this.getParentAction().getMetrics().getMutationTest().getRatio() * 100);
+  public String getScale() {
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getMutationTest();
+    if (evaluator.isAvailable()) {
+      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
+    }
+    return "N/A";
   }
 
   @Override

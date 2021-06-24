@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.ui.recipe;
 
+import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
@@ -135,8 +136,12 @@ public class RecipeCodeViolationsAction
   }
 
   @Override
-  public int getScale() {
-    return (int) (this.getParentAction().getMetrics().getCodeViolations().getRatio() * 100);
+  public String getScale() {
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getCodeViolations();
+    if (evaluator.isAvailable()) {
+      return String.format("%.2f", evaluator.getRatio());
+    }
+    return "N/A";
   }
 
   @Override

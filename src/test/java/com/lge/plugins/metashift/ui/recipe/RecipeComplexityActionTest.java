@@ -88,8 +88,8 @@ public class RecipeComplexityActionTest {
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
     RecipeComplexityAction action = recipeAction.getAction(RecipeComplexityAction.class);
 
-    int scale = action.getScale();
-    assertEquals(0, scale);
+    String scale = action.getScale();
+    assertEquals("0%", scale);
 
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray.fromObject("[{\"count\":0,\"width\":0,\"label\":\"Complex\",\"clazz\":\"valid-bad\"},"

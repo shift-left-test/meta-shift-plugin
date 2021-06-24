@@ -88,8 +88,8 @@ public class RecipeSharedStateCacheActionTest {
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
     RecipeSharedStateCacheAction action = recipeAction.getAction(RecipeSharedStateCacheAction.class);
 
-    int scale = action.getScale();
-    assertEquals(93, scale);
+    String scale = action.getScale();
+    assertEquals("93%", scale);
 
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray.fromObject("[{\"count\":187,\"width\":93,\"label\":\"Cached\",\"clazz\":\"valid-good\"},"

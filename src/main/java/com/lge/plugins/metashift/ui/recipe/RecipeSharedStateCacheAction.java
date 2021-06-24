@@ -89,8 +89,12 @@ public class RecipeSharedStateCacheAction
   }
 
   @Override
-  public int getScale() {
-    return (int) (this.getParentAction().getMetrics().getSharedStateCache().getRatio() * 100);
+  public String getScale() {
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getSharedStateCache();
+    if (evaluator.isAvailable()) {
+      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
+    }
+    return "N/A";
   }
 
   @Override
