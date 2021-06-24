@@ -32,16 +32,15 @@ export class FileDetail extends LitElement {
   /**
    * set source file
    * @param {string} filePath
-   * @param {string} content
-   * @param {unknown} dataList
+   * @param {unknown} response
    */
-  setSourceFile(filePath: string, content: string, dataList: unknown)
+  setSourceFile(filePath: string, response: unknown)
       : void {
     this.filePath = filePath;
-    this.dataList = dataList;
+    this.dataList = response['dataList'];
 
 
-    this.codeEditor.setValue(content);
+    this.codeEditor.setValue(response['content']);
     this.codeEditor.deltaDecorations([], this.getSourceDecorations());
     this.codeEditor.layout();
     this.updateDataList(undefined);
@@ -136,7 +135,7 @@ export class FileDetail extends LitElement {
    * update data list.
    * @param {number} newLine
    */
-  private updateDataList(newLine) : void {
+  protected updateDataList(newLine) : void {
     if (newLine != undefined && newLine === this.currentLine) {
       return;
     }

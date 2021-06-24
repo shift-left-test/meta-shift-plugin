@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
-import org.springframework.expression.spel.ast.Elvis;
 
 /**
  * MetaShift recipe's cache availability detail view action class.

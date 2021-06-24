@@ -51,6 +51,8 @@ public class RecipeComplexityAction
   static final String STORE_KEY_COMPLEXITYLIST = "ComplexityList";
   static final String STORE_KEY_FILECOMPLEXITYSTAT = "FileComplexityStat";
 
+  private long complexityLevel;
+
   /**
    * constructor.
    *
@@ -81,13 +83,13 @@ public class RecipeComplexityAction
     }
 
     FileComplexitySortableItemList fileComplexityStats = new FileComplexitySortableItemList();
-    long complexityThreashold =
+    complexityLevel =
         this.getParentAction().getParentAction().getCriteria().getComplexityLevel();
 
     fileComplexityList.forEach((file, complexityList) -> {
       fileComplexityStats.addItem(file,
           complexityList.size(),
-          complexityList.stream().filter(o -> o.getValue() >= complexityThreashold).count()
+          complexityList.stream().filter(o -> o.getValue() >= complexityLevel).count()
       );
 
       try {
@@ -186,6 +188,7 @@ public class RecipeComplexityAction
     List<ComplexityData> dataList = this.getDataSource().get(
         this.getParentAction().getName(), codePath, STORE_KEY_COMPLEXITYLIST);
 
+    result.put("complexityLevel", complexityLevel);
     result.put("dataList", dataList);
     result.put("content", this.readFileContents(codePath));
 

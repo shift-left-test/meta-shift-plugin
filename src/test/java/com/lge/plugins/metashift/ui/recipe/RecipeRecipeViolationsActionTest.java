@@ -29,7 +29,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;

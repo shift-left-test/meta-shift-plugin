@@ -86,8 +86,7 @@ export class FilesTable extends LitElement {
       const filePath = row.getData().file;
       this.requestFileDetailFunc(filePath, function(model) {
         const fileView = <FileDetail>document.querySelector(this.fileView);
-        fileView.setSourceFile(filePath, model.responseJSON.content,
-            model.responseJSON.dataList);
+        fileView.setSourceFile(filePath, model.responseJSON);
       }.bind(this));
     }
   }

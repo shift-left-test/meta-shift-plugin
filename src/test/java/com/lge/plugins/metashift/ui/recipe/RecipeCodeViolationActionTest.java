@@ -25,18 +25,14 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 
-import org.apache.commons.collections.IteratorUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

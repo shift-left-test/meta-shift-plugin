@@ -23,14 +23,16 @@ suite('code-violation-file-view', () => {
       <code-violation-file-view></code-violation-file-view>
     `)) as CodeViolationFileView;
 
-    el.setSourceFile('test.c', '//test', [{
-      line: 1,
-      level: 'MAJOR',
-      rule: 'test',
-      tool: 'test',
-      severity: 'error',
-      message: 'test message',
-    }]);
+    el.setSourceFile('test.c', {
+      content: '//test',
+      dataList: [{
+        line: 1,
+        level: 'MAJOR',
+        rule: 'test',
+        tool: 'test',
+        severity: 'error',
+        message: 'test message'}],
+    });
 
     // try private member call
     el['updateDataList'](1);

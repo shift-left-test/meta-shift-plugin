@@ -511,6 +511,14 @@ recipe-treemap {
   background: red;
 }
 
+.sourceNotComplex {
+  background: green;
+}
+
+.sourceComplex {
+  background: red;
+}
+
 .monaco-editor {
   width: 100%;
   height: 100%;
@@ -540,6 +548,20 @@ background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAY
 
 coverage-file-view {
   table.branch-coverage {
+    width: 100%;
+    border: 1px solid;
+    text-align: center;
+    th {
+      background-color: rgb(201, 201, 201);
+    }
+    th,td{
+      border: 1px solid;
+    }
+  }
+}
+
+complexity-file-view {
+  table.complexity {
     width: 100%;
     border: 1px solid;
     text-align: center;
