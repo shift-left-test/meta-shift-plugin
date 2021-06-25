@@ -36,9 +36,10 @@ import java.util.Map;
  */
 public class TestSortableItemList
     extends SortableItemList<TestSortableItemList.Item> {
+
   private static final long serialVersionUID = 1L;
   private static final Map<String, Comparator<Item>> comparators;
-  
+
   static {
     comparators = new HashMap<>();
     comparators.put("suite", Comparator.comparing(Item::getSuite));

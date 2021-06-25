@@ -35,9 +35,10 @@ import java.util.Map;
  */
 public class FileComplexitySortableItemList
     extends SortableItemList<FileComplexitySortableItemList.Item> {
+
   private static final long serialVersionUID = 1L;
   private static final Map<String, Comparator<Item>> comparators;
-  
+
   static {
     comparators = new HashMap<>();
     comparators.put("file", Comparator.comparing(Item::getFile));

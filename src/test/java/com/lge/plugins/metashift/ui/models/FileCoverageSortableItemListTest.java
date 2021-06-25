@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class FileCoverageSortableItemListTest {
+
   @Test
   public void testAddItem() {
     FileCoverageSortableItemList itemList = new FileCoverageSortableItemList();
@@ -49,8 +50,8 @@ public class FileCoverageSortableItemListTest {
     itemList.addItem("test1.c", 0.1, 0.3);
     itemList.addItem("test3.c", 0.2, 0.1);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "file")
     });
 
     assertEquals("test1.c", itemList.getItems().get(0).getFile());
@@ -65,8 +66,8 @@ public class FileCoverageSortableItemListTest {
     itemList.addItem("test1.c", 0.1, 0.3);
     itemList.addItem("test3.c", 0.2, 0.1);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "file")
     });
 
     assertEquals("test3.c", itemList.getItems().get(0).getFile());
@@ -81,8 +82,8 @@ public class FileCoverageSortableItemListTest {
     itemList.addItem("test1.c", 0.1, 0.3);
     itemList.addItem("test3.c", 0.2, 0.1);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "lineCoverage")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "lineCoverage")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getLineCoverage(), 0);
@@ -98,8 +99,8 @@ public class FileCoverageSortableItemListTest {
     itemList.addItem("test1.c", 0.1, 0.3);
     itemList.addItem("test3.c", 0.2, 0.1);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "lineCoverage")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "lineCoverage")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getLineCoverage(), 0);
@@ -114,8 +115,8 @@ public class FileCoverageSortableItemListTest {
     itemList.addItem("test1.c", 0.1, 0.3);
     itemList.addItem("test3.c", 0.2, 0.1);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "branchCoverage")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "branchCoverage")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getBranchCoverage(), 0);
@@ -130,8 +131,8 @@ public class FileCoverageSortableItemListTest {
     itemList.addItem("test1.c", 0.1, 0.3);
     itemList.addItem("test3.c", 0.2, 0.1);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "branchCoverage")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "branchCoverage")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getBranchCoverage(), 0);

@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class FileViolationSortableItemListTest {
+
   @Test
   public void testAddItem() {
     FileViolationSortableItemList itemList = new FileViolationSortableItemList();
@@ -50,8 +51,8 @@ public class FileViolationSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "file")
     });
 
     assertEquals("test1.c", itemList.getItems().get(0).getFile());
@@ -66,8 +67,8 @@ public class FileViolationSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "file")
     });
 
     assertEquals("test3.c", itemList.getItems().get(0).getFile());
@@ -82,8 +83,8 @@ public class FileViolationSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "major")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "major")
     });
 
     assertEquals(1, itemList.getItems().get(0).getMajor());
@@ -98,8 +99,8 @@ public class FileViolationSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "major")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "major")
     });
 
     assertEquals(3, itemList.getItems().get(0).getMajor());
@@ -114,8 +115,8 @@ public class FileViolationSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "minor")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "minor")
     });
 
     assertEquals(1, itemList.getItems().get(0).getMinor());
@@ -130,8 +131,8 @@ public class FileViolationSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "minor")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "minor")
     });
 
     assertEquals(3, itemList.getItems().get(0).getMinor());
@@ -146,8 +147,8 @@ public class FileViolationSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "info")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "info")
     });
 
     assertEquals(1, itemList.getItems().get(0).getInfo());
@@ -162,8 +163,8 @@ public class FileViolationSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "info")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "info")
     });
 
     assertEquals(3, itemList.getItems().get(0).getInfo());

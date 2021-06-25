@@ -51,7 +51,7 @@ public class RecipeComplexityAction
   static final String STORE_KEY_COMPLEXITYLIST = "ComplexityList";
   static final String STORE_KEY_FILECOMPLEXITYSTAT = "FileComplexityStat";
 
-  private long complexityLevel;
+  private final long complexityLevel;
 
   /**
    * constructor.
@@ -129,7 +129,7 @@ public class RecipeComplexityAction
   @Override
   public String getScale() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getComplexity();
-    
+
     if (evaluator.isAvailable()) {
       return String.format("%d%%", (long) (evaluator.getRatio() * 100));
     }

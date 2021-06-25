@@ -26,38 +26,36 @@ package com.lge.plugins.metashift.ui.models;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.TestData;
-
+import com.lge.plugins.metashift.ui.models.TestSortableItemList.Item;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestSortableItemListTest {
+
   private List<TestData> testDataList;
 
   @Before
   public void setUp() {
-    testDataList = Arrays.asList(new TestData [] {
-      new PassedTestData("test-0-0", "stest1", "test2", "message3"),
-      new PassedTestData("test-0-0", "stest3", "test3", "message1"),
-      new FailedTestData("test-0-0", "stest2", "test1", "message2"),
-    });
+    testDataList = Arrays.asList(new PassedTestData("test-0-0", "stest1", "test2", "message3"),
+        new PassedTestData("test-0-0", "stest3", "test3", "message1"),
+        new FailedTestData("test-0-0", "stest2", "test1", "message2"));
   }
 
   @Test
   public void testSortBySuiteAsc() {
     List<TestSortableItemList.Item> dataList = testDataList.stream()
-    .map(o -> new TestSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     TestSortableItemList itemList = new TestSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "suite")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "suite")
     });
 
     assertEquals("stest1", itemList.getItems().get(0).getSuite());
@@ -68,12 +66,12 @@ public class TestSortableItemListTest {
   @Test
   public void testSortBySuiteDesc() {
     List<TestSortableItemList.Item> dataList = testDataList.stream()
-    .map(o -> new TestSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     TestSortableItemList itemList = new TestSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "suite")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "suite")
     });
 
     assertEquals("stest3", itemList.getItems().get(0).getSuite());
@@ -84,12 +82,12 @@ public class TestSortableItemListTest {
   @Test
   public void testSortByNameAsc() {
     List<TestSortableItemList.Item> dataList = testDataList.stream()
-    .map(o -> new TestSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     TestSortableItemList itemList = new TestSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "name")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "name")
     });
 
     assertEquals("test1", itemList.getItems().get(0).getName());
@@ -100,12 +98,12 @@ public class TestSortableItemListTest {
   @Test
   public void testSortByNameDesc() {
     List<TestSortableItemList.Item> dataList = testDataList.stream()
-    .map(o -> new TestSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     TestSortableItemList itemList = new TestSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "name")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "name")
     });
 
     assertEquals("test3", itemList.getItems().get(0).getName());
@@ -116,12 +114,12 @@ public class TestSortableItemListTest {
   @Test
   public void testSortByStatusAsc() {
     List<TestSortableItemList.Item> dataList = testDataList.stream()
-    .map(o -> new TestSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     TestSortableItemList itemList = new TestSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "status")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "status")
     });
 
     assertEquals("FAILED", itemList.getItems().get(0).getStatus());
@@ -132,12 +130,12 @@ public class TestSortableItemListTest {
   @Test
   public void testSortByStatusDesc() {
     List<TestSortableItemList.Item> dataList = testDataList.stream()
-    .map(o -> new TestSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     TestSortableItemList itemList = new TestSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "status")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "status")
     });
 
     assertEquals("PASSED", itemList.getItems().get(0).getStatus());
@@ -148,12 +146,12 @@ public class TestSortableItemListTest {
   @Test
   public void testSortByMessageAsc() {
     List<TestSortableItemList.Item> dataList = testDataList.stream()
-    .map(o -> new TestSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     TestSortableItemList itemList = new TestSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "message")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "message")
     });
 
     assertEquals("message1", itemList.getItems().get(0).getMessage());
@@ -164,12 +162,12 @@ public class TestSortableItemListTest {
   @Test
   public void testSortByMessageDesc() {
     List<TestSortableItemList.Item> dataList = testDataList.stream()
-    .map(o -> new TestSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     TestSortableItemList itemList = new TestSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "message")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "message")
     });
 
     assertEquals("message3", itemList.getItems().get(0).getMessage());

@@ -35,9 +35,10 @@ import java.util.Map;
  */
 public class FileCoverageSortableItemList
     extends SortableItemList<FileCoverageSortableItemList.Item> {
+
   private static final long serialVersionUID = 1L;
   private static final Map<String, Comparator<Item>> comparators;
-  
+
   static {
     comparators = new HashMap<>();
     comparators.put("file", Comparator.comparing(Item::getFile));
@@ -53,7 +54,7 @@ public class FileCoverageSortableItemList
   public void addItem(String file, double lineCoverage, double branchCoverage) {
     this.items.add(new Item(file, lineCoverage, branchCoverage));
   }
-  
+
   protected Comparator<Item> createComparator(SortInfo sortInfo) {
     String field = sortInfo.getField();
     if (!comparators.containsKey(field)) {

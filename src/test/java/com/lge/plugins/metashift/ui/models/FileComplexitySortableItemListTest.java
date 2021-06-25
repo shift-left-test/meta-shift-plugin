@@ -25,9 +25,11 @@
 package com.lge.plugins.metashift.ui.models;
 
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 public class FileComplexitySortableItemListTest {
+
   @Test
   public void testAddItem() {
     FileComplexitySortableItemList itemList = new FileComplexitySortableItemList();
@@ -48,8 +50,8 @@ public class FileComplexitySortableItemListTest {
     itemList.addItem("test1.c", 100, 30);
     itemList.addItem("test3.c", 200, 10);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "file")
     });
 
     assertEquals("test1.c", itemList.getItems().get(0).getFile());
@@ -64,8 +66,8 @@ public class FileComplexitySortableItemListTest {
     itemList.addItem("test1.c", 100, 30);
     itemList.addItem("test3.c", 200, 10);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "file")
     });
 
     assertEquals("test3.c", itemList.getItems().get(0).getFile());
@@ -80,8 +82,8 @@ public class FileComplexitySortableItemListTest {
     itemList.addItem("test1.c", 100, 30);
     itemList.addItem("test3.c", 200, 10);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "functions")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "functions")
     });
 
     assertEquals(100, itemList.getItems().get(0).getFunctions());
@@ -96,8 +98,8 @@ public class FileComplexitySortableItemListTest {
     itemList.addItem("test1.c", 100, 30);
     itemList.addItem("test3.c", 200, 10);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "functions")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "functions")
     });
 
     assertEquals(300, itemList.getItems().get(0).getFunctions());
@@ -112,8 +114,8 @@ public class FileComplexitySortableItemListTest {
     itemList.addItem("test1.c", 100, 30);
     itemList.addItem("test3.c", 200, 10);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "complexFunctions")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "complexFunctions")
     });
 
     assertEquals(10, itemList.getItems().get(0).getComplexFunctions());
@@ -128,8 +130,8 @@ public class FileComplexitySortableItemListTest {
     itemList.addItem("test1.c", 100, 30);
     itemList.addItem("test3.c", 200, 10);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "complexFunctions")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "complexFunctions")
     });
 
     assertEquals(30, itemList.getItems().get(0).getComplexFunctions());

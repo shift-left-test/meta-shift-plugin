@@ -26,27 +26,27 @@ package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
-
+import hudson.FilePath;
+import hudson.model.FreeStyleBuild;
+import hudson.model.FreeStyleProject;
+import hudson.model.TaskListener;
+import java.io.File;
+import java.net.URL;
+import java.util.Objects;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import hudson.FilePath;
-import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
-import hudson.model.TaskListener;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 public class RecipeCodeViolationActionTest {
+
   @Rule
   public final JenkinsRule jenkins = new JenkinsRule();
 
@@ -64,8 +64,8 @@ public class RecipeCodeViolationActionTest {
 
     project = jenkins.createFreeStyleProject();
 
-    ClassLoader classLoader = getClass().getClassLoader();
-    FilePath reportZip = new FilePath(new File(classLoader.getResource("report.zip").toURI()));
+    URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("report.zip"));
+    FilePath reportZip = new FilePath(new File(url.toURI()));
     workspace = new FilePath(folder.newFolder("WORKSPACE"));
     reportZip.unzip(workspace);
 
@@ -77,25 +77,27 @@ public class RecipeCodeViolationActionTest {
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run, 
+    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
         taskListener, config, workspace.child("report"), dataSource);
 
     RecipeAction recipeAction = buildAction.getActions(RecipeAction.class).stream()
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
+    Objects.requireNonNull(recipeAction);
     RecipeCodeViolationsAction action = recipeAction.getAction(RecipeCodeViolationsAction.class);
 
     String scale = action.getScale();
     assertEquals("0.00", scale);
 
     JSONArray statistics = action.getStatistics();
-    assertEquals(JSONArray.fromObject("[{\"count\":0,\"width\":0,\"label\":\"Major\",\"clazz\":\"major\"},"
-        + "{\"count\":0,\"width\":0,\"label\":\"Minor\",\"clazz\":\"minor\"},"
-        + "{\"count\":0,\"width\":0,\"label\":\"Info\",\"clazz\":\"informational\"}]"),
+    assertEquals(
+        JSONArray.fromObject("[{\"count\":0,\"width\":0,\"label\":\"Major\",\"clazz\":\"major\"},"
+            + "{\"count\":0,\"width\":0,\"label\":\"Minor\",\"clazz\":\"minor\"},"
+            + "{\"count\":0,\"width\":0,\"label\":\"Info\",\"clazz\":\"informational\"}]"),
         statistics);
 
-    JSONObject recipeFiles = action.getRecipeFiles(1, 10, new SortableItemList.SortInfo [] {});
+    JSONObject recipeFiles = action.getRecipeFiles(1, 10, new SortableItemList.SortInfo[]{});
     assertEquals(JSONObject.fromObject("{\"last_page\":0}"),
-      recipeFiles);
+        recipeFiles);
 
     // TODO: getFileCodeViolationDetail can't test
     // because we can't determine source file path to metadata.json in test env

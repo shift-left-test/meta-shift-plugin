@@ -46,7 +46,7 @@ export class CoverageFileView extends FileDetail {
   }
 
   /**
-   * soure decorations.
+   * source decorations.
    * @return {unknown}
    */
   getSourceDecorations() : {range: monaco.Range, options: unknown}[] {

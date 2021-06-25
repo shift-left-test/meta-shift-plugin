@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class StatisticsItemTest {
+
   @Test
   public void testInitData() {
     StatisticsItem item = new StatisticsItem("test", 10, 20, "good");

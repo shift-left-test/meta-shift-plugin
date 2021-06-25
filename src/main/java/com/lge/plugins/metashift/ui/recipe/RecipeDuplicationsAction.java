@@ -63,7 +63,7 @@ public class RecipeDuplicationsAction
 
     FileDuplicationSortableItemList duplicationList =
         new FileDuplicationSortableItemList(recipe.objects(DuplicationData.class)
-        .map(FileDuplicationSortableItemList.Item::new).collect(Collectors.toList()));
+            .map(FileDuplicationSortableItemList.Item::new).collect(Collectors.toList()));
 
     try {
       dataSource.put(duplicationList, this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);

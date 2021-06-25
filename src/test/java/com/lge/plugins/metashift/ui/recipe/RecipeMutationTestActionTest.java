@@ -22,34 +22,32 @@
  * THE SOFTWARE.
  */
 
- package com.lge.plugins.metashift.ui.recipe;
+package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.Arrays;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
-
-import org.apache.commons.collections.IteratorUtils;
+import hudson.FilePath;
+import hudson.model.FreeStyleBuild;
+import hudson.model.FreeStyleProject;
+import hudson.model.TaskListener;
+import java.io.File;
+import java.net.URL;
+import java.util.Objects;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import hudson.FilePath;
-import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
-import hudson.model.TaskListener;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 public class RecipeMutationTestActionTest {
+
   @Rule
   public final JenkinsRule jenkins = new JenkinsRule();
 
@@ -67,12 +65,18 @@ public class RecipeMutationTestActionTest {
 
     project = jenkins.createFreeStyleProject();
 
-    ClassLoader classLoader = getClass().getClassLoader();
-    FilePath reportZip = new FilePath(new File(classLoader.getResource("report.zip").toURI()));
+    URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("report.zip"));
+    FilePath reportZip = new FilePath(new File(url.toURI()));
     workspace = new FilePath(folder.newFolder("WORKSPACE"));
     reportZip.unzip(workspace);
 
     config = new Configuration();
+  }
+
+  private void assertContainsKey(JSONObject object, String... keys) {
+    for (String key : keys) {
+      assertTrue("Key: " + key, object.containsKey(key));
+    }
   }
 
   @Test
@@ -80,26 +84,29 @@ public class RecipeMutationTestActionTest {
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run, 
+    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
         taskListener, config, workspace.child("report"), dataSource);
 
     RecipeAction recipeAction = buildAction.getActions(RecipeAction.class).stream()
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
+    Objects.requireNonNull(recipeAction);
     RecipeMutationTestAction action = recipeAction.getAction(RecipeMutationTestAction.class);
 
     String scale = action.getScale();
     assertEquals("50%", scale);
 
     JSONArray statistics = action.getStatistics();
-    assertEquals(JSONArray.fromObject("[{\"count\":1,\"width\":50,\"label\":\"Killed\",\"clazz\":\"valid-good\"},"
-      + "{\"count\":1,\"width\":50,\"label\":\"Survived\",\"clazz\":\"valid-bad\"},{\"count\":0,\"width\":0,\"label\":\"Skipped\",\"clazz\":\"invalid\"}]"),
+    assertEquals(JSONArray
+            .fromObject("[{\"count\":1,\"width\":50,\"label\":\"Killed\",\"clazz\":\"valid-good\"},"
+                + "{\"count\":1,\"width\":50,\"label\":\"Survived\",\"clazz\":\"valid-bad\"},"
+                + "{\"count\":0,\"width\":0,\"label\":\"Skipped\",\"clazz\":\"invalid\"}]"),
         statistics);
 
-    JSONObject mutationTests = action.getRecipeMutationTests(1, 10, new SortableItemList.SortInfo [] {});
+    JSONObject mutationTests = action
+        .getRecipeMutationTests(1, 10, new SortableItemList.SortInfo[]{});
     assertEquals(1, mutationTests.get("last_page"));
-    assertTrue(IteratorUtils.toList(mutationTests.getJSONArray("data").getJSONObject(0).keys()).containsAll(
-      Arrays.asList(
-        new String [] {"file", "survived", "killed", "skipped"})));
+    assertContainsKey(mutationTests.getJSONArray("data").getJSONObject(0),
+        "file", "survived", "killed", "skipped");
 
     // TODO: getFileMutationTestDetail can't test
     // because we can't determine source file path to metadata.json in test env

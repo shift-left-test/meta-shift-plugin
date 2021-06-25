@@ -28,11 +28,16 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.io.File;
-
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
-
+import hudson.FilePath;
+import hudson.model.FreeStyleBuild;
+import hudson.model.FreeStyleProject;
+import hudson.model.TaskListener;
+import java.io.File;
+import java.net.URL;
+import java.util.Objects;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,13 +46,8 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import hudson.FilePath;
-import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
-import hudson.model.TaskListener;
-import net.sf.json.JSONObject;
-
 public class MetaShiftProjectActionTest {
+
   @Rule
   public final JenkinsRule jenkins = new JenkinsRule();
 
@@ -65,8 +65,8 @@ public class MetaShiftProjectActionTest {
 
     project = jenkins.createFreeStyleProject();
 
-    ClassLoader classLoader = getClass().getClassLoader();
-    FilePath reportZip = new FilePath(new File(classLoader.getResource("report.zip").toURI()));
+    URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("report.zip"));
+    FilePath reportZip = new FilePath(new File(url.toURI()));
     workspace = new FilePath(folder.newFolder("WORKSPACE"));
     reportZip.unzip(workspace);
 
@@ -87,7 +87,7 @@ public class MetaShiftProjectActionTest {
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run, 
+    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
         taskListener, config, workspace.child("report"), dataSource);
     run.addAction(buildAction);
 
@@ -104,11 +104,11 @@ public class MetaShiftProjectActionTest {
     assertEquals(10, chartModel.getJSONArray("legend").size());
     assertEquals(10, chartModel.getJSONArray("series").size());
     assertEquals(0, chartModel.getJSONArray("builds").size());
-    
+
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run, 
+    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
         taskListener, config, workspace.child("report"), dataSource);
     run.addAction(buildAction);
 

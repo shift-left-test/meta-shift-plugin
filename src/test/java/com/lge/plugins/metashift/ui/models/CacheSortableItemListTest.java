@@ -25,13 +25,14 @@
 package com.lge.plugins.metashift.ui.models;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.models.PremirrorCacheData;
+import com.lge.plugins.metashift.ui.models.CacheSortableItemList.Item;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.lge.plugins.metashift.models.PremirrorCacheData;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,26 +40,25 @@ import org.junit.Test;
  * Unit test for the CacheSortableItemList class.
  */
 public class CacheSortableItemListTest {
+
   private List<PremirrorCacheData> cacheDataList;
 
   @Before
   public void setUp() {
-    cacheDataList = Arrays.asList(new PremirrorCacheData [] {
-        new PremirrorCacheData("test-0-0", "sig2", true),
+    cacheDataList = Arrays.asList(new PremirrorCacheData("test-0-0", "sig2", true),
         new PremirrorCacheData("test-0-0", "sig3", false),
-        new PremirrorCacheData("test-0-0", "sig1", true)
-    });
+        new PremirrorCacheData("test-0-0", "sig1", true));
   }
 
   @Test
   public void testSortBySignatureAsc() {
     List<CacheSortableItemList.Item> dataList = cacheDataList.stream()
-        .map(o -> new CacheSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     CacheSortableItemList itemList = new CacheSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "signature")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "signature")
     });
 
     assertEquals("sig1", itemList.getItems().get(0).getSignature());
@@ -69,12 +69,12 @@ public class CacheSortableItemListTest {
   @Test
   public void testSortBySignatureDesc() {
     List<CacheSortableItemList.Item> dataList = cacheDataList.stream()
-        .map(o -> new CacheSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     CacheSortableItemList itemList = new CacheSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "signature")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "signature")
     });
 
     assertEquals("sig3", itemList.getItems().get(0).getSignature());
@@ -85,32 +85,32 @@ public class CacheSortableItemListTest {
   @Test
   public void testSortByAvailableAsc() {
     List<CacheSortableItemList.Item> dataList = cacheDataList.stream()
-        .map(o -> new CacheSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     CacheSortableItemList itemList = new CacheSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "available")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "available")
     });
 
-    assertEquals(false, itemList.getItems().get(0).isAvailable());
-    assertEquals(true, itemList.getItems().get(1).isAvailable());
-    assertEquals(true, itemList.getItems().get(2).isAvailable());
+    assertFalse(itemList.getItems().get(0).isAvailable());
+    assertTrue(itemList.getItems().get(1).isAvailable());
+    assertTrue(itemList.getItems().get(2).isAvailable());
   }
 
   @Test
   public void testSortByAvailableDesc() {
     List<CacheSortableItemList.Item> dataList = cacheDataList.stream()
-        .map(o -> new CacheSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     CacheSortableItemList itemList = new CacheSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "available")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "available")
     });
 
-    assertEquals(true, itemList.getItems().get(0).isAvailable());
-    assertEquals(true, itemList.getItems().get(1).isAvailable());
-    assertEquals(false, itemList.getItems().get(2).isAvailable());
+    assertTrue(itemList.getItems().get(0).isAvailable());
+    assertTrue(itemList.getItems().get(1).isAvailable());
+    assertFalse(itemList.getItems().get(2).isAvailable());
   }
 }

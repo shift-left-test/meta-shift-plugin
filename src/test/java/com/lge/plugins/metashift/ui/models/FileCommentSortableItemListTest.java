@@ -26,36 +26,34 @@ package com.lge.plugins.metashift.ui.models;
 
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.CommentData;
+import com.lge.plugins.metashift.ui.models.FileCommentSortableItemList.Item;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.lge.plugins.metashift.models.CommentData;
-
 import org.junit.Before;
 import org.junit.Test;
 
 public class FileCommentSortableItemListTest {
+
   private List<CommentData> commentDataList;
 
   @Before
   public void setUp() {
-    commentDataList = Arrays.asList(new CommentData [] {
-      new CommentData("test-0-0", "test2.c", 300, 90),
-      new CommentData("test-0-0", "test3.c", 100, 10),
-      new CommentData("test-0-0", "test1.c", 200, 40)
-    });
+    commentDataList = Arrays.asList(new CommentData("test-0-0", "test2.c", 300, 90),
+        new CommentData("test-0-0", "test3.c", 100, 10),
+        new CommentData("test-0-0", "test1.c", 200, 40));
   }
 
   @Test
   public void testSortByFileAsc() {
     List<FileCommentSortableItemList.Item> dataList = commentDataList.stream()
-        .map(o -> new FileCommentSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileCommentSortableItemList itemList = new FileCommentSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "file")
     });
 
     assertEquals("test1.c", itemList.getItems().get(0).getFile());
@@ -66,12 +64,12 @@ public class FileCommentSortableItemListTest {
   @Test
   public void testSortByFileDesc() {
     List<FileCommentSortableItemList.Item> dataList = commentDataList.stream()
-        .map(o -> new FileCommentSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileCommentSortableItemList itemList = new FileCommentSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "file")
     });
 
     assertEquals("test3.c", itemList.getItems().get(0).getFile());
@@ -82,12 +80,12 @@ public class FileCommentSortableItemListTest {
   @Test
   public void testSortByLinesAsc() {
     List<FileCommentSortableItemList.Item> dataList = commentDataList.stream()
-        .map(o -> new FileCommentSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileCommentSortableItemList itemList = new FileCommentSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "lines")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "lines")
     });
 
     assertEquals(100, itemList.getItems().get(0).getLines());
@@ -98,12 +96,12 @@ public class FileCommentSortableItemListTest {
   @Test
   public void testSortByLinesDesc() {
     List<FileCommentSortableItemList.Item> dataList = commentDataList.stream()
-        .map(o -> new FileCommentSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileCommentSortableItemList itemList = new FileCommentSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "lines")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "lines")
     });
 
     assertEquals(300, itemList.getItems().get(0).getLines());
@@ -114,12 +112,12 @@ public class FileCommentSortableItemListTest {
   @Test
   public void testSortByCommentLinesAsc() {
     List<FileCommentSortableItemList.Item> dataList = commentDataList.stream()
-        .map(o -> new FileCommentSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileCommentSortableItemList itemList = new FileCommentSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "commentLines")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "commentLines")
     });
 
     assertEquals(10, itemList.getItems().get(0).getCommentLines());
@@ -130,12 +128,12 @@ public class FileCommentSortableItemListTest {
   @Test
   public void testSortByCommentLinesDesc() {
     List<FileCommentSortableItemList.Item> dataList = commentDataList.stream()
-        .map(o -> new FileCommentSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileCommentSortableItemList itemList = new FileCommentSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "commentLines")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "commentLines")
     });
 
     assertEquals(90, itemList.getItems().get(0).getCommentLines());
@@ -146,12 +144,12 @@ public class FileCommentSortableItemListTest {
   @Test
   public void testSortByCommentRateAsc() {
     List<FileCommentSortableItemList.Item> dataList = commentDataList.stream()
-        .map(o -> new FileCommentSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileCommentSortableItemList itemList = new FileCommentSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "commentRate")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "commentRate")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getCommentRate(), 0);
@@ -162,12 +160,12 @@ public class FileCommentSortableItemListTest {
   @Test
   public void testSortByCommentRateDesc() {
     List<FileCommentSortableItemList.Item> dataList = commentDataList.stream()
-        .map(o -> new FileCommentSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileCommentSortableItemList itemList = new FileCommentSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "commentRate")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "commentRate")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getCommentRate(), 0);

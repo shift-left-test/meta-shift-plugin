@@ -37,6 +37,7 @@ import java.util.Map;
  */
 public class RecipeMetricsSortableItemList
     extends SortableItemList<RecipeMetricsSortableItemList.Item> {
+
   private static final long serialVersionUID = 1L;
   private static final Map<String, Comparator<Item>> comparators;
 
@@ -60,9 +61,9 @@ public class RecipeMetricsSortableItemList
   }
 
   public RecipeMetricsSortableItemList() {
-    super(new ArrayList<Item>());
+    super(new ArrayList<>());
   }
-  
+
   public void addItem(String name, long lines, Queryable<Evaluator<?>> queryable) {
     this.items.add(new Item(name, lines, queryable));
   }

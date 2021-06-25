@@ -26,36 +26,34 @@ package com.lge.plugins.metashift.ui.models;
 
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.DuplicationData;
+import com.lge.plugins.metashift.ui.models.FileDuplicationSortableItemList.Item;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.lge.plugins.metashift.models.DuplicationData;
-
 import org.junit.Before;
 import org.junit.Test;
 
 public class FileDuplicationSortableItemListTest {
+
   private List<DuplicationData> duplicationDataList;
 
   @Before
   public void setUp() {
-    duplicationDataList = Arrays.asList(new DuplicationData [] {
-        new DuplicationData("test-0-0", "test2.c", 200, 30),
+    duplicationDataList = Arrays.asList(new DuplicationData("test-0-0", "test2.c", 200, 30),
         new DuplicationData("test-0-0", "test3.c", 100, 10),
-        new DuplicationData("test-0-0", "test1.c", 300, 20)
-    });
+        new DuplicationData("test-0-0", "test1.c", 300, 20));
   }
 
   @Test
   public void testSortByFileAsc() {
     List<FileDuplicationSortableItemList.Item> dataList = duplicationDataList.stream()
-        .map(o -> new FileDuplicationSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileDuplicationSortableItemList itemList = new FileDuplicationSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "file")
     });
 
     assertEquals("test1.c", itemList.getItems().get(0).getFile());
@@ -66,12 +64,12 @@ public class FileDuplicationSortableItemListTest {
   @Test
   public void testSortByFileDesc() {
     List<FileDuplicationSortableItemList.Item> dataList = duplicationDataList.stream()
-        .map(o -> new FileDuplicationSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileDuplicationSortableItemList itemList = new FileDuplicationSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "file")
     });
 
     assertEquals("test3.c", itemList.getItems().get(0).getFile());
@@ -82,12 +80,12 @@ public class FileDuplicationSortableItemListTest {
   @Test
   public void testSortByLinesAsc() {
     List<FileDuplicationSortableItemList.Item> dataList = duplicationDataList.stream()
-        .map(o -> new FileDuplicationSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileDuplicationSortableItemList itemList = new FileDuplicationSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "lines")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "lines")
     });
 
     assertEquals(100, itemList.getItems().get(0).getLines());
@@ -98,12 +96,12 @@ public class FileDuplicationSortableItemListTest {
   @Test
   public void testSortByLinesDesc() {
     List<FileDuplicationSortableItemList.Item> dataList = duplicationDataList.stream()
-        .map(o -> new FileDuplicationSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileDuplicationSortableItemList itemList = new FileDuplicationSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "lines")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "lines")
     });
 
     assertEquals(300, itemList.getItems().get(0).getLines());
@@ -114,12 +112,12 @@ public class FileDuplicationSortableItemListTest {
   @Test
   public void testSortByDuplicatedLinesAsc() {
     List<FileDuplicationSortableItemList.Item> dataList = duplicationDataList.stream()
-        .map(o -> new FileDuplicationSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileDuplicationSortableItemList itemList = new FileDuplicationSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "duplicatedLines")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "duplicatedLines")
     });
 
     assertEquals(10, itemList.getItems().get(0).getDuplicatedLines());
@@ -128,14 +126,14 @@ public class FileDuplicationSortableItemListTest {
   }
 
   @Test
-  public void testSortByDupplcatedLinesDesc() {
+  public void testSortByDuplicatedLinesDesc() {
     List<FileDuplicationSortableItemList.Item> dataList = duplicationDataList.stream()
-        .map(o -> new FileDuplicationSortableItemList.Item(o)).collect(Collectors.toList());
+        .map(Item::new).collect(Collectors.toList());
 
     FileDuplicationSortableItemList itemList = new FileDuplicationSortableItemList(dataList);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "duplicatedLines")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "duplicatedLines")
     });
 
     assertEquals(30, itemList.getItems().get(0).getDuplicatedLines());

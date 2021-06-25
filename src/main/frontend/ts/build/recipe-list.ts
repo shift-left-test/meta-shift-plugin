@@ -4,7 +4,7 @@ import Tabulator from 'tabulator-tables';
 
 @customElement('recipe-list')
 /**
- * Recipt list element.
+ * Recipe list element.
  */
 export class RecipeList extends LitElement {
   @query('#recipes-table') recipesTable;

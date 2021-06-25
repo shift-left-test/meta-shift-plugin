@@ -31,14 +31,14 @@ import static org.junit.Assert.assertNull;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-
+import net.sf.json.JSONObject;
 import org.junit.Test;
 
-import net.sf.json.JSONObject;
-
 public class SortableItemListTest {
-  static class TmpSortableItemList extends SortableItemList<Integer> {
-    public TmpSortableItemList(List<Integer> items) {
+
+  static class FakeSortableItemList extends SortableItemList<Integer> {
+
+    public FakeSortableItemList(List<Integer> items) {
       super(items);
     }
 
@@ -48,11 +48,7 @@ public class SortableItemListTest {
       if (!field.equals("value")) {
         throw new IllegalArgumentException();
       }
-      Comparator<Integer> comparator = new Comparator<Integer>() {
-        public int compare(Integer a, Integer b) {
-          return a - b;
-        }
-      };
+      Comparator<Integer> comparator = Comparator.comparingInt(a -> a);
 
       return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
     }
@@ -60,33 +56,29 @@ public class SortableItemListTest {
 
   @Test
   public void testInitData() {
-    TmpSortableItemList itemList = new TmpSortableItemList(null);
+    FakeSortableItemList itemList = new FakeSortableItemList(null);
 
     assertNull(itemList.getItems());
   }
 
   @Test
   public void testSort() {
-    TmpSortableItemList itemList = new TmpSortableItemList(Arrays.asList(new Integer [] {
-      2, 3, 1
-    }));
+    FakeSortableItemList itemList = new FakeSortableItemList(Arrays.asList(2, 3, 1));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "value")});
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "value")});
 
-    assertArrayEquals(new Integer [] {1, 2, 3}, itemList.getItems().toArray());
+    assertArrayEquals(new Integer[]{1, 2, 3}, itemList.getItems().toArray());
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "value")});
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "value")});
 
-    assertArrayEquals(new Integer [] {3, 2, 1}, itemList.getItems().toArray());
+    assertArrayEquals(new Integer[]{3, 2, 1}, itemList.getItems().toArray());
   }
 
   @Test
   public void testGetPage() {
-    TmpSortableItemList itemList = new TmpSortableItemList(Arrays.asList(new Integer [] {
-      2, 3, 1
-    }));
+    FakeSortableItemList itemList = new FakeSortableItemList(Arrays.asList(2, 3, 1));
 
     assertEquals(JSONObject.fromObject("{\"data\":[2, 3],\"last_page\":2}"),
         itemList.getPage(1, 2));
@@ -94,14 +86,13 @@ public class SortableItemListTest {
         itemList.getPage(2, 2));
   }
 
+  @Test
   public void testGetPageOutOfIndex() {
-    TmpSortableItemList itemList = new TmpSortableItemList(Arrays.asList(new Integer [] {
-      2, 3, 1
-    }));
+    FakeSortableItemList itemList = new FakeSortableItemList(Arrays.asList(2, 3, 1));
 
-    assertEquals(JSONObject.fromObject("{\"data\":null,\"last_page\":2}"),
+    assertEquals(JSONObject.fromObject("{\"data\":[2,3],\"last_page\":2}"),
         itemList.getPage(0, 2));
-    assertEquals(JSONObject.fromObject("{\"data\":null,\"last_page\":2}"),
+    assertEquals(JSONObject.fromObject("{\"data\":[1],\"last_page\":2}"),
         itemList.getPage(3, 2));
   }
 }

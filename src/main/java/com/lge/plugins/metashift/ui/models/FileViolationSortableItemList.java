@@ -35,6 +35,7 @@ import java.util.Map;
  */
 public class FileViolationSortableItemList
     extends SortableItemList<FileViolationSortableItemList.Item> {
+
   private static final long serialVersionUID = 1L;
   private static final Map<String, Comparator<Item>> comparators;
 
@@ -47,7 +48,7 @@ public class FileViolationSortableItemList
   }
 
   public FileViolationSortableItemList() {
-    super(new ArrayList<Item>());
+    super(new ArrayList<>());
   }
 
   public void addItem(String file, long major, long minor, long info) {
@@ -70,7 +71,7 @@ public class FileViolationSortableItemList
   public static class Item implements Serializable {
 
     private static final long serialVersionUID = -8604715878738466132L;
-   
+
     private final String file;
     private final long major;
     private final long minor;

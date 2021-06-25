@@ -72,7 +72,7 @@ public class RecipeTest {
 
   private void prepareSourceFiles(File source) {
     StringBuilder sb = new StringBuilder();
-    sb.append("#include<iostream>").append("int main() {").append("  return 0;").append("}");
+    sb.append("#include<stdio>").append("int main() {").append("  return 0;").append("}");
     utils.writeLines(sb, source, "test.cpp");
 
     sb = new StringBuilder();

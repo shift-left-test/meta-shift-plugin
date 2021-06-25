@@ -28,20 +28,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
-
+import net.sf.json.JSONArray;
 import org.junit.Test;
 
-import net.sf.json.JSONArray;
-
 public class RecipesTreemapModelTest {
+
   @Test
   public void testInitData() {
     RecipesTreemapModel model = new RecipesTreemapModel();
 
     assertEquals(JSONArray.fromObject(
-      "[{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,0]},"
-      + "{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,100]}]"),
-      JSONArray.fromObject(model.getSeries()));
+        "[{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,0]},"
+            + "{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,100]}]"),
+        JSONArray.fromObject(model.getSeries()));
   }
 
   @Test
@@ -50,10 +49,10 @@ public class RecipesTreemapModelTest {
 
     model.add("test", "testpath", 1, 2);
     System.out.println(JSONArray.fromObject(model.getSeries()));
-    int [] values = {1, 2};
+    int[] values = {1, 2};
 
-    assertNotNull(model.getSeries().stream().filter(o -> o.getName() == "test" 
-        && o.getPath() == "testpath" && Arrays.equals(o.getValue(), values))
+    assertNotNull(model.getSeries().stream().filter(o -> o.getName().equals("test")
+        && o.getPath().equals("testpath") && Arrays.equals(o.getValue(), values))
         .findAny().orElse(null));
   }
 }

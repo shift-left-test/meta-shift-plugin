@@ -81,21 +81,21 @@ public class RecipeCodeViolationsAction
     this.infoCount = codeViolationDataList.stream().filter(
         o -> o.getLevel().equals("INFO")).count();
 
-    HashMap<String, List<CodeViolationData>> fileCodeViloationList = new HashMap<>();
+    HashMap<String, List<CodeViolationData>> fileCodeViolationList = new HashMap<>();
 
     for (CodeViolationData codeViolationData : codeViolationDataList) {
       String file = codeViolationData.getFile();
 
-      if (!fileCodeViloationList.containsKey(file)) {
-        fileCodeViloationList.put(file, new ArrayList<>());
+      if (!fileCodeViolationList.containsKey(file)) {
+        fileCodeViolationList.put(file, new ArrayList<>());
       }
 
-      fileCodeViloationList.get(file).add(codeViolationData);
+      fileCodeViolationList.get(file).add(codeViolationData);
     }
 
     FileViolationSortableItemList fileCodeViolationStats = new FileViolationSortableItemList();
 
-    fileCodeViloationList.forEach((file, violationList) -> {
+    fileCodeViolationList.forEach((file, violationList) -> {
       fileCodeViolationStats.addItem(file,
           violationList.stream().filter(o -> o.getLevel().equals("MAJOR")).count(),
           violationList.stream().filter(o -> o.getLevel().equals("MINOR")).count(),

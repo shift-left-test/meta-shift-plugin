@@ -35,6 +35,7 @@ import java.util.Map;
  */
 public class FileMutationTestSortableItemList
     extends SortableItemList<FileMutationTestSortableItemList.Item> {
+
   private static final long serialVersionUID = 1L;
   private static final Map<String, Comparator<Item>> comparators;
 
@@ -63,7 +64,7 @@ public class FileMutationTestSortableItemList
     Comparator<Item> comparator = comparators.get(field);
     return sortInfo.getDir().equals("desc") ? comparator.reversed() : comparator;
   }
-  
+
   /**
    * mutation test for each file.
    */

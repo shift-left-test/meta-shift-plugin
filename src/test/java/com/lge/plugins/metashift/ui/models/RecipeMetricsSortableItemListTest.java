@@ -34,7 +34,9 @@ import com.lge.plugins.metashift.models.Streamable;
 import org.junit.Test;
 
 public class RecipeMetricsSortableItemListTest {
+
   public static class MockEvaluator extends Evaluator<MockEvaluator> {
+
     double ratio;
 
     public MockEvaluator(double ratio) {
@@ -64,6 +66,7 @@ public class RecipeMetricsSortableItemListTest {
   }
 
   public static class MockQueryable implements Queryable<Evaluator<?>> {
+
     MockEvaluator premirrorCache;
     MockEvaluator sharedStateCache;
     MockEvaluator codeViolations;
@@ -76,16 +79,16 @@ public class RecipeMetricsSortableItemListTest {
     MockEvaluator test;
 
     public MockQueryable(
-      double premirrorCacheRatio,
-      double sharedStateCacheRatio,
-      double codeViolationsRatio,
-      double commentsRatio,
-      double complexityRatio,
-      double coverageRatio,
-      double duplicationsRatio,
-      double mutationTestRatio,
-      double recipeViolationsRatio,
-      double testRatio
+        double premirrorCacheRatio,
+        double sharedStateCacheRatio,
+        double codeViolationsRatio,
+        double commentsRatio,
+        double complexityRatio,
+        double coverageRatio,
+        double duplicationsRatio,
+        double mutationTestRatio,
+        double recipeViolationsRatio,
+        double testRatio
     ) {
       this.premirrorCache = new MockEvaluator(premirrorCacheRatio);
       this.sharedStateCache = new MockEvaluator(sharedStateCacheRatio);
@@ -106,32 +109,32 @@ public class RecipeMetricsSortableItemListTest {
     public Evaluator<?> getSharedStateCache() {
       return sharedStateCache;
     }
-  
+
     public Evaluator<?> getCodeViolations() {
       return codeViolations;
     }
-    
+
     public Evaluator<?> getComments() {
       return comments;
     }
-  
+
     public Evaluator<?> getComplexity() {
       return complexity;
     }
-    
+
     public Evaluator<?> getCoverage() {
       return coverage;
     }
-  
+
     public Evaluator<?> getDuplications() {
       return duplications;
     }
-  
+
     public Evaluator<?> getMutationTest() {
       return mutationTest;
     }
 
-    public Evaluator<?>getRecipeViolations() {
+    public Evaluator<?> getRecipeViolations() {
       return recipeViolations;
     }
 
@@ -157,12 +160,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByNameAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "name")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "name")
     });
 
     assertEquals("test1-0-0", itemList.getItems().get(0).getName());
@@ -174,12 +180,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByNameDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "name")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "name")
     });
 
     assertEquals("test3-0-0", itemList.getItems().get(0).getName());
@@ -191,12 +200,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByLinesAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "lines")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "lines")
     });
 
     assertEquals(10, itemList.getItems().get(0).getLines());
@@ -208,12 +220,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByLinesDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "lines")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "lines")
     });
 
     assertEquals(30, itemList.getItems().get(0).getLines());
@@ -225,12 +240,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByPremirrorCacheAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "premirrorCache")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "premirrorCache")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getPremirrorCache().getRatio(), 0);
@@ -242,12 +260,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByPremirrorCacheDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "premirrorCache")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "premirrorCache")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getPremirrorCache().getRatio(), 0);
@@ -259,12 +280,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortBySharedStateCacheAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "sharedStateCache")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "sharedStateCache")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getSharedStateCache().getRatio(), 0);
@@ -276,12 +300,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortBySharedStateCacheDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "sharedStateCache")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "sharedStateCache")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getSharedStateCache().getRatio(), 0);
@@ -293,12 +320,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByRecipeViolationsAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "recipeViolations")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "recipeViolations")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getRecipeViolations().getRatio(), 0);
@@ -310,12 +340,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByRecipeViolationsDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "recipeViolations")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "recipeViolations")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getRecipeViolations().getRatio(), 0);
@@ -327,12 +360,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByCommentsAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "comments")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "comments")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getComments().getRatio(), 0);
@@ -344,12 +380,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByCommentsDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "comments")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "comments")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getComments().getRatio(), 0);
@@ -361,12 +400,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByCodeViolationsAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "codeViolations")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "codeViolations")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getCodeViolations().getRatio(), 0);
@@ -378,12 +420,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByCodeViolationsDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "codeViolations")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "codeViolations")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getCodeViolations().getRatio(), 0);
@@ -395,12 +440,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByComplexityAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "complexity")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "complexity")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getComplexity().getRatio(), 0);
@@ -412,12 +460,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByComplexityDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "complexity")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "complexity")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getComplexity().getRatio(), 0);
@@ -429,12 +480,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByDuplicationsAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "duplications")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "duplications")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getDuplications().getRatio(), 0);
@@ -446,12 +500,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByDuplicationsDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "duplications")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "duplications")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getDuplications().getRatio(), 0);
@@ -463,12 +520,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByTestAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "test")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "test")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getTest().getRatio(), 0);
@@ -480,12 +540,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByTestDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "test")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "test")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getTest().getRatio(), 0);
@@ -497,12 +560,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByCoverageAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "coverage")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "coverage")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getCoverage().getRatio(), 0);
@@ -514,12 +580,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByCoverageDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "coverage")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "coverage")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getCoverage().getRatio(), 0);
@@ -531,12 +600,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByMutationTestAsc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "mutationTest")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "mutationTest")
     });
 
     assertEquals(0.1, itemList.getItems().get(0).getMutationTest().getRatio(), 0);
@@ -548,12 +620,15 @@ public class RecipeMetricsSortableItemListTest {
   public void testSortByMutationTestDesc() {
     RecipeMetricsSortableItemList itemList = new RecipeMetricsSortableItemList();
 
-    itemList.addItem("test3-0-0", 30, new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
-    itemList.addItem("test1-0-0", 10, new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
-    itemList.addItem("test2-0-0", 20, new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
+    itemList.addItem("test3-0-0", 30,
+        new MockQueryable(0.1, 0.2, 0.1, 0.3, 0.2, 0.2, 0.1, 0.1, 0.3, 0.2));
+    itemList.addItem("test1-0-0", 10,
+        new MockQueryable(0.3, 0.1, 0.2, 0.2, 0.3, 0.1, 0.3, 0.2, 0.1, 0.1));
+    itemList.addItem("test2-0-0", 20,
+        new MockQueryable(0.2, 0.3, 0.3, 0.1, 0.1, 0.3, 0.2, 0.3, 0.2, 0.3));
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "mutationTest")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "mutationTest")
     });
 
     assertEquals(0.3, itemList.getItems().get(0).getMutationTest().getRatio(), 0);

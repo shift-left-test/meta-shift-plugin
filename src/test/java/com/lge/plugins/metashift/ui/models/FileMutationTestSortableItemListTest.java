@@ -22,12 +22,14 @@
  * THE SOFTWARE.
  */
 
- package com.lge.plugins.metashift.ui.models;
+package com.lge.plugins.metashift.ui.models;
 
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 public class FileMutationTestSortableItemListTest {
+
   @Test
   public void testAddItem() {
     FileMutationTestSortableItemList itemList = new FileMutationTestSortableItemList();
@@ -49,8 +51,8 @@ public class FileMutationTestSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "file")
     });
 
     assertEquals("test1.c", itemList.getItems().get(0).getFile());
@@ -65,8 +67,8 @@ public class FileMutationTestSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "file")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "file")
     });
 
     assertEquals("test3.c", itemList.getItems().get(0).getFile());
@@ -81,8 +83,8 @@ public class FileMutationTestSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "killed")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "killed")
     });
 
     assertEquals(1, itemList.getItems().get(0).getKilled());
@@ -97,8 +99,8 @@ public class FileMutationTestSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "killed")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "killed")
     });
 
     assertEquals(3, itemList.getItems().get(0).getKilled());
@@ -113,8 +115,8 @@ public class FileMutationTestSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "survived")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "survived")
     });
 
     assertEquals(1, itemList.getItems().get(0).getSurvived());
@@ -129,8 +131,8 @@ public class FileMutationTestSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "survived")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "survived")
     });
 
     assertEquals(3, itemList.getItems().get(0).getSurvived());
@@ -145,8 +147,8 @@ public class FileMutationTestSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("asc", "skipped")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("asc", "skipped")
     });
 
     assertEquals(1, itemList.getItems().get(0).getSkipped());
@@ -161,8 +163,8 @@ public class FileMutationTestSortableItemListTest {
     itemList.addItem("test1.c", 1, 3, 3);
     itemList.addItem("test3.c", 2, 1, 2);
 
-    itemList.sort(new SortableItemList.SortInfo [] {
-      new SortableItemList.SortInfo("desc", "skipped")
+    itemList.sort(new SortableItemList.SortInfo[]{
+        new SortableItemList.SortInfo("desc", "skipped")
     });
 
     assertEquals(3, itemList.getItems().get(0).getSkipped());

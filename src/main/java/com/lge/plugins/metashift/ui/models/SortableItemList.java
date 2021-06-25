@@ -35,23 +35,25 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * Sortableitem list class.
  */
 public abstract class SortableItemList<T> implements Serializable {
+
   /**
    * column sort info.
    */
   public static class SortInfo {
+
     private final String dir;
     private final String field;
-  
+
     @DataBoundConstructor
     public SortInfo(String dir, String field) {
       this.dir = dir;
       this.field = field;
     }
-  
+
     public String getDir() {
       return dir;
     }
-  
+
     public String getField() {
       return field;
     }

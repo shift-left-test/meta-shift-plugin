@@ -34,11 +34,11 @@ import java.util.Map;
 /**
  * Cache metrics sortableitem list class.
  */
-public class CacheSortableItemList
-    extends SortableItemList<CacheSortableItemList.Item> {
+public class CacheSortableItemList extends SortableItemList<CacheSortableItemList.Item> {
+
   private static final long serialVersionUID = 1L;
   private static final Map<String, Comparator<Item>> comparators;
-  
+
   static {
     comparators = new HashMap<>();
     comparators.put("signature", Comparator.comparing(Item::getSignature));
@@ -67,16 +67,16 @@ public class CacheSortableItemList
     private static final long serialVersionUID = -396700679379276827L;
     private final String signature;
     private final boolean available;
-  
+
     public Item(CacheData cacheData) {
       signature = cacheData.getSignature();
       available = cacheData.isAvailable();
     }
-  
+
     public String getSignature() {
       return signature;
     }
-  
+
     public boolean isAvailable() {
       return available;
     }

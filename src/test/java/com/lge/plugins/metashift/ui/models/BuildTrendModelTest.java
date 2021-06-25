@@ -28,46 +28,43 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-
 import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
-
-import org.junit.Test;
-
+import java.util.Arrays;
+import java.util.Collections;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.junit.Test;
 
 /**
  * Unit test for the BuildTrendModel class.
  */
 public class BuildTrendModelTest {
+
   @Test
   public void testInitData() {
     BuildTrendModel model = new BuildTrendModel(0);
 
-    assertEquals(Arrays.asList(new String [] {
-        "PremirrorCache", "SharedStateCache", "RecipeViolation",
+    assertEquals(Arrays.asList("PremirrorCache", "SharedStateCache", "RecipeViolation",
         "Comment", "CodeViolation", "Complexity", "Duplication",
-        "Test", "Coverage", "Mutation"}),
+        "Test", "Coverage", "Mutation"),
         model.getLegend());
 
-    assertEquals(Arrays.asList(new String [] {}),
-        model.getBuilds());
+    assertEquals(Collections.emptyList(), model.getBuilds());
 
     assertEquals(JSONArray.fromObject(
         "[{\"data\":[],\"name\":\"PremirrorCache\",\"type\":\"line\",\"yAxisIndex\":0},"
-        + "{\"data\":[],\"name\":\"SharedStateCache\",\"type\":\"line\",\"yAxisIndex\":0},"
-        + "{\"data\":[],\"name\":\"RecipeViolation\",\"type\":\"line\",\"yAxisIndex\":1},"
-        + "{\"data\":[],\"name\":\"Comment\",\"type\":\"line\",\"yAxisIndex\":0},"
-        + "{\"data\":[],\"name\":\"CodeViolation\",\"type\":\"line\",\"yAxisIndex\":1},"
-        + "{\"data\":[],\"name\":\"Complexity\",\"type\":\"line\",\"yAxisIndex\":0},"
-        + "{\"data\":[],\"name\":\"Duplication\",\"type\":\"line\",\"yAxisIndex\":0},"
-        + "{\"data\":[],\"name\":\"Test\",\"type\":\"line\",\"yAxisIndex\":0},"
-        + "{\"data\":[],\"name\":\"Coverage\",\"type\":\"line\",\"yAxisIndex\":0},"
-        + "{\"data\":[],\"name\":\"Mutation\",\"type\":\"line\",\"yAxisIndex\":0}]"),
+            + "{\"data\":[],\"name\":\"SharedStateCache\",\"type\":\"line\",\"yAxisIndex\":0},"
+            + "{\"data\":[],\"name\":\"RecipeViolation\",\"type\":\"line\",\"yAxisIndex\":1},"
+            + "{\"data\":[],\"name\":\"Comment\",\"type\":\"line\",\"yAxisIndex\":0},"
+            + "{\"data\":[],\"name\":\"CodeViolation\",\"type\":\"line\",\"yAxisIndex\":1},"
+            + "{\"data\":[],\"name\":\"Complexity\",\"type\":\"line\",\"yAxisIndex\":0},"
+            + "{\"data\":[],\"name\":\"Duplication\",\"type\":\"line\",\"yAxisIndex\":0},"
+            + "{\"data\":[],\"name\":\"Test\",\"type\":\"line\",\"yAxisIndex\":0},"
+            + "{\"data\":[],\"name\":\"Coverage\",\"type\":\"line\",\"yAxisIndex\":0},"
+            + "{\"data\":[],\"name\":\"Mutation\",\"type\":\"line\",\"yAxisIndex\":0}]"),
         JSONArray.fromObject(model.getSeries()));
   }
 
@@ -82,18 +79,18 @@ public class BuildTrendModelTest {
     metrics.parse(recipe);
 
     model.addData("#1", metrics);
-    assertEquals(Arrays.asList(new String [] {"#1"}),
-        model.getBuilds());
-    
-    assertTrue(JSONArray.fromObject(model.getSeries()).contains(
-        JSONObject.fromObject("{\"data\":[0],\"name\":\"PremirrorCache\",\"type\":\"line\",\"yAxisIndex\":0}")));
-    
-    model.addData("#2", metrics);
-    assertEquals(Arrays.asList(new String [] {"#2", "#1"}),
-        model.getBuilds());
+    assertEquals(Collections.singletonList("#1"), model.getBuilds());
 
     assertTrue(JSONArray.fromObject(model.getSeries()).contains(
-        JSONObject.fromObject("{\"data\":[0, 0],\"name\":\"PremirrorCache\",\"type\":\"line\",\"yAxisIndex\":0}")));
+        JSONObject.fromObject(
+            "{\"data\":[0],\"name\":\"PremirrorCache\",\"type\":\"line\",\"yAxisIndex\":0}")));
+
+    model.addData("#2", metrics);
+    assertEquals(Arrays.asList("#2", "#1"), model.getBuilds());
+
+    assertTrue(JSONArray.fromObject(model.getSeries()).contains(
+        JSONObject.fromObject(
+            "{\"data\":[0, 0],\"name\":\"PremirrorCache\",\"type\":\"line\",\"yAxisIndex\":0}")));
   }
 
   @Test
