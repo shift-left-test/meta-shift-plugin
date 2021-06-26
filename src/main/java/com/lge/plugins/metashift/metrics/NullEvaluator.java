@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.BuildStatus;
+
 /**
  * NullEvaluator class.
  *
@@ -55,5 +57,10 @@ public abstract class NullEvaluator<T> extends Evaluator<T> {
   @Override
   public boolean isQualified() {
     return false;
+  }
+
+  @Override
+  public boolean isStable(final BuildStatus status) {
+    return true;
   }
 }

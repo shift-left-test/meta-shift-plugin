@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
@@ -117,6 +118,11 @@ public final class TestEvaluator extends PositiveEvaluator<TestEvaluator> {
    */
   public Counter getSkipped() {
     return collection.get(Type.SKIPPED);
+  }
+
+  @Override
+  public boolean isStable(BuildStatus status) {
+    return !status.isTestAsUnstable() || isQualified();
   }
 
   @Override

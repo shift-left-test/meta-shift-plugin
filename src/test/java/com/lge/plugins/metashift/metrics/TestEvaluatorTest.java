@@ -27,9 +27,10 @@ package com.lge.plugins.metashift.metrics;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
@@ -50,12 +51,13 @@ public class TestEvaluatorTest {
   private TestEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
+  private Configuration configuration;
 
   @Before
   public void setUp() {
-    Criteria criteria = new Configuration();
-    criteria.setTestThreshold(50);
-    evaluator = new TestEvaluator(criteria);
+    configuration = new Configuration();
+    configuration.setTestThreshold(50);
+    evaluator = new TestEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
@@ -192,5 +194,31 @@ public class TestEvaluatorTest {
     recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
     assertEquals(1, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipe() {
+    evaluator.parse(recipe);
+    assertFalse(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+    evaluator.parse(recipe);
+    configuration.setTestAsUnstable(false);
+    assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipes() {
+    evaluator.parse(recipes);
+    assertFalse(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
+    evaluator.parse(recipes);
+    configuration.setTestAsUnstable(false);
+    assertTrue(evaluator.isStable(configuration));
   }
 }

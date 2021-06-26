@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Streamable;
@@ -51,6 +52,11 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
   public ComplexityEvaluator(final Criteria criteria) {
     super((double) criteria.getComplexityThreshold() / 100.0);
     level = criteria.getComplexityLevel();
+  }
+
+  @Override
+  public boolean isStable(BuildStatus status) {
+    return !status.isComplexityAsUnstable() || isQualified();
   }
 
   @Override

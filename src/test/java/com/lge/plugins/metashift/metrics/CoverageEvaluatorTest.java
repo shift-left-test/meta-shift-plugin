@@ -27,10 +27,11 @@ package com.lge.plugins.metashift.metrics;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.Recipe;
@@ -49,12 +50,13 @@ public class CoverageEvaluatorTest {
   private CoverageEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
+  private Configuration configuration;
 
   @Before
   public void setUp() {
-    Criteria criteria = new Configuration();
-    criteria.setCoverageThreshold(50);
-    evaluator = new CoverageEvaluator(criteria);
+    configuration = new Configuration();
+    configuration.setCoverageThreshold(50);
+    evaluator = new CoverageEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
@@ -190,5 +192,31 @@ public class CoverageEvaluatorTest {
     recipe.add(new StatementCoverageData("A-1.0.0-r0", "a.file", 1, true));
     assertEquals(1, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipe() {
+    evaluator.parse(recipe);
+    assertFalse(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+    evaluator.parse(recipe);
+    configuration.setCoverageAsUnstable(false);
+    assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipes() {
+    evaluator.parse(recipes);
+    assertFalse(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
+    evaluator.parse(recipes);
+    configuration.setCoverageAsUnstable(false);
+    assertTrue(evaluator.isStable(configuration));
   }
 }

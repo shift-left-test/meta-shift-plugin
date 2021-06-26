@@ -27,10 +27,11 @@ package com.lge.plugins.metashift.metrics;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
@@ -47,12 +48,13 @@ public class CommentEvaluatorTest {
   private CommentEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
+  private Configuration configuration;
 
   @Before
   public void setUp() {
-    Criteria criteria = new Configuration();
-    criteria.setCommentThreshold(50);
-    evaluator = new CommentEvaluator(criteria);
+    configuration = new Configuration();
+    configuration.setCommentThreshold(50);
+    evaluator = new CommentEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
@@ -149,5 +151,31 @@ public class CommentEvaluatorTest {
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     assertEquals(10, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipe() {
+    evaluator.parse(recipe);
+    assertFalse(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+    evaluator.parse(recipe);
+    configuration.setCommentsAsUnstable(false);
+    assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipes() {
+    evaluator.parse(recipes);
+    assertFalse(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
+    evaluator.parse(recipes);
+    configuration.setCommentsAsUnstable(false);
+    assertTrue(evaluator.isStable(configuration));
   }
 }

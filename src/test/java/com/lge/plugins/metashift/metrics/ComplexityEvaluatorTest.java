@@ -27,10 +27,11 @@ package com.lge.plugins.metashift.metrics;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
@@ -47,13 +48,14 @@ public class ComplexityEvaluatorTest {
   private ComplexityEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
+  private Configuration configuration;
 
   @Before
   public void setUp() {
-    Criteria criteria = new Configuration();
-    criteria.setComplexityLevel(5);
-    criteria.setComplexityThreshold(50);
-    evaluator = new ComplexityEvaluator(criteria);
+    configuration = new Configuration();
+    configuration.setComplexityLevel(5);
+    configuration.setComplexityThreshold(50);
+    evaluator = new ComplexityEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
@@ -159,5 +161,31 @@ public class ComplexityEvaluatorTest {
     recipe.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     assertEquals(1, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipe() {
+    evaluator.parse(recipe);
+    assertFalse(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+    evaluator.parse(recipe);
+    configuration.setComplexityAsUnstable(false);
+    assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipes() {
+    evaluator.parse(recipes);
+    assertFalse(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
+    evaluator.parse(recipes);
+    configuration.setComplexityAsUnstable(false);
+    assertTrue(evaluator.isStable(configuration));
   }
 }

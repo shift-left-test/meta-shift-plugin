@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.StatementCoverageData;
@@ -88,6 +89,11 @@ public final class CoverageEvaluator extends PositiveEvaluator<CoverageEvaluator
    */
   public Counter getBranch() {
     return collection.get(Type.BRANCH);
+  }
+
+  @Override
+  public boolean isStable(BuildStatus status) {
+    return !status.isCoverageAsUnstable() || isQualified();
   }
 
   @Override

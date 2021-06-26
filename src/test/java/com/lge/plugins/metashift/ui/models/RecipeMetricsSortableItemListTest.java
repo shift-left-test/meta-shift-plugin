@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.metrics.Queryable;
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Streamable;
 import org.junit.Test;
@@ -46,6 +47,11 @@ public class RecipeMetricsSortableItemListTest {
 
     @Override
     public boolean isQualified() {
+      return true;
+    }
+
+    @Override
+    public boolean isStable(BuildStatus status) {
       return true;
     }
 

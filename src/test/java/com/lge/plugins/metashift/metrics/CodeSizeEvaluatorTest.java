@@ -27,10 +27,10 @@ package com.lge.plugins.metashift.metrics;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
@@ -47,11 +47,12 @@ public class CodeSizeEvaluatorTest {
   private CodeSizeEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
+  private Configuration configuration;
 
   @Before
   public void setUp() {
-    Criteria criteria = new Configuration();
-    criteria.setRecipeViolationThreshold(0.5);
+    configuration = new Configuration();
+    configuration.setRecipeViolationThreshold(0.5);
     evaluator = new CodeSizeEvaluator();
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
@@ -129,5 +130,11 @@ public class CodeSizeEvaluatorTest {
     recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1));
     assertEquals(3, evaluator.parse(recipes).getLines());
     assertEquals(0, evaluator.parse(new Recipes()).getLines());
+  }
+
+  @Test
+  public void testIsStableWithEmptyRecipe() {
+    evaluator.parse(recipe);
+    assertTrue(evaluator.isStable(configuration));
   }
 }

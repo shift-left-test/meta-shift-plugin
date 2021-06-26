@@ -224,40 +224,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
             run, listener, criteria, reportPath, dataSource);
         run.addAction(buildAction);
 
-        boolean isStable = true;
-
-        if (criteria.isPremirrorCacheAsUnstable()) {
-          isStable &= buildAction.getMetrics().getPremirrorCache().isQualified();
-        }
-        if (criteria.isSharedStateCacheAsUnstable()) {
-          isStable &= buildAction.getMetrics().getSharedStateCache().isQualified();
-        }
-        if (criteria.isRecipeViolationsAsUnstable()) {
-          isStable &= buildAction.getMetrics().getRecipeViolations().isQualified();
-        }
-        if (criteria.isCommentsAsUnstable()) {
-          isStable &= buildAction.getMetrics().getComments().isQualified();
-        }
-        if (criteria.isCodeViolationsAsUnstable()) {
-          isStable &= buildAction.getMetrics().getCodeViolations().isQualified();
-        }
-        if (criteria.isComplexityAsUnstable()) {
-          isStable &= buildAction.getMetrics().getComplexity().isQualified();
-        }
-        if (criteria.isDuplicationsAsUnstable()) {
-          isStable &= buildAction.getMetrics().getDuplications().isQualified();
-        }
-        if (criteria.isTestAsUnstable()) {
-          isStable &= buildAction.getMetrics().getTest().isQualified();
-        }
-        if (criteria.isCoverageAsUnstable()) {
-          isStable &= buildAction.getMetrics().getCoverage().isQualified();
-        }
-        if (criteria.isMutationTestAsUnstable()) {
-          isStable &= buildAction.getMetrics().getMutationTest().isQualified();
-        }
-
-        if (!isStable) {
+        if (!buildAction.getMetrics().isStable(criteria)) {
           run.setResult(Result.UNSTABLE);
         }
       } else {

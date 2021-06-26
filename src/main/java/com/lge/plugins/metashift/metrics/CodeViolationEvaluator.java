@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.models.Criteria;
@@ -46,6 +47,11 @@ public final class CodeViolationEvaluator extends ViolationEvaluator<CodeViolati
    */
   public CodeViolationEvaluator(final Criteria criteria) {
     super(criteria.getCodeViolationThreshold());
+  }
+
+  @Override
+  public boolean isStable(BuildStatus status) {
+    return !status.isCodeViolationsAsUnstable() || isQualified();
   }
 
   @Override

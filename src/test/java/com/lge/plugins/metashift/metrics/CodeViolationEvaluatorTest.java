@@ -28,10 +28,11 @@ package com.lge.plugins.metashift.metrics;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.InfoCodeViolationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.MinorCodeViolationData;
@@ -51,12 +52,13 @@ public class CodeViolationEvaluatorTest {
   private CodeViolationEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
+  private Configuration configuration;
 
   @Before
   public void setUp() {
-    Criteria criteria = new Configuration();
-    criteria.setCodeViolationThreshold(0.5);
-    evaluator = new CodeViolationEvaluator(criteria);
+    configuration = new Configuration();
+    configuration.setCodeViolationThreshold(0.5);
+    evaluator = new CodeViolationEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
@@ -222,5 +224,31 @@ public class CodeViolationEvaluatorTest {
     recipes = new Recipes();
     assertEquals(0, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(recipes).getNumerator());
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipe() {
+    evaluator.parse(recipe);
+    assertFalse(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+    evaluator.parse(recipe);
+    configuration.setCodeViolationsAsUnstable(false);
+    assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipes() {
+    evaluator.parse(recipes);
+    assertFalse(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
+    evaluator.parse(recipes);
+    configuration.setCodeViolationsAsUnstable(false);
+    assertTrue(evaluator.isStable(configuration));
   }
 }

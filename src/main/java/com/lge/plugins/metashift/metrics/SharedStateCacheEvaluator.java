@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.models.Streamable;
@@ -42,6 +43,11 @@ public class SharedStateCacheEvaluator extends PositiveEvaluator<SharedStateCach
    */
   public SharedStateCacheEvaluator(final Criteria criteria) {
     super((double) criteria.getSharedStateCacheThreshold() / 100.0);
+  }
+
+  @Override
+  public boolean isStable(BuildStatus status) {
+    return !status.isSharedStateCacheAsUnstable() || isQualified();
   }
 
   @Override

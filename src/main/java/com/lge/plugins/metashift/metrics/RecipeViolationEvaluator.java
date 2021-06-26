@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.InfoRecipeViolationData;
 import com.lge.plugins.metashift.models.MajorRecipeViolationData;
@@ -46,6 +47,11 @@ public final class RecipeViolationEvaluator extends ViolationEvaluator<RecipeVio
    */
   public RecipeViolationEvaluator(final Criteria criteria) {
     super(criteria.getRecipeViolationThreshold());
+  }
+
+  @Override
+  public boolean isStable(BuildStatus status) {
+    return !status.isRecipeViolationsAsUnstable() || isQualified();
   }
 
   @Override

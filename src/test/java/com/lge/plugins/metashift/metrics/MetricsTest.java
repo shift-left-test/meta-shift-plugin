@@ -27,13 +27,14 @@ package com.lge.plugins.metashift.metrics;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
@@ -75,24 +76,25 @@ public class MetricsTest {
   private Metrics metrics;
   private Recipe recipe;
   private Recipes recipes;
+  private Configuration configuration;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    Criteria criteria = new Configuration();
-    criteria.setPremirrorCacheThreshold(50);
-    criteria.setSharedStateCacheThreshold(50);
-    criteria.setRecipeViolationThreshold(0.5);
-    criteria.setCommentThreshold(50);
-    criteria.setCodeViolationThreshold(0.5);
-    criteria.setComplexityLevel(5);
-    criteria.setComplexityThreshold(50);
-    criteria.setDuplicationThreshold(50);
-    criteria.setTestThreshold(50);
-    criteria.setCoverageThreshold(50);
-    criteria.setMutationTestThreshold(50);
-    metrics = new Metrics(criteria);
+    configuration = new Configuration();
+    configuration.setPremirrorCacheThreshold(50);
+    configuration.setSharedStateCacheThreshold(50);
+    configuration.setRecipeViolationThreshold(0.5);
+    configuration.setCommentThreshold(50);
+    configuration.setCodeViolationThreshold(0.5);
+    configuration.setComplexityLevel(5);
+    configuration.setComplexityThreshold(50);
+    configuration.setDuplicationThreshold(50);
+    configuration.setTestThreshold(50);
+    configuration.setCoverageThreshold(50);
+    configuration.setMutationTestThreshold(50);
+    metrics = new Metrics(configuration);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
@@ -476,5 +478,49 @@ public class MetricsTest {
     metrics.parse(recipe);
     assertEvaluator(metrics.getTest(), true, false);
     assertCounter(metrics.getTest(), 0, 0, 0.0);
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipe() {
+    metrics.parse(recipe);
+    assertFalse(metrics.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+    metrics.parse(recipe);
+    configuration.setPremirrorCacheAsUnstable(false);
+    configuration.setSharedStateCacheAsUnstable(false);
+    configuration.setRecipeViolationsAsUnstable(false);
+    configuration.setCommentsAsUnstable(false);
+    configuration.setCodeViolationsAsUnstable(false);
+    configuration.setComplexityAsUnstable(false);
+    configuration.setDuplicationsAsUnstable(false);
+    configuration.setTestAsUnstable(false);
+    configuration.setCoverageAsUnstable(false);
+    configuration.setMutationTestAsUnstable(false);
+    assertTrue(metrics.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnFalseWithEmptyRecipes() {
+    metrics.parse(recipes);
+    assertFalse(metrics.isStable(configuration));
+  }
+
+  @Test
+  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
+    metrics.parse(recipes);
+    configuration.setPremirrorCacheAsUnstable(false);
+    configuration.setSharedStateCacheAsUnstable(false);
+    configuration.setRecipeViolationsAsUnstable(false);
+    configuration.setCommentsAsUnstable(false);
+    configuration.setCodeViolationsAsUnstable(false);
+    configuration.setComplexityAsUnstable(false);
+    configuration.setDuplicationsAsUnstable(false);
+    configuration.setTestAsUnstable(false);
+    configuration.setCoverageAsUnstable(false);
+    configuration.setMutationTestAsUnstable(false);
+    assertTrue(metrics.isStable(configuration));
   }
 }

@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Streamable;
 import java.util.HashMap;
@@ -125,6 +126,11 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
   @Override
   public Evaluator<?> getTest() {
     return collection.get(TestEvaluator.class);
+  }
+
+  @Override
+  public boolean isStable(final BuildStatus status) {
+    return collection.values().stream().allMatch(evaluator -> evaluator.isStable(status));
   }
 
   @Override
