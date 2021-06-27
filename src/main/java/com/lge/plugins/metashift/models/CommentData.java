@@ -120,4 +120,13 @@ public final class CommentData extends Data<CommentData> {
   public long getCommentLines() {
     return commentLines;
   }
+
+  /**
+   * Returns the ratio of the comment lines.
+   *
+   * @return comment line ratio
+   */
+  public double getRatio() {
+    return getLines() > 0 ? (double) getCommentLines() / (double) getLines() : 0;
+  }
 }

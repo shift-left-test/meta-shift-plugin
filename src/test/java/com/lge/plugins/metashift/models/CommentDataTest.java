@@ -88,4 +88,11 @@ public class CommentDataTest {
     Collections.sort(actual);
     assertEquals(expected, actual);
   }
+
+  @Test
+  public void testGetRatio() {
+    CommentData data = new CommentData("A-1.0.0-r0", "a.file", 0, 0);
+    assertEquals(0, data.getRatio(), 0.1);
+    assertEquals(0.5, origin.getRatio(), 0.1);
+  }
 }
