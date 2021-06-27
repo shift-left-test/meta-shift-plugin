@@ -35,6 +35,7 @@ import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -177,5 +178,20 @@ public class CommentEvaluatorTest {
     evaluator.parse(recipes);
     configuration.setCommentsAsUnstable(false);
     assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testToJsonObject() {
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new CommentData("A-1.0.0-r0", "b.file", 10, 5));
+    evaluator.parse(recipe);
+
+    JSONObject object = evaluator.toJsonObject();
+    assertEquals(20, object.getLong("denominator"));
+    assertEquals(10, object.getLong("numerator"));
+    assertEquals(0.5, object.getDouble("ratio"), 0.1);
+    assertEquals(0.5, object.getDouble("threshold"), 0.1);
+    assertTrue(object.getBoolean("available"));
+    assertTrue(object.getBoolean("qualified"));
   }
 }

@@ -37,6 +37,7 @@ import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SkippedMutationTestData;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -206,5 +207,28 @@ public class MutationTestEvaluatorTest {
     evaluator.parse(recipes);
     configuration.setMutationTestAsUnstable(false);
     assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testJsonObject() {
+    recipe.add(new SkippedMutationTestData("A-1.0.0-r0", "a.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new SurvivedMutationTestData("A-1.0.0-r0", "b.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
+    recipe.add(new KilledMutationTestData("A-1.0.0-r0", "d.file", "C", "f()", 1, "AOR", "TC"));
+    evaluator.parse(recipe);
+
+    JSONObject object = evaluator.toJsonObject();
+    assertEquals(4, object.getLong("denominator"));
+    assertEquals(2, object.getLong("numerator"));
+    assertEquals(0.5, object.getDouble("ratio"), 0.1);
+    assertEquals(4, object.getJSONObject("killed").getLong("denominator"));
+    assertEquals(2, object.getJSONObject("killed").getLong("numerator"));
+    assertEquals(4, object.getJSONObject("survived").getLong("denominator"));
+    assertEquals(1, object.getJSONObject("survived").getLong("numerator"));
+    assertEquals(4, object.getJSONObject("skipped").getLong("denominator"));
+    assertEquals(1, object.getJSONObject("skipped").getLong("numerator"));
+    assertEquals(0.5, object.getDouble("threshold"), 0.1);
+    assertTrue(object.getBoolean("available"));
+    assertTrue(object.getBoolean("qualified"));
   }
 }

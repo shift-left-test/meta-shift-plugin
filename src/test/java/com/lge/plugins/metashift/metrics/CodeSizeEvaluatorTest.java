@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.metrics;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
@@ -34,6 +35,7 @@ import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,7 +54,6 @@ public class CodeSizeEvaluatorTest {
   @Before
   public void setUp() {
     configuration = new Configuration();
-    configuration.setRecipeViolationThreshold(0.5);
     evaluator = new CodeSizeEvaluator();
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
@@ -136,5 +137,22 @@ public class CodeSizeEvaluatorTest {
   public void testIsStableWithEmptyRecipe() {
     evaluator.parse(recipe);
     assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testToJsonObject() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1));
+    evaluator.parse(recipe);
+    JSONObject object = evaluator.toJsonObject();
+    assertEquals(1, object.getLong("recipes"));
+    assertEquals(1, object.getLong("files"));
+    assertEquals(3, object.getLong("lines"));
+    assertEquals(2, object.getLong("functions"));
+    assertEquals(1, object.getLong("classes"));
+    assertEquals(0, object.getLong("denominator"));
+    assertEquals(0, object.getLong("numerator"));
+    assertEquals(0.0, object.getDouble("ratio"), 0.1);
+    assertFalse(object.getBoolean("available"));
+    assertFalse(object.getBoolean("qualified"));
   }
 }

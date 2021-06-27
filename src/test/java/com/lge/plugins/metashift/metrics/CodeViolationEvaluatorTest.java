@@ -39,6 +39,7 @@ import com.lge.plugins.metashift.models.MinorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -250,5 +251,29 @@ public class CodeViolationEvaluatorTest {
     evaluator.parse(recipes);
     configuration.setCodeViolationsAsUnstable(false);
     assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testToJsonObject() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
+    recipe.add(
+        new MajorCodeViolationData("A-1.0.0-r0", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new MinorCodeViolationData("A-1.0.0-r0", "b.file", 1, 2, "rule", "m", "d", "E", "t"));
+    recipe.add(
+        new InfoCodeViolationData("A-1.0.0-r0", "c.file", 1, 2, "rule", "m", "d", "E", "t"));
+    evaluator.parse(recipe);
+
+    JSONObject object = evaluator.toJsonObject();
+    assertEquals(3, object.getJSONObject("major").getLong("denominator"));
+    assertEquals(1, object.getJSONObject("major").getLong("numerator"));
+    assertEquals(3, object.getJSONObject("minor").getLong("denominator"));
+    assertEquals(1, object.getJSONObject("minor").getLong("numerator"));
+    assertEquals(3, object.getJSONObject("info").getLong("denominator"));
+    assertEquals(1, object.getJSONObject("info").getLong("numerator"));
+    assertEquals(10, object.getLong("denominator"));
+    assertEquals(3, object.getLong("numerator"));
+    assertTrue(object.getBoolean("available"));
+    assertTrue(object.getBoolean("qualified"));
   }
 }

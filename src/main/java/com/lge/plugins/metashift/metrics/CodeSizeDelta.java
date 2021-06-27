@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import net.sf.json.JSONObject;
+
 /**
  * CodeSizeDelta class.
  *
@@ -144,5 +146,14 @@ public final class CodeSizeDelta {
         latter.getFunctions() - former.getFunctions(),
         latter.getClasses() - former.getClasses()
     );
+  }
+
+  /**
+   * Returns the object as a JSONObject instance.
+   *
+   * @return a JSONObject instance
+   */
+  public JSONObject toJsonObject() {
+    return JSONObject.fromObject(this);
   }
 }

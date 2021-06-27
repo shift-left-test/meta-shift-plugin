@@ -35,6 +35,7 @@ import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -194,5 +195,21 @@ public class PremirrorCacheEvaluatorTest {
     evaluator.parse(recipes);
     configuration.setPremirrorCacheAsUnstable(false);
     assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testToJsonObject() {
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "X", true));
+    recipe.add(new PremirrorCacheData("C-1.0.0-r0", "X", false));
+    evaluator.parse(recipe);
+
+    JSONObject object = evaluator.toJsonObject();
+    assertEquals(3, object.getLong("denominator"));
+    assertEquals(2, object.getLong("numerator"));
+    assertEquals(0.6, object.getDouble("ratio"), 0.1);
+    assertEquals(0.5, object.getDouble("threshold"), 0.1);
+    assertTrue(object.getBoolean("available"));
+    assertTrue(object.getBoolean("qualified"));
   }
 }

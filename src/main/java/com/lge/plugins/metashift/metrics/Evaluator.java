@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Streamable;
+import net.sf.json.JSONObject;
 
 /**
  * Evaluator class.
@@ -118,4 +119,13 @@ public abstract class Evaluator<T> extends Counter {
    * @param c object to evaluate
    */
   protected abstract void parseImpl(final Streamable c);
+
+  /**
+   * Returns the object as a JSONObject instance.
+   *
+   * @return a JSONObject instance
+   */
+  public JSONObject toJsonObject() {
+    return JSONObject.fromObject(this);
+  }
 }

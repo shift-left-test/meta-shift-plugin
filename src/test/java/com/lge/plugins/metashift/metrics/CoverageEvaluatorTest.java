@@ -37,6 +37,7 @@ import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.StatementCoverageData;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -218,5 +219,26 @@ public class CoverageEvaluatorTest {
     evaluator.parse(recipes);
     configuration.setCoverageAsUnstable(false);
     assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testToJsonObject() {
+    recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
+    recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
+    recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, true));
+    evaluator.parse(recipe);
+
+    JSONObject object = evaluator.toJsonObject();
+    assertEquals(2, object.getJSONObject("statement").getLong("denominator"));
+    assertEquals(1, object.getJSONObject("statement").getLong("numerator"));
+    assertEquals(1, object.getJSONObject("branch").getLong("denominator"));
+    assertEquals(1, object.getJSONObject("branch").getLong("numerator"));
+    assertEquals(3, object.getLong("denominator"));
+    assertEquals(2, object.getLong("numerator"));
+    assertEquals(0.6, object.getDouble("ratio"), 0.1);
+    assertEquals(0.5, object.getDouble("threshold"), 0.1);
+    assertTrue(object.getBoolean("available"));
+    assertTrue(object.getBoolean("qualified"));
   }
 }

@@ -57,6 +57,7 @@ import com.lge.plugins.metashift.models.SurvivedMutationTestData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import java.io.File;
 import java.io.IOException;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -522,5 +523,36 @@ public class MetricsTest {
     configuration.setCoverageAsUnstable(false);
     configuration.setMutationTestAsUnstable(false);
     assertTrue(metrics.isStable(configuration));
+  }
+
+  @Test
+  public void testToJsonObject() {
+    metrics.parse(recipe);
+    JSONObject object = metrics.toJsonObject();
+    assertEquals(0, object.getLong("denominator"));
+    assertEquals(0, object.getLong("numerator"));
+    assertEquals(0.0, object.getDouble("ratio"), 0.1);
+    assertFalse(object.getJSONObject("premirrorCache").getBoolean("available"));
+    assertFalse(object.getJSONObject("premirrorCache").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("sharedStateCache").getBoolean("available"));
+    assertFalse(object.getJSONObject("sharedStateCache").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("codeSize").getBoolean("available"));
+    assertFalse(object.getJSONObject("codeSize").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("codeViolations").getBoolean("available"));
+    assertFalse(object.getJSONObject("codeViolations").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("comments").getBoolean("available"));
+    assertFalse(object.getJSONObject("comments").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("complexity").getBoolean("available"));
+    assertFalse(object.getJSONObject("complexity").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("coverage").getBoolean("available"));
+    assertFalse(object.getJSONObject("coverage").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("duplications").getBoolean("available"));
+    assertFalse(object.getJSONObject("duplications").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("mutationTest").getBoolean("available"));
+    assertFalse(object.getJSONObject("mutationTest").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("recipeViolations").getBoolean("available"));
+    assertFalse(object.getJSONObject("recipeViolations").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("test").getBoolean("available"));
+    assertFalse(object.getJSONObject("test").getBoolean("qualified"));
   }
 }

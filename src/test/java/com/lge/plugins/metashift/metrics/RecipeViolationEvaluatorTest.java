@@ -38,6 +38,7 @@ import com.lge.plugins.metashift.models.MinorRecipeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.models.Recipes;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -236,5 +237,24 @@ public class RecipeViolationEvaluatorTest {
     evaluator.parse(recipes);
     configuration.setRecipeViolationsAsUnstable(false);
     assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testToJsonObject() {
+    recipe.add(new RecipeSizeData("A-1.0.0-r0", "a.file", 5));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
+    recipe.add(new InfoRecipeViolationData("A-1.0.0-r0", "a.file", 1, "info", "info", "info"));
+    evaluator.parse(recipe);
+
+    JSONObject object = evaluator.toJsonObject();
+    assertEquals(0.5, object.getJSONObject("major").getDouble("ratio"), 0.1);
+    assertEquals(0.0, object.getJSONObject("minor").getDouble("ratio"), 0.1);
+    assertEquals(0.5, object.getJSONObject("info").getDouble("ratio"), 0.1);
+    assertEquals(5, object.getLong("denominator"));
+    assertEquals(2, object.getLong("numerator"));
+    assertEquals(0.5, object.getDouble("ratio"), 0.1);
+    assertEquals(0.5, object.getDouble("threshold"), 0.1);
+    assertTrue(object.getBoolean("available"));
+    assertTrue(object.getBoolean("qualified"));
   }
 }

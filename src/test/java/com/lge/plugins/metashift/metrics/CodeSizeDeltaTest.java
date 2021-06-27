@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Recipe;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -118,5 +119,18 @@ public class CodeSizeDeltaTest {
     second.parse(recipe);
     delta = CodeSizeDelta.between(first, second);
     assertValues(0, 0, -4, -3, 3);
+  }
+
+  @Test
+  public void testToJsonObject() {
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "a.file", 3, 2, 6));
+    second.parse(recipe);
+    delta = CodeSizeDelta.between(null, second);
+    JSONObject object = delta.toJsonObject();
+    assertEquals(1, object.getLong("recipes"));
+    assertEquals(1, object.getLong("files"));
+    assertEquals(3, object.getLong("lines"));
+    assertEquals(2, object.getLong("functions"));
+    assertEquals(6, object.getLong("classes"));
   }
 }

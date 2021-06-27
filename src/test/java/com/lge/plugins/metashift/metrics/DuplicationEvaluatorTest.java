@@ -35,6 +35,7 @@ import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -175,5 +176,19 @@ public class DuplicationEvaluatorTest {
     evaluator.parse(recipes);
     configuration.setDuplicationsAsUnstable(false);
     assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testJsonObject() {
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 4));
+    evaluator.parse(recipe);
+
+    JSONObject object = evaluator.toJsonObject();
+    assertEquals(10, object.getLong("denominator"));
+    assertEquals(4, object.getLong("numerator"));
+    assertEquals(0.4, object.getDouble("ratio"), 0.1);
+    assertEquals(0.5, object.getDouble("threshold"), 0.1);
+    assertTrue(object.getBoolean("available"));
+    assertTrue(object.getBoolean("qualified"));
   }
 }

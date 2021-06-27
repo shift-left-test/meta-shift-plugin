@@ -38,6 +38,7 @@ import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SkippedTestData;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -220,5 +221,24 @@ public class TestEvaluatorTest {
     evaluator.parse(recipes);
     configuration.setTestAsUnstable(false);
     assertTrue(evaluator.isStable(configuration));
+  }
+
+  @Test
+  public void testToJsonObject() {
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    recipe.add(new FailedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
+    recipe.add(new ErrorTestData("A-1.0.0-r0", "a.suite", "c.tc", "msg"));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "e.suite", "a.tc", "msg"));
+    evaluator.parse(recipe);
+
+    JSONObject object = evaluator.toJsonObject();
+    assertEquals(0.5, object.getJSONObject("passed").getDouble("ratio"), 0.1);
+    assertEquals(0.2, object.getJSONObject("failed").getDouble("ratio"), 0.1);
+    assertEquals(0.2, object.getJSONObject("error").getDouble("ratio"), 0.1);
+    assertEquals(0.0, object.getJSONObject("skipped").getDouble("ratio"), 0.1);
+    assertEquals(0.5, object.getDouble("ratio"), 0.1);
+    assertEquals(0.5, object.getDouble("threshold"), 0.1);
+    assertTrue(object.getBoolean("available"));
+    assertTrue(object.getBoolean("qualified"));
   }
 }
