@@ -59,8 +59,7 @@ import org.kohsuke.stapler.export.ExportedBean;
  * The main post build action class.
  */
 @ExportedBean
-public class MetaShiftBuildAction extends Actionable
-    implements RunAction2 {
+public class MetaShiftBuildAction extends Actionable implements RunAction2 {
 
   static final String STORE_KEY_RECIPEMETRICSLIST = "RecipeMetricsList";
 
@@ -239,8 +238,7 @@ public class MetaShiftBuildAction extends Actionable
    * @return tested recipe count
    */
   public long getTestedRecipes() {
-    return this.getRecipes().stream().filter(
-        o -> o.getMetrics().getTest().isAvailable()).count();
+    return qualifiedRecipeCounter.getTestedRecipes().getNumerator();
   }
 
   public JSONObject getCodeSizeJson() {
@@ -325,14 +323,10 @@ public class MetaShiftBuildAction extends Actionable
    * return tested recipe rate change.
    */
   public double getTestedRecipesDelta() {
-    MetaShiftBuildAction previous =
-        Optional.ofNullable(getPreviousBuildAction()).orElse(null);
-
-    double previousRatio = previous != null ? (double) previous.getTestedRecipes()
-        / (double) previous.getMetrics().getCodeSize().getRecipes() : 0;
-
-    return (double) getTestedRecipes() / (double) getMetrics().getCodeSize().getRecipes()
-        - previousRatio;
+    MetaShiftBuildAction previous = getPreviousBuildAction();
+    double previousRatio = (previous == null) ? 0 :
+        previous.getQualifiedRecipeCounter().getTestedRecipes().getRatio();
+    return getQualifiedRecipeCounter().getTestedRecipes().getRatio() - previousRatio;
   }
 
   /**
@@ -341,25 +335,19 @@ public class MetaShiftBuildAction extends Actionable
    * @return CodeSizeDelta object
    */
   public JSONObject getCodeSizeDeltaJson() {
-    CodeSizeEvaluator previous =
-        Optional.ofNullable(getPreviousMetrics())
-            .map(Metrics::getCodeSize).orElse(null);
+    CodeSizeEvaluator previous = Optional.ofNullable(getPreviousMetrics())
+        .map(Metrics::getCodeSize).orElse(null);
     CodeSizeEvaluator current = getMetrics().getCodeSize();
     return JSONObject.fromObject(CodeSizeDelta.between(previous, current));
   }
 
   private double getRatioDelta(Function<Metrics, Evaluator<?>> mapper) {
-    Evaluator<?> previous =
-        Optional.ofNullable(getPreviousMetrics())
-            .map(mapper).orElse(null);
+    Evaluator<?> previous = Optional.ofNullable(getPreviousMetrics()).map(mapper).orElse(null);
     Evaluator<?> current = mapper.apply(getMetrics());
-
     if (current == null) {
       return 0;
     }
-
-    return (previous != null) ? current.getRatio() - previous.getRatio()
-        : current.getRatio();
+    return (previous != null) ? current.getRatio() - previous.getRatio() : current.getRatio();
   }
 
   // ratio delta

@@ -47,7 +47,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <f:number field="premirrorCacheThreshold"
                 value="${it.premirrorCacheThreshold}"
                 default="${descriptor.criteria.premirrorCacheThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)" 
+                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
                 clazz="rate-input" />%
     </div>
   </f:entry>
@@ -63,7 +63,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <f:number field="sharedStateCacheThreshold"
                 value="${it.sharedStateCacheThreshold}"
                 default="${descriptor.criteria.sharedStateCacheThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
                 clazz="rate-input" />%
     </div>
   </f:entry>
@@ -95,7 +95,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <f:number field="commentThreshold"
                   value="${it.commentThreshold}"
                   default="${descriptor.criteria.commentThreshold}"
-                  checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                  checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
                   clazz="rate-input" />%
       </div>
   </f:entry>
@@ -127,7 +127,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <f:number field="complexityThreshold"
                 value="${it.complexityThreshold}"
                 default="${descriptor.criteria.complexityThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
                 clazz="rate-input" />%
     </div>
     <div class="limit">Complex limit</div>
@@ -151,7 +151,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <f:number field="duplicationThreshold"
                 value="${it.duplicationThreshold}"
                 default="${descriptor.criteria.duplicationThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
                 clazz="rate-input" />%
     </div>
   </f:entry>
@@ -167,7 +167,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <f:number field="testThreshold"
                 value="${it.testThreshold}"
                 default="${descriptor.criteria.testThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
                 clazz="rate-input" />%
     </div>
   </f:entry>
@@ -183,7 +183,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <f:number field="coverageThreshold"
                 value="${it.coverageThreshold}"
                 default="${descriptor.criteria.coverageThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
                 clazz="rate-input" />%
     </div>
   </f:entry>
@@ -199,7 +199,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <f:number field="mutationTestThreshold"
                 value="${it.mutationTestThreshold}"
                 default="${descriptor.criteria.mutationTestThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPrecentThreshold?value='+escape(this.value)"
+                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
                 clazz="rate-input" />%
     </div>
   </f:entry>

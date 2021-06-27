@@ -147,7 +147,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     /**
      * check percent type threshold value validation.
      */
-    public FormValidation doCheckPrecentThreshold(@QueryParameter String value) {
+    public FormValidation doCheckPercentThreshold(@QueryParameter String value) {
       String thresholdStr = Util.fixEmptyAndTrim(value);
       if (thresholdStr == null) {
         return FormValidation.error("Value cannot be empty");
