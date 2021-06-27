@@ -23,6 +23,6 @@
  */
 
 /**
- * Provides the view classes.
+ * Provides the recipe ui classes.
  */
 package com.lge.plugins.metashift.ui.recipe;

@@ -56,7 +56,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.ExportedBean;
 
 /**
- * MetaShift post build action class.
+ * The main post build action class.
  */
 @ExportedBean
 public class MetaShiftBuildAction extends Actionable

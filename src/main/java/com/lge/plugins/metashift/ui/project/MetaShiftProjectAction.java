@@ -38,7 +38,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
- * project action class.
+ * The project action class.
  */
 public class MetaShiftProjectAction implements ProminentProjectAction {
 

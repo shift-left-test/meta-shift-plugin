@@ -23,6 +23,6 @@
  */
 
 /**
- * Provides the view classes.
+ * Provides the ui classes.
  */
 package com.lge.plugins.metashift.ui;

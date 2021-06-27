@@ -49,7 +49,7 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
- * MetaShift post build step class.
+ * The post build step class.
  *
  * @author Sung Gon Kim
  */

@@ -27,7 +27,7 @@ package com.lge.plugins.metashift.ui.project;
 import hudson.Plugin;
 
 /**
- * MetaShift root plugin class.
+ * The root plugin class.
  */
 public class MetaShiftPlugin extends Plugin {
 
