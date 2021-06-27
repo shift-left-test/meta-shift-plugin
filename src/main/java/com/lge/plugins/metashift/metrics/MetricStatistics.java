@@ -92,6 +92,16 @@ public class MetricStatistics extends GroupParser<DoubleSummaryStatistics> {
         .filter(Evaluator::isAvailable)
         .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
 
+    setStatementCoverage(metrics.stream()
+        .map(Metrics::getStatementCoverage)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+
+    setBranchCoverage(metrics.stream()
+        .map(Metrics::getBranchCoverage)
+        .filter(Evaluator::isAvailable)
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+
     setDuplications(metrics.stream()
         .map(Metrics::getDuplications)
         .filter(Evaluator::isAvailable)

@@ -132,6 +132,16 @@ public class RecipeMetricsSortableItemListTest {
       return coverage;
     }
 
+    @Override
+    public Evaluator<?> getStatementCoverage() {
+      return null;
+    }
+
+    @Override
+    public Evaluator<?> getBranchCoverage() {
+      return null;
+    }
+
     public Evaluator<?> getDuplications() {
       return duplications;
     }

@@ -44,14 +44,16 @@ public class BuildStatusTest {
   }
 
   private void assertValues(boolean premirrorCache, boolean sharedStateCache,
-      boolean codeViolations, boolean comments, boolean complexity, boolean coverage,
-      boolean duplications, boolean mutationTest, boolean recipeViolations, boolean test) {
+      boolean codeViolations, boolean comments, boolean complexity, boolean statementCoverage,
+      boolean branchCoverage, boolean duplications, boolean mutationTest, boolean recipeViolations,
+      boolean test) {
     assertEquals(premirrorCache, status.isPremirrorCacheAsUnstable());
     assertEquals(sharedStateCache, status.isSharedStateCacheAsUnstable());
     assertEquals(codeViolations, status.isCodeViolationsAsUnstable());
     assertEquals(comments, status.isCommentsAsUnstable());
     assertEquals(complexity, status.isComplexityAsUnstable());
-    assertEquals(coverage, status.isCoverageAsUnstable());
+    assertEquals(statementCoverage, status.isStatementCoverageAsUnstable());
+    assertEquals(branchCoverage, status.isBranchCoverageAsUnstable());
     assertEquals(duplications, status.isDuplicationsAsUnstable());
     assertEquals(mutationTest, status.isMutationTestAsUnstable());
     assertEquals(recipeViolations, status.isRecipeViolationsAsUnstable());
@@ -60,7 +62,7 @@ public class BuildStatusTest {
 
   @Test
   public void testInitData() {
-    assertValues(true, true, true, true, true, true, true, true, true, true);
+    assertValues(true, true, true, true, true, true, true, true, true, true, true);
   }
 
   @Test
@@ -70,11 +72,12 @@ public class BuildStatusTest {
     status.setCodeViolationsAsUnstable(false);
     status.setCommentsAsUnstable(false);
     status.setComplexityAsUnstable(false);
-    status.setCoverageAsUnstable(false);
+    status.setStatementCoverageAsUnstable(false);
+    status.setBranchCoverageAsUnstable(false);
     status.setDuplicationsAsUnstable(false);
     status.setMutationTestAsUnstable(false);
     status.setRecipeViolationsAsUnstable(false);
     status.setTestAsUnstable(false);
-    assertValues(false, false, false, false, false, false, false, false, false, false);
+    assertValues(false, false, false, false, false, false, false, false, false, false, false);
   }
 }

@@ -116,6 +116,34 @@ public interface BuildStatus {
   void setCoverageAsUnstable(boolean allowed);
 
   /**
+   * Shows that the unsatisfied statement coverage metric marks the build status unstable.
+   *
+   * @return true if the metric sets the build status unstable, false otherwise
+   */
+  boolean isStatementCoverageAsUnstable();
+
+  /**
+   * Sets whether the unsatisfied statement coverage metric marks the build status unstable.
+   *
+   * @param allowed to set the build status
+   */
+  void setStatementCoverageAsUnstable(boolean allowed);
+
+  /**
+   * Shows that the unsatisfied branch coverage metric marks the build status unstable.
+   *
+   * @return true if the metric sets the build status unstable, false otherwise
+   */
+  boolean isBranchCoverageAsUnstable();
+
+  /**
+   * Sets whether the unsatisfied branch coverage metric marks the build status unstable.
+   *
+   * @param allowed to set the build status
+   */
+  void setBranchCoverageAsUnstable(boolean allowed);
+
+  /**
    * Shows that the unsatisfied duplication metric marks the build status unstable.
    *
    * @return true if the metric sets the build status unstable, false otherwise

@@ -94,6 +94,8 @@ public class MetricsTest {
     configuration.setDuplicationThreshold(50);
     configuration.setTestThreshold(50);
     configuration.setCoverageThreshold(50);
+    configuration.setStatementCoverageThreshold(50);
+    configuration.setBranchCoverageThreshold(50);
     configuration.setMutationTestThreshold(50);
     metrics = new Metrics(configuration);
     recipe = new Recipe("A-1.0.0-r0");
@@ -109,7 +111,8 @@ public class MetricsTest {
     assertEvaluator(metrics.getCodeViolations(), false, false);
     assertEvaluator(metrics.getComments(), false, false);
     assertEvaluator(metrics.getComplexity(), false, false);
-    assertEvaluator(metrics.getCoverage(), false, false);
+    assertEvaluator(metrics.getStatementCoverage(), false, false);
+    assertEvaluator(metrics.getBranchCoverage(), false, false);
     assertEvaluator(metrics.getDuplications(), false, false);
     assertEvaluator(metrics.getMutationTest(), false, false);
     assertEvaluator(metrics.getRecipeViolations(), false, false);
@@ -126,7 +129,8 @@ public class MetricsTest {
     assertEvaluator(metrics.getCodeViolations(), false, false);
     assertEvaluator(metrics.getComments(), false, false);
     assertEvaluator(metrics.getComplexity(), false, false);
-    assertEvaluator(metrics.getCoverage(), false, false);
+    assertEvaluator(metrics.getStatementCoverage(), false, false);
+    assertEvaluator(metrics.getBranchCoverage(), false, false);
     assertEvaluator(metrics.getDuplications(), false, false);
     assertEvaluator(metrics.getMutationTest(), false, false);
     assertEvaluator(metrics.getRecipeViolations(), false, false);
@@ -233,25 +237,47 @@ public class MetricsTest {
   }
 
   @Test
-  public void testParseWithUnqualifiedCoverageData() {
+  public void testParseWithUnqualifiedStatementCoverageData() {
     recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
-    recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, false));
+    recipe.add(new StatementCoverageData("A-B-C", "c.file", 1, false));
     metrics.parse(recipes);
-    assertEvaluator(metrics.getCoverage(), true, false);
-    assertCounter(metrics.getCoverage(), 3, 1, 0.3);
+    assertEvaluator(metrics.getStatementCoverage(), true, false);
+    assertCounter(metrics.getStatementCoverage(), 3, 1, 0.3);
   }
 
   @Test
-  public void testParseWithQualifiedCoverageData() {
+  public void testParseWithQualifiedStatementCoverageData() {
     recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     recipe.add(new StatementCoverageData("A-B-C", "b.file", 1, false));
-    recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 1, true));
+    recipe.add(new StatementCoverageData("A-B-C", "c.file", 1, true));
     metrics.parse(recipes);
-    assertEvaluator(metrics.getCoverage(), true, true);
-    assertCounter(metrics.getCoverage(), 3, 2, 0.6);
+    assertEvaluator(metrics.getStatementCoverage(), true, true);
+    assertCounter(metrics.getStatementCoverage(), 3, 2, 0.6);
+  }
+
+  @Test
+  public void testParseWithUnqualifiedBranchCoverageData() {
+    recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
+    recipe.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, true));
+    recipe.add(new BranchCoverageData("A-B-C", "b.file", 1, 2, false));
+    recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 3, false));
+    metrics.parse(recipes);
+    assertEvaluator(metrics.getBranchCoverage(), true, false);
+    assertCounter(metrics.getBranchCoverage(), 3, 1, 0.3);
+  }
+
+  @Test
+  public void testParseWithQualifiedBranchCoverageData() {
+    recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
+    recipe.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, true));
+    recipe.add(new BranchCoverageData("A-B-C", "b.file", 1, 2, false));
+    recipe.add(new BranchCoverageData("A-B-C", "c.file", 1, 3, true));
+    metrics.parse(recipes);
+    assertEvaluator(metrics.getBranchCoverage(), true, true);
+    assertCounter(metrics.getBranchCoverage(), 3, 2, 0.6);
   }
 
   @Test
@@ -429,8 +455,10 @@ public class MetricsTest {
     recipe.add(new PassedTestData("B-1.0.0-r0", "test", "test", ""));
 
     metrics.parse(recipe);
-    assertEvaluator(metrics.getCoverage(), true, false);
-    assertCounter(metrics.getCoverage(), 0, 0, 0.0);
+    assertEvaluator(metrics.getStatementCoverage(), false, false);
+    assertCounter(metrics.getStatementCoverage(), 0, 0, 0.0);
+    assertEvaluator(metrics.getBranchCoverage(), false, false);
+    assertCounter(metrics.getBranchCoverage(), 0, 0, 0.0);
   }
 
   @Test
@@ -499,6 +527,8 @@ public class MetricsTest {
     configuration.setDuplicationsAsUnstable(false);
     configuration.setTestAsUnstable(false);
     configuration.setCoverageAsUnstable(false);
+    configuration.setStatementCoverageAsUnstable(false);
+    configuration.setBranchCoverageAsUnstable(false);
     configuration.setMutationTestAsUnstable(false);
     assertTrue(metrics.isStable(configuration));
   }
@@ -521,6 +551,8 @@ public class MetricsTest {
     configuration.setDuplicationsAsUnstable(false);
     configuration.setTestAsUnstable(false);
     configuration.setCoverageAsUnstable(false);
+    configuration.setStatementCoverageAsUnstable(false);
+    configuration.setBranchCoverageAsUnstable(false);
     configuration.setMutationTestAsUnstable(false);
     assertTrue(metrics.isStable(configuration));
   }
@@ -544,8 +576,10 @@ public class MetricsTest {
     assertFalse(object.getJSONObject("comments").getBoolean("qualified"));
     assertFalse(object.getJSONObject("complexity").getBoolean("available"));
     assertFalse(object.getJSONObject("complexity").getBoolean("qualified"));
-    assertFalse(object.getJSONObject("coverage").getBoolean("available"));
-    assertFalse(object.getJSONObject("coverage").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("statementCoverage").getBoolean("available"));
+    assertFalse(object.getJSONObject("statementCoverage").getBoolean("qualified"));
+    assertFalse(object.getJSONObject("branchCoverage").getBoolean("available"));
+    assertFalse(object.getJSONObject("branchCoverage").getBoolean("qualified"));
     assertFalse(object.getJSONObject("duplications").getBoolean("available"));
     assertFalse(object.getJSONObject("duplications").getBoolean("qualified"));
     assertFalse(object.getJSONObject("mutationTest").getBoolean("available"));

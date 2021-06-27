@@ -42,7 +42,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                   default="${descriptor.criteria.premirrorCacheAllowedAsUnstable}"/>
     </div>
     <div class="title">Premirror Cache</div>
-    <div class="description">is less than</div>
+    <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="premirrorCacheThreshold"
                 value="${it.premirrorCacheThreshold}"
@@ -58,7 +58,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                   default="${descriptor.criteria.sharedStateCacheAllowedAsUnstable}"/>
     </div>
     <div class="title">Shared State Cache</div>
-    <div class="description">is less than</div>
+    <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="sharedStateCacheThreshold"
                 value="${it.sharedStateCacheThreshold}"
@@ -74,7 +74,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                   default="${descriptor.criteria.recipeViolationsAllowedAsUnstable}"/>
     </div>
     <div class="title">Recipe Violations</div>
-    <div class="description">is greater than</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="recipeViolationThreshold"
                 value="${it.recipeViolationThreshold}"
@@ -90,7 +90,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                     default="${descriptor.criteria.commentsAllowedAsUnstable}"/>
       </div>
       <div class="title">Comments</div>
-      <div class="description">is less than</div>
+      <div class="description">is less than or equal to</div>
       <div class="input">
         <f:number field="commentThreshold"
                   value="${it.commentThreshold}"
@@ -106,7 +106,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                   default="${descriptor.criteria.codeViolationsAllowedAsUnstable}"/>
     </div>
     <div class="title">Code Violations</div>
-    <div class="description">is greater than</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="codeViolationThreshold"
                 value="${it.codeViolationThreshold}"
@@ -122,7 +122,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                   default="${descriptor.criteria.complexityAllowedAsUnstable}"/>
     </div>
     <div class="title">Complexity</div>
-    <div class="description">is greater than</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="complexityThreshold"
                 value="${it.complexityThreshold}"
@@ -146,7 +146,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                   default="${descriptor.criteria.duplicationsAllowedAsUnstable}"/>
     </div>
     <div class="title">Duplications</div>
-    <div class="description">is greater than</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="duplicationThreshold"
                 value="${it.duplicationThreshold}"
@@ -162,7 +162,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                   default="${descriptor.criteria.testAllowedAsUnstable}"/>
     </div>
     <div class="title">Unit Tests</div>
-    <div class="description">is less than</div>
+    <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="testThreshold"
                 value="${it.testThreshold}"
@@ -178,13 +178,45 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                   default="${descriptor.criteria.coverageAllowedAsUnstable}"/>
     </div>
     <div class="title">Coverage</div>
-    <div class="description">is less than</div>
+    <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="coverageThreshold"
                 value="${it.coverageThreshold}"
                 default="${descriptor.criteria.coverageThreshold}"
                 checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
                 clazz="rate-input" />%
+    </div>
+  </f:entry>
+  <f:entry field="StatementCoverage">
+    <div class="evaluate">
+      <f:checkbox field="statementCoverageAsUnstable"
+        checked="${it.statementCoverageAsUnstable}"
+        default="${descriptor.criteria.statementCoverageAllowedAsUnstable}"/>
+    </div>
+    <div class="title">Statement Coverage</div>
+    <div class="description">is less than or equal to</div>
+    <div class="input">
+      <f:number field="statementCoverageThreshold"
+        value="${it.statementCoverageThreshold}"
+        default="${descriptor.criteria.statementCoverageThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
+        clazz="rate-input" />%
+    </div>
+  </f:entry>
+  <f:entry field="BranchCoverage">
+    <div class="evaluate">
+      <f:checkbox field="branchCoverageAsUnstable"
+        checked="${it.branchCoverageAsUnstable}"
+        default="${descriptor.criteria.branchCoverageAllowedAsUnstable}"/>
+    </div>
+    <div class="title">Branch Coverage</div>
+    <div class="description">is less than or equal to</div>
+    <div class="input">
+      <f:number field="branchCoverageThreshold"
+        value="${it.branchCoverageThreshold}"
+        default="${descriptor.criteria.branchCoverageThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
+        clazz="rate-input" />%
     </div>
   </f:entry>
   <f:entry field="MutationTest">
@@ -194,7 +226,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
                   default="${descriptor.criteria.mutationTestAllowedAsUnstable}"/>
     </div>
     <div class="title">Mutation Tests</div>
-    <div class="description">is less than</div>
+    <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="mutationTestThreshold"
                 value="${it.mutationTestThreshold}"

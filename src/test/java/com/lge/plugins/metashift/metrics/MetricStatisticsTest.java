@@ -107,7 +107,8 @@ public class MetricStatisticsTest {
         0.0);
     assertValues(stats.getComments(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
     assertValues(stats.getComplexity(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
-    assertValues(stats.getCoverage(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
+    assertValues(stats.getStatementCoverage(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
+    assertValues(stats.getBranchCoverage(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
     assertValues(stats.getDuplications(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
     assertValues(stats.getMutationTest(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
     assertValues(stats.getRecipeViolations(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
@@ -163,14 +164,25 @@ public class MetricStatisticsTest {
   }
 
   @Test
-  public void testGetCoverage() {
+  public void testGetStatementCoverage() {
     recipe1.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     recipe2.add(new PassedTestData("B-B-C", "test", "test", ""));
     recipe2.add(new BranchCoverageData("B-B-C", "a.file", 1, 1, false));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     stats.parse(recipes);
-    assertValues(stats.getCoverage(), 0.0, 1.0, 0.5);
+    assertValues(stats.getStatementCoverage(), 1.0, 1.0, 1.0);
+  }
+
+  @Test
+  public void testGetBranchCoverage() {
+    recipe1.add(new PassedTestData("A-B-C", "test", "test", ""));
+    recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe2.add(new PassedTestData("B-B-C", "test", "test", ""));
+    recipe2.add(new BranchCoverageData("B-B-C", "a.file", 1, 1, false));
+    recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
+    stats.parse(recipes);
+    assertValues(stats.getBranchCoverage(), 0.0, 0.0, 0.0);
   }
 
   @Test
@@ -216,6 +228,7 @@ public class MetricStatisticsTest {
     recipe1.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
     recipe1.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe1.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, false));
     recipe1.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe1.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
     recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 5, 1, 1));
@@ -234,7 +247,8 @@ public class MetricStatisticsTest {
     assertValues(stats.getCodeViolations(), 0.2, 0.2, 0.2);
     assertValues(stats.getComments(), 0.5, 0.5, 0.5);
     assertValues(stats.getComplexity(), 0.0, 0.0, 0.0);
-    assertValues(stats.getCoverage(), 1.0, 1.0, 1.0);
+    assertValues(stats.getStatementCoverage(), 1.0, 1.0, 1.0);
+    assertValues(stats.getBranchCoverage(), 0.0, 0.0, 0.0);
     assertValues(stats.getDuplications(), 0.0, 0.0, 0.0);
     assertValues(stats.getMutationTest(), 1.0, 1.0, 1.0);
     assertValues(stats.getRecipeViolations(), 0.2, 0.2, 0.2);
@@ -246,6 +260,7 @@ public class MetricStatisticsTest {
     recipe1.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
     recipe1.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe1.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, false));
     recipe1.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
     recipe1.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
     recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 5, 1, 1));
@@ -267,7 +282,8 @@ public class MetricStatisticsTest {
     assertValues(stats.getCodeViolations(), 0.2, 0.2, 0.2);
     assertValues(stats.getComments(), 0.5, 0.5, 0.5);
     assertValues(stats.getComplexity(), 0.0, 0.0, 0.0);
-    assertValues(stats.getCoverage(), 1.0, 1.0, 1.0);
+    assertValues(stats.getStatementCoverage(), 1.0, 1.0, 1.0);
+    assertValues(stats.getBranchCoverage(), 0.0, 0.0, 0.0);
     assertValues(stats.getDuplications(), 0.0, 0.0, 0.0);
     assertValues(stats.getMutationTest(), 1.0, 1.0, 1.0);
     assertValues(stats.getRecipeViolations(), 0.2, 0.2, 0.2);

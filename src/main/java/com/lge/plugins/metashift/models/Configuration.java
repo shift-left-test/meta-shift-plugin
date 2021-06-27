@@ -69,6 +69,16 @@ public class Configuration implements Criteria, BuildStatus {
   private int coverageThreshold;
 
   /**
+   * Represents the threshold for the statement coverage.
+   */
+  private int statementCoverageThreshold;
+
+  /**
+   * Represents the threshold for the branch coverage.
+   */
+  private int branchCoverageThreshold;
+
+  /**
    * Represents the threshold for the duplications.
    */
   private int duplicationThreshold;
@@ -119,6 +129,16 @@ public class Configuration implements Criteria, BuildStatus {
   private boolean coverageAsUnstable;
 
   /**
+   * Represents whether the unsatisfied statement coverage sets the build status unstable.
+   */
+  private boolean statementCoverageAsUnstable;
+
+  /**
+   * Represents whether the unsatisfied branch coverage sets the build status unstable.
+   */
+  private boolean branchCoverageAsUnstable;
+
+  /**
    * Represents whether the unsatisfied duplication sets the build status unstable.
    */
   private boolean duplicationsAsUnstable;
@@ -142,8 +162,8 @@ public class Configuration implements Criteria, BuildStatus {
    * Default constructor.
    */
   public Configuration() {
-    this(80, 80, 0.1, 30, 0.1, 4, 10, 10, 95, 60, 85,
-        true, true, true, true, true, true, true, true, true, true);
+    this(80, 80, 0.1, 30, 0.1, 4, 10, 10, 95, 60, 80, 40, 85,
+        true, true, true, true, true, true, true, true, true, true, true, true);
   }
 
   /**
@@ -159,6 +179,8 @@ public class Configuration implements Criteria, BuildStatus {
    * @param duplicationThreshold       threshold
    * @param testThreshold              threshold
    * @param coverageThreshold          threshold
+   * @param statementCoverageThreshold threshold
+   * @param branchCoverageThreshold    threshold
    * @param mutationTestThreshold      threshold
    * @param premirrorCacheAsUnstable   marks a build as unstable if unsatisfied
    * @param sharedStateCacheAsUnstable marks a build as unstable if unsatisfied
@@ -182,6 +204,8 @@ public class Configuration implements Criteria, BuildStatus {
       final int duplicationThreshold,
       final int testThreshold,
       final int coverageThreshold,
+      final int statementCoverageThreshold,
+      final int branchCoverageThreshold,
       final int mutationTestThreshold,
       final boolean premirrorCacheAsUnstable,
       final boolean sharedStateCacheAsUnstable,
@@ -192,6 +216,8 @@ public class Configuration implements Criteria, BuildStatus {
       final boolean duplicationsAsUnstable,
       final boolean testAsUnstable,
       final boolean coverageAsUnstable,
+      final boolean statementCoverageAsUnstable,
+      final boolean branchCoverageAsUnstable,
       final boolean mutationTestAsUnstable) {
     this.premirrorCacheThreshold = premirrorCacheThreshold;
     this.sharedStateCacheThreshold = sharedStateCacheThreshold;
@@ -203,6 +229,8 @@ public class Configuration implements Criteria, BuildStatus {
     this.duplicationThreshold = duplicationThreshold;
     this.testThreshold = testThreshold;
     this.coverageThreshold = coverageThreshold;
+    this.statementCoverageThreshold = statementCoverageThreshold;
+    this.branchCoverageThreshold = branchCoverageThreshold;
     this.mutationTestThreshold = mutationTestThreshold;
     this.premirrorCacheAsUnstable = premirrorCacheAsUnstable;
     this.sharedStateCacheAsUnstable = sharedStateCacheAsUnstable;
@@ -213,6 +241,8 @@ public class Configuration implements Criteria, BuildStatus {
     this.duplicationsAsUnstable = duplicationsAsUnstable;
     this.testAsUnstable = testAsUnstable;
     this.coverageAsUnstable = coverageAsUnstable;
+    this.statementCoverageAsUnstable = statementCoverageAsUnstable;
+    this.branchCoverageAsUnstable = branchCoverageAsUnstable;
     this.mutationTestAsUnstable = mutationTestAsUnstable;
   }
 
@@ -284,6 +314,26 @@ public class Configuration implements Criteria, BuildStatus {
   @Override
   public void setCoverageThreshold(int threshold) {
     coverageThreshold = threshold;
+  }
+
+  @Override
+  public int getStatementCoverageThreshold() {
+    return statementCoverageThreshold;
+  }
+
+  @Override
+  public void setStatementCoverageThreshold(int threshold) {
+    statementCoverageThreshold = threshold;
+  }
+
+  @Override
+  public int getBranchCoverageThreshold() {
+    return branchCoverageThreshold;
+  }
+
+  @Override
+  public void setBranchCoverageThreshold(int threshold) {
+    branchCoverageThreshold = threshold;
   }
 
   @Override
@@ -384,6 +434,26 @@ public class Configuration implements Criteria, BuildStatus {
   @Override
   public void setCoverageAsUnstable(boolean allowed) {
     coverageAsUnstable = allowed;
+  }
+
+  @Override
+  public boolean isStatementCoverageAsUnstable() {
+    return statementCoverageAsUnstable;
+  }
+
+  @Override
+  public void setStatementCoverageAsUnstable(boolean allowed) {
+    statementCoverageAsUnstable = allowed;
+  }
+
+  @Override
+  public boolean isBranchCoverageAsUnstable() {
+    return branchCoverageAsUnstable;
+  }
+
+  @Override
+  public void setBranchCoverageAsUnstable(boolean allowed) {
+    branchCoverageAsUnstable = allowed;
   }
 
   @Override

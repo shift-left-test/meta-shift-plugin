@@ -130,6 +130,34 @@ public interface Criteria {
   void setCoverageThreshold(int threshold);
 
   /**
+   * Returns the statement coverage threshold.
+   *
+   * @return statement coverage threshold
+   */
+  int getStatementCoverageThreshold();
+
+  /**
+   * Sets the statement coverage threshold.
+   *
+   * @param threshold for the statement coverage
+   */
+  void setStatementCoverageThreshold(int threshold);
+
+  /**
+   * Returns the branch coverage threshold.
+   *
+   * @return branch coverage threshold
+   */
+  int getBranchCoverageThreshold();
+
+  /**
+   * Sets the branch coverage threshold.
+   *
+   * @param threshold for the branch coverage
+   */
+  void setBranchCoverageThreshold(int threshold);
+
+  /**
    * Returns the duplication threshold.
    *
    * @return duplication threshold

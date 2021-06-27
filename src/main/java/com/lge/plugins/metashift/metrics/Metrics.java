@@ -62,6 +62,8 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
     collection.put(CommentEvaluator.class, new CommentEvaluator(criteria));
     collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(criteria));
     collection.put(CoverageEvaluator.class, new CoverageEvaluator(criteria));
+    collection.put(StatementCoverageEvaluator.class, new StatementCoverageEvaluator(criteria));
+    collection.put(BranchCoverageEvaluator.class, new BranchCoverageEvaluator(criteria));
     collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(criteria));
     collection.put(MutationTestEvaluator.class, new MutationTestEvaluator(criteria));
     collection.put(RecipeViolationEvaluator.class, new RecipeViolationEvaluator(criteria));
@@ -109,6 +111,16 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
   }
 
   @Override
+  public Evaluator<?> getStatementCoverage() {
+    return collection.get(StatementCoverageEvaluator.class);
+  }
+
+  @Override
+  public Evaluator<?> getBranchCoverage() {
+    return collection.get(BranchCoverageEvaluator.class);
+  }
+
+  @Override
   public Evaluator<?> getDuplications() {
     return collection.get(DuplicationEvaluator.class);
   }
@@ -143,6 +155,9 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
     collection.put(CommentEvaluator.class, new CommentEvaluator(criteria).parse(c));
     collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(criteria).parse(c));
     collection.put(CoverageEvaluator.class, new CoverageEvaluator(criteria).parse(c));
+    collection.put(StatementCoverageEvaluator.class,
+        new StatementCoverageEvaluator(criteria).parse(c));
+    collection.put(BranchCoverageEvaluator.class, new BranchCoverageEvaluator(criteria).parse(c));
     collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(criteria).parse(c));
     collection.put(MutationTestEvaluator.class, new MutationTestEvaluator(criteria).parse(c));
     collection.put(RecipeViolationEvaluator.class,

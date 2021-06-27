@@ -74,6 +74,20 @@ public interface Queryable<T> {
   T getCoverage();
 
   /**
+   * Returns the statement coverage object.
+   *
+   * @return statement coverage object
+   */
+  T getStatementCoverage();
+
+  /**
+   * Returns the branch coverage object.
+   *
+   * @return branch coverage object
+   */
+  T getBranchCoverage();
+
+  /**
    * Returns the duplication object.
    *
    * @return duplication object

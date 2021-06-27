@@ -102,7 +102,8 @@ public class QualifiedRecipeCounterTest {
     assertValues(counter.getCodeViolations(), 0, 0);
     assertValues(counter.getComments(), 0, 0);
     assertValues(counter.getComplexity(), 0, 0);
-    assertValues(counter.getCoverage(), 0, 0);
+    assertValues(counter.getStatementCoverage(), 0, 0);
+    assertValues(counter.getBranchCoverage(), 0, 0);
     assertValues(counter.getDuplications(), 0, 0);
     assertValues(counter.getMutationTest(), 0, 0);
     assertValues(counter.getRecipeViolations(), 0, 0);
@@ -158,14 +159,25 @@ public class QualifiedRecipeCounterTest {
   }
 
   @Test
-  public void testGetCoverage() {
+  public void testGetStatementCoverage() {
     recipe1.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     recipe2.add(new PassedTestData("B-B-C", "test", "test", ""));
     recipe2.add(new BranchCoverageData("B-B-C", "a.file", 1, 1, false));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
-    assertValues(counter.getCoverage(), 2, 1);
+    assertValues(counter.getStatementCoverage(), 1, 1);
+  }
+
+  @Test
+  public void testGetBranchCoverage() {
+    recipe1.add(new PassedTestData("A-B-C", "test", "test", ""));
+    recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    recipe2.add(new PassedTestData("B-B-C", "test", "test", ""));
+    recipe2.add(new BranchCoverageData("B-B-C", "a.file", 1, 1, false));
+    recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
+    counter.parse(recipes);
+    assertValues(counter.getBranchCoverage(), 1, 0);
   }
 
   @Test
@@ -236,7 +248,8 @@ public class QualifiedRecipeCounterTest {
     assertValues(counter.getCodeViolations(), 1, 1);
     assertValues(counter.getComments(), 1, 1);
     assertValues(counter.getComplexity(), 1, 1);
-    assertValues(counter.getCoverage(), 1, 1);
+    assertValues(counter.getStatementCoverage(), 1, 1);
+    assertValues(counter.getBranchCoverage(), 0, 0);
     assertValues(counter.getDuplications(), 1, 1);
     assertValues(counter.getMutationTest(), 1, 1);
     assertValues(counter.getRecipeViolations(), 1, 1);
@@ -269,7 +282,8 @@ public class QualifiedRecipeCounterTest {
     assertValues(counter.getCodeViolations(), 1, 1);
     assertValues(counter.getComments(), 1, 1);
     assertValues(counter.getComplexity(), 1, 1);
-    assertValues(counter.getCoverage(), 1, 1);
+    assertValues(counter.getStatementCoverage(), 1, 1);
+    assertValues(counter.getBranchCoverage(), 0, 0);
     assertValues(counter.getDuplications(), 1, 1);
     assertValues(counter.getMutationTest(), 1, 1);
     assertValues(counter.getRecipeViolations(), 1, 1);

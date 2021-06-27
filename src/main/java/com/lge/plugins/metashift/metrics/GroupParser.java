@@ -73,6 +73,16 @@ public abstract class GroupParser<T> implements Queryable<T> {
     COVERAGE,
 
     /**
+     * Statement coverage type.
+     */
+    STATEMENT_COVERAGE,
+
+    /**
+     * Branch coverage type.
+     */
+    BRANCH_COVERAGE,
+
+    /**
      * Duplication type.
      */
     DUPLICATIONS,
@@ -190,6 +200,34 @@ public abstract class GroupParser<T> implements Queryable<T> {
    */
   protected void setCoverage(T object) {
     collection.put(Type.COVERAGE, object);
+  }
+
+  @Override
+  public T getStatementCoverage() {
+    return collection.get(Type.STATEMENT_COVERAGE);
+  }
+
+  /**
+   * Sets the statement coverage object.
+   *
+   * @param object for the statement coverage
+   */
+  protected void setStatementCoverage(T object) {
+    collection.put(Type.STATEMENT_COVERAGE, object);
+  }
+
+  @Override
+  public T getBranchCoverage() {
+    return collection.get(Type.BRANCH_COVERAGE);
+  }
+
+  /**
+   * Sets the branch coverage object.
+   *
+   * @param object for the branch coverage
+   */
+  protected void setBranchCoverage(T object) {
+    collection.put(Type.BRANCH_COVERAGE, object);
   }
 
   @Override

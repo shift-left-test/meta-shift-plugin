@@ -89,6 +89,8 @@ public final class QualifiedRecipeCounter extends GroupParser<Counter> {
     setComments(countBy(recipes, new CommentEvaluator(criteria)));
     setComplexity(countBy(recipes, new ComplexityEvaluator(criteria)));
     setCoverage(countBy(recipes, new CoverageEvaluator(criteria)));
+    setStatementCoverage(countBy(recipes, new StatementCoverageEvaluator(criteria)));
+    setBranchCoverage(countBy(recipes, new BranchCoverageEvaluator(criteria)));
     setDuplications(countBy(recipes, new DuplicationEvaluator(criteria)));
     setMutationTest(countBy(recipes, new MutationTestEvaluator(criteria)));
     setRecipeViolations(countBy(recipes, new RecipeViolationEvaluator(criteria)));
@@ -121,6 +123,14 @@ public final class QualifiedRecipeCounter extends GroupParser<Counter> {
     setCoverage(new Counter(
         metrics.stream().map(Metrics::getCoverage).filter(Evaluator::isAvailable).count(),
         metrics.stream().map(Metrics::getCoverage).filter(Evaluator::isQualified).count()
+    ));
+    setStatementCoverage(new Counter(
+        metrics.stream().map(Metrics::getStatementCoverage).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getStatementCoverage).filter(Evaluator::isQualified).count()
+    ));
+    setBranchCoverage(new Counter(
+        metrics.stream().map(Metrics::getBranchCoverage).filter(Evaluator::isAvailable).count(),
+        metrics.stream().map(Metrics::getBranchCoverage).filter(Evaluator::isQualified).count()
     ));
     setDuplications(new Counter(
         metrics.stream().map(Metrics::getDuplications).filter(Evaluator::isAvailable).count(),

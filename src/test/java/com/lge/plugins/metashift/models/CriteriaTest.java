@@ -52,7 +52,8 @@ public class CriteriaTest {
       int complexityThreshold,
       int duplicationThreshold,
       int testThreshold,
-      int coverageThreshold,
+      int statementCoverageThreshold,
+      int branchCoverageThreshold,
       int mutationTestThreshold) {
     assertEquals(premirrorThreshold, criteria.getPremirrorCacheThreshold());
     assertEquals(sharedStateCacheThreshold, criteria.getSharedStateCacheThreshold());
@@ -63,13 +64,14 @@ public class CriteriaTest {
     assertEquals(complexityThreshold, criteria.getComplexityThreshold());
     assertEquals(duplicationThreshold, criteria.getDuplicationThreshold());
     assertEquals(testThreshold, criteria.getTestThreshold());
-    assertEquals(coverageThreshold, criteria.getCoverageThreshold());
+    assertEquals(statementCoverageThreshold, criteria.getStatementCoverageThreshold());
+    assertEquals(branchCoverageThreshold, criteria.getBranchCoverageThreshold());
     assertEquals(mutationTestThreshold, criteria.getMutationTestThreshold());
   }
 
   @Test
   public void testInitData() {
-    assertValues(80, 80, 0.1, 30, 0.1, 4, 10, 10, 95, 60, 85);
+    assertValues(80, 80, 0.1, 30, 0.1, 4, 10, 10, 95, 80, 40, 85);
   }
 
   @Test
@@ -84,7 +86,9 @@ public class CriteriaTest {
     criteria.setDuplicationThreshold(70);
     criteria.setTestThreshold(80);
     criteria.setCoverageThreshold(90);
+    criteria.setStatementCoverageThreshold(90);
+    criteria.setBranchCoverageThreshold(100);
     criteria.setMutationTestThreshold(100);
-    assertValues(10, 20, 30, 40, 50, 6, 60, 70, 80, 90, 100);
+    assertValues(10, 20, 30, 40, 50, 6, 60, 70, 80, 90, 100, 100);
   }
 }
