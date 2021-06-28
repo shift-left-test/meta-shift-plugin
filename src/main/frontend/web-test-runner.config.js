@@ -22,7 +22,7 @@ module.exports = {
     },
   },
   reporters: [
-    defaultReporter({reportTestResults: false, reportTestProgress: true}),
+    defaultReporter({reportTestResults: true, reportTestProgress: true}),
     junitReporter({
       outputPath: '../../../target/frontend/test-results.xml',
       reportLogs: true,

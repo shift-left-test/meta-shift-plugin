@@ -28,8 +28,6 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileMutationTestSortableItemList;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -92,15 +90,19 @@ public class RecipeMutationTestAction extends RecipeActionChild {
       fileMutationTestList.get(file).add(mutationTestData);
     }
 
-    FileMutationTestSortableItemList fileMutationTestStats = new FileMutationTestSortableItemList();
+    JSONArray fileMutationTestArray = new JSONArray();
 
-    // TODO: need to check that skipped is 'ERROR' status.
     fileMutationTestList.forEach((file, testList) -> {
-      fileMutationTestStats.addItem(file,
-          testList.stream().filter(o -> o.getStatus().equals("KILLED")).count(),
-          testList.stream().filter(o -> o.getStatus().equals("SURVIVED")).count(),
-          testList.stream().filter(o -> o.getStatus().equals("ERROR")).count()
-      );
+      JSONObject fileMutationTest = new JSONObject();
+      fileMutationTest.put("file", file);
+      fileMutationTest.put("killed",
+          testList.stream().filter(o -> o.getStatus().equals("KILLED")).count());
+      fileMutationTest.put("survived",
+          testList.stream().filter(o -> o.getStatus().equals("SURVIVED")).count());
+      fileMutationTest.put("skipped",
+          testList.stream().filter(o -> o.getStatus().equals("ERROR")).count());
+      fileMutationTestArray.add(fileMutationTest);
+
       try {
         this.saveFileContents(channel, metadata, file);
         dataSource.put(testList,
@@ -112,7 +114,7 @@ public class RecipeMutationTestAction extends RecipeActionChild {
     });
 
     try {
-      dataSource.put(fileMutationTestStats,
+      dataSource.put(fileMutationTestArray,
           this.getParentAction().getName(), STORE_KEY_FILEMUTATIONTESTSTAT);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
@@ -175,21 +177,14 @@ public class RecipeMutationTestAction extends RecipeActionChild {
   /**
    * return paginated mutation test list.
    *
-   * @param pageIndex page index
-   * @param pageSize  page size
    * @return mutation test list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeMutationTests(
-      int pageIndex, int pageSize, SortableItemList.SortInfo[] sortInfos) {
-    FileMutationTestSortableItemList dataList = this.getDataSource().get(
+  public JSONArray getRecipeMutationTests() {
+    JSONArray dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILEMUTATIONTESTSTAT);
 
-    if (dataList != null) {
-      return dataList.sort(sortInfos).getPage(pageIndex, pageSize);
-    } else {
-      return null;
-    }
+    return dataList;
   }
 
   /**

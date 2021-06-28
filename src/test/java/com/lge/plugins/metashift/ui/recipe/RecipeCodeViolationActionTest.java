@@ -28,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
@@ -95,8 +94,8 @@ public class RecipeCodeViolationActionTest {
             + "{\"count\":0,\"width\":0,\"label\":\"Info\",\"clazz\":\"informational\"}]"),
         statistics);
 
-    JSONObject recipeFiles = action.getRecipeFiles(1, 10, new SortableItemList.SortInfo[]{});
-    assertEquals(JSONObject.fromObject("{\"last_page\":0}"),
+    JSONArray recipeFiles = action.getRecipeFiles();
+    assertEquals(JSONArray.fromObject("[]"),
         recipeFiles);
 
     // TODO: getFileCodeViolationDetail can't test

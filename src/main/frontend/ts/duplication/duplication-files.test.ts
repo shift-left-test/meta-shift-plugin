@@ -24,19 +24,16 @@ suite('duplication-files', () => {
     `)) as DuplicationFiles;
 
     const model = {
-      responseJSON: {
-        last_page: 1,
-        data: [
-          {
-            file: 'test',
-            lines: 100,
-            duplicatedLines: 50,
-          },
-        ],
-      },
+      responseJSON: [
+        {
+          file: 'test',
+          lines: 100,
+          duplicatedLines: 50,
+        },
+      ],
     };
 
-    el.setAjaxFunc((page, size, sorters, callback) => {
+    el.setAjaxFunc((callback) => {
       callback(model);
     });
 

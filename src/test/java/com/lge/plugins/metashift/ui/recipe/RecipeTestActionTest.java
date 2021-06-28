@@ -29,7 +29,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
@@ -103,9 +102,8 @@ public class RecipeTestActionTest {
                 + "{\"count\":0,\"width\":0,\"label\":\"Skipped\",\"clazz\":\"invalid\"}]"),
         statistics);
 
-    JSONObject recipeTests = action.getRecipeTests(1, 10, new SortableItemList.SortInfo[]{});
-    assertEquals(1, recipeTests.get("last_page"));
-    assertContainsKey(recipeTests.getJSONArray("data").getJSONObject(0),
+    JSONArray recipeTests = action.getRecipeTests();
+    assertContainsKey(recipeTests.getJSONObject(0),
         "suite", "name", "message");
   }
 }

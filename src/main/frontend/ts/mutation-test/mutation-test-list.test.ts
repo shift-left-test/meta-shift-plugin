@@ -24,20 +24,17 @@ suite('mutation-test-list', () => {
     `)) as MutationTestList;
 
     const model = {
-      responseJSON: {
-        last_page: 1,
-        data: [
-          {
-            file: 'test',
-            killed: 3,
-            survived: 2,
-            skipped: 1,
-          },
-        ],
-      },
+      responseJSON: [
+        {
+          file: 'test',
+          killed: 3,
+          survived: 2,
+          skipped: 1,
+        },
+      ],
     };
 
-    el.setAjaxFunc((page, size, sorters, callback) => {
+    el.setAjaxFunc((callback) => {
       callback(model);
     });
 

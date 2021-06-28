@@ -29,7 +29,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
@@ -102,9 +101,8 @@ public class RecipeSharedStateCacheActionTest {
                 + "{\"count\":13,\"width\":6,\"label\":\"Uncached\",\"clazz\":\"invalid\"}]"),
         statistics);
 
-    JSONObject recipeCaches = action.getRecipeCaches(1, 10, new SortableItemList.SortInfo[]{});
-    assertEquals(20, recipeCaches.get("last_page"));
-    assertContainsKey(recipeCaches.getJSONArray("data").getJSONObject(0),
+    JSONArray recipeCaches = action.getRecipeCaches();
+    assertContainsKey(recipeCaches.getJSONObject(0),
         "signature", "available");
   }
 }

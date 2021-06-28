@@ -28,8 +28,6 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileViolationSortableItemList;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -92,14 +90,19 @@ public class RecipeRecipeViolationsAction extends RecipeActionChild {
       fileRecipeViolationList.get(file).add(recipeViolationData);
     }
 
-    FileViolationSortableItemList fileRecipeViolationStats = new FileViolationSortableItemList();
+    JSONArray fileRecipeViolationArray = new JSONArray();
 
     fileRecipeViolationList.forEach((file, violationList) -> {
-      fileRecipeViolationStats.addItem(file,
-          violationList.stream().filter(o -> o.getLevel().equals("MAJOR")).count(),
-          violationList.stream().filter(o -> o.getLevel().equals("MINOR")).count(),
-          violationList.stream().filter(o -> o.getLevel().equals("INFO")).count()
-      );
+      JSONObject fileViolation = new JSONObject();
+      fileViolation.put("file", file);
+      fileViolation.put("major",
+          violationList.stream().filter(o -> o.getLevel().equals("MAJOR")).count());
+      fileViolation.put("minor",
+          violationList.stream().filter(o -> o.getLevel().equals("MINOR")).count());
+      fileViolation.put("info",
+          violationList.stream().filter(o -> o.getLevel().equals("INFO")).count());
+      fileRecipeViolationArray.add(fileViolation);
+
       try {
         this.saveFileContents(channel, metadata, file);
         dataSource.put(violationList,
@@ -111,7 +114,7 @@ public class RecipeRecipeViolationsAction extends RecipeActionChild {
     });
 
     try {
-      dataSource.put(fileRecipeViolationStats,
+      dataSource.put(fileRecipeViolationArray,
           this.getParentAction().getName(), STORE_KEY_FILERECIPEVIOLATIONSTAT);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
@@ -174,21 +177,13 @@ public class RecipeRecipeViolationsAction extends RecipeActionChild {
   /**
    * return paginated recipe violation list.
    *
-   * @param pageIndex page index
-   * @param pageSize  page size
    * @return recipe violation list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
-      SortableItemList.SortInfo[] sortInfos) throws IOException {
-    FileViolationSortableItemList dataList = this.getDataSource().get(
+  public JSONArray getRecipeFiles() throws IOException {
+    JSONArray dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILERECIPEVIOLATIONSTAT);
-
-    if (dataList != null) {
-      return dataList.sort(sortInfos).getPage(pageIndex, pageSize);
-    } else {
-      return null;
-    }
+    return dataList;
   }
 
   /**

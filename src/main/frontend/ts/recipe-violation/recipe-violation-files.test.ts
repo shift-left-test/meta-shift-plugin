@@ -24,20 +24,17 @@ suite('recipe-violation-files', () => {
     `)) as RecipeViolationFiles;
 
     const model = {
-      responseJSON: {
-        last_page: 1,
-        data: [
-          {
-            file: 'test',
-            major: 1,
-            minor: 2,
-            info: 3,
-          },
-        ],
-      },
+      responseJSON: [
+        {
+          file: 'test',
+          major: 1,
+          minor: 2,
+          info: 3,
+        },
+      ],
     };
 
-    el.setAjaxFunc((page, size, sorters, callback) => {
+    el.setAjaxFunc((callback) => {
       callback(model);
     });
 

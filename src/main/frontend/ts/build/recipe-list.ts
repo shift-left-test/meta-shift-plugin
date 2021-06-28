@@ -9,7 +9,6 @@ import Tabulator from 'tabulator-tables';
 export class RecipeList extends LitElement {
   @query('#recipes-table') recipesTable;
 
-  private requestFilesFunc;
   private requestFileDetailFunc;
   private tabulatorTable: Tabulator;
   protected columns;
@@ -24,26 +23,39 @@ export class RecipeList extends LitElement {
       {title: 'Recipes', field: 'name', widthGrow: 1},
       {title: 'Lines of Code', field: 'lines',
         formatter: this.lineOfCodeFormatter.bind(this)},
-      {title: 'Premirror Cache', field: 'premirrorCache', hozAlign: 'left',
-        formatter: this.qualifierPercentCellformatter.bind(this), widthGrow: 1},
-      {title: 'Shared State Cache', field: 'sharedStateCache', hozAlign: 'left',
-        formatter: this.qualifierPercentCellformatter.bind(this), widthGrow: 1},
-      {title: 'Recipe Violations', field: 'recipeViolations', hozAlign: 'left',
-        formatter: this.qualifierCellformatter.bind(this), widthGrow: 1},
-      {title: 'Comment', field: 'comments', hozAlign: 'left',
-        formatter: this.qualifierPercentCellformatter.bind(this), widthGrow: 1},
-      {title: 'Code Violations', field: 'codeViolations', hozAlign: 'left',
-        formatter: this.qualifierCellformatter.bind(this), widthGrow: 1},
-      {title: 'Complexity', field: 'complexity', hozAlign: 'left',
-        formatter: this.qualifierPercentCellformatter.bind(this), widthGrow: 1},
-      {title: 'Duplications', field: 'duplications', hozAlign: 'left',
-        formatter: this.qualifierPercentCellformatter.bind(this), widthGrow: 1},
-      {title: 'Unit Tests', field: 'test', hozAlign: 'left',
-        formatter: this.qualifierPercentCellformatter.bind(this), widthGrow: 1},
-      {title: 'Coverage', field: 'coverage', hozAlign: 'left',
-        formatter: this.qualifierPercentCellformatter.bind(this), widthGrow: 1},
-      {title: 'Mutation Tests', field: 'mutationTest', hozAlign: 'left',
-        formatter: this.qualifierPercentCellformatter.bind(this), widthGrow: 1},
+      {title: 'Premirror Cache', field: 'premirrorCache',
+        formatter: this.qualifierPercentCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
+      {title: 'Shared State Cache', field: 'sharedStateCache',
+        formatter: this.qualifierPercentCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
+      {title: 'Recipe Violations', field: 'recipeViolations',
+        formatter: this.qualifierCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
+      {title: 'Comment', field: 'comments',
+        formatter: this.qualifierPercentCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
+      {title: 'Code Violations', field: 'codeViolations',
+        formatter: this.qualifierCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
+      {title: 'Complexity', field: 'complexity',
+        formatter: this.qualifierPercentCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
+      {title: 'Duplications', field: 'duplications',
+        formatter: this.qualifierPercentCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
+      {title: 'Unit Tests', field: 'test',
+        formatter: this.qualifierPercentCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
+      {title: 'Statement Coverage', field: 'statementCoverage',
+        formatter: this.qualifierPercentCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
+      {title: 'Branch Coverage', field: 'branchCoverage',
+        formatter: this.qualifierPercentCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
+      {title: 'Mutation Tests', field: 'mutationTest',
+        formatter: this.qualifierPercentCellformatter.bind(this),
+        hozAlign: 'left', widthGrow: 1},
     ];
   }
 
@@ -70,10 +82,8 @@ export class RecipeList extends LitElement {
     this.tabulatorTable = new Tabulator(
         this.recipesTable, {
           rowClick: this._handleRecipeClicked.bind(this),
-          pagination: 'remote',
+          pagination: 'local',
           paginationSize: 10,
-          ajaxRequestFunc: this._handleAjaxRequest.bind(this),
-          ajaxSorting: true,
           layout: 'fitColumns', // fit columns to width of table (optional)
           columns: this.columns,
         }
@@ -144,25 +154,6 @@ export class RecipeList extends LitElement {
   }
 
   /**
-   * ajax request function.
-   * @param {unknown} url
-   * @param {unknown} config
-   * @param {unknown} params
-   * @return {Promise}
-   */
-  private _handleAjaxRequest(url, config, params) {
-    const that = this;
-    return new Promise(function(resolve, ) {
-      that.requestFilesFunc(params.page, params.size, params.sorters,
-          function(model) {
-            console.log(model.responseJSON);
-            resolve(model.responseJSON);
-          }
-      );
-    });
-  }
-
-  /**
    * recipe click event handler.
    * @param {unknown} e
    * @param {unknown} row
@@ -177,13 +168,13 @@ export class RecipeList extends LitElement {
    * @param {unknown} requestFilesFunc
    * @param {unknown} requestFileDetailFunc
    */
-  setAjaxFunc(requestFilesFunc: (page, size, sorters, callback) => void,
+  setAjaxFunc(requestFilesFunc: (callback) => void,
       requestFileDetailFunc = undefined) : void {
-    this.requestFilesFunc = requestFilesFunc;
-    this.requestFileDetailFunc = requestFileDetailFunc;
+    const that = this;
 
-    // just triggering ajaxRequestFunc.
-    // url('meta-shift') has no meaning, because we replace ajaxRequestFunc.
-    this.tabulatorTable.setData('meta-shift');
+    requestFilesFunc(function(model) {
+      that.tabulatorTable.setData(model.responseJSON);
+    });
+    this.requestFileDetailFunc = requestFileDetailFunc;
   }
 }

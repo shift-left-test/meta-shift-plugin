@@ -28,8 +28,6 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileComplexitySortableItemList;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -82,15 +80,17 @@ public class RecipeComplexityAction
       fileComplexityList.get(file).add(complexityData);
     }
 
-    FileComplexitySortableItemList fileComplexityStats = new FileComplexitySortableItemList();
+    JSONArray fileComplexityArray = new JSONArray();
     complexityLevel =
         this.getParentAction().getParentAction().getCriteria().getComplexityLevel();
 
     fileComplexityList.forEach((file, complexityList) -> {
-      fileComplexityStats.addItem(file,
-          complexityList.size(),
-          complexityList.stream().filter(o -> o.getValue() >= complexityLevel).count()
-      );
+      JSONObject fileComplexity = new JSONObject();
+      fileComplexity.put("file", file);
+      fileComplexity.put("functions", complexityList.size());
+      fileComplexity.put("complexFunctions",
+          complexityList.stream().filter(o -> o.getValue() >= complexityLevel).count());
+      fileComplexityArray.add(fileComplexity);
 
       try {
         this.saveFileContents(channel, metadata, file);
@@ -103,7 +103,7 @@ public class RecipeComplexityAction
     });
 
     try {
-      dataSource.put(fileComplexityStats,
+      dataSource.put(fileComplexityArray,
           this.getParentAction().getName(), STORE_KEY_FILECOMPLEXITYSTAT);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
@@ -161,21 +161,14 @@ public class RecipeComplexityAction
   /**
    * return paginated complexity list.
    *
-   * @param pageIndex page index
-   * @param pageSize  page size
    * @return complexity list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
-      SortableItemList.SortInfo[] sortInfos) {
-    FileComplexitySortableItemList dataList = this.getDataSource().get(
+  public JSONArray getRecipeFiles() {
+    JSONArray dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECOMPLEXITYSTAT);
 
-    if (dataList != null) {
-      return dataList.sort(sortInfos).getPage(pageIndex, pageSize);
-    } else {
-      return null;
-    }
+    return dataList;
   }
 
   /**

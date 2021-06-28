@@ -24,20 +24,17 @@ suite('comment-files', () => {
     `)) as CommentFiles;
 
     const model = {
-      responseJSON: {
-        last_page: 1,
-        data: [
-          {
-            file: 'test',
-            commentRate: 0.1,
-            lines: 20,
-            commentLines: 2,
-          },
-        ],
-      },
+      responseJSON: [
+        {
+          file: 'test',
+          commentRate: 0.1,
+          lines: 20,
+          commentLines: 2,
+        },
+      ],
     };
 
-    el.setAjaxFunc((page, size, sorters, callback) => {
+    el.setAjaxFunc((callback) => {
       callback(model);
     });
 

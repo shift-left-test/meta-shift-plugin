@@ -32,7 +32,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -40,6 +39,8 @@ import hudson.model.TaskListener;
 import java.io.File;
 import java.net.URL;
 import java.util.Objects;
+
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
@@ -100,13 +101,12 @@ public class MetaShiftBuildActionTest {
                 + "{\"path\":\"\",\"link\":\"qmake5-project-1.0.0-r0\",\"name\":\"qmake5-project-1.0.0-r0\",\"value\":[333,60]}]}")
         , buildAction.getRecipesTreemapModel());
 
-    JSONObject recipeTableModel = buildAction.getRecipesTableModel(1, 10,
-        new SortableItemList.SortInfo[]{});
+    JSONArray recipeTableModel = buildAction.getRecipesTableModel();
     assertArrayEquals(new String[]{
         "autotools-project-1.0.0-r0",
         "cmake-project-1.0.0-r0",
         "qmake5-project-1.0.0-r0",
-    }, recipeTableModel.getJSONArray("data").stream().map(o ->
+    }, recipeTableModel.stream().map(o ->
         ((JSONObject) o).getString("name")).toArray());
 
     assertEquals(3, buildAction.getTestedRecipes());
@@ -159,7 +159,8 @@ public class MetaShiftBuildActionTest {
     assertEquals(0.0, buildAction2.getCodeViolationsDelta(), 0);
     assertEquals(0.0, buildAction2.getCommentsDelta(), 0);
     assertEquals(0.0, buildAction2.getComplexityDelta(), 0);
-    assertEquals(0.0, buildAction2.getCoverageDelta(), 0);
+    assertEquals(0.0, buildAction2.getStatementCoverageDelta(), 0);
+    assertEquals(0.0, buildAction2.getBranchCoverageDelta(), 0);
     assertEquals(0.0, buildAction2.getDuplicationsDelta(), 0);
     assertEquals(0.0, buildAction2.getMutationTestDelta(), 0);
     assertEquals(0.0, buildAction2.getRecipeViolationsDelta(), 0);

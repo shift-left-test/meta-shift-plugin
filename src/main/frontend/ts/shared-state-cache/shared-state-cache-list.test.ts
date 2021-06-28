@@ -24,18 +24,15 @@ suite('shared-state-cache-list', () => {
     `)) as SharedStateCacheList;
 
     const model = {
-      responseJSON: {
-        last_page: 1,
-        data: [
-          {
-            signature: 'test',
-            available: true,
-          },
-        ],
-      },
+      responseJSON: [
+        {
+          signature: 'test',
+          available: true,
+        },
+      ],
     };
 
-    el.setAjaxFunc((page, size, sorters, callback) => {
+    el.setAjaxFunc((callback) => {
       callback(model);
     });
 

@@ -24,28 +24,24 @@ suite('recipe-list', () => {
     `)) as RecipeList;
 
     const model = {
-      responseJSON: {
-        last_page: 1,
-        data: [
-          {
-            name: 'test',
-            lines: 10,
-            premirrorCache: {available: true, ratio: 0.20},
-            sharedStateCache: {available: true, ratio: 0.3011},
-            recipeViolations: {available: true, ratio: 0.4000},
-            comments: {available: true, ratio: 0.509},
-            codeViolations: {available: true, ratio: 0.60455},
-            complexity: {available: true, ratio: 0.700001},
-            duplications: {available: true, ratio: 0.80001},
-            test: {available: true, ratio: 0.9},
-            coverage: {available: true, ratio: 1.0},
-            mutationTest: {available: true, ratio: 0.11},
-          },
-        ],
-      },
+      responseJSON: [{
+        name: 'test',
+        lines: 10,
+        premirrorCache: {available: true, ratio: 0.20},
+        sharedStateCache: {available: true, ratio: 0.3011},
+        recipeViolations: {available: true, ratio: 0.4000},
+        comments: {available: true, ratio: 0.509},
+        codeViolations: {available: true, ratio: 0.60455},
+        complexity: {available: true, ratio: 0.700001},
+        duplications: {available: true, ratio: 0.80001},
+        test: {available: true, ratio: 0.9},
+        statementCoverage: {available: true, ratio: 1.0},
+        branchCoverage: {available: true, ratio: 0.99},
+        mutationTest: {available: true, ratio: 0.11},
+      }],
     };
 
-    el.setAjaxFunc((page, size, sorters, callback) => {
+    el.setAjaxFunc((callback) => {
       callback(model);
     });
 
@@ -102,8 +98,13 @@ suite('recipe-list', () => {
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="coverage"');
+        'div.tabulator-cell[tabulator-field="statementCoverage"');
     assert.include(elChild.textContent, '100%',
+        elChild.outerHTML);
+
+    elChild = el.querySelector(
+        'div.tabulator-cell[tabulator-field="branchCoverage"');
+    assert.include(elChild.textContent, '99%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
@@ -118,28 +119,24 @@ suite('recipe-list', () => {
     `)) as RecipeList;
 
     const model = {
-      responseJSON: {
-        last_page: 1,
-        data: [
-          {
-            name: 'test',
-            lines: 10,
-            premirrorCache: {available: false, ratio: 0.20},
-            sharedStateCache: {available: false, ratio: 0.3011},
-            recipeViolations: {available: false, ratio: 0.4000},
-            comments: {available: false, ratio: 0.509},
-            codeViolations: {available: false, ratio: 0.60455},
-            complexity: {available: false, ratio: 0.700001},
-            duplications: {available: false, ratio: 0.80001},
-            test: {available: false, ratio: 0.9},
-            coverage: {available: false, ratio: 1.0},
-            mutationTest: {available: false, ratio: 0.11},
-          },
-        ],
-      },
+      responseJSON: [{
+        name: 'test',
+        lines: 10,
+        premirrorCache: {available: false, ratio: 0.20},
+        sharedStateCache: {available: false, ratio: 0.3011},
+        recipeViolations: {available: false, ratio: 0.4000},
+        comments: {available: false, ratio: 0.509},
+        codeViolations: {available: false, ratio: 0.60455},
+        complexity: {available: false, ratio: 0.700001},
+        duplications: {available: false, ratio: 0.80001},
+        test: {available: false, ratio: 0.9},
+        statementCoverage: {available: true, ratio: 1.0},
+        branchCoverage: {available: true, ratio: 0.99},
+        mutationTest: {available: false, ratio: 0.11},
+      }],
     };
 
-    el.setAjaxFunc((page, size, sorters, callback) => {
+    el.setAjaxFunc((callback) => {
       callback(model);
     });
 
@@ -196,8 +193,13 @@ suite('recipe-list', () => {
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="coverage"');
-    assert.include(elChild.textContent, 'N/A',
+        'div.tabulator-cell[tabulator-field="statementCoverage"');
+    assert.include(elChild.textContent, '100%',
+        elChild.outerHTML);
+
+    elChild = el.querySelector(
+        'div.tabulator-cell[tabulator-field="branchCoverage"');
+    assert.include(elChild.textContent, '99%',
         elChild.outerHTML);
 
     elChild = el.querySelector(

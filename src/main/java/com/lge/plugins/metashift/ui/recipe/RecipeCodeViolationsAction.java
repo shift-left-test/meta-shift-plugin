@@ -28,8 +28,6 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileViolationSortableItemList;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -93,14 +91,19 @@ public class RecipeCodeViolationsAction
       fileCodeViolationList.get(file).add(codeViolationData);
     }
 
-    FileViolationSortableItemList fileCodeViolationStats = new FileViolationSortableItemList();
+    JSONArray fileCodeViolationArray = new JSONArray();
 
     fileCodeViolationList.forEach((file, violationList) -> {
-      fileCodeViolationStats.addItem(file,
-          violationList.stream().filter(o -> o.getLevel().equals("MAJOR")).count(),
-          violationList.stream().filter(o -> o.getLevel().equals("MINOR")).count(),
-          violationList.stream().filter(o -> o.getLevel().equals("INFO")).count()
-      );
+      JSONObject fileViolation = new JSONObject();
+      fileViolation.put("file", file);
+      fileViolation.put("major", 
+          violationList.stream().filter(o -> o.getLevel().equals("MAJOR")).count());
+      fileViolation.put("minor",
+          violationList.stream().filter(o -> o.getLevel().equals("MINOR")).count());
+      fileViolation.put("info",
+          violationList.stream().filter(o -> o.getLevel().equals("INFO")).count());
+      fileCodeViolationArray.add(fileViolation);
+
       try {
         this.saveFileContents(channel, metadata, file);
         dataSource.put(violationList,
@@ -112,7 +115,7 @@ public class RecipeCodeViolationsAction
     });
 
     try {
-      dataSource.put(fileCodeViolationStats,
+      dataSource.put(fileCodeViolationArray,
           this.getParentAction().getName(), STORE_KEY_FILECODEVIOLATIONSTAT);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
@@ -175,22 +178,14 @@ public class RecipeCodeViolationsAction
   /**
    * return paginated code violation list.
    *
-   * @param pageIndex page index
-   * @param pageSize  page size
    * @return code violation list
    * @throws IOException invalid recipe uri
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
-      SortableItemList.SortInfo[] sortInfos) throws IOException {
-    FileViolationSortableItemList dataList = this.getDataSource().get(
+  public JSONArray getRecipeFiles() throws IOException {
+    JSONArray dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECODEVIOLATIONSTAT);
-
-    if (dataList != null) {
-      return dataList.sort(sortInfos).getPage(pageIndex, pageSize);
-    } else {
-      return null;
-    }
+    return dataList;
   }
 
   /**

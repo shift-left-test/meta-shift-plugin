@@ -33,9 +33,7 @@ import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.RecipeMetricsSortableItemList;
 import com.lge.plugins.metashift.ui.models.RecipesTreemapModel;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import hudson.FilePath;
 import hudson.PluginWrapper;
@@ -51,6 +49,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import jenkins.model.Jenkins;
 import jenkins.model.RunAction2;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -95,7 +94,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
     this.qualifiedRecipeCounter = new QualifiedRecipeCounter(criteria);
     this.qualifiedRecipeCounter.parse(recipes);
 
-    RecipeMetricsSortableItemList recipeMetricsList = new RecipeMetricsSortableItemList();
+    JSONArray recipeMetricsArray = new JSONArray();
 
     for (Recipe recipe : recipes) {
       listener.getLogger().printf("Create recipe[%s] report%n", recipe.getRecipe());
@@ -104,11 +103,28 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
       this.addAction(recipeAction);
       long codeLines = recipeAction.getMetrics().getCodeSize() != null
           ? recipeAction.getMetrics().getCodeSize().getLines() : 0;
-      recipeMetricsList.addItem(recipeAction.getName(), codeLines, recipeAction.getMetrics());
+      JSONObject recipeMetrics = new JSONObject();
+      recipeMetrics.put("name", recipeAction.getName());
+      recipeMetrics.put("lines", codeLines);
+
+      recipeMetrics.put("premirrorCache", recipeAction.getMetrics().getPremirrorCache());
+      recipeMetrics.put("sharedStateCache", recipeAction.getMetrics().getSharedStateCache());
+      recipeMetrics.put("recipeViolations", recipeAction.getMetrics().getRecipeViolations());
+      recipeMetrics.put("premirrorCache", recipeAction.getMetrics().getPremirrorCache());
+      recipeMetrics.put("comments", recipeAction.getMetrics().getComments());
+      recipeMetrics.put("codeViolations", recipeAction.getMetrics().getCodeViolations());
+      recipeMetrics.put("complexity", recipeAction.getMetrics().getComplexity());
+      recipeMetrics.put("duplications", recipeAction.getMetrics().getDuplications());
+      recipeMetrics.put("test", recipeAction.getMetrics().getTest());
+      recipeMetrics.put("statementCoverage", recipeAction.getMetrics().getStatementCoverage());
+      recipeMetrics.put("branchCoverage", recipeAction.getMetrics().getBranchCoverage());
+      recipeMetrics.put("mutationTest", recipeAction.getMetrics().getMutationTest());
+      
+      recipeMetricsArray.add(recipeMetrics);
     }
 
     try {
-      dataSource.put(recipeMetricsList, STORE_KEY_RECIPEMETRICSLIST);
+      dataSource.put(recipeMetricsArray, STORE_KEY_RECIPEMETRICSLIST);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -218,21 +234,14 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
   /**
    * return paginated recipes list.
    *
-   * @param pageIndex page index
-   * @param pageSize  page size
    * @return recipe qualifier list.
    */
   @JavaScriptMethod
-  public JSONObject getRecipesTableModel(int pageIndex, int pageSize,
-      SortableItemList.SortInfo[] sortInfos) {
-    RecipeMetricsSortableItemList recipeMetricsList = this.getDataSource().get(
+  public JSONArray getRecipesTableModel() {
+    JSONArray recipeMetricsArray = this.getDataSource().get(
         STORE_KEY_RECIPEMETRICSLIST);
 
-    if (recipeMetricsList != null) {
-      return recipeMetricsList.sort(sortInfos).getPage(pageIndex, pageSize);
-    } else {
-      return null;
-    }
+    return recipeMetricsArray;
   }
 
   /**
@@ -376,6 +385,14 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
 
   public double getCoverageDelta() {
     return getRatioDelta(Metrics::getCoverage);
+  }
+
+  public double getStatementCoverageDelta() {
+    return getRatioDelta(Metrics::getStatementCoverage);
+  }
+
+  public double getBranchCoverageDelta() {
+    return getRatioDelta(Metrics::getBranchCoverage);
   }
 
   public double getDuplicationsDelta() {

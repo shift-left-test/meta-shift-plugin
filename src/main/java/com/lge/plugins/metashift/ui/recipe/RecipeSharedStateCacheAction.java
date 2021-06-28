@@ -28,13 +28,10 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.CacheSortableItemList;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
-import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -61,9 +58,10 @@ public class RecipeSharedStateCacheAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    CacheSortableItemList cacheList = new CacheSortableItemList(
-        recipe.objects(SharedStateCacheData.class)
-            .map(CacheSortableItemList.Item::new).collect(Collectors.toList()));
+    JSONArray cacheList = new JSONArray();
+    recipe.objects(SharedStateCacheData.class).forEach(o -> {
+      cacheList.add(o);
+    });
 
     try {
       dataSource.put(cacheList, this.getParentAction().getName(), STORE_KEY_CACHELIST);
@@ -122,20 +120,13 @@ public class RecipeSharedStateCacheAction
   /**
    * return paginated cache availability list.
    *
-   * @param pageIndex page index
-   * @param pageSize  page size
    * @return cache availability list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeCaches(int pageIndex, int pageSize,
-      SortableItemList.SortInfo[] sortInfos) {
-    CacheSortableItemList cacheList = this.getDataSource().get(
+  public JSONArray getRecipeCaches() {
+    JSONArray cacheList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CACHELIST);
 
-    if (cacheList != null) {
-      return cacheList.sort(sortInfos).getPage(pageIndex, pageSize);
-    } else {
-      return null;
-    }
+    return cacheList;
   }
 }

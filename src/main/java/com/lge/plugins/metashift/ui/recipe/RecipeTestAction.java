@@ -28,12 +28,11 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
-import com.lge.plugins.metashift.ui.models.TestSortableItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -66,20 +65,24 @@ public class RecipeTestAction extends RecipeActionChild {
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    TestSortableItemList testList = new TestSortableItemList(recipe.objects(TestData.class)
-        .map(TestSortableItemList.Item::new).collect(Collectors.toList()));
+    List<TestData> testList = recipe.objects(TestData.class).collect(Collectors.toList());
 
-    passedCount = testList.getItems().stream()
+    JSONArray testArray = new JSONArray();
+    testList.forEach(o -> {
+      testArray.add(o);
+    });
+
+    passedCount = testList.stream()
         .filter(o -> o.getStatus().equals("PASSED")).count();
-    failedCount = testList.getItems().stream()
+    failedCount = testList.stream()
         .filter(o -> o.getStatus().equals("FAILED")).count();
-    errorCount = testList.getItems().stream()
+    errorCount = testList.stream()
         .filter(o -> o.getStatus().equals("ERROR")).count();
-    skippedCount = testList.getItems().stream()
+    skippedCount = testList.stream()
         .filter(o -> o.getStatus().equals("SKIPPED")).count();
 
     try {
-      dataSource.put(testList, this.getParentAction().getName(), STORE_KEY_TESTLIST);
+      dataSource.put(testArray, this.getParentAction().getName(), STORE_KEY_TESTLIST);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -147,20 +150,13 @@ public class RecipeTestAction extends RecipeActionChild {
   /**
    * return paginated test list.
    *
-   * @param pageIndex page index
-   * @param pageSize  page size
    * @return test list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeTests(int pageIndex, int pageSize,
-      SortableItemList.SortInfo[] sortInfos) {
-    TestSortableItemList testDataList = this.getDataSource().get(
+  public JSONArray getRecipeTests() {
+    JSONArray testDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_TESTLIST);
 
-    if (testDataList != null) {
-      return testDataList.sort(sortInfos).getPage(pageIndex, pageSize);
-    } else {
-      return null;
-    }
+    return testDataList;
   }
 }

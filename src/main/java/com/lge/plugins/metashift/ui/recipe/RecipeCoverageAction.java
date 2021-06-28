@@ -28,8 +28,6 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileCoverageSortableItemList;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -80,7 +78,7 @@ public class RecipeCoverageAction extends RecipeActionChild {
       fileCoverageList.get(file).add(coverageData);
     }
 
-    FileCoverageSortableItemList fileCoverageStats = new FileCoverageSortableItemList();
+    JSONArray fileCoverageArray = new JSONArray();
 
     fileCoverageList.forEach((file, coverageList) -> {
       HashSet<Long> lines = new HashSet<>();
@@ -98,11 +96,15 @@ public class RecipeCoverageAction extends RecipeActionChild {
           coveredIndexes.add(lineIndex);
         }
       }
+      
+      JSONObject fileCoverage = new JSONObject();
+      fileCoverage.put("file", file);
+      fileCoverage.put("lineCoverage",
+          lines.size() > 0 ? (double) coveredLines.size() / (double) lines.size() : 0);
+      fileCoverage.put("branchCoverage",
+          indexes.size() > 0 ? (double) coveredIndexes.size() / (double) indexes.size() : 0);
+      fileCoverageArray.add(fileCoverage);
 
-      fileCoverageStats.addItem(file,
-          lines.size() > 0 ? (double) coveredLines.size() / (double) lines.size() : 0,
-          indexes.size() > 0 ? (double) coveredIndexes.size() / (double) indexes.size() : 0
-      );
       try {
         this.saveFileContents(channel, metadata, file);
         dataSource.put(coverageList,
@@ -114,7 +116,7 @@ public class RecipeCoverageAction extends RecipeActionChild {
     });
 
     try {
-      dataSource.put(fileCoverageStats,
+      dataSource.put(fileCoverageArray,
           this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
@@ -193,21 +195,14 @@ public class RecipeCoverageAction extends RecipeActionChild {
   /**
    * return paginated coverage list.
    *
-   * @param pageIndex page index
-   * @param pageSize  page size
    * @return coverage list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
-      SortableItemList.SortInfo[] sortInfos) {
-    FileCoverageSortableItemList dataList = this.getDataSource().get(
+  public JSONArray getRecipeFiles() {
+    JSONArray dataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
 
-    if (dataList != null) {
-      return dataList.sort(sortInfos).getPage(pageIndex, pageSize);
-    } else {
-      return null;
-    }
+    return dataList;
   }
 
   /**

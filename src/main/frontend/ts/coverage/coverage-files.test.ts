@@ -24,18 +24,15 @@ suite('coverage-files', () => {
     `)) as CoverageFiles;
 
     const model = {
-      responseJSON: {
-        last_page: 1,
-        data: [
-          {
-            file: 'test',
-            lineCoverage: 0.5,
-            branchCoverage: 0.4,
-          },
-        ],
-      },
+      responseJSON: [
+        {
+          file: 'test',
+          lineCoverage: 0.5,
+          branchCoverage: 0.4,
+        },
+      ],
     };
-    el.setAjaxFunc((page, size, sorters, callback) => {
+    el.setAjaxFunc((callback) => {
       callback(model);
     });
 

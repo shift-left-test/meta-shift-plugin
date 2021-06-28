@@ -12,7 +12,6 @@ export class FilesTable extends LitElement {
 
   @query('#files-table') filesTable
 
-  private requestFilesFunc;
   private requestFileDetailFunc;
   private tabulatorTable;
   protected columns;
@@ -48,31 +47,10 @@ export class FilesTable extends LitElement {
   firstUpdated() : void {
     this.tabulatorTable = new Tabulator(this.filesTable, {
       rowClick: this._handleFileClicked.bind(this),
-      pagination: 'remote',
+      pagination: 'local',
       paginationSize: 10,
-      ajaxRequestFunc: this._handleAjaxRequest.bind(this),
-      ajaxSorting: true,
       layout: 'fitColumns', // fit columns to width of table (optional)
       columns: this.columns,
-    });
-  }
-
-  /**
-   * handle ajax request.
-   * @param {unknown} url
-   * @param {unknown} config
-   * @param {unknown} params
-   * @return {Promise}
-   */
-  private _handleAjaxRequest(url, config, params) {
-    const that = this;
-    return new Promise(function(resolve, ) {
-      that.requestFilesFunc(params.page, params.size, params.sorters,
-          function(model) {
-            console.log(model.responseJSON);
-            resolve(model.responseJSON);
-          }
-      );
     });
   }
 
@@ -96,13 +74,13 @@ export class FilesTable extends LitElement {
    * @param {unknown} requestFilesFunc
    * @param {unknown} requestFileDetailFunc
    */
-  setAjaxFunc(requestFilesFunc: (page, size, sorters, callback) => void,
+  setAjaxFunc(requestFilesFunc: (callback) => void,
       requestFileDetailFunc = undefined) : void {
-    this.requestFilesFunc = requestFilesFunc;
-    this.requestFileDetailFunc = requestFileDetailFunc;
+    const that = this;
 
-    // just triggering ajaxRequestFunc.
-    // url('meta-shift') has no meaning, because we replace ajaxRequestFunc.
-    this.tabulatorTable.setData('meta-shift');
+    requestFilesFunc(function(model) {
+      that.tabulatorTable.setData(model.responseJSON);
+    });
+    this.requestFileDetailFunc = requestFileDetailFunc;
   }
 }

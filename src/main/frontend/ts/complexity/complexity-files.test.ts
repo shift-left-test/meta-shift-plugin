@@ -24,18 +24,15 @@ suite('complexity-files', () => {
     `)) as ComplexityFiles;
 
     const model = {
-      responseJSON: {
-        last_page: 1,
-        data: [
-          {
-            file: 'test',
-            functions: 10,
-            complexFunctions: 20,
-          },
-        ],
-      },
+      responseJSON: [
+        {
+          file: 'test',
+          functions: 10,
+          complexFunctions: 20,
+        },
+      ],
     };
-    el.setAjaxFunc((page, size, sorters, callback) => {
+    el.setAjaxFunc((callback) => {
       callback(model);
     });
 

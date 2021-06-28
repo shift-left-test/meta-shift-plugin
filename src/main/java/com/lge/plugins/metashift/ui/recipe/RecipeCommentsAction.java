@@ -28,8 +28,6 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileCommentSortableItemList;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -61,12 +59,17 @@ public class RecipeCommentsAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    FileCommentSortableItemList commentList = new FileCommentSortableItemList(
-        recipe.objects(CommentData.class)
-            .map(FileCommentSortableItemList.Item::new).collect(Collectors.toList()));
+    JSONArray commentArray = new JSONArray();
+    
+    recipe.objects(CommentData.class).forEach(o -> {
+      JSONObject commentObject = JSONObject.fromObject(o);
+      commentObject.put("commentRate",
+          o.getLines() > 0 ? (double) o.getCommentLines() / (double) o.getLines() : 1);
+      commentArray.add(commentObject);
+    });
 
     try {
-      dataSource.put(commentList, this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
+      dataSource.put(commentArray, this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -122,20 +125,13 @@ public class RecipeCommentsAction
   /**
    * return paginated comment list.
    *
-   * @param pageIndex page index
-   * @param pageSize  page size
    * @return comment list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
-      SortableItemList.SortInfo[] sortInfos) {
-    FileCommentSortableItemList commentDataList = this.getDataSource().get(
+  public JSONArray getRecipeFiles() {
+    JSONArray commentDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
 
-    if (commentDataList != null) {
-      return commentDataList.sort(sortInfos).getPage(pageIndex, pageSize);
-    } else {
-      return null;
-    }
+    return commentDataList;
   }
 }

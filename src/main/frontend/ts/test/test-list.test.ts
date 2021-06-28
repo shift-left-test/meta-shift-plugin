@@ -24,20 +24,17 @@ suite('test-list', () => {
     `)) as TestList;
 
     const model = {
-      responseJSON: {
-        last_page: 1,
-        data: [
-          {
-            suite: 'test',
-            name: 'test2',
-            status: 'PASSED',
-            message: 'test3',
-          },
-        ],
-      },
+      responseJSON: [
+        {
+          suite: 'test',
+          name: 'test2',
+          status: 'PASSED',
+          message: 'test3',
+        },
+      ],
     };
 
-    el.setAjaxFunc((page, size, sorters, callback) => {
+    el.setAjaxFunc((callback) => {
       callback(model);
     });
 

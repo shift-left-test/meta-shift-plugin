@@ -28,8 +28,6 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.FileDuplicationSortableItemList;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -61,9 +59,11 @@ public class RecipeDuplicationsAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    FileDuplicationSortableItemList duplicationList =
-        new FileDuplicationSortableItemList(recipe.objects(DuplicationData.class)
-            .map(FileDuplicationSortableItemList.Item::new).collect(Collectors.toList()));
+    JSONArray duplicationList = new JSONArray();
+
+    recipe.objects(DuplicationData.class).forEach(o -> {
+      duplicationList.add(o);
+    });
 
     try {
       dataSource.put(duplicationList, this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
@@ -122,20 +122,13 @@ public class RecipeDuplicationsAction
   /**
    * return paginated duplication list.
    *
-   * @param pageIndex page index
-   * @param pageSize  page size
    * @return duplication list
    */
   @JavaScriptMethod
-  public JSONObject getRecipeFiles(int pageIndex, int pageSize,
-      SortableItemList.SortInfo[] sortInfos) {
-    FileDuplicationSortableItemList duplicationDataList = this.getDataSource().get(
+  public JSONArray getRecipeFiles() {
+    JSONArray duplicationDataList = this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
 
-    if (duplicationDataList != null) {
-      return duplicationDataList.sort(sortInfos).getPage(pageIndex, pageSize);
-    } else {
-      return null;
-    }
+    return duplicationDataList;
   }
 }

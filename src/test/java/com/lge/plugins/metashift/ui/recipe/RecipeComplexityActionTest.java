@@ -29,7 +29,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.SortableItemList;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
@@ -101,9 +100,8 @@ public class RecipeComplexityActionTest {
                 + "{\"count\":5,\"width\":100,\"label\":\"Normal\",\"clazz\":\"invalid\"}]"),
         statistics);
 
-    JSONObject recipeFiles = action.getRecipeFiles(1, 10, new SortableItemList.SortInfo[]{});
-    assertEquals(1, recipeFiles.get("last_page"));
-    assertContainsKey(recipeFiles.getJSONArray("data").getJSONObject(0),
+    JSONArray recipeFiles = action.getRecipeFiles();
+    assertContainsKey(recipeFiles.getJSONObject(0),
         "complexFunctions", "file", "functions");
 
     // TODO: getFileComplexityDetail can't test
