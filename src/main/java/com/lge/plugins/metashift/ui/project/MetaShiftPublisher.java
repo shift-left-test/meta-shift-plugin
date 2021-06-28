@@ -206,20 +206,26 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   @Override
   public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
       throws InterruptedException, IOException {
+    listener.getLogger().printf("%s - begin%n", this.getDescriptor().getDisplayName());
+
     Result result = run.getResult();
 
     if (result != null && result.isBetterOrEqualTo(Result.UNSTABLE)) {
       EnvVars env = run.getEnvironment(listener);
       FilePath reportPath = workspace.child(env.expand(this.reportRoot));
       if (reportPath.exists()) {
-        // load criteria.
-        Configuration criteria = (this.localCriteria == null)
-            ? ((DescriptorImpl) getDescriptor()).getCriteria() : this.localCriteria;
+        Configuration criteria = this.localCriteria;
+        if (criteria != null) {
+          listener.getLogger().println("Use project criteria");
+        } else {
+          criteria = ((DescriptorImpl) getDescriptor()).getCriteria();
+          listener.getLogger().println("Use global criteria");
+        }
 
         FilePath buildPath = new FilePath(run.getRootDir());
         DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
 
-        // create action.
+        listener.getLogger().println("Create project report");
         MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
             run, listener, criteria, reportPath, dataSource);
         run.addAction(buildAction);
@@ -228,10 +234,12 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
           run.setResult(Result.UNSTABLE);
         }
       } else {
-        listener.getLogger().printf("Meta Shift Error: report path[%s] does not exist!!!",
-            reportPath.toURI().toString());
+        throw new IllegalArgumentException(
+          String.format("Meta Shift Error: report path[%s] does not exist!!!",
+            reportPath.toURI().toString()));
       }
     }
+    listener.getLogger().printf("%s - end%n", this.getDescriptor().getDisplayName());
   }
 
   @Override

@@ -65,6 +65,8 @@ public class RecipeAction extends Actionable implements Action {
 
     this.name = recipe.getRecipe();
     this.parent = parent;
+
+    listener.getLogger().printf("Parse recipe[%s] metrics%n", recipe.getRecipe());
     this.metrics = new Metrics(criteria);
     this.metrics.parse(recipe);
 
@@ -72,24 +74,34 @@ public class RecipeAction extends Actionable implements Action {
     JSONObject metadata = JSONObject.fromObject(
         reportRoot.child(this.name).child("metadata.json").readToString());
 
+    listener.getLogger().println("Create shared state cache report");
     this.addAction(new RecipeSharedStateCacheAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+    listener.getLogger().println("Create premirror cache report");
     this.addAction(new RecipePremirrorCacheAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+    listener.getLogger().println("Create code violations report");
     this.addAction(new RecipeCodeViolationsAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+    listener.getLogger().println("Create comments report");
     this.addAction(new RecipeCommentsAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+    listener.getLogger().println("Create complexity report");
     this.addAction(new RecipeComplexityAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+    listener.getLogger().println("Create coverage report");
     this.addAction(new RecipeCoverageAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+    listener.getLogger().println("Create duplications report");
     this.addAction(new RecipeDuplicationsAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+    listener.getLogger().println("Create mutation test report");
     this.addAction(new RecipeMutationTestAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+    listener.getLogger().println("Create recipe violations report");
     this.addAction(new RecipeRecipeViolationsAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+    listener.getLogger().println("Create unit test report");
     this.addAction(new RecipeTestAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
   }

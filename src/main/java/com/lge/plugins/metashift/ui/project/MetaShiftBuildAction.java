@@ -87,15 +87,18 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
 
     Recipes recipes = new Recipes(new File(reportRoot.toURI()), listener.getLogger());
 
+    listener.getLogger().println("Parse project recipes metrics");
     this.metrics = new Metrics(criteria);
     this.metrics.parse(recipes);
 
+    listener.getLogger().println("Parse qualifed recipe counter");
     this.qualifiedRecipeCounter = new QualifiedRecipeCounter(criteria);
     this.qualifiedRecipeCounter.parse(recipes);
 
     RecipeMetricsSortableItemList recipeMetricsList = new RecipeMetricsSortableItemList();
 
     for (Recipe recipe : recipes) {
+      listener.getLogger().printf("Create recipe[%s] report%n", recipe.getRecipe());
       RecipeAction recipeAction = new RecipeAction(
           this, listener, criteria, reportRoot, dataSource, recipe);
       this.addAction(recipeAction);
