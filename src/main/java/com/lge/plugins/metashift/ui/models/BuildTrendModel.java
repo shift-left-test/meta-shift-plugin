@@ -128,7 +128,9 @@ public class BuildTrendModel {
     this.seriesList.add(new BuildTrendSeries(
         "Test", "line", true, Metrics::getTest));
     this.seriesList.add(new BuildTrendSeries(
-        "Coverage", "line", true, Metrics::getCoverage));
+        "StatementCoverage", "line", true, Metrics::getStatementCoverage));
+    this.seriesList.add(new BuildTrendSeries(
+        "BranchCoverage", "line", true, Metrics::getBranchCoverage));
     this.seriesList.add(new BuildTrendSeries(
         "Mutation", "line", true, Metrics::getMutationTest));
   }

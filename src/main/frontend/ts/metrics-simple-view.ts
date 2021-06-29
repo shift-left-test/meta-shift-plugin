@@ -36,6 +36,7 @@ export class MetricsSimpleView extends LitElement {
   render() : unknown {
     const evaluator = JSON.parse(this.metricsValue);
     const isPercent = this.classList.contains('percent');
+    const isSummary = this.classList.contains('summary');
 
     const diffDirection = this.delta == 0 ? null :
         (this.delta > 0 ? '▲' : '▼');
@@ -62,10 +63,13 @@ export class MetricsSimpleView extends LitElement {
               html`${Number(Math.abs(this.delta)).toFixed(2)}`})
           </div>` :
         html``}
-      <div class="description ${textClass}">
-        <b>${Number(evaluator.numerator).toLocaleString()}</b>
-        out of <b>${Number(evaluator.denominator).toLocaleString()}</b>
-      </div>
+      ${!isSummary ?
+        html`
+          <div class="description ${textClass}">
+            <b>${Number(evaluator.numerator).toLocaleString()}</b>
+            out of <b>${Number(evaluator.denominator).toLocaleString()}</b>
+          </div>` :
+        html``}
     </div>
     ${this.qualifiedRate ?
       html`

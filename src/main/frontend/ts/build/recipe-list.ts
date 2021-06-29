@@ -159,7 +159,6 @@ export class RecipeList extends LitElement {
    * @param {unknown} row
    */
   private _handleRecipeClicked(e, row) {
-    console.log(row.getData().name);
     window.location.href = row.getData().name;
   }
 

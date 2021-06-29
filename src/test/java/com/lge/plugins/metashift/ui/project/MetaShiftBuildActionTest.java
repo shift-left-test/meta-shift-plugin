@@ -121,7 +121,8 @@ public class MetaShiftBuildActionTest {
     assertContainsKey(buildAction.getCodeViolationsJson(), evaluatorJsonFields);
     assertContainsKey(buildAction.getCommentsJson(), evaluatorJsonFields);
     assertContainsKey(buildAction.getComplexityJson(), evaluatorJsonFields);
-    assertContainsKey(buildAction.getCoverageJson(), evaluatorJsonFields);
+    assertContainsKey(buildAction.getStatementCoverageJson(), evaluatorJsonFields);
+    assertContainsKey(buildAction.getBranchCoverageJson(), evaluatorJsonFields);
     assertContainsKey(buildAction.getDuplicationsJson(), evaluatorJsonFields);
     assertContainsKey(buildAction.getMutationTestJson(), evaluatorJsonFields);
     assertContainsKey(buildAction.getRecipeViolationsJson(), evaluatorJsonFields);

@@ -25,8 +25,8 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import com.lge.plugins.metashift.metrics.Evaluator;
-import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
@@ -44,10 +44,10 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 /**
  * MetaShift recipe's coverage detail view action class.
  */
-public class RecipeCoverageAction extends RecipeActionChild {
+public class RecipeStatementCoverageAction extends RecipeActionChild {
 
-  static final String STORE_KEY_COVERAGELIST = "CoverageList";
-  static final String STORE_KEY_FILECOVERAGESTAT = "FileCoverageStat";
+  static final String STORE_KEY_COVERAGELIST = "StatementCoverageList";
+  static final String STORE_KEY_FILECOVERAGESTAT = "FileStatementCoverageStat";
 
   /**
    * constructor.
@@ -58,17 +58,17 @@ public class RecipeCoverageAction extends RecipeActionChild {
    * @param recipe     recipe
    * @param metadata   metadata
    */
-  public RecipeCoverageAction(
+  public RecipeStatementCoverageAction(
       RecipeAction parent, TaskListener listener, VirtualChannel channel,
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    List<CoverageData> coverageDataList =
-        recipe.objects(CoverageData.class).collect(Collectors.toList());
+    List<StatementCoverageData> coverageDataList =
+        recipe.objects(StatementCoverageData.class).collect(Collectors.toList());
 
-    HashMap<String, List<CoverageData>> fileCoverageList = new HashMap<>();
+    HashMap<String, List<StatementCoverageData>> fileCoverageList = new HashMap<>();
 
-    for (CoverageData coverageData : coverageDataList) {
+    for (StatementCoverageData coverageData : coverageDataList) {
       String file = coverageData.getFile();
 
       if (!fileCoverageList.containsKey(file)) {
@@ -83,26 +83,18 @@ public class RecipeCoverageAction extends RecipeActionChild {
     fileCoverageList.forEach((file, coverageList) -> {
       HashSet<Long> lines = new HashSet<>();
       HashSet<Long> coveredLines = new HashSet<>();
-      HashSet<LineIndex> indexes = new HashSet<>();
-      HashSet<LineIndex> coveredIndexes = new HashSet<>();
 
-      for (CoverageData data : coverageList) {
-        LineIndex lineIndex = new LineIndex(data.getLine(), data.getIndex());
-
+      for (StatementCoverageData data : coverageList) {
         lines.add(data.getLine());
-        indexes.add(lineIndex);
         if (data.isCovered()) {
           coveredLines.add(data.getLine());
-          coveredIndexes.add(lineIndex);
         }
       }
       
       JSONObject fileCoverage = new JSONObject();
       fileCoverage.put("file", file);
-      fileCoverage.put("lineCoverage",
+      fileCoverage.put("coverage",
           lines.size() > 0 ? (double) coveredLines.size() / (double) lines.size() : 0);
-      fileCoverage.put("branchCoverage",
-          indexes.size() > 0 ? (double) coveredIndexes.size() / (double) indexes.size() : 0);
       fileCoverageArray.add(fileCoverage);
 
       try {
@@ -131,17 +123,17 @@ public class RecipeCoverageAction extends RecipeActionChild {
 
   @Override
   public String getDisplayName() {
-    return "Coverage";
+    return "Statement Coverage";
   }
 
   @Override
   public String getUrlName() {
-    return "coverage";
+    return "statement_coverage";
   }
 
   @Override
   public String getScale() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getCoverage();
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getStatementCoverage();
     if (evaluator.isAvailable()) {
       return String.format("%d%%", (long) (evaluator.getRatio() * 100));
     }
@@ -150,7 +142,7 @@ public class RecipeCoverageAction extends RecipeActionChild {
 
   @Override
   public JSONArray getStatistics() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getCoverage();
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getStatementCoverage();
 
     StatisticsItem[] result = new StatisticsItem[]{
         new StatisticsItem(
@@ -168,28 +160,6 @@ public class RecipeCoverageAction extends RecipeActionChild {
     };
 
     return JSONArray.fromObject(result);
-  }
-
-  /**
-   * key for line + index.
-   */
-  public static class LineIndex {
-
-    Long line;
-    long index;
-
-    public LineIndex(long line, long index) {
-      this.line = line;
-      this.index = index;
-    }
-
-    public long getLine() {
-      return this.line;
-    }
-
-    public long getIndex() {
-      return this.index;
-    }
   }
 
   /**
@@ -212,7 +182,7 @@ public class RecipeCoverageAction extends RecipeActionChild {
   public JSONObject getFileCoverageDetail(String codePath) {
     JSONObject result = new JSONObject();
 
-    List<CoverageData> dataList = this.getDataSource().get(
+    List<StatementCoverageData> dataList = this.getDataSource().get(
         this.getParentAction().getName(), codePath, STORE_KEY_COVERAGELIST);
 
     result.put("dataList", dataList);

@@ -89,9 +89,12 @@ public class RecipeAction extends Actionable implements Action {
     listener.getLogger().println("Create complexity report");
     this.addAction(new RecipeComplexityAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
-    listener.getLogger().println("Create coverage report");
-    this.addAction(new RecipeCoverageAction(
+    listener.getLogger().println("Create statement coverage report");
+    this.addAction(new RecipeStatementCoverageAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+    listener.getLogger().println("Create branch coverage report");
+    this.addAction(new RecipeBranchCoverageAction(
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));    
     listener.getLogger().println("Create duplications report");
     this.addAction(new RecipeDuplicationsAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
@@ -196,8 +199,12 @@ public class RecipeAction extends Actionable implements Action {
     return JSONObject.fromObject(this.metrics.getComplexity());
   }
 
-  public JSONObject getCoverageJson() {
-    return JSONObject.fromObject(this.metrics.getCoverage());
+  public JSONObject getStatementCoverageJson() {
+    return JSONObject.fromObject(this.metrics.getStatementCoverage());
+  }
+
+  public JSONObject getBranchCoverageJson() {
+    return JSONObject.fromObject(this.metrics.getBranchCoverage());
   }
 
   public JSONObject getDuplicationsJson() {

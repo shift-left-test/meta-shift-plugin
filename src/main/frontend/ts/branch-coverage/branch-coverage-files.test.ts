@@ -1,18 +1,18 @@
 import {elementUpdated, fixture, html} from '@open-wc/testing';
-import {CoverageFiles} from './coverage-files';
+import {BranchCoverageFiles} from './branch-coverage-files';
 
 import {assert} from 'chai';
 
-suite('coverage-files', () => {
+suite('branch-coverage-files', () => {
   test('is defined', () => {
-    const el = document.createElement('coverage-files');
-    assert.instanceOf(el, CoverageFiles);
+    const el = document.createElement('branch-coverage-files');
+    assert.instanceOf(el, BranchCoverageFiles);
   });
 
   test('create', async () => {
     const el = (await fixture(html`
-      <coverage-files></coverage-files>
-    `)) as CoverageFiles;
+      <branch-coverage-files></branch-coverage-files>
+    `)) as BranchCoverageFiles;
 
     assert.isNotNull(el.querySelector('#files-table'),
         el.outerHTML);
@@ -20,15 +20,14 @@ suite('coverage-files', () => {
 
   test('setAjaxFunc', async () => {
     const el = (await fixture(html`
-      <coverage-files></coverage-files>
-    `)) as CoverageFiles;
+      <branch-coverage-files></branch-coverage-files>
+    `)) as BranchCoverageFiles;
 
     const model = {
       responseJSON: [
         {
           file: 'test',
-          lineCoverage: 0.5,
-          branchCoverage: 0.4,
+          coverage: 0.5,
         },
       ],
     };
@@ -43,13 +42,8 @@ suite('coverage-files', () => {
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="lineCoverage"]');
+        'div.tabulator-cell[tabulator-field="coverage"]');
     assert.equal(elChild.textContent, '50%',
-        elChild.outerHTML);
-
-    elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="branchCoverage');
-    assert.equal(elChild.textContent, '40%',
         elChild.outerHTML);
   });
 });

@@ -277,8 +277,12 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
     return JSONObject.fromObject(this.metrics.getComplexity());
   }
 
-  public JSONObject getCoverageJson() {
-    return JSONObject.fromObject(this.metrics.getCoverage());
+  public JSONObject getStatementCoverageJson() {
+    return JSONObject.fromObject(this.metrics.getStatementCoverage());
+  }
+
+  public JSONObject getBranchCoverageJson() {
+    return JSONObject.fromObject(this.metrics.getBranchCoverage());
   }
 
   public JSONObject getDuplicationsJson() {
@@ -381,10 +385,6 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
 
   public double getComplexityDelta() {
     return getRatioDelta(Metrics::getComplexity);
-  }
-
-  public double getCoverageDelta() {
-    return getRatioDelta(Metrics::getCoverage);
   }
 
   public double getStatementCoverageDelta() {

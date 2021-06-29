@@ -45,7 +45,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.JenkinsRule;
 
-public class RecipeCoverageActionTest {
+public class RecipeBranchCoverageActionTest {
 
   @Rule
   public final JenkinsRule jenkins = new JenkinsRule();
@@ -89,20 +89,20 @@ public class RecipeCoverageActionTest {
     RecipeAction recipeAction = buildAction.getActions(RecipeAction.class).stream()
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
     Objects.requireNonNull(recipeAction);
-    RecipeCoverageAction action = recipeAction.getAction(RecipeCoverageAction.class);
+    RecipeBranchCoverageAction action = recipeAction.getAction(RecipeBranchCoverageAction.class);
 
     String scale = action.getScale();
-    assertEquals("43%", scale);
+    assertEquals("37%", scale);
 
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray
-            .fromObject("[{\"count\":26,\"width\":43,\"label\":\"Covered\",\"clazz\":\"valid-good\"},"
-                + "{\"count\":34,\"width\":56,\"label\":\"UnCovered\",\"clazz\":\"invalid\"}]"),
+            .fromObject("[{\"count\":18,\"width\":37,\"label\":\"Covered\",\"clazz\":\"valid-good\"},"
+            + "{\"count\":30,\"width\":62,\"label\":\"UnCovered\",\"clazz\":\"invalid\"}]"),
         statistics);
 
     JSONArray recipeFiles = action.getRecipeFiles();
     assertContainsKey(recipeFiles.getJSONObject(0),
-        "branchCoverage", "file", "lineCoverage");
+        "coverage", "file");
 
     // TODO: getFileCoverageDetail can't test
     // because we can't determine source file path to metadata.json in test env

@@ -49,9 +49,12 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
           <metrics-simple-view title="Unit Tests" class="percent"
             url="test"
             metricsValue="${it.testJson}" />
-          <metrics-simple-view title="Coverage" class="percent"
-            url="coverage"
-            metricsValue="${it.coverageJson}" />
+          <metrics-simple-view title="Statement Coverage" class="percent"
+            url="statement_coverage"
+            metricsValue="${it.statementCoverageJson}" />
+          <metrics-simple-view title="Branch Coverage" class="percent"
+            url="branch_coverage"
+            metricsValue="${it.branchCoverageJson}" />
           <metrics-simple-view title="Mutation Tests" class="percent"
             url="mutation_test"
             metricsValue="${it.mutationTestJson}" />

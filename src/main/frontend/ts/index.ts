@@ -1,4 +1,3 @@
-import {BuildSummary} from './build/build-summary';
 import {CodeSize} from './code-size';
 import {MetricsSimpleView} from './metrics-simple-view';
 import {TestedSimpleView} from './tested-simple-view';
@@ -19,8 +18,13 @@ import {ComplexityFiles} from './complexity/complexity-files';
 import {ComplexityFileView} from './complexity/complexity-file-view';
 import {DuplicationFiles} from './duplication/duplication-files';
 import {TestList} from './test/test-list';
-import {CoverageFiles} from './coverage/coverage-files';
-import {CoverageFileView} from './coverage/coverage-file-view';
+import {StatementCoverageFiles}
+  from './statement-coverage/statement-coverage-files';
+import {StatementCoverageFileView}
+  from './statement-coverage/statement-coverage-file-view';
+import {BranchCoverageFiles} from './branch-coverage/branch-coverage-files';
+import {BranchCoverageFileView}
+  from './branch-coverage/branch-coverage-file-view';
 import {MutationTestList} from './mutation-test/mutation-test-list';
 import {MutationTestFileView} from './mutation-test/mutation-test-file-view';
 
@@ -28,7 +32,6 @@ import 'tabulator-tables/src/scss/tabulator.scss';
 import '../scss/main.scss';
 
 export {
-  BuildSummary,
   CodeSize,
   MetricsSimpleView,
   TestedSimpleView,
@@ -47,8 +50,10 @@ export {
   BuildTrendChart,
   StatisticsBar,
   TestList,
-  CoverageFiles,
-  CoverageFileView,
+  StatementCoverageFiles,
+  StatementCoverageFileView,
+  BranchCoverageFiles,
+  BranchCoverageFileView,
   MutationTestList,
   MutationTestFileView,
 };

@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.ui.project;
+package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -37,16 +37,15 @@ import hudson.model.TaskListener;
 import java.io.File;
 import java.net.URL;
 import java.util.Objects;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
-public class MetaShiftProjectActionTest {
+public class RecipeStatementCoverageActionTest {
 
   @Rule
   public final JenkinsRule jenkins = new JenkinsRule();
@@ -73,48 +72,39 @@ public class MetaShiftProjectActionTest {
     config = new Configuration();
   }
 
-  @Test
-  public void testDoIndex() throws Exception {
-    MetaShiftProjectAction projectAction = new MetaShiftProjectAction(project);
-
-    StaplerRequest req = mock(StaplerRequest.class);
-    StaplerResponse rsp = mock(StaplerResponse.class);
-
-    projectAction.doIndex(req, rsp);
-
-    verify(rsp).sendRedirect2("nodata");
-
-    FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
-    DataSource dataSource = new DataSource(new FilePath(
-        new FilePath(run.getRootDir()), "meta-shift-report"));
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, workspace.child("report"), dataSource);
-    run.addAction(buildAction);
-
-    projectAction.doIndex(req, rsp);
-
-    verify(rsp).sendRedirect2("../../../" + buildAction.getUrl());
+  private void assertContainsKey(JSONObject object, String... keys) {
+    for (String key : keys) {
+      assertTrue("Key: " + key, object.containsKey(key));
+    }
   }
 
   @Test
-  public void testGetTrendChartModel() throws Exception {
-    MetaShiftProjectAction projectAction = new MetaShiftProjectAction(project);
-
-    JSONObject chartModel = projectAction.getTrendChartModel();
-    assertEquals(11, chartModel.getJSONArray("legend").size());
-    assertEquals(11, chartModel.getJSONArray("series").size());
-    assertEquals(0, chartModel.getJSONArray("builds").size());
-
+  public void testCreate() throws Exception {
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
         taskListener, config, workspace.child("report"), dataSource);
-    run.addAction(buildAction);
 
-    JSONObject chartModel2 = projectAction.getTrendChartModel();
-    assertEquals(11, chartModel2.getJSONArray("legend").size());
-    assertEquals(11, chartModel2.getJSONArray("series").size());
-    assertEquals(1, chartModel2.getJSONArray("builds").size());
+    RecipeAction recipeAction = buildAction.getActions(RecipeAction.class).stream()
+        .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
+    Objects.requireNonNull(recipeAction);
+    RecipeStatementCoverageAction action = recipeAction.getAction(RecipeStatementCoverageAction.class);
+
+    String scale = action.getScale();
+    assertEquals("66%", scale);
+
+    JSONArray statistics = action.getStatistics();
+    assertEquals(JSONArray
+            .fromObject("[{\"count\":8,\"width\":66,\"label\":\"Covered\",\"clazz\":\"valid-good\"},"
+            + "{\"count\":4,\"width\":33,\"label\":\"UnCovered\",\"clazz\":\"invalid\"}]"),
+        statistics);
+
+    JSONArray recipeFiles = action.getRecipeFiles();
+    assertContainsKey(recipeFiles.getJSONObject(0),
+        "coverage", "file");
+
+    // TODO: getFileCoverageDetail can't test
+    // because we can't determine source file path to metadata.json in test env
   }
 }

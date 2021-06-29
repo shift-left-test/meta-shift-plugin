@@ -49,7 +49,7 @@ public class BuildTrendModelTest {
 
     assertEquals(Arrays.asList("PremirrorCache", "SharedStateCache", "RecipeViolation",
         "Comment", "CodeViolation", "Complexity", "Duplication",
-        "Test", "Coverage", "Mutation"),
+        "Test", "StatementCoverage", "BranchCoverage", "Mutation"),
         model.getLegend());
 
     assertEquals(Collections.emptyList(), model.getBuilds());
@@ -63,7 +63,8 @@ public class BuildTrendModelTest {
             + "{\"data\":[],\"name\":\"Complexity\",\"type\":\"line\",\"yAxisIndex\":0},"
             + "{\"data\":[],\"name\":\"Duplication\",\"type\":\"line\",\"yAxisIndex\":0},"
             + "{\"data\":[],\"name\":\"Test\",\"type\":\"line\",\"yAxisIndex\":0},"
-            + "{\"data\":[],\"name\":\"Coverage\",\"type\":\"line\",\"yAxisIndex\":0},"
+            + "{\"data\":[],\"name\":\"StatementCoverage\",\"type\":\"line\",\"yAxisIndex\":0},"
+            + "{\"data\":[],\"name\":\"BranchCoverage\",\"type\":\"line\",\"yAxisIndex\":0},"
             + "{\"data\":[],\"name\":\"Mutation\",\"type\":\"line\",\"yAxisIndex\":0}]"),
         JSONArray.fromObject(model.getSeries()));
   }

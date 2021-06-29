@@ -105,7 +105,8 @@ public class RecipeActionTest {
     assertContainsKey(recipeAction.getCodeViolationsJson(), evaluatorJsonFields);
     assertContainsKey(recipeAction.getCommentsJson(), evaluatorJsonFields);
     assertContainsKey(recipeAction.getComplexityJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getCoverageJson(), evaluatorJsonFields);
+    assertContainsKey(recipeAction.getStatementCoverageJson(), evaluatorJsonFields);
+    assertContainsKey(recipeAction.getBranchCoverageJson(), evaluatorJsonFields);
     assertContainsKey(recipeAction.getDuplicationsJson(), evaluatorJsonFields);
     assertContainsKey(recipeAction.getMutationTestJson(), evaluatorJsonFields);
     assertContainsKey(recipeAction.getRecipeViolationsJson(), evaluatorJsonFields);

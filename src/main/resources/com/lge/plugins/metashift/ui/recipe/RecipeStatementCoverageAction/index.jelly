@@ -12,19 +12,19 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
           ${it.run.project.displayName} ${it.run.displayName}
         </h1>
         <h2>${it.parentAction.displayName}</h2>
-        <h3>Coverage</h3>
+        <h3>Statement Coverage</h3>
         <h4>Scale <span class="metrics-scale">${it.scale}</span></h4>
         <h4>Statistics</h4>
         <statistics-bar 
           items='${it.statistics}'/>
         <h4>Details</h4>
-        <coverage-files editorId="source-editor" />
-        <coverage-file-view />
+        <statement-coverage-files editorId="source-editor" />
+        <statement-coverage-file-view />
       </div>
       </div>
       <script type="text/javascript">
       {
-        document.querySelector("coverage-files").setAjaxFunc(
+        document.querySelector("statement-coverage-files").setAjaxFunc(
           proxy.getRecipeFiles,
           proxy.getFileCoverageDetail
         )

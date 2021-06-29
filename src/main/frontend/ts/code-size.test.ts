@@ -42,8 +42,6 @@ suite('code-size', () => {
         </code-size>`
     )) as CodeSize;
 
-    console.log(el.outerHTML);
-
     let elChild = el.querySelectorAll('div.size-number')[0];
     assert.include(elChild.textContent, '10',
         elChild.outerHTML);

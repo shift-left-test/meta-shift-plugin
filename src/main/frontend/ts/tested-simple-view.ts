@@ -25,6 +25,8 @@ export class TestedSimpleView extends LitElement {
    * @return {unknown}
    */
   render() : unknown {
+    const isSummary = this.classList.contains('summary');
+
     const diffDirection = this.delta == 0 ? '' :
         (this.delta > 0 ? '▲' : '▼');
 
@@ -35,13 +37,17 @@ export class TestedSimpleView extends LitElement {
       <div class="size-number">
        ${Math.floor(this.tested / this.recipes * 100)}%
       </div>
-      <div class="size-diff">
-      (${diffDirection}${Math.floor(Math.abs((this.delta * 100)))}%)
-      </div>
-      <div class="description">
-        <b>${Number(this.tested).toLocaleString()}</b>
-        out of <b>${Number(this.recipes).toLocaleString()}</b>
-      </div>
+      ${!isSummary ?
+        html`
+          <div class="size-diff">
+          (${diffDirection}${Math.floor(Math.abs((this.delta * 100)))}%)
+          </div>
+          <div class="description">
+            <b>${Number(this.tested).toLocaleString()}</b>
+            out of <b>${Number(this.recipes).toLocaleString()}</b>
+          </div>
+          ` :
+        html``}
     </div>
     `;
   }

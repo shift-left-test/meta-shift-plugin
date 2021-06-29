@@ -5,11 +5,11 @@ import {FileDetail} from '../common/file-detail';
 
 import * as monaco from 'monaco-editor';
 
-@customElement('coverage-file-view')
+@customElement('statement-coverage-file-view')
 /**
  * coverage file view.
  */
-export class CoverageFileView extends FileDetail {
+export class StatementCoverageFileView extends FileDetail {
   /**
    * render data list.
    * @return {unknown}

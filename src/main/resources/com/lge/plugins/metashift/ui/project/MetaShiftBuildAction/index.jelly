@@ -42,11 +42,11 @@ xmlns:c="/charts">
           <metrics-simple-view title="Code Violations"
             metricsValue="${it.codeViolationsJson}"
             delta="${it.codeViolationsDelta}"
-            qualifiedRate="${it.codeViolationsQualifiedRate}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.codeViolations.ratio}" />
           <metrics-simple-view title="Complexity" class="percent"
             metricsValue="${it.complexityJson}"
             delta="${it.complexityDelta}"
-            qualifiedRate="${it.complexityQualifiedRate}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.complexity.ratio}" />
           <metrics-simple-view title="Duplications" class="percent"
             metricsValue="${it.duplicationsJson}"
             delta="${it.duplicationsDelta}"
@@ -61,11 +61,15 @@ xmlns:c="/charts">
           <metrics-simple-view title="Unit Tests" class="percent"
             metricsValue="${it.testJson}"
             delta="${it.testDelta}"
-            qualifiedRate="${it.testQualifiedRate}" />
-          <metrics-simple-view title="Coverage" class="percent"
-            metricsValue="${it.coverageJson}"
-            delta="${it.coverageDelta}"
-            qualifiedRate="${it.coverageQualifiedRate}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.test.ratio}" />
+          <metrics-simple-view title="Statement Coverage" class="percent"
+            metricsValue="${it.statementCoverageJson}"
+            delta="${it.statementCoverageDelta}"
+            qualifiedRate="${it.qualifiedRecipeCounter.statementCoverage.ratio}" />
+          <metrics-simple-view title="Branch Coverage" class="percent"
+            metricsValue="${it.branchCoverageJson}"
+            delta="${it.branchCoverageDelta}"
+            qualifiedRate="${it.qualifiedRecipeCounter.branchCoverage.ratio}" />
           <metrics-simple-view title="Mutation Tests" class="percent"
             metricsValue="${it.mutationTestJson}"
             delta="${it.mutationTestDelta}"
