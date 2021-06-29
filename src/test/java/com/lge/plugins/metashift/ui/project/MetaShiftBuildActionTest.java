@@ -39,7 +39,6 @@ import hudson.model.TaskListener;
 import java.io.File;
 import java.net.URL;
 import java.util.Objects;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Before;
@@ -96,9 +95,9 @@ public class MetaShiftBuildActionTest {
     assertEquals(JSONObject
             .fromObject("{\"series\":[{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,0]},"
                 + "{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,100]},"
-                + "{\"path\":\"\",\"link\":\"autotools-project-1.0.0-r0\",\"name\":\"autotools-project-1.0.0-r0\",\"value\":[181,60]},"
-                + "{\"path\":\"\",\"link\":\"cmake-project-1.0.0-r0\",\"name\":\"cmake-project-1.0.0-r0\",\"value\":[202,60]},"
-                + "{\"path\":\"\",\"link\":\"qmake5-project-1.0.0-r0\",\"name\":\"qmake5-project-1.0.0-r0\",\"value\":[333,60]}]}")
+                + "{\"path\":\"\",\"link\":\"autotools-project-1.0.0-r0\",\"name\":\"autotools-project-1.0.0-r0\",\"value\":[181,50]},"
+                + "{\"path\":\"\",\"link\":\"cmake-project-1.0.0-r0\",\"name\":\"cmake-project-1.0.0-r0\",\"value\":[202,50]},"
+                + "{\"path\":\"\",\"link\":\"qmake5-project-1.0.0-r0\",\"name\":\"qmake5-project-1.0.0-r0\",\"value\":[333,50]}]}")
         , buildAction.getRecipesTreemapModel());
 
     JSONArray recipeTableModel = buildAction.getRecipesTableModel();

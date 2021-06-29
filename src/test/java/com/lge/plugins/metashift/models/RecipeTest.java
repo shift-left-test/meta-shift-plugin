@@ -301,7 +301,7 @@ public class RecipeTest {
     assertEquals(6, recipe.objects(Data.class).count());
     assertTrue(recipe.isAvailable(CodeViolationData.class));
     assertTrue(recipe.isAvailable(ComplexityData.class));
-    assertTrue(recipe.isAvailable(CoverageData.class));
+    assertTrue(recipe.isAvailable(StatementCoverageData.class));
     assertTrue(recipe.isAvailable(MutationTestData.class));
     assertTrue(recipe.isAvailable(RecipeViolationData.class));
   }

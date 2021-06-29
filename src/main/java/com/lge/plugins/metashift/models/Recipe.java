@@ -110,8 +110,10 @@ public final class Recipe extends Data<Recipe> implements Streamable {
     return () -> {
       try {
         logger.printf("[Recipe] %s: processing the %s data%n", getRecipe(), name);
-        objects.addAll(functor.apply(path));
+        List<?> parsed = functor.apply(path);
+        objects.addAll(parsed);
         classes.add(clazz);
+        parsed.forEach(o -> classes.add(o.getClass()));
         logger.printf("[Recipe] %s: finished processing the %s data%n", getRecipe(), name);
       } catch (IOException ignored) {
         // ignored
