@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -174,8 +175,8 @@ public final class Recipe extends Data<Recipe> implements Streamable {
    */
   public Recipe(final String recipe) throws IllegalArgumentException {
     super(recipe);
-    objects = new ArrayList<>();
-    classes = new HashSet<>();
+    objects = Collections.synchronizedList(new ArrayList<>());
+    classes = Collections.synchronizedSet(new HashSet<>());
   }
 
   /**
