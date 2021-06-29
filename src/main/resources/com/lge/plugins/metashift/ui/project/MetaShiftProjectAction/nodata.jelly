@@ -1,0 +1,17 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" 
+xmlns:c="/charts">
+  <l:layout title="Meta-Shift Report">
+    <st:adjunct includes="com.lge.plugins.metashift.front"/>
+    <st:include it="${it.project}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <div class="metashift">
+        <div class="page">
+        <h2>Meta Shift</h2>
+        <p>The report has never been published.</p>
+        </div>
+      </div>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
