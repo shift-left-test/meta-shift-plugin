@@ -26,16 +26,16 @@ package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Recipes;
-import java.util.DoubleSummaryStatistics;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Represents the group of statistics for each metric.
+ * The class represents the group of statistics for each metric.
  *
  * @author Sung Gon Kim
  */
-public class MetricStatistics extends GroupParser<DoubleSummaryStatistics> {
+public class MetricStatistics extends GroupParser<SummaryStatistics> {
 
   /**
    * Represents the criteria object.
@@ -48,7 +48,7 @@ public class MetricStatistics extends GroupParser<DoubleSummaryStatistics> {
    * @param criteria for evaluation
    */
   public MetricStatistics(final Criteria criteria) {
-    super(new DoubleSummaryStatistics());
+    super(new SummaryStatistics());
     this.criteria = criteria;
   }
 
@@ -62,64 +62,64 @@ public class MetricStatistics extends GroupParser<DoubleSummaryStatistics> {
 
   @Override
   public void parse(final List<Metrics> metrics) {
-    setPremirrorCache(metrics.stream()
+    setPremirrorCache(new SummaryStatistics(metrics.stream()
         .map(Metrics::getPremirrorCache)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setSharedStateCache(metrics.stream()
+    setSharedStateCache(new SummaryStatistics(metrics.stream()
         .map(Metrics::getSharedStateCache)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setCodeViolations(metrics.stream()
+    setCodeViolations(new SummaryStatistics(metrics.stream()
         .map(Metrics::getCodeViolations)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setComments(metrics.stream()
+    setComments(new SummaryStatistics(metrics.stream()
         .map(Metrics::getComments)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setComplexity(metrics.stream()
+    setComplexity(new SummaryStatistics(metrics.stream()
         .map(Metrics::getComplexity)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setCoverage(metrics.stream()
+    setCoverage(new SummaryStatistics(metrics.stream()
         .map(Metrics::getCoverage)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setStatementCoverage(metrics.stream()
+    setStatementCoverage(new SummaryStatistics(metrics.stream()
         .map(Metrics::getStatementCoverage)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setBranchCoverage(metrics.stream()
+    setBranchCoverage(new SummaryStatistics(metrics.stream()
         .map(Metrics::getBranchCoverage)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setDuplications(metrics.stream()
+    setDuplications(new SummaryStatistics(metrics.stream()
         .map(Metrics::getDuplications)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setMutationTest(metrics.stream()
+    setMutationTest(new SummaryStatistics(metrics.stream()
         .map(Metrics::getMutationTest)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setRecipeViolations(metrics.stream()
+    setRecipeViolations(new SummaryStatistics(metrics.stream()
         .map(Metrics::getRecipeViolations)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setTest(metrics.stream()
+    setTest(new SummaryStatistics(metrics.stream()
         .map(Metrics::getTest)
         .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio)));
+        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
   }
 }

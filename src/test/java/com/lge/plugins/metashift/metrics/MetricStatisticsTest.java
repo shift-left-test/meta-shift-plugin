@@ -47,7 +47,7 @@ import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.models.SkippedMutationTestData;
 import com.lge.plugins.metashift.models.StatementCoverageData;
-import java.util.DoubleSummaryStatistics;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Before;
@@ -91,7 +91,7 @@ public class MetricStatisticsTest {
     recipes.add(recipe3);
   }
 
-  private void assertValues(DoubleSummaryStatistics stats, double min, double max, double average) {
+  private void assertValues(SummaryStatistics stats, double min, double max, double average) {
     assertEquals(min, stats.getMin(), 0.1);
     assertEquals(max, stats.getMax(), 0.1);
     assertEquals(average, stats.getAverage(), 0.1);
@@ -99,21 +99,17 @@ public class MetricStatisticsTest {
 
   @Test
   public void testInitialState() {
-    assertValues(stats.getPremirrorCache(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
-        0.0);
-    assertValues(stats.getSharedStateCache(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
-        0.0);
-    assertValues(stats.getCodeViolations(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
-        0.0);
-    assertValues(stats.getComments(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
-    assertValues(stats.getComplexity(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
-    assertValues(stats.getStatementCoverage(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
-    assertValues(stats.getBranchCoverage(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
-    assertValues(stats.getDuplications(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
-    assertValues(stats.getMutationTest(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
-    assertValues(stats.getRecipeViolations(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
-        0.0);
-    assertValues(stats.getTest(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
+    assertValues(stats.getPremirrorCache(), 0.0, 0.0, 0.0);
+    assertValues(stats.getSharedStateCache(), 0.0, 0.0, 0.0);
+    assertValues(stats.getCodeViolations(), 0.0, 0.0, 0.0);
+    assertValues(stats.getComments(), 0.0, 0.0, 0.0);
+    assertValues(stats.getComplexity(), 0.0, 0.0, 0.0);
+    assertValues(stats.getStatementCoverage(), 0.0, 0.0, 0.0);
+    assertValues(stats.getBranchCoverage(), 0.0, 0.0, 0.0);
+    assertValues(stats.getDuplications(), 0.0, 0.0, 0.0);
+    assertValues(stats.getMutationTest(), 0.0, 0.0, 0.0);
+    assertValues(stats.getRecipeViolations(), 0.0, 0.0, 0.0);
+    assertValues(stats.getTest(), 0.0, 0.0, 0.0);
   }
 
   @Test
@@ -242,8 +238,7 @@ public class MetricStatisticsTest {
     stats.parse(recipes);
 
     assertValues(stats.getPremirrorCache(), 1.0, 1.0, 1.0);
-    assertValues(stats.getSharedStateCache(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
-        0.0);
+    assertValues(stats.getSharedStateCache(), 0.0, 0.0, 0.0);
     assertValues(stats.getCodeViolations(), 0.2, 0.2, 0.2);
     assertValues(stats.getComments(), 0.5, 0.5, 0.5);
     assertValues(stats.getComplexity(), 0.0, 0.0, 0.0);
@@ -277,8 +272,7 @@ public class MetricStatisticsTest {
     stats.parse(metrics);
 
     assertValues(stats.getPremirrorCache(), 1.0, 1.0, 1.0);
-    assertValues(stats.getSharedStateCache(), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
-        0.0);
+    assertValues(stats.getSharedStateCache(), 0.0, 0.0, 0.0);
     assertValues(stats.getCodeViolations(), 0.2, 0.2, 0.2);
     assertValues(stats.getComments(), 0.5, 0.5, 0.5);
     assertValues(stats.getComplexity(), 0.0, 0.0, 0.0);
