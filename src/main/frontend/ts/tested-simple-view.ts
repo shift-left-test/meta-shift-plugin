@@ -46,6 +46,7 @@ export class TestedSimpleView extends LitElement {
             <b>${Number(this.tested).toLocaleString()}</b>
             out of <b>${Number(this.recipes).toLocaleString()}</b>
           </div>
+          <div><br></div>
           ` :
         html``}
     </div>

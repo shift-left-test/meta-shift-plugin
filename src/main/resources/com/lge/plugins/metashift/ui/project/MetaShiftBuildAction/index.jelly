@@ -17,20 +17,24 @@ xmlns:c="/charts">
             codeSizeDelta="${it.codeSizeDeltaJson}"
           />
         </div>
+
         <h3>Build Performance</h3>
         <div class="metrics-row">
           <metrics-simple-view title="Premirror Cache" class="percent"
             metricsValue="${it.premirrorCacheJson}"
             delta="${it.premirrorCacheDelta}"
-            qualifiedRate="${it.premirrorCacheQualifiedRate}" />
+            qualifiedRate="${it.premirrorCacheQualifiedRate}"
+            threshold="${it.criteria.premirrorCacheThreshold}" />
           <metrics-simple-view title="Shared State Cache" class="percent"
             metricsValue="${it.sharedStateCacheJson}"
             delta="${it.sharedStateCacheDelta}"
-            qualifiedRate="${it.qualifiedRecipeCounter.sharedStateCache.ratio}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.sharedStateCache.ratio}"
+            threshold="${it.criteria.sharedStateCacheThreshold}" />
           <metrics-simple-view title="Recipe Violations"
             metricsValue="${it.recipeViolationsJson}"
             delta="${it.recipeViolationsDelta}"
-            qualifiedRate="${it.qualifiedRecipeCounter.recipeViolations.ratio}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.recipeViolations.ratio}"
+            threshold="${it.criteria.recipeViolationThreshold}" />
         </div>
         <h3>Code Quality</h3>
         <h4>Static Analysis</h4>
@@ -38,19 +42,23 @@ xmlns:c="/charts">
           <metrics-simple-view title="Comments" class="percent"
             metricsValue="${it.commentsJson}"
             delta="${it.commentsDelta}"
-            qualifiedRate="${it.qualifiedRecipeCounter.comments.ratio}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.comments.ratio}"
+            threshold="${it.criteria.commentThreshold}" />
           <metrics-simple-view title="Code Violations"
             metricsValue="${it.codeViolationsJson}"
             delta="${it.codeViolationsDelta}"
-            qualifiedRate="${it.qualifiedRecipeCounter.codeViolations.ratio}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.codeViolations.ratio}"
+            threshold="${it.criteria.codeViolationThreshold}" />
           <metrics-simple-view title="Complexity" class="percent"
             metricsValue="${it.complexityJson}"
             delta="${it.complexityDelta}"
-            qualifiedRate="${it.qualifiedRecipeCounter.complexity.ratio}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.complexity.ratio}"
+            threshold="${it.criteria.complexityThreshold}" />
           <metrics-simple-view title="Duplications" class="percent"
             metricsValue="${it.duplicationsJson}"
             delta="${it.duplicationsDelta}"
-            qualifiedRate="${it.qualifiedRecipeCounter.duplications.ratio}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.duplications.ratio}"
+            threshold="${it.criteria.duplicationThreshold}" />
         </div>
         <h4>Dynamic Testing</h4>
         <div class="metrics-row">
@@ -61,19 +69,23 @@ xmlns:c="/charts">
           <metrics-simple-view title="Unit Tests" class="percent"
             metricsValue="${it.testJson}"
             delta="${it.testDelta}"
-            qualifiedRate="${it.qualifiedRecipeCounter.test.ratio}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.test.ratio}"
+            threshold="${it.criteria.testThreshold}" />
           <metrics-simple-view title="Statement Coverage" class="percent"
             metricsValue="${it.statementCoverageJson}"
             delta="${it.statementCoverageDelta}"
-            qualifiedRate="${it.qualifiedRecipeCounter.statementCoverage.ratio}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.statementCoverage.ratio}"
+            threshold="${it.criteria.statementCoverageThreshold}" />
           <metrics-simple-view title="Branch Coverage" class="percent"
             metricsValue="${it.branchCoverageJson}"
             delta="${it.branchCoverageDelta}"
-            qualifiedRate="${it.qualifiedRecipeCounter.branchCoverage.ratio}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.branchCoverage.ratio}"
+            threshold="${it.criteria.branchCoverageThreshold}" />
           <metrics-simple-view title="Mutation Tests" class="percent"
             metricsValue="${it.mutationTestJson}"
             delta="${it.mutationTestDelta}"
-            qualifiedRate="${it.qualifiedRecipeCounter.mutationTest.ratio}" />
+            qualifiedRate="${it.qualifiedRecipeCounter.mutationTest.ratio}"
+            threshold="${it.criteria.mutationTestThreshold}" />
         </div>
         <h3>Recipes</h3>
         <div>

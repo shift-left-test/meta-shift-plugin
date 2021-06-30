@@ -11,6 +11,7 @@ export class MetricsSimpleView extends LitElement {
   @property() url
   @property() delta
   @property() qualifiedRate
+  @property() threshold
 
   /**
    * constructor
@@ -44,6 +45,11 @@ export class MetricsSimpleView extends LitElement {
     const iconClass = evaluator.available ?
         (evaluator.qualified ? 'ico-pass' : 'ico-fail'):'ico-na';
 
+    const diffThreshold = isPercent ?
+      Math.floor(evaluator.ratio * 100) - this.threshold :
+      evaluator.ratio - this.threshold;
+    const diffThresholdPrefix = diffThreshold > 0 ? '+' : null;
+
     return html`<div class="board">
       <div class="title">
         <b class="${iconClass}">${this.title}</b>
@@ -68,6 +74,13 @@ export class MetricsSimpleView extends LitElement {
           <div class="description ${textClass}">
             <b>${Number(evaluator.numerator).toLocaleString()}</b>
             out of <b>${Number(evaluator.denominator).toLocaleString()}</b>
+          </div>` :
+        html``}
+      ${this.threshold ?
+        html`
+          <div>Threshold: ${this.threshold}${isPercent ?
+            html`%(${diffThresholdPrefix}${diffThreshold}%)`:
+            html`(${diffThresholdPrefix}${Number(diffThreshold).toFixed(2)})`}
           </div>` :
         html``}
     </div>

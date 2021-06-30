@@ -16,48 +16,60 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
             codeSizeDelta="${it.codeSizeDeltaJson}"
           />
         </div>
+
         <h3>Build Performance</h3>
         <div class="metrics-row">
           <metrics-simple-view title="Premirror Cache" class="percent"
             url="premirror_cache"
-            metricsValue="${it.premirrorCacheJson}" />
+            metricsValue="${it.premirrorCacheJson}"
+            threshold="${it.parentAction.criteria.premirrorCacheThreshold}" />
           <metrics-simple-view title="Shared State Cache" class="percent"
             url="sharedstate_cache"
-            metricsValue="${it.sharedStateCacheJson}" />
+            metricsValue="${it.sharedStateCacheJson}"
+            threshold="${it.parentAction.criteria.sharedStateCacheThreshold}" />
           <metrics-simple-view title="Recipe Violations"
             url="recipe_violations"
-            metricsValue="${it.recipeViolationsJson}" />
+            metricsValue="${it.recipeViolationsJson}"
+            threshold="${it.parentAction.criteria.recipeViolationThreshold}" />
         </div>
         <h3>Code Quality</h3>
         <h4>Static Analysis</h4>
         <div class="metrics-row">
           <metrics-simple-view title="Comments" class="percent"
             url="comments"
-            metricsValue="${it.commentsJson}" />
+            metricsValue="${it.commentsJson}"
+            threshold="${it.parentAction.criteria.commentThreshold}" />
           <metrics-simple-view title="Code Violations"
             url="code_violations"
-            metricsValue="${it.codeViolationsJson}" />
+            metricsValue="${it.codeViolationsJson}"
+            threshold="${it.parentAction.criteria.codeViolationThreshold}" />
           <metrics-simple-view title="Complexity" class="percent"
             url="complexity"
-            metricsValue="${it.complexityJson}" />
+            metricsValue="${it.complexityJson}"
+            threshold="${it.parentAction.criteria.complexityThreshold}" />
           <metrics-simple-view title="Duplications" class="percent"
             url="duplications"
-            metricsValue="${it.duplicationsJson}" />
+            metricsValue="${it.duplicationsJson}"
+            threshold="${it.parentAction.criteria.duplicationThreshold}" />
         </div>
         <h4>Dynamic Testing</h4>
         <div class="metrics-row">
           <metrics-simple-view title="Unit Tests" class="percent"
             url="test"
-            metricsValue="${it.testJson}" />
+            metricsValue="${it.testJson}"
+            threshold="${it.parentAction.criteria.testThreshold}" />
           <metrics-simple-view title="Statement Coverage" class="percent"
             url="statement_coverage"
-            metricsValue="${it.statementCoverageJson}" />
+            metricsValue="${it.statementCoverageJson}"
+            threshold="${it.parentAction.criteria.statementCoverageThreshold}" />
           <metrics-simple-view title="Branch Coverage" class="percent"
             url="branch_coverage"
-            metricsValue="${it.branchCoverageJson}" />
+            metricsValue="${it.branchCoverageJson}"
+            threshold="${it.parentAction.criteria.branchCoverageThreshold}" />
           <metrics-simple-view title="Mutation Tests" class="percent"
             url="mutation_test"
-            metricsValue="${it.mutationTestJson}" />
+            metricsValue="${it.mutationTestJson}"
+            threshold="${it.parentAction.criteria.mutationTestThreshold}" />
         </div>
       </div>
       </div>
