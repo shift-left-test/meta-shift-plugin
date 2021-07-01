@@ -95,9 +95,9 @@ public class MetaShiftBuildActionTest {
     assertEquals(JSONObject
             .fromObject("{\"series\":[{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,0]},"
                 + "{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,100]},"
-                + "{\"path\":\"\",\"link\":\"autotools-project-1.0.0-r0\",\"name\":\"autotools-project-1.0.0-r0\",\"value\":[181,50]},"
-                + "{\"path\":\"\",\"link\":\"cmake-project-1.0.0-r0\",\"name\":\"cmake-project-1.0.0-r0\",\"value\":[202,50]},"
-                + "{\"path\":\"\",\"link\":\"qmake5-project-1.0.0-r0\",\"name\":\"qmake5-project-1.0.0-r0\",\"value\":[333,50]}]}")
+                + "{\"path\":\"\",\"link\":\"autotools-project-1.0.0-r0\",\"name\":\"autotools-project-1.0.0-r0\",\"value\":[181,54]},"
+                + "{\"path\":\"\",\"link\":\"cmake-project-1.0.0-r0\",\"name\":\"cmake-project-1.0.0-r0\",\"value\":[202,54]},"
+                + "{\"path\":\"\",\"link\":\"qmake5-project-1.0.0-r0\",\"name\":\"qmake5-project-1.0.0-r0\",\"value\":[333,54]}]}")
         , buildAction.getRecipesTreemapModel());
 
     JSONArray recipeTableModel = buildAction.getRecipesTableModel();

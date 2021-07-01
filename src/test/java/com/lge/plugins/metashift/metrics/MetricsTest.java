@@ -93,7 +93,6 @@ public class MetricsTest {
     configuration.setComplexityThreshold(50);
     configuration.setDuplicationThreshold(50);
     configuration.setTestThreshold(50);
-    configuration.setCoverageThreshold(50);
     configuration.setStatementCoverageThreshold(50);
     configuration.setBranchCoverageThreshold(50);
     configuration.setMutationTestThreshold(50);
@@ -526,7 +525,6 @@ public class MetricsTest {
     configuration.setComplexityAsUnstable(false);
     configuration.setDuplicationsAsUnstable(false);
     configuration.setTestAsUnstable(false);
-    configuration.setCoverageAsUnstable(false);
     configuration.setStatementCoverageAsUnstable(false);
     configuration.setBranchCoverageAsUnstable(false);
     configuration.setMutationTestAsUnstable(false);
@@ -550,7 +548,6 @@ public class MetricsTest {
     configuration.setComplexityAsUnstable(false);
     configuration.setDuplicationsAsUnstable(false);
     configuration.setTestAsUnstable(false);
-    configuration.setCoverageAsUnstable(false);
     configuration.setStatementCoverageAsUnstable(false);
     configuration.setBranchCoverageAsUnstable(false);
     configuration.setMutationTestAsUnstable(false);

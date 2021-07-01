@@ -64,11 +64,6 @@ public class Configuration implements Criteria, BuildStatus {
   private int complexityThreshold;
 
   /**
-   * Represents the threshold for the coverage.
-   */
-  private int coverageThreshold;
-
-  /**
    * Represents the threshold for the statement coverage.
    */
   private int statementCoverageThreshold;
@@ -124,11 +119,6 @@ public class Configuration implements Criteria, BuildStatus {
   private boolean complexityAsUnstable;
 
   /**
-   * Represents whether the unsatisfied coverage sets the build status unstable.
-   */
-  private boolean coverageAsUnstable;
-
-  /**
    * Represents whether the unsatisfied statement coverage sets the build status unstable.
    */
   private boolean statementCoverageAsUnstable;
@@ -162,8 +152,8 @@ public class Configuration implements Criteria, BuildStatus {
    * Default constructor.
    */
   public Configuration() {
-    this(80, 80, 0.1, 30, 0.1, 4, 10, 10, 95, 60, 80, 40, 85,
-        true, true, true, true, true, true, true, true, true, true, true, true);
+    this(80, 80, 0.1, 30, 0.1, 4, 10, 10, 95, 80, 40, 85,
+        true, true, true, true, true, true, true, true, true, true, true);
   }
 
   /**
@@ -178,7 +168,6 @@ public class Configuration implements Criteria, BuildStatus {
    * @param complexityThreshold        threshold
    * @param duplicationThreshold       threshold
    * @param testThreshold              threshold
-   * @param coverageThreshold          threshold
    * @param statementCoverageThreshold threshold
    * @param branchCoverageThreshold    threshold
    * @param mutationTestThreshold      threshold
@@ -190,7 +179,6 @@ public class Configuration implements Criteria, BuildStatus {
    * @param complexityAsUnstable       marks a build as unstable if unsatisfied
    * @param duplicationsAsUnstable     marks a build as unstable if unsatisfied
    * @param testAsUnstable             marks a build as unstable if unsatisfied
-   * @param coverageAsUnstable         marks a build as unstable if unsatisfied
    * @param mutationTestAsUnstable     marks a build as unstable if unsatisfied
    */
   @DataBoundConstructor
@@ -203,7 +191,6 @@ public class Configuration implements Criteria, BuildStatus {
       final int complexityThreshold,
       final int duplicationThreshold,
       final int testThreshold,
-      final int coverageThreshold,
       final int statementCoverageThreshold,
       final int branchCoverageThreshold,
       final int mutationTestThreshold,
@@ -215,7 +202,6 @@ public class Configuration implements Criteria, BuildStatus {
       final boolean complexityAsUnstable,
       final boolean duplicationsAsUnstable,
       final boolean testAsUnstable,
-      final boolean coverageAsUnstable,
       final boolean statementCoverageAsUnstable,
       final boolean branchCoverageAsUnstable,
       final boolean mutationTestAsUnstable) {
@@ -228,7 +214,6 @@ public class Configuration implements Criteria, BuildStatus {
     this.complexityThreshold = complexityThreshold;
     this.duplicationThreshold = duplicationThreshold;
     this.testThreshold = testThreshold;
-    this.coverageThreshold = coverageThreshold;
     this.statementCoverageThreshold = statementCoverageThreshold;
     this.branchCoverageThreshold = branchCoverageThreshold;
     this.mutationTestThreshold = mutationTestThreshold;
@@ -240,7 +225,6 @@ public class Configuration implements Criteria, BuildStatus {
     this.complexityAsUnstable = complexityAsUnstable;
     this.duplicationsAsUnstable = duplicationsAsUnstable;
     this.testAsUnstable = testAsUnstable;
-    this.coverageAsUnstable = coverageAsUnstable;
     this.statementCoverageAsUnstable = statementCoverageAsUnstable;
     this.branchCoverageAsUnstable = branchCoverageAsUnstable;
     this.mutationTestAsUnstable = mutationTestAsUnstable;
@@ -304,16 +288,6 @@ public class Configuration implements Criteria, BuildStatus {
   @Override
   public void setComplexityThreshold(int threshold) {
     complexityThreshold = threshold;
-  }
-
-  @Override
-  public int getCoverageThreshold() {
-    return coverageThreshold;
-  }
-
-  @Override
-  public void setCoverageThreshold(int threshold) {
-    coverageThreshold = threshold;
   }
 
   @Override
@@ -424,16 +398,6 @@ public class Configuration implements Criteria, BuildStatus {
   @Override
   public void setComplexityAsUnstable(boolean allowed) {
     complexityAsUnstable = allowed;
-  }
-
-  @Override
-  public boolean isCoverageAsUnstable() {
-    return coverageAsUnstable;
-  }
-
-  @Override
-  public void setCoverageAsUnstable(boolean allowed) {
-    coverageAsUnstable = allowed;
   }
 
   @Override

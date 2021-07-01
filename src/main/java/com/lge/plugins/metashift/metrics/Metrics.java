@@ -61,7 +61,6 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
     collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(criteria));
     collection.put(CommentEvaluator.class, new CommentEvaluator(criteria));
     collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(criteria));
-    collection.put(CoverageEvaluator.class, new CoverageEvaluator(criteria));
     collection.put(StatementCoverageEvaluator.class, new StatementCoverageEvaluator(criteria));
     collection.put(BranchCoverageEvaluator.class, new BranchCoverageEvaluator(criteria));
     collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(criteria));
@@ -103,11 +102,6 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
   @Override
   public Evaluator<?> getComplexity() {
     return collection.get(ComplexityEvaluator.class);
-  }
-
-  @Override
-  public Evaluator<?> getCoverage() {
-    return collection.get(CoverageEvaluator.class);
   }
 
   @Override
@@ -154,7 +148,6 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
     collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(criteria).parse(c));
     collection.put(CommentEvaluator.class, new CommentEvaluator(criteria).parse(c));
     collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(criteria).parse(c));
-    collection.put(CoverageEvaluator.class, new CoverageEvaluator(criteria).parse(c));
     collection.put(StatementCoverageEvaluator.class,
         new StatementCoverageEvaluator(criteria).parse(c));
     collection.put(BranchCoverageEvaluator.class, new BranchCoverageEvaluator(criteria).parse(c));

@@ -102,20 +102,6 @@ public interface BuildStatus {
   void setComplexityAsUnstable(boolean allowed);
 
   /**
-   * Shows that the unsatisfied coverage metric marks the build status unstable.
-   *
-   * @return true if the metric sets the build status unstable, false otherwise
-   */
-  boolean isCoverageAsUnstable();
-
-  /**
-   * Sets whether the unsatisfied coverage metric marks the build status unstable.
-   *
-   * @param allowed to set the build status
-   */
-  void setCoverageAsUnstable(boolean allowed);
-
-  /**
    * Shows that the unsatisfied statement coverage metric marks the build status unstable.
    *
    * @return true if the metric sets the build status unstable, false otherwise

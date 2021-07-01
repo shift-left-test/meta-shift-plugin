@@ -87,11 +87,6 @@ public class MetricStatistics extends GroupParser<SummaryStatistics> {
         .filter(Evaluator::isAvailable)
         .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
 
-    setCoverage(new SummaryStatistics(metrics.stream()
-        .map(Metrics::getCoverage)
-        .filter(Evaluator::isAvailable)
-        .collect(Collectors.summarizingDouble(Evaluator::getRatio))));
-
     setStatementCoverage(new SummaryStatistics(metrics.stream()
         .map(Metrics::getStatementCoverage)
         .filter(Evaluator::isAvailable)

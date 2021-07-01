@@ -67,13 +67,6 @@ public interface Queryable<T> {
   T getComplexity();
 
   /**
-   * Returns the coverage object.
-   *
-   * @return coverage object
-   */
-  T getCoverage();
-
-  /**
    * Returns the statement coverage object.
    *
    * @return statement coverage object

@@ -1,190 +1,181 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core"
+  xmlns:f="/lib/form">
   <j:set var="publisher_class" value="com.lge.plugins.metashift.ui.project.MetaShiftPublisher"/>
   <style>
     .rate-input {
-      width: 60px;
-      text-align: right;
+    width: 60px;
+    text-align: right;
     }
     .evaluate {
-      width: 100px;
-      display: inline-block;
+    width: 100px;
+    display: inline-block;
     }
     .title {
-      width: 200px;
-      display: inline-block;
+    width: 200px;
+    display: inline-block;
     }
     .description {
-      width: 200px;
-      display: inline-block;
+    width: 200px;
+    display: inline-block;
     }
     .input {
-      display: inline;
+    display: inline;
     }
     .limit {
-      padding-left: 20px;
-      width: 150px;
-      display: inline-block;
+    padding-left: 20px;
+    width: 150px;
+    display: inline-block;
     }
   </style>
 
   <f:entry title="Criteria" field="criteria">
-    <div class="evaluate"><b>Mark</b>**</div>
-    <div class="title"><b>Metric</b></div>
-    <div class="description"><b>Operator</b></div>
-    <div class="input"><b>Threshold</b></div>
+    <div class="evaluate"><b>Mark</b>**
+    </div>
+    <div class="title">
+      <b>Metric</b>
+    </div>
+    <div class="description">
+      <b>Operator</b>
+    </div>
+    <div class="input">
+      <b>Threshold</b>
+    </div>
   </f:entry>
   <f:entry field="PremirrorCache">
     <div class="evaluate">
       <f:checkbox field="premirrorCacheAsUnstable"
-                  checked="${it.premirrorCacheAsUnstable}"
-                  default="${descriptor.criteria.premirrorCacheAllowedAsUnstable}"/>
+        checked="${it.premirrorCacheAsUnstable}"
+        default="${descriptor.criteria.premirrorCacheAllowedAsUnstable}"/>
     </div>
     <div class="title">Premirror Cache</div>
     <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="premirrorCacheThreshold"
-                value="${it.premirrorCacheThreshold}"
-                default="${descriptor.criteria.premirrorCacheThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-                clazz="rate-input" />%
+        value="${it.premirrorCacheThreshold}"
+        default="${descriptor.criteria.premirrorCacheThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
+        clazz="rate-input"/>%
     </div>
   </f:entry>
   <f:entry field="SharedStateCache">
     <div class="evaluate">
       <f:checkbox field="sharedStateCacheAsUnstable"
-                  checked="${it.sharedStateCacheAsUnstable}"
-                  default="${descriptor.criteria.sharedStateCacheAllowedAsUnstable}"/>
+        checked="${it.sharedStateCacheAsUnstable}"
+        default="${descriptor.criteria.sharedStateCacheAllowedAsUnstable}"/>
     </div>
     <div class="title">Shared State Cache</div>
     <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="sharedStateCacheThreshold"
-                value="${it.sharedStateCacheThreshold}"
-                default="${descriptor.criteria.sharedStateCacheThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-                clazz="rate-input" />%
+        value="${it.sharedStateCacheThreshold}"
+        default="${descriptor.criteria.sharedStateCacheThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
+        clazz="rate-input"/>%
     </div>
   </f:entry>
   <f:entry field="RecipeViolation">
     <div class="evaluate">
       <f:checkbox field="recipeViolationsAsUnstable"
-                  checked="${it.recipeViolationsAsUnstable}"
-                  default="${descriptor.criteria.recipeViolationsAllowedAsUnstable}"/>
+        checked="${it.recipeViolationsAsUnstable}"
+        default="${descriptor.criteria.recipeViolationsAllowedAsUnstable}"/>
     </div>
     <div class="title">Recipe Violations</div>
     <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="recipeViolationThreshold"
-                value="${it.recipeViolationThreshold}"
-                default="${descriptor.criteria.recipeViolationThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)"
-                clazz="rate-input" />
+        value="${it.recipeViolationThreshold}"
+        default="${descriptor.criteria.recipeViolationThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)"
+        clazz="rate-input"/>
     </div>
   </f:entry>
   <f:entry field="Comment">
-      <div class="evaluate">
-        <f:checkbox field="commentsAsUnstable"
-                    checked="${it.commentsAsUnstable}"
-                    default="${descriptor.criteria.commentsAllowedAsUnstable}"/>
-      </div>
-      <div class="title">Comments</div>
-      <div class="description">is less than or equal to</div>
-      <div class="input">
-        <f:number field="commentThreshold"
-                  value="${it.commentThreshold}"
-                  default="${descriptor.criteria.commentThreshold}"
-                  checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-                  clazz="rate-input" />%
-      </div>
+    <div class="evaluate">
+      <f:checkbox field="commentsAsUnstable"
+        checked="${it.commentsAsUnstable}"
+        default="${descriptor.criteria.commentsAllowedAsUnstable}"/>
+    </div>
+    <div class="title">Comments</div>
+    <div class="description">is less than or equal to</div>
+    <div class="input">
+      <f:number field="commentThreshold"
+        value="${it.commentThreshold}"
+        default="${descriptor.criteria.commentThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
+        clazz="rate-input"/>%
+    </div>
   </f:entry>
   <f:entry field="CodeViolation">
     <div class="evaluate">
       <f:checkbox field="codeViolationsAsUnstable"
-                  checked="${it.codeViolationsAsUnstable}"
-                  default="${descriptor.criteria.codeViolationsAllowedAsUnstable}"/>
+        checked="${it.codeViolationsAsUnstable}"
+        default="${descriptor.criteria.codeViolationsAllowedAsUnstable}"/>
     </div>
     <div class="title">Code Violations</div>
     <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="codeViolationThreshold"
-                value="${it.codeViolationThreshold}"
-                default="${descriptor.criteria.codeViolationThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)"
-                clazz="rate-input" />
+        value="${it.codeViolationThreshold}"
+        default="${descriptor.criteria.codeViolationThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)"
+        clazz="rate-input"/>
     </div>
   </f:entry>
   <f:entry field="Complexity">
     <div class="evaluate">
       <f:checkbox field="complexityAsUnstable"
-                  checked="${it.complexityAsUnstable}"
-                  default="${descriptor.criteria.complexityAllowedAsUnstable}"/>
+        checked="${it.complexityAsUnstable}"
+        default="${descriptor.criteria.complexityAllowedAsUnstable}"/>
     </div>
     <div class="title">Complexity</div>
     <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="complexityThreshold"
-                value="${it.complexityThreshold}"
-                default="${descriptor.criteria.complexityThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-                clazz="rate-input" />%
+        value="${it.complexityThreshold}"
+        default="${descriptor.criteria.complexityThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
+        clazz="rate-input"/>%
     </div>
     <div class="limit">Complex limit</div>
     <div class="input">
       <f:number field="complexityLevel"
-                value="${it.complexityLevel}"
-                default="${descriptor.criteria.complexityLevel}"
-                checkUrl="'descriptorByName/${publisher_class}/checkLimit?value='+escape(this.value)"
-                clazz="rate-input" />
+        value="${it.complexityLevel}"
+        default="${descriptor.criteria.complexityLevel}"
+        checkUrl="'descriptorByName/${publisher_class}/checkLimit?value='+escape(this.value)"
+        clazz="rate-input"/>
     </div>
   </f:entry>
   <f:entry field="Duplication">
     <div class="evaluate">
       <f:checkbox field="duplicationsAsUnstable"
-                  checked="${it.duplicationsAsUnstable}"
-                  default="${descriptor.criteria.duplicationsAllowedAsUnstable}"/>
+        checked="${it.duplicationsAsUnstable}"
+        default="${descriptor.criteria.duplicationsAllowedAsUnstable}"/>
     </div>
     <div class="title">Duplications</div>
     <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="duplicationThreshold"
-                value="${it.duplicationThreshold}"
-                default="${descriptor.criteria.duplicationThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-                clazz="rate-input" />%
+        value="${it.duplicationThreshold}"
+        default="${descriptor.criteria.duplicationThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
+        clazz="rate-input"/>%
     </div>
   </f:entry>
   <f:entry field="UnitTest">
     <div class="evaluate">
       <f:checkbox field="testAsUnstable"
-                  checked="${it.testAsUnstable}"
-                  default="${descriptor.criteria.testAllowedAsUnstable}"/>
+        checked="${it.testAsUnstable}"
+        default="${descriptor.criteria.testAllowedAsUnstable}"/>
     </div>
     <div class="title">Unit Tests</div>
     <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="testThreshold"
-                value="${it.testThreshold}"
-                default="${descriptor.criteria.testThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-                clazz="rate-input" />%
-    </div>
-  </f:entry>
-  <f:entry field="Coverage">
-    <div class="evaluate">
-      <f:checkbox field="coverageAsUnstable"
-                  checked="${it.coverageAsUnstable}"
-                  default="${descriptor.criteria.coverageAllowedAsUnstable}"/>
-    </div>
-    <div class="title">Coverage</div>
-    <div class="description">is less than or equal to</div>
-    <div class="input">
-      <f:number field="coverageThreshold"
-                value="${it.coverageThreshold}"
-                default="${descriptor.criteria.coverageThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-                clazz="rate-input" />%
+        value="${it.testThreshold}"
+        default="${descriptor.criteria.testThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
+        clazz="rate-input"/>%
     </div>
   </f:entry>
   <f:entry field="StatementCoverage">
@@ -200,7 +191,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         value="${it.statementCoverageThreshold}"
         default="${descriptor.criteria.statementCoverageThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input" />%
+        clazz="rate-input"/>%
     </div>
   </f:entry>
   <f:entry field="BranchCoverage">
@@ -216,23 +207,23 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         value="${it.branchCoverageThreshold}"
         default="${descriptor.criteria.branchCoverageThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input" />%
+        clazz="rate-input"/>%
     </div>
   </f:entry>
   <f:entry field="MutationTest">
     <div class="evaluate">
       <f:checkbox field="mutationTestAsUnstable"
-                  checked="${it.mutationTestAsUnstable}"
-                  default="${descriptor.criteria.mutationTestAllowedAsUnstable}"/>
+        checked="${it.mutationTestAsUnstable}"
+        default="${descriptor.criteria.mutationTestAllowedAsUnstable}"/>
     </div>
     <div class="title">Mutation Tests</div>
     <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="mutationTestThreshold"
-                value="${it.mutationTestThreshold}"
-                default="${descriptor.criteria.mutationTestThreshold}"
-                checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-                clazz="rate-input" />%
+        value="${it.mutationTestThreshold}"
+        default="${descriptor.criteria.mutationTestThreshold}"
+        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
+        clazz="rate-input"/>%
     </div>
   </f:entry>
   <div>

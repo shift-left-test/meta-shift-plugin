@@ -88,7 +88,6 @@ public final class QualifiedRecipeCounter extends GroupParser<Counter> {
     setCodeViolations(countBy(recipes, new CodeViolationEvaluator(criteria)));
     setComments(countBy(recipes, new CommentEvaluator(criteria)));
     setComplexity(countBy(recipes, new ComplexityEvaluator(criteria)));
-    setCoverage(countBy(recipes, new CoverageEvaluator(criteria)));
     setStatementCoverage(countBy(recipes, new StatementCoverageEvaluator(criteria)));
     setBranchCoverage(countBy(recipes, new BranchCoverageEvaluator(criteria)));
     setDuplications(countBy(recipes, new DuplicationEvaluator(criteria)));
@@ -119,10 +118,6 @@ public final class QualifiedRecipeCounter extends GroupParser<Counter> {
     setComplexity(new Counter(
         metrics.stream().map(Metrics::getComplexity).filter(Evaluator::isAvailable).count(),
         metrics.stream().map(Metrics::getComplexity).filter(Evaluator::isQualified).count()
-    ));
-    setCoverage(new Counter(
-        metrics.stream().map(Metrics::getCoverage).filter(Evaluator::isAvailable).count(),
-        metrics.stream().map(Metrics::getCoverage).filter(Evaluator::isQualified).count()
     ));
     setStatementCoverage(new Counter(
         metrics.stream().map(Metrics::getStatementCoverage).filter(Evaluator::isAvailable).count(),

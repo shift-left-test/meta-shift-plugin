@@ -79,7 +79,6 @@ public class MetricStatisticsTest {
     criteria.setComplexityThreshold(50);
     criteria.setDuplicationThreshold(50);
     criteria.setTestThreshold(50);
-    criteria.setCoverageThreshold(50);
     criteria.setMutationTestThreshold(50);
     stats = new MetricStatistics(criteria);
     recipe1 = new Recipe("A-1.0.0-r0");

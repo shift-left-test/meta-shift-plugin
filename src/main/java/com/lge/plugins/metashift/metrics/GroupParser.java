@@ -68,11 +68,6 @@ public abstract class GroupParser<T> implements Queryable<T> {
     COMPLEXITY,
 
     /**
-     * Coverage type.
-     */
-    COVERAGE,
-
-    /**
      * Statement coverage type.
      */
     STATEMENT_COVERAGE,
@@ -186,20 +181,6 @@ public abstract class GroupParser<T> implements Queryable<T> {
    */
   protected void setComplexity(T object) {
     collection.put(Type.COMPLEXITY, object);
-  }
-
-  @Override
-  public T getCoverage() {
-    return collection.get(Type.COVERAGE);
-  }
-
-  /**
-   * Sets the coverage object.
-   *
-   * @param object for the coverage
-   */
-  protected void setCoverage(T object) {
-    collection.put(Type.COVERAGE, object);
   }
 
   @Override

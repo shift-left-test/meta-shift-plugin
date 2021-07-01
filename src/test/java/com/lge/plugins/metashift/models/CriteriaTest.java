@@ -85,7 +85,6 @@ public class CriteriaTest {
     criteria.setComplexityThreshold(60);
     criteria.setDuplicationThreshold(70);
     criteria.setTestThreshold(80);
-    criteria.setCoverageThreshold(90);
     criteria.setStatementCoverageThreshold(90);
     criteria.setBranchCoverageThreshold(100);
     criteria.setMutationTestThreshold(100);

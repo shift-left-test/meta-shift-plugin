@@ -116,20 +116,6 @@ public interface Criteria {
   void setComplexityThreshold(int threshold);
 
   /**
-   * Returns the coverage threshold.
-   *
-   * @return coverage threshold
-   */
-  int getCoverageThreshold();
-
-  /**
-   * Sets the coverage threshold.
-   *
-   * @param threshold for the coverage
-   */
-  void setCoverageThreshold(int threshold);
-
-  /**
    * Returns the statement coverage threshold.
    *
    * @return statement coverage threshold
