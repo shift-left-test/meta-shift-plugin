@@ -92,7 +92,7 @@ public class RecipeBranchCoverageAction extends RecipeActionChild {
           coveredIndexes.add(lineIndex);
         }
       }
-      
+
       JSONObject fileCoverage = new JSONObject();
       fileCoverage.put("file", file);
       fileCoverage.put("coverage",
@@ -193,10 +193,8 @@ public class RecipeBranchCoverageAction extends RecipeActionChild {
    */
   @JavaScriptMethod
   public JSONArray getRecipeFiles() {
-    JSONArray dataList = this.getDataSource().get(
+    return this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
-
-    return dataList;
   }
 
   /**

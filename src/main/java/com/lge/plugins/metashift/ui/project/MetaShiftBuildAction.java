@@ -90,7 +90,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
     this.metrics = new Metrics(criteria);
     this.metrics.parse(recipes);
 
-    listener.getLogger().println("Parse qualifed recipe counter");
+    listener.getLogger().println("Parse qualified recipe counter");
     this.qualifiedRecipeCounter = new QualifiedRecipeCounter(criteria);
     this.qualifiedRecipeCounter.parse(recipes);
 
@@ -103,23 +103,9 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
       this.addAction(recipeAction);
       long codeLines = recipeAction.getMetrics().getCodeSize() != null
           ? recipeAction.getMetrics().getCodeSize().getLines() : 0;
-      JSONObject recipeMetrics = new JSONObject();
+      JSONObject recipeMetrics = recipeAction.getMetrics().toJsonObject();
       recipeMetrics.put("name", recipeAction.getName());
       recipeMetrics.put("lines", codeLines);
-
-      recipeMetrics.put("premirrorCache", recipeAction.getMetrics().getPremirrorCache());
-      recipeMetrics.put("sharedStateCache", recipeAction.getMetrics().getSharedStateCache());
-      recipeMetrics.put("recipeViolations", recipeAction.getMetrics().getRecipeViolations());
-      recipeMetrics.put("premirrorCache", recipeAction.getMetrics().getPremirrorCache());
-      recipeMetrics.put("comments", recipeAction.getMetrics().getComments());
-      recipeMetrics.put("codeViolations", recipeAction.getMetrics().getCodeViolations());
-      recipeMetrics.put("complexity", recipeAction.getMetrics().getComplexity());
-      recipeMetrics.put("duplications", recipeAction.getMetrics().getDuplications());
-      recipeMetrics.put("test", recipeAction.getMetrics().getTest());
-      recipeMetrics.put("statementCoverage", recipeAction.getMetrics().getStatementCoverage());
-      recipeMetrics.put("branchCoverage", recipeAction.getMetrics().getBranchCoverage());
-      recipeMetrics.put("mutationTest", recipeAction.getMetrics().getMutationTest());
-      
       recipeMetricsArray.add(recipeMetrics);
     }
 
@@ -238,10 +224,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
    */
   @JavaScriptMethod
   public JSONArray getRecipesTableModel() {
-    JSONArray recipeMetricsArray = this.getDataSource().get(
-        STORE_KEY_RECIPEMETRICSLIST);
-
-    return recipeMetricsArray;
+    return this.getDataSource().get(STORE_KEY_RECIPEMETRICSLIST);
   }
 
   /**
@@ -254,51 +237,51 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
   }
 
   public JSONObject getCodeSizeJson() {
-    return JSONObject.fromObject(this.metrics.getCodeSize());
+    return metrics.getCodeSize().toJsonObject();
   }
 
   public JSONObject getPremirrorCacheJson() {
-    return JSONObject.fromObject(this.metrics.getPremirrorCache());
+    return metrics.getPremirrorCache().toJsonObject();
   }
 
   public JSONObject getSharedStateCacheJson() {
-    return JSONObject.fromObject(this.metrics.getSharedStateCache());
+    return metrics.getSharedStateCache().toJsonObject();
   }
 
   public JSONObject getCodeViolationsJson() {
-    return JSONObject.fromObject(this.metrics.getCodeViolations());
+    return metrics.getCodeViolations().toJsonObject();
   }
 
   public JSONObject getCommentsJson() {
-    return JSONObject.fromObject(this.metrics.getComments());
+    return metrics.getComments().toJsonObject();
   }
 
   public JSONObject getComplexityJson() {
-    return JSONObject.fromObject(this.metrics.getComplexity());
+    return metrics.getComplexity().toJsonObject();
   }
 
   public JSONObject getStatementCoverageJson() {
-    return JSONObject.fromObject(this.metrics.getStatementCoverage());
+    return metrics.getStatementCoverage().toJsonObject();
   }
 
   public JSONObject getBranchCoverageJson() {
-    return JSONObject.fromObject(this.metrics.getBranchCoverage());
+    return metrics.getBranchCoverage().toJsonObject();
   }
 
   public JSONObject getDuplicationsJson() {
-    return JSONObject.fromObject(this.metrics.getDuplications());
+    return metrics.getDuplications().toJsonObject();
   }
 
   public JSONObject getMutationTestJson() {
-    return JSONObject.fromObject(this.metrics.getMutationTest());
+    return metrics.getMutationTest().toJsonObject();
   }
 
   public JSONObject getRecipeViolationsJson() {
-    return JSONObject.fromObject(this.metrics.getRecipeViolations());
+    return metrics.getRecipeViolations().toJsonObject();
   }
 
   public JSONObject getTestJson() {
-    return JSONObject.fromObject(this.metrics.getTest());
+    return metrics.getTest().toJsonObject();
   }
 
   private transient MetaShiftBuildAction previousAction;

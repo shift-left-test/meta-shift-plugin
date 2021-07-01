@@ -37,7 +37,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.Objects;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

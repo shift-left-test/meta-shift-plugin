@@ -81,10 +81,9 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
   /**
    * Plugin descriptor class.
-   * <p>
+   *
    * Symbol "metashift" is annotated for pipeline job simple usage. pipeline script example below.
    * metashift reportRoot:'report_test/report',  localCriteria: null
-   * </p>
    */
   @Symbol("metashift")
   @Extension
@@ -235,8 +234,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
         }
       } else {
         throw new IllegalArgumentException(
-          String.format("Meta Shift Error: report path[%s] does not exist!!!",
-            reportPath.toURI().toString()));
+            String.format("Meta Shift Error: report path[%s] does not exist!!!",
+                reportPath.toURI().toString()));
       }
     }
     listener.getLogger().printf("%s - end%n", this.getDescriptor().getDisplayName());

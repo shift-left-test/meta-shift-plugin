@@ -101,7 +101,7 @@ public class RecipeCommentsActionTest {
         statistics);
 
     JSONArray recipeFiles = action.getRecipeFiles();
-    
+
     assertContainsKey(recipeFiles.getJSONObject(0),
         "file", "commentLines", "lines", "commentRate");
   }

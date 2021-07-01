@@ -89,7 +89,8 @@ public class RecipeStatementCoverageActionTest {
     RecipeAction recipeAction = buildAction.getActions(RecipeAction.class).stream()
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
     Objects.requireNonNull(recipeAction);
-    RecipeStatementCoverageAction action = recipeAction.getAction(RecipeStatementCoverageAction.class);
+    RecipeStatementCoverageAction action = recipeAction
+        .getAction(RecipeStatementCoverageAction.class);
 
     String scale = action.getScale();
     assertEquals("66%", scale);
@@ -97,7 +98,7 @@ public class RecipeStatementCoverageActionTest {
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray
             .fromObject("[{\"count\":8,\"width\":66,\"label\":\"Covered\",\"clazz\":\"valid-good\"},"
-            + "{\"count\":4,\"width\":33,\"label\":\"UnCovered\",\"clazz\":\"invalid\"}]"),
+                + "{\"count\":4,\"width\":33,\"label\":\"UnCovered\",\"clazz\":\"invalid\"}]"),
         statistics);
 
     JSONArray recipeFiles = action.getRecipeFiles();

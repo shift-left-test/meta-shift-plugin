@@ -32,7 +32,6 @@ import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
-import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -61,9 +60,7 @@ public class RecipeDuplicationsAction
 
     JSONArray duplicationList = new JSONArray();
 
-    recipe.objects(DuplicationData.class).forEach(o -> {
-      duplicationList.add(o);
-    });
+    recipe.objects(DuplicationData.class).forEach(duplicationList::add);
 
     try {
       dataSource.put(duplicationList, this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
@@ -126,9 +123,7 @@ public class RecipeDuplicationsAction
    */
   @JavaScriptMethod
   public JSONArray getRecipeFiles() {
-    JSONArray duplicationDataList = this.getDataSource().get(
+    return this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
-
-    return duplicationDataList;
   }
 }

@@ -97,7 +97,7 @@ public class RecipeBranchCoverageActionTest {
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray
             .fromObject("[{\"count\":18,\"width\":37,\"label\":\"Covered\",\"clazz\":\"valid-good\"},"
-            + "{\"count\":30,\"width\":62,\"label\":\"UnCovered\",\"clazz\":\"invalid\"}]"),
+                + "{\"count\":30,\"width\":62,\"label\":\"UnCovered\",\"clazz\":\"invalid\"}]"),
         statistics);
 
     JSONArray recipeFiles = action.getRecipeFiles();

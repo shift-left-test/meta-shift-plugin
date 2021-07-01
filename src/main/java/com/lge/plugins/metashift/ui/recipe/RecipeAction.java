@@ -44,7 +44,7 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 /**
- * MetaShift recipe action class.
+ * The recipe action class.
  */
 @ExportedBean
 public class RecipeAction extends Actionable implements Action {
@@ -94,7 +94,7 @@ public class RecipeAction extends Actionable implements Action {
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     listener.getLogger().println("Create branch coverage report");
     this.addAction(new RecipeBranchCoverageAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));    
+        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
     listener.getLogger().println("Create duplications report");
     this.addAction(new RecipeDuplicationsAction(
         this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
@@ -149,16 +149,13 @@ public class RecipeAction extends Actionable implements Action {
     if (getParentAction().getPreviousBuildAction() != null) {
       List<RecipeAction> recipes =
           getParentAction().getPreviousBuildAction().getActions(RecipeAction.class);
-
       for (RecipeAction recipe : recipes) {
         if (recipe.name.equals(this.name)) {
           return recipe.getMetrics();
         }
       }
-
       return null;
     }
-
     return null;
   }
 
@@ -176,50 +173,50 @@ public class RecipeAction extends Actionable implements Action {
   }
 
   public JSONObject getCodeSizeJson() {
-    return JSONObject.fromObject(this.metrics.getCodeSize()).discard("recipes");
+    return metrics.getCodeSize().toJsonObject().discard("recipes");
   }
 
   public JSONObject getPremirrorCacheJson() {
-    return JSONObject.fromObject(this.metrics.getPremirrorCache());
+    return metrics.getPremirrorCache().toJsonObject();
   }
 
   public JSONObject getSharedStateCacheJson() {
-    return JSONObject.fromObject(this.metrics.getSharedStateCache());
+    return metrics.getSharedStateCache().toJsonObject();
   }
 
   public JSONObject getCodeViolationsJson() {
-    return JSONObject.fromObject(this.metrics.getCodeViolations());
+    return metrics.getCodeViolations().toJsonObject();
   }
 
   public JSONObject getCommentsJson() {
-    return JSONObject.fromObject(this.metrics.getComments());
+    return metrics.getComments().toJsonObject();
   }
 
   public JSONObject getComplexityJson() {
-    return JSONObject.fromObject(this.metrics.getComplexity());
+    return metrics.getComplexity().toJsonObject();
   }
 
   public JSONObject getStatementCoverageJson() {
-    return JSONObject.fromObject(this.metrics.getStatementCoverage());
+    return metrics.getStatementCoverage().toJsonObject();
   }
 
   public JSONObject getBranchCoverageJson() {
-    return JSONObject.fromObject(this.metrics.getBranchCoverage());
+    return metrics.getBranchCoverage().toJsonObject();
   }
 
   public JSONObject getDuplicationsJson() {
-    return JSONObject.fromObject(this.metrics.getDuplications());
+    return metrics.getDuplications().toJsonObject();
   }
 
   public JSONObject getMutationTestJson() {
-    return JSONObject.fromObject(this.metrics.getMutationTest());
+    return metrics.getMutationTest().toJsonObject();
   }
 
   public JSONObject getRecipeViolationsJson() {
-    return JSONObject.fromObject(this.metrics.getRecipeViolations());
+    return metrics.getRecipeViolations().toJsonObject();
   }
 
   public JSONObject getTestJson() {
-    return JSONObject.fromObject(this.metrics.getTest());
+    return metrics.getTest().toJsonObject();
   }
 }

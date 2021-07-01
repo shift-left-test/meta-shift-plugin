@@ -32,7 +32,6 @@ import com.lge.plugins.metashift.ui.models.StatisticsItem;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
-import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -60,7 +59,7 @@ public class RecipeCommentsAction
     super(parent);
 
     JSONArray commentArray = new JSONArray();
-    
+
     recipe.objects(CommentData.class).forEach(o -> {
       JSONObject commentObject = JSONObject.fromObject(o);
       commentObject.put("commentRate",
@@ -129,9 +128,7 @@ public class RecipeCommentsAction
    */
   @JavaScriptMethod
   public JSONArray getRecipeFiles() {
-    JSONArray commentDataList = this.getDataSource().get(
+    return this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
-
-    return commentDataList;
   }
 }

@@ -96,7 +96,7 @@ public class RecipeCodeViolationsAction
     fileCodeViolationList.forEach((file, violationList) -> {
       JSONObject fileViolation = new JSONObject();
       fileViolation.put("file", file);
-      fileViolation.put("major", 
+      fileViolation.put("major",
           violationList.stream().filter(o -> o.getLevel().equals("MAJOR")).count());
       fileViolation.put("minor",
           violationList.stream().filter(o -> o.getLevel().equals("MINOR")).count());
@@ -183,9 +183,8 @@ public class RecipeCodeViolationsAction
    */
   @JavaScriptMethod
   public JSONArray getRecipeFiles() throws IOException {
-    JSONArray dataList = this.getDataSource().get(
+    return this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECODEVIOLATIONSTAT);
-    return dataList;
   }
 
   /**
