@@ -93,6 +93,12 @@
     border-radius: 3px;
     border-color: gray;
   }
+
+  .section {
+    padding-left: 40px;
+    display: inline-block;
+    width: 100%;
+  }
 }
 
 .ico {
@@ -276,6 +282,7 @@ statistics-bar {
     width: 100%;
     height: 10px;
     background-color: $invalid-color;
+    margin-bottom: 10px;
   }
 
   .rate {
@@ -359,6 +366,52 @@ statistics-bar {
     .informational {
       color: $info-color;
     }
+  }
+}
+
+scale-bar {
+  @extend statistics-bar;
+
+  .metrics-stats {
+    width: 100%;
+    height: 10px;
+    background-color: $empty-color;
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .empty {
+    @extend .rate;
+    background-color: $empty-color;
+  }
+
+  .range {
+    @extend .rate;
+    position: absolute;
+    background-color: $invalid-color;
+  }
+
+  .pointer {
+    top: -8px;
+    position: absolute;
+    display: inline-block;
+    font-size: 24px;
+
+    .pointer-text {
+      position: relative;
+      left: -12px;
+    }
+  }
+  .scale {
+    color: $average-color;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: $average-outline-color;
+  }
+
+  .avg {
+    color: $scale-color;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: $scale-outline-color;
   }
 }
 

@@ -14,12 +14,12 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <h2>${it.parentAction.displayName}</h2>
         <h3>Statement Coverage</h3>
         <h4>Scale <span class="metrics-scale">${it.scale}</span></h4>
+        <scale-bar class="section" statistics='${it.metricStatistics}'></scale-bar>
         <h4>Statistics</h4>
-        <statistics-bar 
-          items='${it.statistics}'/>
+        <statistics-bar class="section" items='${it.statistics}'/>
         <h4>Details</h4>
-        <statement-coverage-files editorId="source-editor" />
-        <statement-coverage-file-view />
+        <statement-coverage-files class="section" editorId="source-editor" />
+        <statement-coverage-file-view class="section" />
       </div>
       </div>
       <script type="text/javascript">

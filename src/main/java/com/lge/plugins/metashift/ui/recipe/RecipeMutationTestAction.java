@@ -142,8 +142,23 @@ public class RecipeMutationTestAction extends RecipeActionChild {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getMutationTest();
     if (evaluator.isAvailable()) {
       return String.format("%d%%", (long) (evaluator.getRatio() * 100));
+    } else {
+      return "N/A";
     }
-    return "N/A";
+  }
+
+  @Override
+  public JSONObject getMetricStatistics() {
+    JSONObject result = this.getParentAction().getMetricStatistics()
+        .getMutationTest().toJsonObject();
+
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getMutationTest();
+
+    result.put("scale", evaluator.getRatio());
+    result.put("available", evaluator.isAvailable());
+    result.put("percent", true);
+    
+    return result;
   }
 
   @Override

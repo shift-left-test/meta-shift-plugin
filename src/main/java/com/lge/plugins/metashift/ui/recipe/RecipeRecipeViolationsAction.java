@@ -142,8 +142,23 @@ public class RecipeRecipeViolationsAction extends RecipeActionChild {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getRecipeViolations();
     if (evaluator.isAvailable()) {
       return String.format("%.2f", evaluator.getRatio());
+    } else {
+      return "N/A";
     }
-    return "N/A";
+  }
+
+  @Override
+  public JSONObject getMetricStatistics() {
+    JSONObject result = this.getParentAction().getMetricStatistics()
+        .getRecipeViolations().toJsonObject();
+
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getRecipeViolations();
+
+    result.put("scale", evaluator.getRatio());
+    result.put("available", evaluator.isAvailable());
+    result.put("percent", false);
+    
+    return result;
   }
 
   @Override

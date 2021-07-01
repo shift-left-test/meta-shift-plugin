@@ -143,8 +143,23 @@ public class RecipeCodeViolationsAction
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getCodeViolations();
     if (evaluator.isAvailable()) {
       return String.format("%.2f", evaluator.getRatio());
+    } else {
+      return "N/A";
     }
-    return "N/A";
+  }
+
+  @Override
+  public JSONObject getMetricStatistics() {
+    JSONObject result = this.getParentAction().getMetricStatistics()
+        .getCodeViolations().toJsonObject();
+
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getCodeViolations();
+
+    result.put("scale", evaluator.getRatio());
+    result.put("available", evaluator.isAvailable());
+    result.put("percent", false);
+    
+    return result;
   }
 
   @Override

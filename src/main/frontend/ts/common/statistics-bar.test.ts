@@ -25,7 +25,7 @@ suite('statistics-bar', () => {
     ];
 
     const el = (await fixture(html`
-     <statistics-bar items="${JSON.stringify(items)}"><statistics-bar>
+      <statistics-bar items="${JSON.stringify(items)}"><statistics-bar>
     `)) as StatisticsBar;
 
     let elChild = el.querySelector('div.label.valid-good');

@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.ui.recipe;
 
 import com.lge.plugins.metashift.metrics.CodeSizeDelta;
 import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
+import com.lge.plugins.metashift.metrics.MetricStatistics;
 import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Recipe;
@@ -121,6 +122,10 @@ public class RecipeAction extends Actionable implements Action {
     return this.metrics;
   }
 
+  public MetricStatistics getMetricStatistics() {
+    return this.parent.getMetricStatistics();
+  }
+
   public String getName() {
     return this.name;
   }
@@ -149,12 +154,11 @@ public class RecipeAction extends Actionable implements Action {
     if (getParentAction().getPreviousBuildAction() != null) {
       List<RecipeAction> recipes =
           getParentAction().getPreviousBuildAction().getActions(RecipeAction.class);
-      for (RecipeAction recipe : recipes) {
-        if (recipe.name.equals(this.name)) {
-          return recipe.getMetrics();
-        }
-      }
-      return null;
+      RecipeAction prevRecipe = recipes.stream().filter(
+          o -> o.name.equals(this.name)).findFirst().orElse(null);
+      if (prevRecipe != null) {
+        return prevRecipe.getMetrics();
+      } 
     }
     return null;
   }

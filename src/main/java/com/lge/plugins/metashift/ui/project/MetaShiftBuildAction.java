@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.ui.project;
 import com.lge.plugins.metashift.metrics.CodeSizeDelta;
 import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
 import com.lge.plugins.metashift.metrics.Evaluator;
+import com.lge.plugins.metashift.metrics.MetricStatistics;
 import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.metrics.QualifiedRecipeCounter;
 import com.lge.plugins.metashift.models.Criteria;
@@ -68,6 +69,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
   private final Criteria criteria;
   private final QualifiedRecipeCounter qualifiedRecipeCounter;
   private Metrics metrics;
+  private MetricStatistics metricStatistics;
 
   private final DataSource dataSource;
 
@@ -89,6 +91,9 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
     listener.getLogger().println("Parse project recipes metrics");
     this.metrics = new Metrics(criteria);
     this.metrics.parse(recipes);
+
+    this.metricStatistics = new MetricStatistics(criteria);
+    this.metricStatistics.parse(recipes);
 
     listener.getLogger().println("Parse qualified recipe counter");
     this.qualifiedRecipeCounter = new QualifiedRecipeCounter(criteria);
@@ -179,6 +184,10 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
 
   public Metrics getMetrics() {
     return this.metrics;
+  }
+
+  public MetricStatistics getMetricStatistics() {
+    return this.metricStatistics;
   }
 
   public QualifiedRecipeCounter getQualifiedRecipeCounter() {

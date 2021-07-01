@@ -136,8 +136,23 @@ public class RecipeStatementCoverageAction extends RecipeActionChild {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getStatementCoverage();
     if (evaluator.isAvailable()) {
       return String.format("%d%%", (long) (evaluator.getRatio() * 100));
+    } else {
+      return "N/A";
     }
-    return "N/A";
+  }
+
+  @Override
+  public JSONObject getMetricStatistics() {
+    JSONObject result = this.getParentAction().getMetricStatistics()
+        .getStatementCoverage().toJsonObject();
+
+    Evaluator<?> evaluator = this.getParentAction().getMetrics().getStatementCoverage();
+
+    result.put("scale", evaluator.getRatio());
+    result.put("available", evaluator.isAvailable());
+    result.put("percent", true);
+    
+    return result;
   }
 
   @Override

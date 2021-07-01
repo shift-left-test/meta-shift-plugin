@@ -89,5 +89,7 @@ public abstract class RecipeActionChild implements Action {
 
   public abstract String getScale();
 
+  public abstract JSONObject getMetricStatistics();
+
   public abstract JSONArray getStatistics();
 }

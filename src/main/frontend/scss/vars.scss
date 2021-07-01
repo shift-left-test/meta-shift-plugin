@@ -2,6 +2,7 @@ $valid-good-color: #1f5384;
 $valid-bad-color: #e8671a;
 $valid-error-color: #fdb55a;
 $invalid-color: #818181;
+$empty-color: rgb(233, 233, 233);
 
 $major-color: $valid-bad-color;
 $minor-color: $valid-error-color;
@@ -13,3 +14,9 @@ $metrics-simple-view-progress-bg-color: #f2f2f2;
 $progress-bar-color: #a8c2d9;
 
 $test-simple-text-color: #1f5384;
+
+$average-color: #fdb55a;
+$average-outline-color: #fd805a;
+
+$scale-color: #818181;
+$scale-outline-color: #333333;

@@ -4,6 +4,7 @@ import {TestedSimpleView} from './tested-simple-view';
 import {RecipeTreemap} from './build/recipe-treemap';
 import {RecipeList} from './build/recipe-list';
 import {BuildTrendChart} from './build/build-trend-chart';
+import {ScaleBar} from './common/scale-bar';
 import {StatisticsBar} from './common/statistics-bar';
 import {PremirrorCacheList} from './premirror-cache/premirror-cache-list';
 import {SharedStateCacheList}
@@ -48,6 +49,7 @@ export {
   RecipeTreemap,
   RecipeList,
   BuildTrendChart,
+  ScaleBar,
   StatisticsBar,
   TestList,
   StatementCoverageFiles,
