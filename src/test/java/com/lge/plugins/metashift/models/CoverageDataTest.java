@@ -31,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -101,5 +102,15 @@ public class CoverageDataTest {
 
     Collections.sort(actual);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testToJsonObject() {
+    JSONObject object = origin.toJsonObject();
+    assertEquals("A-B-C", object.getString("recipe"));
+    assertEquals("a.file", object.getString("file"));
+    assertEquals(1, object.getLong("line"));
+    assertTrue(object.getBoolean("covered"));
+    assertEquals("Statement", object.getString("type"));
   }
 }

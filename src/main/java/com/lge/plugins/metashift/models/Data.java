@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.models;
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.sf.json.JSONObject;
 
 /**
  * Represents a data object for all metrics.
@@ -116,5 +117,14 @@ public abstract class Data<T> implements Comparable<T>, Serializable {
       }
     }
     return 0;
+  }
+
+  /**
+   * Returns the object as a JSONObject instance.
+   *
+   * @return a JSONObject instance
+   */
+  public JSONObject toJsonObject() {
+    return JSONObject.fromObject(this);
   }
 }

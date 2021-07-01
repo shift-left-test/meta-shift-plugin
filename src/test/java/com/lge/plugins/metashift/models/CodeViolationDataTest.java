@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotEquals;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -146,5 +147,19 @@ public class CodeViolationDataTest {
 
     Collections.sort(actual);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testToJsonObject() {
+    JSONObject object = origin.toJsonObject();
+    assertEquals("A-X-X", object.getString("recipe"));
+    assertEquals("a.file", object.getString("file"));
+    assertEquals(1, object.getLong("line"));
+    assertEquals(2, object.getLong("column"));
+    assertEquals("rule", object.getString("rule"));
+    assertEquals("msg", object.getString("message"));
+    assertEquals("desc", object.getString("description"));
+    assertEquals("E", object.getString("severity"));
+    assertEquals("tool", object.getString("tool"));
   }
 }

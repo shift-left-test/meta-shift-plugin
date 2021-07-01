@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotEquals;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -80,5 +81,13 @@ public class RecipeSizeDataTest {
 
     Collections.sort(actual);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testToJsonObject() {
+    JSONObject object = origin.toJsonObject();
+    assertEquals("A-1.0.0-r0", object.getString("recipe"));
+    assertEquals("a.bb", object.getString("file"));
+    assertEquals(10, object.getLong("lines"));
   }
 }

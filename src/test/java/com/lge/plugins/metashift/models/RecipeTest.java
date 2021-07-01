@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -314,5 +315,11 @@ public class RecipeTest {
     Mockito.verify(logger, Mockito.times(12))
         .printf(Mockito.startsWith("[Recipe] %s: processing"),
             Mockito.anyString(), Mockito.anyString());
+  }
+
+  @Test
+  public void testToJsonObject() {
+    JSONObject object = origin.toJsonObject();
+    assertEquals("cmake-project-1.0.0-r0", object.getString("recipe"));
   }
 }

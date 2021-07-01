@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotEquals;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -89,5 +90,14 @@ public class DuplicationDataTest {
 
     Collections.sort(actual);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testToJsonObject() {
+    JSONObject object = origin.toJsonObject();
+    assertEquals("A-1.0.0-r0", object.getString("recipe"));
+    assertEquals("a.file", object.getString("file"));
+    assertEquals(10, object.getLong("lines"));
+    assertEquals(5, object.getLong("duplicatedLines"));
   }
 }

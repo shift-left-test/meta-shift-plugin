@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotEquals;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -127,5 +128,18 @@ public class MutationTestDataTest {
 
     Collections.sort(actual);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testToJsonObject() {
+    JSONObject object = origin.toJsonObject();
+    assertEquals("A-X-X", object.getString("recipe"));
+    assertEquals("a.file", object.getString("file"));
+    assertEquals("C", object.getString("mutatedClass"));
+    assertEquals("f()", object.getString("mutatedMethod"));
+    assertEquals(1, object.getLong("line"));
+    assertEquals("AOR", object.getString("mutator"));
+    assertEquals("TC", object.getString("killingTest"));
+    assertEquals("KILLED", object.getString("status"));
   }
 }
