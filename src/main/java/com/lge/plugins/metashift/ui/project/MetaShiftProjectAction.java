@@ -56,18 +56,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
 
   @Override
   public String getIconFileName() {
-    Jenkins jenkins = Jenkins.getInstanceOrNull();
-    if (jenkins == null) {
-      return "";
-    }
-
-    PluginWrapper wrapper = jenkins.getPluginManager().getPlugin(MetaShiftPlugin.class);
-
-    if (wrapper == null) {
-      return "";
-    }
-
-    return "/plugin/" + wrapper.getShortName() + "/img/meta_shift_first.png";
+    return "/plugin/metashift/img/meta_shift_first.png";
   }
 
   @Override
