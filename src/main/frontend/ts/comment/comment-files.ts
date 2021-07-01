@@ -15,7 +15,7 @@ export class CommentFiles extends FilesTable {
 
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'file', widthGrow: 1},
-      {title: 'Comment Rate', field: 'commentRate',
+      {title: 'Comment Rate', field: 'ratio',
         formatter: 'progress',
         formatterParams: {min: 0, max: 1, legend: function(value) {
           return Math.floor(value * 100) + '%';

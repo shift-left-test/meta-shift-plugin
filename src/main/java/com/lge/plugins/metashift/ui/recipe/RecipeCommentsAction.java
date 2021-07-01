@@ -58,14 +58,7 @@ public class RecipeCommentsAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    JSONArray commentArray = new JSONArray();
-
-    recipe.objects(CommentData.class).forEach(o -> {
-      JSONObject commentObject = JSONObject.fromObject(o);
-      commentObject.put("commentRate",
-          o.getLines() > 0 ? (double) o.getCommentLines() / (double) o.getLines() : 1);
-      commentArray.add(commentObject);
-    });
+    JSONArray commentArray = JSONArray.fromObject(recipe.objects(CommentData.class).toArray());
 
     try {
       dataSource.put(commentArray, this.getParentAction().getName(), STORE_KEY_COMMENTLIST);

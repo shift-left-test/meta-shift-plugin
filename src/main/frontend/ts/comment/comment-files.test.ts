@@ -27,7 +27,7 @@ suite('comment-files', () => {
       responseJSON: [
         {
           file: 'test',
-          commentRate: 0.1,
+          ratio: 0.1,
           lines: 20,
           commentLines: 2,
         },
@@ -45,7 +45,7 @@ suite('comment-files', () => {
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="commentRate"]');
+        'div.tabulator-cell[tabulator-field="ratio"]');
     assert.equal(elChild.textContent, '10%',
         elChild.outerHTML);
 

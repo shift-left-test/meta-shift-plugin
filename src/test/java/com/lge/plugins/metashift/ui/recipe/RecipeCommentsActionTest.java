@@ -103,6 +103,6 @@ public class RecipeCommentsActionTest {
     JSONArray recipeFiles = action.getRecipeFiles();
 
     assertContainsKey(recipeFiles.getJSONObject(0),
-        "file", "commentLines", "lines", "commentRate");
+        "file", "commentLines", "lines", "ratio");
   }
 }
