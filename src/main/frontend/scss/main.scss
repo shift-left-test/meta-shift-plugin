@@ -74,15 +74,6 @@
     font-size: 40px;
   }
 
-  .badge {
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 12px;
-    color: white;
-    padding: 3px;
-    margin: 3px 3px;
-  }
-
   .list-group {
     height: 100%;
     overflow: auto;
@@ -102,7 +93,7 @@
 }
 
 .ico {
-  padding: 0px 18px 5px 30px;
+  padding: 0px 20px 5px 10px;
   background-position: 50%;
   background-size: 24px 24px;
   background-repeat: no-repeat;
@@ -141,47 +132,6 @@ build-trend-chart {
   }
 }
 
-build-summary {
-  width: 625px;
-  display: block;
-  background-color: rgb(248, 248, 248);
-  div {
-    display: inline-block;
-    height: 30px;
-    vertical-align: middle;
-    margin: 1px;
-    padding: 0px;
-    //border: 1px solid;
-    border-color: rgb(190, 190, 190);
-  }
-  .title {
-    width: 25%;
-    background-color: rgb(194, 194, 194);
-    text-align: center;
-  }
-
-  .ratio {
-    width: 15%;
-    background-color: #fff;
-    text-align: center;
-  }
-  .description {
-    width: 30%;
-  }
-
-  .progress {
-    width: 55%;
-    height: 20px;
-    margin: 0px;
-    background-color: rgb(202, 202, 202);
-  }
-
-  .progress-bar {
-    margin: 0px;
-    height: 20px;
-  }
-}
-
 code-size {
   .size-item {
     display: inline-block;
@@ -209,7 +159,6 @@ code-size {
   .size-diff {
     font-size: 20px;
     font-weight: normal;
-    color: gray;
   }
 }
 
@@ -219,7 +168,7 @@ metrics-simple-view {
 
   margin: 2px;
   text-align: center;
-  width: 220px;
+  width: 200px;
 
   .board{
     border: 1px solid;
@@ -228,9 +177,18 @@ metrics-simple-view {
   }
 
   .title {
+    width: 100%;
     padding-top: 8px;
-    padding-left: 40px;
     font-size: 16px;
+    position: relative;
+    display: inline-block;
+
+    .icon {
+      display: inline-block;
+      position: absolute;
+      right: 0px;
+      width: 0px;
+    }
   }
 
   .size-number {
@@ -243,7 +201,6 @@ metrics-simple-view {
 
   .size-diff {
     font-size: 20px;
-    color: gray;
   }
 
   .progress {
@@ -257,6 +214,10 @@ metrics-simple-view {
     height: 10px;
     background-color: $metrics-simple-view-progress-color;
   }
+}
+
+metrics-simple-view.summary {
+  width: 180px;
 }
 
 metrics-simple-view.has-url:hover {
@@ -455,7 +416,7 @@ recipe-treemap {
 }
 
 .text-na {
-  color: gray;
+  color: $na-text-color;
 }
 
 .text-pass {

@@ -60,6 +60,8 @@ export class BuildTrendChart extends LitElement {
           trigger: 'axis',
         },
         legend: {
+          type: 'scroll',
+          pageButtonPosition: 'start',
           data: legend,
         },
         xAxis: {
@@ -79,9 +81,6 @@ export class BuildTrendChart extends LitElement {
             name: 'float',
           }],
         series: series,
-        grid: {
-          top: 80,
-        },
       };
 
       that.trendChart.setOption(option);

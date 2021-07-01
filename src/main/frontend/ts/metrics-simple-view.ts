@@ -39,7 +39,7 @@ export class MetricsSimpleView extends LitElement {
     const isPercent = this.classList.contains('percent');
     const isSummary = this.classList.contains('summary');
 
-    const diffDirection = this.delta == 0 ? null :
+    const diffDirection = !evaluator.available || this.delta == 0 ? null :
         (this.delta > 0 ? '▲' : '▼');
     const textClass = evaluator.available ? '' : 'text-na';
     const iconClass = evaluator.available ?
@@ -50,9 +50,15 @@ export class MetricsSimpleView extends LitElement {
       evaluator.ratio - this.threshold;
     const diffThresholdPrefix = diffThreshold > 0 ? '+' : null;
 
+    const diffThresholdHtml = evaluator.available ?
+      (isPercent ? html`(${diffThresholdPrefix}${diffThreshold}%)` :
+      html`(${diffThresholdPrefix}${Number(diffThreshold).toFixed(2)})`) :
+      html`(N/A)`;
+
     return html`<div class="board">
       <div class="title">
-        <b class="${iconClass}">${this.title}</b>
+        <b>${this.title}</b>
+        <div class="icon ${iconClass}"></div>
       </div>
       <div class="size-number ${textClass}">
         ${evaluator.available ?
@@ -64,9 +70,12 @@ export class MetricsSimpleView extends LitElement {
       ${this.delta ?
         html`
           <div class="size-diff ${textClass}">
-            (${diffDirection}${isPercent ?
+          ${evaluator.available ?
+            html`(${diffDirection}${isPercent ?
               html`${Math.floor(Math.abs(this.delta * 100))}%`:
-              html`${Number(Math.abs(this.delta)).toFixed(2)}`})
+              html`${Number(Math.abs(this.delta)).toFixed(2)}`})` :
+            html`(N/A)`
+          }
           </div>` :
         html``}
       ${!isSummary ?
@@ -78,9 +87,9 @@ export class MetricsSimpleView extends LitElement {
         html``}
       ${this.threshold ?
         html`
-          <div>Threshold: ${this.threshold}${isPercent ?
-            html`%(${diffThresholdPrefix}${diffThreshold}%)`:
-            html`(${diffThresholdPrefix}${Number(diffThreshold).toFixed(2)})`}
+          <div class="description ${textClass}">
+            Threshold: ${this.threshold}${isPercent ? html`%` : html``}
+            ${diffThresholdHtml}
           </div>` :
         html``}
     </div>
