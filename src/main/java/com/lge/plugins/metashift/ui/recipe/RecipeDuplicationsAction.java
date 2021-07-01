@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.StatisticsItem;
+import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -58,9 +58,8 @@ public class RecipeDuplicationsAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    JSONArray duplicationList = new JSONArray();
-
-    recipe.objects(DuplicationData.class).forEach(duplicationList::add);
+    JSONArray duplicationList = JSONArray.fromObject(
+        recipe.objects(DuplicationData.class).toArray());
 
     try {
       dataSource.put(duplicationList, this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
@@ -113,22 +112,15 @@ public class RecipeDuplicationsAction
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getDuplications();
 
-    StatisticsItem[] result = new StatisticsItem[]{
-        new StatisticsItem(
-            "Duplicated",
-            (int) (evaluator.getRatio() * 100),
-            (int) evaluator.getNumerator(),
-            "valid-bad"
-        ),
-        new StatisticsItem(
-            "Code",
-            (int) ((1 - evaluator.getRatio()) * 100),
-            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-            "invalid"
-        )
-    };
+    StatisticsItemList stats = new StatisticsItemList();
+    stats.addItem("Duplicated", "valid-bad",
+        (int) (evaluator.getRatio() * 100),
+        (int) evaluator.getNumerator());
+    stats.addItem("Code", "invalid",
+        (int) ((1 - evaluator.getRatio()) * 100),
+        (int) (evaluator.getDenominator() - evaluator.getNumerator()));
 
-    return JSONArray.fromObject(result);
+    return stats.toJsonArray();
   }
 
   /**

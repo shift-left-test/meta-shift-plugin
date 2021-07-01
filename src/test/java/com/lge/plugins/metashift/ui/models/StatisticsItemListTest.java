@@ -24,39 +24,26 @@
 
 package com.lge.plugins.metashift.ui.models;
 
-/**
- * recipe statistics info.
- */
-public class StatisticsItem {
+import static org.junit.Assert.assertEquals;
 
-  private final String label;
-  private final long width;
-  private final long count;
-  private final String clazz;
+import org.junit.Test;
 
-  /**
-   * constructor.
-   */
-  public StatisticsItem(String label, long width, long count, String clazz) {
-    this.label = label;
-    this.width = width;
-    this.count = count;
-    this.clazz = clazz;
-  }
+import net.sf.json.JSONArray;
 
-  public String getLabel() {
-    return label;
-  }
+public class StatisticsItemListTest {
 
-  public long getWidth() {
-    return width;
-  }
+  @Test
+  public void testInitData() {
+    StatisticsItemList stats = new StatisticsItemList();
+    stats.addItem("test", "good", 10, 20);
 
-  public long getCount() {
-    return count;
-  }
+    JSONArray datalist = stats.toJsonArray();
 
-  public String getClazz() {
-    return clazz;
+    assertEquals(1, datalist.size());
+
+    assertEquals("test", datalist.getJSONObject(0).getString("label"));
+    assertEquals(10, datalist.getJSONObject(0).getLong("width"));
+    assertEquals(20, datalist.getJSONObject(0).getLong("count"));
+    assertEquals("good", datalist.getJSONObject(0).getString("clazz"));
   }
 }

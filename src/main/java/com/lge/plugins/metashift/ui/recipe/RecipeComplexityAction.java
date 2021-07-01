@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.StatisticsItem;
+import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -154,22 +154,15 @@ public class RecipeComplexityAction
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getComplexity();
 
-    StatisticsItem[] result = new StatisticsItem[]{
-        new StatisticsItem(
-            "Complex",
-            (int) (evaluator.getRatio() * 100),
-            (int) evaluator.getNumerator(),
-            "valid-bad"
-        ),
-        new StatisticsItem(
-            "Normal",
-            (int) ((1 - evaluator.getRatio()) * 100),
-            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-            "invalid"
-        )
-    };
+    StatisticsItemList stats = new StatisticsItemList();
+    stats.addItem("Complex", "valid-bad",
+        (int) (evaluator.getRatio() * 100),
+        (int) evaluator.getNumerator());
+    stats.addItem("Normal", "invalid",
+        (int) ((1 - evaluator.getRatio()) * 100),
+        (int) (evaluator.getDenominator() - evaluator.getNumerator()));
 
-    return JSONArray.fromObject(result);
+    return stats.toJsonArray();
   }
 
   /**

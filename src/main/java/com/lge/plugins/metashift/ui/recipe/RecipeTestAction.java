@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.StatisticsItem;
+import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -67,10 +67,7 @@ public class RecipeTestAction extends RecipeActionChild {
 
     List<TestData> testList = recipe.objects(TestData.class).collect(Collectors.toList());
 
-    JSONArray testArray = new JSONArray();
-    testList.forEach(o -> {
-      testArray.add(o);
-    });
+    JSONArray testArray = JSONArray.fromObject(testList);
 
     passedCount = testList.stream()
         .filter(o -> o.getStatus().equals("PASSED")).count();
@@ -132,34 +129,21 @@ public class RecipeTestAction extends RecipeActionChild {
   public JSONArray getStatistics() {
     long allCount = passedCount + failedCount + errorCount + skippedCount;
 
-    StatisticsItem[] result = new StatisticsItem[]{
-        new StatisticsItem(
-            "Passed",
-            allCount > 0 ? passedCount * 100 / allCount : 0,
-            passedCount,
-            "valid-good"
-        ),
-        new StatisticsItem(
-            "Failed",
-            allCount > 0 ? failedCount * 100 / allCount : 0,
-            failedCount,
-            "valid-bad"
-        ),
-        new StatisticsItem(
-            "Error",
-            allCount > 0 ? errorCount * 100 / allCount : 0,
-            errorCount,
-            "valid-error"
-        ),
-        new StatisticsItem(
-            "Skipped",
-            allCount > 0 ? skippedCount * 100 / allCount : 0,
-            skippedCount,
-            "invalid"
-        )
-    };
+    StatisticsItemList stats = new StatisticsItemList();
+    stats.addItem("Passed", "valid-good",
+        allCount > 0 ? passedCount * 100 / allCount : 0,
+        passedCount);
+    stats.addItem("Failed", "valid-bad",
+        allCount > 0 ? failedCount * 100 / allCount : 0,
+        failedCount);
+    stats.addItem("Error", "valid-error",
+        allCount > 0 ? errorCount * 100 / allCount : 0,
+        errorCount);
+    stats.addItem("Skipped", "invalid",
+        allCount > 0 ? skippedCount * 100 / allCount : 0,
+        skippedCount);
 
-    return JSONArray.fromObject(result);
+    return stats.toJsonArray();
   }
 
   /**

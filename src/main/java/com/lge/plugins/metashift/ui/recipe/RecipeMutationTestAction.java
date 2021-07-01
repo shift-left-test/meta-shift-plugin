@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.StatisticsItem;
+import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -165,28 +165,18 @@ public class RecipeMutationTestAction extends RecipeActionChild {
   public JSONArray getStatistics() {
     long allCount = killedCount + survivedCount + skippedCount;
 
-    StatisticsItem[] result = new StatisticsItem[]{
-        new StatisticsItem(
-            "Killed",
-            allCount > 0 ? killedCount * 100 / allCount : 0,
-            killedCount,
-            "valid-good"
-        ),
-        new StatisticsItem(
-            "Survived",
-            allCount > 0 ? survivedCount * 100 / allCount : 0,
-            survivedCount,
-            "valid-bad"
-        ),
-        new StatisticsItem(
-            "Skipped",
-            allCount > 0 ? skippedCount * 100 / allCount : 0,
-            skippedCount,
-            "invalid"
-        )
-    };
+    StatisticsItemList stats = new StatisticsItemList();
+    stats.addItem("Killed", "valid-good",
+        allCount > 0 ? killedCount * 100 / allCount : 0,
+        killedCount);
+    stats.addItem("Survived", "valid-bad",
+        allCount > 0 ? survivedCount * 100 / allCount : 0,
+        survivedCount);
+    stats.addItem("Skipped", "invalid",
+        allCount > 0 ? skippedCount * 100 / allCount : 0,
+        skippedCount);
 
-    return JSONArray.fromObject(result);
+    return stats.toJsonArray();
   }
 
   /**

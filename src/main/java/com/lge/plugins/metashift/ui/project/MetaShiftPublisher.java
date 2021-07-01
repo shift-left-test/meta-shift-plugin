@@ -82,8 +82,10 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   /**
    * Plugin descriptor class.
    *
+   * <p>
    * Symbol "metashift" is annotated for pipeline job simple usage. pipeline script example below.
    * metashift reportRoot:'report_test/report',  localCriteria: null
+   * </p>
    */
   @Symbol("metashift")
   @Extension

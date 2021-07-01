@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.StatisticsItem;
+import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -58,10 +58,8 @@ public class RecipeSharedStateCacheAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    JSONArray cacheList = new JSONArray();
-    recipe.objects(SharedStateCacheData.class).forEach(o -> {
-      cacheList.add(o);
-    });
+    JSONArray cacheList = JSONArray.fromObject(
+        recipe.objects(SharedStateCacheData.class).toArray());
 
     try {
       dataSource.put(cacheList, this.getParentAction().getName(), STORE_KEY_CACHELIST);
@@ -114,22 +112,15 @@ public class RecipeSharedStateCacheAction
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getSharedStateCache();
 
-    StatisticsItem[] result = new StatisticsItem[]{
-        new StatisticsItem(
-            "Cached",
-            (int) (evaluator.getRatio() * 100),
-            (int) evaluator.getNumerator(),
-            "valid-good"
-        ),
-        new StatisticsItem(
-            "Uncached",
-            (int) ((1 - evaluator.getRatio()) * 100),
-            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-            "invalid"
-        )
-    };
+    StatisticsItemList stats = new StatisticsItemList();
+    stats.addItem("Cached", "valid-good",
+        (int) (evaluator.getRatio() * 100),
+        (int) evaluator.getNumerator());
+    stats.addItem("Uncached", "invalid",
+        (int) ((1 - evaluator.getRatio()) * 100),
+        (int) (evaluator.getDenominator() - evaluator.getNumerator()));
 
-    return JSONArray.fromObject(result);
+    return stats.toJsonArray();
   }
 
   /**

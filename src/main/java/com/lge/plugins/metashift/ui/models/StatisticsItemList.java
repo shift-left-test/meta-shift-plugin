@@ -24,19 +24,57 @@
 
 package com.lge.plugins.metashift.ui.models;
 
-import static org.junit.Assert.assertEquals;
+import java.util.ArrayList;
+import net.sf.json.JSONArray;
 
-import org.junit.Test;
+/**
+ * recipe mettics statistics item list class.
+ */
+public class StatisticsItemList
+    extends ArrayList<StatisticsItemList.Item> {
 
-public class StatisticsItemTest {
+  public void addItem(String label, String clazz, long width, long count) {
+    this.add(new Item(label, clazz, width, count));
+  }
 
-  @Test
-  public void testInitData() {
-    StatisticsItem item = new StatisticsItem("test", 10, 20, "good");
+  public JSONArray toJsonArray() {
+    return JSONArray.fromObject(this);
+  }
 
-    assertEquals("test", item.getLabel());
-    assertEquals(10, item.getWidth());
-    assertEquals(20, item.getCount());
-    assertEquals("good", item.getClazz());
+  /**
+   * recipe statistics info.
+   */
+  public static class Item {
+
+    private final String label;
+    private final long width;
+    private final long count;
+    private final String clazz;
+
+    /**
+     * constructor.
+     */
+    public Item(String label, String clazz, long width, long count) {
+      this.label = label;
+      this.width = width;
+      this.count = count;
+      this.clazz = clazz;
+    }
+
+    public String getLabel() {
+      return label;
+    }
+
+    public long getWidth() {
+      return width;
+    }
+
+    public long getCount() {
+      return count;
+    }
+
+    public String getClazz() {
+      return clazz;
+    }
   }
 }

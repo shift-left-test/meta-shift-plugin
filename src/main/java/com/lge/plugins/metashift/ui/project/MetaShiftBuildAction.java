@@ -212,7 +212,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
           (int) recipeAction.getMetrics().getCodeSize().getLines(),
           (int) (recipeAction.getMetrics().getRatio() * 100));
     }
-    return JSONObject.fromObject(model);
+    return model.toJsonObject();
   }
 
   /**
@@ -335,7 +335,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
     CodeSizeEvaluator previous = Optional.ofNullable(getPreviousMetrics())
         .map(Metrics::getCodeSize).orElse(null);
     CodeSizeEvaluator current = getMetrics().getCodeSize();
-    return JSONObject.fromObject(CodeSizeDelta.between(previous, current));
+    return CodeSizeDelta.between(previous, current).toJsonObject();
   }
 
   private double getRatioDelta(Function<Metrics, Evaluator<?>> mapper) {

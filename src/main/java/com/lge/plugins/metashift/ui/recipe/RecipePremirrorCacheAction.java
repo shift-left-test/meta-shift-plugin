@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.StatisticsItem;
+import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -58,10 +58,8 @@ public class RecipePremirrorCacheAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    JSONArray cacheArray = new JSONArray();
-    recipe.objects(PremirrorCacheData.class).forEach(o -> {
-      cacheArray.add(o);
-    });
+    JSONArray cacheArray = JSONArray.fromObject(
+        recipe.objects(PremirrorCacheData.class).toArray());
 
     try {
       dataSource.put(cacheArray, this.getParentAction().getName(), STORE_KEY_CACHELIST);
@@ -115,22 +113,15 @@ public class RecipePremirrorCacheAction
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getPremirrorCache();
 
-    StatisticsItem[] result = new StatisticsItem[]{
-        new StatisticsItem(
-            "Cached",
-            (int) (evaluator.getRatio() * 100),
-            (int) evaluator.getNumerator(),
-            "valid-good"
-        ),
-        new StatisticsItem(
-            "Uncached",
-            (int) ((1 - evaluator.getRatio()) * 100),
-            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-            "invalid"
-        )
-    };
+    StatisticsItemList stats = new StatisticsItemList();
+    stats.addItem("Cached", "valid-good",
+        (int) (evaluator.getRatio() * 100),
+        (int) evaluator.getNumerator());
+    stats.addItem("Uncached", "invalid",
+        (int) ((1 - evaluator.getRatio()) * 100),
+        (int) (evaluator.getDenominator() - evaluator.getNumerator()));
 
-    return JSONArray.fromObject(result);
+    return stats.toJsonArray();
   }
 
   /**

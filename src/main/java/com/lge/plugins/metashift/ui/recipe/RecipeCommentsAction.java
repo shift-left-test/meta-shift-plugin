@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.StatisticsItem;
+import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -58,7 +58,8 @@ public class RecipeCommentsAction
       DataSource dataSource, Recipe recipe, JSONObject metadata) {
     super(parent);
 
-    JSONArray commentArray = JSONArray.fromObject(recipe.objects(CommentData.class).toArray());
+    JSONArray commentArray = JSONArray.fromObject(
+        recipe.objects(CommentData.class).toArray());
 
     try {
       dataSource.put(commentArray, this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
@@ -111,22 +112,15 @@ public class RecipeCommentsAction
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getComments();
 
-    StatisticsItem[] result = new StatisticsItem[]{
-        new StatisticsItem(
-            "Comments",
-            (int) (evaluator.getRatio() * 100),
-            (int) evaluator.getNumerator(),
-            "valid-good"
-        ),
-        new StatisticsItem(
-            "Code",
-            (int) ((1 - evaluator.getRatio()) * 100),
-            (int) (evaluator.getDenominator() - evaluator.getNumerator()),
-            "invalid"
-        )
-    };
+    StatisticsItemList stats = new StatisticsItemList();
+    stats.addItem("Comments", "valid-good",
+        (int) (evaluator.getRatio() * 100),
+        (int) evaluator.getNumerator());
+    stats.addItem("Code", "invalid",
+        (int) ((1 - evaluator.getRatio()) * 100),
+        (int) (evaluator.getDenominator() - evaluator.getNumerator()));
 
-    return JSONArray.fromObject(result);
+    return stats.toJsonArray();
   }
 
   /**

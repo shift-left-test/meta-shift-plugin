@@ -123,6 +123,6 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
       }
     }
 
-    return JSONObject.fromObject(model);
+    return model.toJsonObject();
   }
 }

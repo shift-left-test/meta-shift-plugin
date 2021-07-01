@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.ui.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.json.JSONObject;
 
 /**
  * recipe treemap chart model.
@@ -90,5 +91,9 @@ public class RecipesTreemapModel {
 
   public List<TreemapData> getSeries() {
     return series;
+  }
+
+  public JSONObject toJsonObject() {
+    return JSONObject.fromObject(this);
   }
 }

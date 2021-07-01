@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import net.sf.json.JSONObject;
 
 /**
  * trend chart model.
@@ -161,5 +162,9 @@ public class BuildTrendModel {
     buildNameList.add(0, buildName);
     seriesList.forEach(o -> o.addData(metrics));
     return true;
+  }
+
+  public JSONObject toJsonObject() {
+    return JSONObject.fromObject(this);
   }
 }

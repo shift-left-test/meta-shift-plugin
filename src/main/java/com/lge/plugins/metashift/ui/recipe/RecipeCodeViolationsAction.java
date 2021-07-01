@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.StatisticsItem;
+import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -166,28 +166,18 @@ public class RecipeCodeViolationsAction
   public JSONArray getStatistics() {
     long allCount = majorCount + minorCount + infoCount;
 
-    StatisticsItem[] result = new StatisticsItem[]{
-        new StatisticsItem(
-            "Major",
-            allCount > 0 ? majorCount * 100 / allCount : 0,
-            majorCount,
-            "major"
-        ),
-        new StatisticsItem(
-            "Minor",
-            allCount > 0 ? minorCount * 100 / allCount : 0,
-            minorCount,
-            "minor"
-        ),
-        new StatisticsItem(
-            "Info",
-            allCount > 0 ? infoCount * 100 / allCount : 0,
-            infoCount,
-            "informational"
-        )
-    };
+    StatisticsItemList stats = new StatisticsItemList();
+    stats.addItem("Major", "major",
+        allCount > 0 ? majorCount * 100 / allCount : 0,
+        majorCount);
+    stats.addItem("Minor", "minor",
+        allCount > 0 ? minorCount * 100 / allCount : 0,
+        minorCount);
+    stats.addItem("Info", "informational",
+        allCount > 0 ? infoCount * 100 / allCount : 0,
+        infoCount);
 
-    return JSONArray.fromObject(result);
+    return stats.toJsonArray();
   }
 
   /**

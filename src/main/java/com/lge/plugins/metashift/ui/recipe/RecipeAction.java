@@ -32,11 +32,13 @@ import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
+import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.Actionable;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -72,8 +74,8 @@ public class RecipeAction extends Actionable implements Action {
     this.metrics.parse(recipe);
 
     // parse metadata.json
-    JSONObject metadata = JSONObject.fromObject(
-        reportRoot.child(this.name).child("metadata.json").readToString());
+    JSONObject metadata = JsonUtils.createObject(new File(
+        reportRoot.child(this.name).child("metadata.json").toURI()));
 
     listener.getLogger().println("Create shared state cache report");
     this.addAction(new RecipeSharedStateCacheAction(
@@ -173,7 +175,7 @@ public class RecipeAction extends Actionable implements Action {
         Optional.ofNullable(getPreviousMetrics())
             .map(Metrics::getCodeSize).orElse(null);
     CodeSizeEvaluator current = getMetrics().getCodeSize();
-    return JSONObject.fromObject(CodeSizeDelta.between(previous, current)).discard("recipes");
+    return CodeSizeDelta.between(previous, current).toJsonObject().discard("recipes");
   }
 
   public JSONObject getCodeSizeJson() {
