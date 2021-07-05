@@ -10,7 +10,7 @@ import {FileDetail} from './file-detail';
 export class FilesTable extends LitElement {
   @property() fileView
 
-  @query('#files-table') filesTable
+  @query('.files-table') filesTable
 
   private requestFileDetailFunc;
   private tabulatorTable;
@@ -38,7 +38,7 @@ export class FilesTable extends LitElement {
    * @return {unknown}
    */
   render() : unknown {
-    return html`<div style="width:100%" id="files-table"></div>`;
+    return html`<div class="files-table"></div>`;
   }
 
   /**

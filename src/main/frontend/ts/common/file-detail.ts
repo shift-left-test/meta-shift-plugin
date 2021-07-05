@@ -51,10 +51,10 @@ export class FileDetail extends LitElement {
    * @return {unknown}
    */
   render() : unknown {
-    return html`<div class="split-panel" style="height: 500px">
+    return html`<div class="split-panel">
         <div id="editor-panel">
           <h3>Source - ${this.filePath}</h3>
-          <div id="source-code-editor" class="monaco-editor"></div>
+          <div id="source-code-editor" class="source-code-editor"></div>
         </div>
         <div id="data-list-panel">
           ${this.renderDataList()}
@@ -98,7 +98,7 @@ export class FileDetail extends LitElement {
   firstUpdated() : void {
     // eslint-disable-next-line new-cap
     Split([this.editorPanel, this.dataListPanel], {
-      sizes: [72, 25],
+      sizes: [75, 25],
       onDragEnd: this._handleResize.bind(this),
     });
 

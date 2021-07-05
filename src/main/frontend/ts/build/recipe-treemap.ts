@@ -68,7 +68,7 @@ export class RecipeTreemap extends LitElement {
             return [
               `<div class="tooltip-title">
               ${formatUtil.encodeHTML(treePath.join('/'))}</div>`,
-              `<div style="text-align: center; width: 100%">${value[1]}<div>`,
+              `<div class="tooltip-body">${value[1]}<div>`,
             ].join('');
           },
         },

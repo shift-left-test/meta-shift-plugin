@@ -14,7 +14,7 @@ suite('mutation-test-list', () => {
       <mutation-test-list></mutation-test-list>
     `)) as MutationTestList;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 

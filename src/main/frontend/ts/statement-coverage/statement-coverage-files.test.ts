@@ -14,7 +14,7 @@ suite('coverage-files', () => {
       <statement-coverage-files></statement-coverage-files>
     `)) as StatementCoverageFiles;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 
@@ -27,7 +27,7 @@ suite('coverage-files', () => {
       responseJSON: [
         {
           file: 'test',
-          coverage: 0.5,
+          coverage: 0.6,
         },
       ],
     };
@@ -43,7 +43,7 @@ suite('coverage-files', () => {
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="coverage"]');
-    assert.equal(elChild.textContent, '50%',
+    assert.equal(elChild.textContent, '60%',
         elChild.outerHTML);
   });
 });

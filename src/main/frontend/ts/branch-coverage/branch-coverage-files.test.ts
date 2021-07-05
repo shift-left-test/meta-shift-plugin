@@ -14,7 +14,7 @@ suite('branch-coverage-files', () => {
       <branch-coverage-files></branch-coverage-files>
     `)) as BranchCoverageFiles;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 

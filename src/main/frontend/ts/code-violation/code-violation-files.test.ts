@@ -14,7 +14,7 @@ suite('code-violation-files', () => {
       <code-violation-files></code-violation-files>
     `)) as CodeViolationFiles;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 

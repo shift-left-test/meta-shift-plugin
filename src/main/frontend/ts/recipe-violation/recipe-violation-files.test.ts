@@ -14,7 +14,7 @@ suite('recipe-violation-files', () => {
       <recipe-violation-files></recipe-violation-files>
     `)) as RecipeViolationFiles;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 

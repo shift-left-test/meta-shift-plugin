@@ -14,7 +14,7 @@ suite('test-list', () => {
       <test-list></test-list>
     `)) as TestList;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 

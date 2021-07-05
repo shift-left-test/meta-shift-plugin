@@ -14,7 +14,7 @@ suite('duplication-files', () => {
         <duplication-files></duplication-files>`
     )) as DuplicationFiles;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 

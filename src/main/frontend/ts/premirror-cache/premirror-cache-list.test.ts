@@ -14,7 +14,7 @@ suite('premirror-cache-list', () => {
       <premirror-cache-list></premirror-cache-list>
     `)) as PremirrorCacheList;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 

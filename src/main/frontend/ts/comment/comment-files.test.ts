@@ -14,7 +14,7 @@ suite('comment-files', () => {
         <comment-files></comment-files>`
     )) as CommentFiles;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 

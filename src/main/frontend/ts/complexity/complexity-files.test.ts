@@ -14,7 +14,7 @@ suite('complexity-files', () => {
       <complexity-files></complexity-files>
     `)) as ComplexityFiles;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 

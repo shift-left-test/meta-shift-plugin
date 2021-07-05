@@ -14,7 +14,7 @@ suite('files-table', () => {
         <files-table></files-table>`
     )) as FilesTable;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 });

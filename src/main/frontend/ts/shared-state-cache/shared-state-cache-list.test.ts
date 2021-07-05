@@ -14,7 +14,7 @@ suite('shared-state-cache-list', () => {
       <shared-state-cache-list></shared-state-cache-list>
     `)) as SharedStateCacheList;
 
-    assert.isNotNull(el.querySelector('#files-table'),
+    assert.isNotNull(el.querySelector('.files-table'),
         el.outerHTML);
   });
 
