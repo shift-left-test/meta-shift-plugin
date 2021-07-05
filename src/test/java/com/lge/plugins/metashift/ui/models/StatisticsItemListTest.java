@@ -26,9 +26,8 @@ package com.lge.plugins.metashift.ui.models;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
-
 import net.sf.json.JSONArray;
+import org.junit.Test;
 
 public class StatisticsItemListTest {
 

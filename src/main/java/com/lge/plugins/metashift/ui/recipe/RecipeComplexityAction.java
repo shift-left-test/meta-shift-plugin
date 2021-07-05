@@ -41,7 +41,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
- * MetaShift recipe's complexity detail view action class.
+ * Complexity detail view action class.
  */
 public class RecipeComplexityAction
     extends RecipeActionChild {
@@ -146,7 +146,7 @@ public class RecipeComplexityAction
     result.put("scale", evaluator.getRatio());
     result.put("available", evaluator.isAvailable());
     result.put("percent", true);
-    
+
     return result;
   }
 
@@ -172,10 +172,8 @@ public class RecipeComplexityAction
    */
   @JavaScriptMethod
   public JSONArray getRecipeFiles() {
-    JSONArray dataList = this.getDataSource().get(
+    return this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILECOMPLEXITYSTAT);
-
-    return dataList;
   }
 
   /**

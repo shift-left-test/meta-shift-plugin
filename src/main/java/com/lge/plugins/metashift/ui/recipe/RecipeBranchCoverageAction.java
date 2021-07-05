@@ -42,7 +42,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
- * MetaShift recipe's coverage detail view action class.
+ * Branch coverage detail view action class.
  */
 public class RecipeBranchCoverageAction extends RecipeActionChild {
 
@@ -153,7 +153,7 @@ public class RecipeBranchCoverageAction extends RecipeActionChild {
     result.put("scale", evaluator.getRatio());
     result.put("available", evaluator.isAvailable());
     result.put("percent", true);
-    
+
     return result;
   }
 

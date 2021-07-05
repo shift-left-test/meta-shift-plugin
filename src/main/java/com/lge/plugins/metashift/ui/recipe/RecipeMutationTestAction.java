@@ -41,7 +41,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
- * MetaShift recipe's mutation test detail view action class.
+ * Mutation test detail view action class.
  */
 public class RecipeMutationTestAction extends RecipeActionChild {
 
@@ -157,7 +157,7 @@ public class RecipeMutationTestAction extends RecipeActionChild {
     result.put("scale", evaluator.getRatio());
     result.put("available", evaluator.isAvailable());
     result.put("percent", true);
-    
+
     return result;
   }
 
@@ -186,10 +186,8 @@ public class RecipeMutationTestAction extends RecipeActionChild {
    */
   @JavaScriptMethod
   public JSONArray getRecipeMutationTests() {
-    JSONArray dataList = this.getDataSource().get(
+    return this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILEMUTATIONTESTSTAT);
-
-    return dataList;
   }
 
   /**

@@ -37,7 +37,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
- * MetaShift recipe's cache availability detail view action class.
+ * Premirror cache availability detail view action class.
  */
 public class RecipePremirrorCacheAction
     extends RecipeActionChild {
@@ -105,7 +105,7 @@ public class RecipePremirrorCacheAction
     result.put("scale", evaluator.getRatio());
     result.put("available", evaluator.isAvailable());
     result.put("percent", true);
-    
+
     return result;
   }
 
@@ -131,9 +131,7 @@ public class RecipePremirrorCacheAction
    */
   @JavaScriptMethod
   public JSONArray getRecipeCaches() {
-    JSONArray cacheList = this.getDataSource().get(
+    return this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_CACHELIST);
-
-    return cacheList;
   }
 }

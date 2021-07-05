@@ -160,7 +160,7 @@ public class RecipeAction extends Actionable implements Action {
           o -> o.name.equals(this.name)).findFirst().orElse(null);
       if (prevRecipe != null) {
         return prevRecipe.getMetrics();
-      } 
+      }
     }
     return null;
   }

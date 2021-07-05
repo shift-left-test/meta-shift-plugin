@@ -37,7 +37,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
- * MetaShift recipe's comment detail view action class.
+ * Comment detail view action class.
  */
 public class RecipeCommentsAction
     extends RecipeActionChild {
@@ -98,13 +98,13 @@ public class RecipeCommentsAction
   public JSONObject getMetricStatistics() {
     JSONObject result = this.getParentAction().getMetricStatistics()
         .getComments().toJsonObject();
-    
+
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getComments();
 
     result.put("scale", evaluator.getRatio());
     result.put("available", evaluator.isAvailable());
     result.put("percent", true);
-    
+
     return result;
   }
 

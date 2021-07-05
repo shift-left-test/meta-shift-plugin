@@ -41,7 +41,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
- * MetaShift recipe's recipe violation detail view action class.
+ * Recipe violation detail view action class.
  */
 public class RecipeRecipeViolationsAction extends RecipeActionChild {
 
@@ -157,7 +157,7 @@ public class RecipeRecipeViolationsAction extends RecipeActionChild {
     result.put("scale", evaluator.getRatio());
     result.put("available", evaluator.isAvailable());
     result.put("percent", false);
-    
+
     return result;
   }
 
@@ -186,9 +186,8 @@ public class RecipeRecipeViolationsAction extends RecipeActionChild {
    */
   @JavaScriptMethod
   public JSONArray getRecipeFiles() throws IOException {
-    JSONArray dataList = this.getDataSource().get(
+    return this.getDataSource().get(
         this.getParentAction().getName(), STORE_KEY_FILERECIPEVIOLATIONSTAT);
-    return dataList;
   }
 
   /**

@@ -104,7 +104,7 @@ public class RecipeDuplicationsAction
     result.put("scale", evaluator.getRatio());
     result.put("available", evaluator.isAvailable());
     result.put("percent", true);
-    
+
     return result;
   }
 

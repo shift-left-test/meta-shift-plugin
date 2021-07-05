@@ -25,13 +25,11 @@
 package com.lge.plugins.metashift.ui.project;
 
 import com.lge.plugins.metashift.ui.models.BuildTrendModel;
-import hudson.PluginWrapper;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Result;
 import java.io.IOException;
-import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;

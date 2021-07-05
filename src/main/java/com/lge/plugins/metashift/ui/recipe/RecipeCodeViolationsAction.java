@@ -41,7 +41,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
- * MetaShift recipe's code violation detail view action class.
+ * Code violation detail view action class.
  */
 public class RecipeCodeViolationsAction
     extends RecipeActionChild {
@@ -158,7 +158,7 @@ public class RecipeCodeViolationsAction
     result.put("scale", evaluator.getRatio());
     result.put("available", evaluator.isAvailable());
     result.put("percent", false);
-    
+
     return result;
   }
 
