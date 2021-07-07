@@ -111,9 +111,6 @@
         <configuration>
           <locale>ko_kr</locale>
           <encoding>utf-8</encoding>
-          <links>
-            <link>https://javadoc.jenkins.io/archive/jenkins-2.289/</link>
-          </links>
         </configuration>
       </plugin>
       <plugin>
