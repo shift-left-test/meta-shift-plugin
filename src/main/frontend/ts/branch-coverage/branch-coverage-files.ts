@@ -13,8 +13,6 @@ export class BranchCoverageFiles extends FilesTable {
   constructor() {
     super();
 
-    this.fileView = 'branch-coverage-file-view';
-
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'file', widthGrow: 1},
       {title: 'Coverage', field: 'coverage',

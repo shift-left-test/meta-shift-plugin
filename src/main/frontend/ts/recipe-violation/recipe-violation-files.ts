@@ -13,8 +13,6 @@ export class RecipeViolationFiles extends FilesTable {
   constructor() {
     super();
 
-    this.fileView = 'recipe-violation-file-view';
-
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'file', widthGrow: 1},
       {title: 'Major', field: 'major', width: 100},

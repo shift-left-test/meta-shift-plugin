@@ -13,8 +13,6 @@ export class StatementCoverageFiles extends FilesTable {
   constructor() {
     super();
 
-    this.fileView = 'statement-coverage-file-view';
-
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'file', widthGrow: 1},
       {title: 'Coverage', field: 'coverage',

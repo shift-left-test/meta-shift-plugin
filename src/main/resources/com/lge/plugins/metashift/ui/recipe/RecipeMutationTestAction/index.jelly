@@ -18,14 +18,19 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <h4>Statistics</h4>
         <statistics-bar class="section" items='${it.statistics}'/>
         <h4>Details</h4>
-        <mutation-test-list class="section" />
-        <mutation-test-file-view class="section" />
+        <mutation-test-list class="section"
+          page='${it.getUrlParameter("page")}'
+          sort='${it.getUrlParameter("sort")}' />
+        <mutation-test-file-view class="section" filePath='${it.getUrlParameter("file")}'
+          scrollX='${it.getUrlParameter("scrollX")}' scrollY='${it.getUrlParameter("scrollY")}' />
       </div>
       </div>
       <script type="text/javascript">
       {
         document.querySelector("mutation-test-list").setAjaxFunc(
-          proxy.getRecipeMutationTests,
+          proxy.getRecipeMutationTests
+        )
+        document.querySelector("mutation-test-file-view").setAjaxFunc(
           proxy.getFileMutationTestDetail
         )
       }

@@ -1,19 +1,17 @@
 import {html, LitElement} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import Tabulator from 'tabulator-tables';
-import {FileDetail} from './file-detail';
 
 @customElement('files-table')
 /**
  * files table.
  */
 export class FilesTable extends LitElement {
-  @property() fileView
-
+  @property() page
+  @property({type: String}) sort
   @query('.files-table') filesTable
 
-  private requestFileDetailFunc;
-  private tabulatorTable;
+  private tabulatorTable: Tabulator;
   protected columns;
 
   /**
@@ -23,6 +21,8 @@ export class FilesTable extends LitElement {
     super();
 
     this.columns = [];
+    this.page = 1;
+    this.sort = '"[]"';
   }
 
   /**
@@ -60,27 +60,30 @@ export class FilesTable extends LitElement {
    * @param {unknown} row
    */
   private _handleFileClicked(e, row) {
-    if (this.requestFileDetailFunc !== undefined) {
-      const filePath = row.getData().file;
-      this.requestFileDetailFunc(filePath, function(model) {
-        const fileView = <FileDetail>document.querySelector(this.fileView);
-        fileView.setSourceFile(filePath, model.responseJSON);
-      }.bind(this));
-    }
+    const sorters: [] = this.tabulatorTable.getSorters();
+    const sortinfo = sorters.map((o) => {
+      return {dir: o['dir'], column: o['field']};
+    });
+
+    window.location.href = `.?file=${row.getData().file}` +
+        `&scrollX=${window.scrollX}&scrollY=${window.scrollY}` +
+        `&page=${this.tabulatorTable.getPage()}` +
+        `&sort=${JSON.stringify(sortinfo)}`;
   }
 
   /**
    * set ajax func.
    * @param {unknown} requestFilesFunc
-   * @param {unknown} requestFileDetailFunc
    */
-  setAjaxFunc(requestFilesFunc: (callback) => void,
-      requestFileDetailFunc = undefined) : void {
+  setAjaxFunc(requestFilesFunc: (callback) => void) : void {
     const that = this;
 
     requestFilesFunc(function(model) {
       that.tabulatorTable.setData(model.responseJSON);
+      // to remove quotes parameter string, parse twice.
+      const sortinfo = JSON.parse(JSON.parse(that.sort));
+      that.tabulatorTable.setSort(sortinfo);
+      that.tabulatorTable.setPage(that.page);
     });
-    this.requestFileDetailFunc = requestFileDetailFunc;
   }
 }

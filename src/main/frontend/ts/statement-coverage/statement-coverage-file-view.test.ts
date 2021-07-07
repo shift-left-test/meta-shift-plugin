@@ -11,7 +11,8 @@ suite('statement-coverage-file-view', () => {
 
   test('create', async () => {
     const el = (await fixture(html`
-      <statement-coverage-file-view></statement-coverage-file-view>
+      <statement-coverage-file-view filePath='test'>
+      </statement-coverage-file-view>
     `)) as StatementCoverageFileView;
 
     assert.isNotNull(el.querySelector('div#editor-panel'),

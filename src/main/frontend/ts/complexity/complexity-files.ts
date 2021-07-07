@@ -13,8 +13,6 @@ export class ComplexityFiles extends FilesTable {
   constructor() {
     super();
 
-    this.fileView = 'complexity-file-view';
-
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'file', widthGrow: 1},
       {title: 'Functions', field: 'functions', width: 100},

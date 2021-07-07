@@ -11,7 +11,7 @@ suite('code-violation-file-view', () => {
 
   test('create', async () => {
     const el = (await fixture(html`
-      <code-violation-file-view></code-violation-file-view>
+      <code-violation-file-view filePath='test'></code-violation-file-view>
     `)) as CodeViolationFileView;
 
     assert.isNotNull(el.querySelector('div.list-group'),
@@ -20,10 +20,10 @@ suite('code-violation-file-view', () => {
 
   test('setSourceFile', async () => {
     const el = (await fixture(html`
-      <code-violation-file-view></code-violation-file-view>
+      <code-violation-file-view filePath='test'></code-violation-file-view>
     `)) as CodeViolationFileView;
 
-    el.setSourceFile('test.c', {
+    el.setSourceFile({
       content: '//test',
       dataList: [{
         line: 1,

@@ -13,8 +13,6 @@ export class MutationTestList extends FilesTable {
   constructor() {
     super();
 
-    this.fileView = 'mutation-test-file-view';
-
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'file', widthGrow: 1},
       {title: 'Killed', field: 'killed', width: 100},

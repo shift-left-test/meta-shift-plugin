@@ -18,15 +18,20 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <h4>Statistics</h4>
         <statistics-bar class="section" items='${it.statistics}'/>
         <h4>Details</h4>
-        <branch-coverage-files class="section" editorId="source-editor" />
-        <branch-coverage-file-view class="section" />
+        <branch-coverage-files class="section"
+          page='${it.getUrlParameter("page")}'
+          sort='${it.getUrlParameter("sort")}' />
+        <branch-coverage-file-view class="section" filePath='${it.getUrlParameter("file")}' 
+          scrollX='${it.getUrlParameter("scrollX")}' scrollY='${it.getUrlParameter("scrollY")}' />
       </div>
       </div>
       <script type="text/javascript">
       {
         document.querySelector("branch-coverage-files").setAjaxFunc(
-          proxy.getRecipeFiles,
-          proxy.getFileCoverageDetail
+          proxy.getRecipeFiles
+        )
+        document.querySelector("branch-coverage-file-view").setAjaxFunc(
+          proxy.getFileCoverageDetail, 
         )
       }
       </script>

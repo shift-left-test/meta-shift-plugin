@@ -14,13 +14,12 @@ export class ComplexityFileView extends FileDetail {
 
   /**
    * set source file override
-   * @param {string} filePath
    * @param {unknown} response
    */
-  setSourceFile(filePath: string, response: unknown)
+  setSourceFile(response: unknown)
       :void {
     this.complexityLevel = response['complexityLevel'];
-    super.setSourceFile(filePath, response);
+    super.setSourceFile(response);
   }
   /**
    * render data list.

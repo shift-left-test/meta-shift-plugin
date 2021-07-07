@@ -11,7 +11,7 @@ suite('branch-coverage-file-view', () => {
 
   test('create', async () => {
     const el = (await fixture(html`
-      <branch-coverage-file-view></branch-coverage-file-view>
+      <branch-coverage-file-view filePath='test'></branch-coverage-file-view>
     `)) as BranchCoverageFileView;
 
     assert.isNotNull(el.querySelector('div#editor-panel'),

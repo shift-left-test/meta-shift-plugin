@@ -11,7 +11,7 @@ suite('recipe-violation-file-view', () => {
 
   test('create', async () => {
     const el = (await fixture(html`
-      <recipe-violation-file-view></recipe-violation-file-view>
+      <recipe-violation-file-view filePath='test'></recipe-violation-file-view>
     `)) as RecipeViolationFileView;
 
     assert.isNotNull(el.querySelector('div#editor-panel'),

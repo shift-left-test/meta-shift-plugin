@@ -32,6 +32,7 @@ import hudson.remoting.VirtualChannel;
 import java.io.IOException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.Stapler;
 
 /**
  * MetaShift recipe's detail view common feature class.
@@ -92,4 +93,8 @@ public abstract class RecipeActionChild implements Action {
   public abstract JSONObject getMetricStatistics();
 
   public abstract JSONArray getStatistics();
+
+  public String getUrlParameter(String paramName) {
+    return Stapler.getCurrentRequest().getParameter(paramName);
+  }
 }

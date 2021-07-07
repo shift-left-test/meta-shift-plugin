@@ -23,12 +23,13 @@ export class FileDetail extends LitElement {
   @query('#data-list-panel') dataListPanel
 
   private codeEditor: EditorView;
-
-  protected filePath;
   protected dataList;
 
   protected currentLine;
 
+  @property() filePath;
+  @property({type: Number}) scrollX;
+  @property({type: Number}) scrollY;
   @property({type: Array}) protected currentDataList = [];
 
   /**
@@ -44,17 +45,21 @@ export class FileDetail extends LitElement {
    * @return {unknown}
    */
   render() : unknown {
-    return html`<div class="split-panel">
-        <div id="editor-panel">
-          <h3>Source - ${this.filePath}</h3>
-          <div id="source-code-editor" class="source-code-editor"
-            style="display: inline-block">
+    if (this.filePath) {
+      return html`<div class="split-panel">
+          <div id="editor-panel">
+            <h3>Source - ${this.filePath}</h3>
+            <div id="source-code-editor" class="source-code-editor"
+              style="display: inline-block">
+            </div>
           </div>
-        </div>
-        <div id="data-list-panel">
-          ${this.renderDataList()}
-        </div>
-      </div>`;
+          <div id="data-list-panel">
+            ${this.renderDataList()}
+          </div>
+        </div>`;
+    } else {
+      return html`Click on a file to view its details.`;
+    }
   }
 
   /**
@@ -69,24 +74,38 @@ export class FileDetail extends LitElement {
    * first updated.
    */
   firstUpdated() : void {
-    // eslint-disable-next-line new-cap
-    Split([this.editorPanel, this.dataListPanel], {
-      sizes: [75, 25],
-    });
+    if (this.filePath) {
+      // eslint-disable-next-line new-cap
+      Split([this.editorPanel, this.dataListPanel], {
+        sizes: [75, 25],
+      });
 
-    this.codeEditor = new EditorView({
-      parent: this.sourceCodeEditor,
-    });
+      this.codeEditor = new EditorView({
+        parent: this.sourceCodeEditor,
+      });
+    }
+  }
+
+  /**
+   * set ajax func.
+   * @param {unknown} requestFileDetailFunc
+   * @param {unknown} filePath
+   */
+  setAjaxFunc(requestFileDetailFunc = undefined) : void {
+    if (this.filePath) {
+      requestFileDetailFunc(this.filePath, function(model) {
+        this.setSourceFile(model.responseJSON);
+        window.scroll(this.scrollX, this.scrollY);
+      }.bind(this));
+    }
   }
 
   /**
    * set source file
-   * @param {string} filePath
    * @param {unknown} response
    */
-  setSourceFile(filePath: string, response: unknown)
+  setSourceFile(response: unknown)
     : void {
-    this.filePath = filePath;
     this.dataList = response['dataList'];
 
     const fileExtension = this.filePath.split('.').pop().toLowerCase();

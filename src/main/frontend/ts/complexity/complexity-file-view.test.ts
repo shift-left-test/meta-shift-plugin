@@ -11,7 +11,7 @@ suite('complexity-file-view', () => {
 
   test('create', async () => {
     const el = (await fixture(html`
-      <complexity-file-view></complexity-file-view>
+      <complexity-file-view filePath='test'></complexity-file-view>
     `)) as ComplexityFileView;
 
     assert.isNotNull(el.querySelector('div#editor-panel'),

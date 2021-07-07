@@ -11,7 +11,7 @@ suite('file-detail', () => {
 
   test('create', async () => {
     const el = (await fixture(html`
-        <file-detail></file-detail>`
+        <file-detail filePath='test'></file-detail>`
     )) as FileDetail;
 
     assert.isNotNull(el.querySelector('#editor-panel'),

@@ -13,8 +13,6 @@ export class CodeViolationFiles extends FilesTable {
   constructor() {
     super();
 
-    this.fileView = 'code-violation-file-view';
-
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'file', widthGrow: 1},
       {title: 'Major', field: 'major', width: 100},
