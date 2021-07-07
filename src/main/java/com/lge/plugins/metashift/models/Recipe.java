@@ -89,8 +89,10 @@ public final class Recipe extends Data<Recipe> implements Streamable {
   /**
    * Create a Recipe object using the given recipe directory.
    *
-   * @param path to recipe directory
+   * @param path to the recipe directory
    * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
+   * @throws InterruptedException     if an interruption occurs
+   * @throws IOException              if the file IO fails
    */
   public Recipe(final FilePath path)
       throws IllegalArgumentException, InterruptedException, IOException {
@@ -127,9 +129,11 @@ public final class Recipe extends Data<Recipe> implements Streamable {
   /**
    * Create a Recipe object using the given recipe directory.
    *
-   * @param path   to recipe directory
+   * @param path   to the recipe directory
    * @param logger object
    * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
+   * @throws InterruptedException     if an interruption occurs
+   * @throws IOException              if a file IO fails
    */
   public Recipe(final FilePath path, final PrintStream logger)
       throws IllegalArgumentException, InterruptedException, IOException {

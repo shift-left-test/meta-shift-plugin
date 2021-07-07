@@ -56,8 +56,10 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
   /**
    * Create a list of Recipe objects using the given report directory.
    *
-   * @param path to directory
+   * @param path to the directory
    * @throws IllegalArgumentException if the path is invalid
+   * @throws InterruptedException     if an interruption occurs
+   * @throws IOException              if the file IO fails
    */
   public Recipes(final FilePath path)
       throws IllegalArgumentException, InterruptedException, IOException {
@@ -67,9 +69,11 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
   /**
    * Create a list of Recipe objects using the given report directory.
    *
-   * @param path   to directory
+   * @param path   to the directory
    * @param logger object
    * @throws IllegalArgumentException if the path is invalid
+   * @throws InterruptedException     if an interruption occurs
+   * @throws IOException              if the file IO fails
    */
   public Recipes(final FilePath path, final PrintStream logger)
       throws IllegalArgumentException, InterruptedException, IOException {
@@ -80,12 +84,9 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
-    List<FilePath> directories = path.listDirectories();
-    if (directories != null) {
-      for (FilePath directory : directories) {
-        logger.println("[Recipes] " + directory.getName() + ": processing");
-        this.add(new Recipe(directory));
-      }
+    for (FilePath directory : path.listDirectories()) {
+      logger.println("[Recipes] " + directory.getName() + ": processing");
+      this.add(new Recipe(directory));
     }
     Collections.sort(this);
   }
