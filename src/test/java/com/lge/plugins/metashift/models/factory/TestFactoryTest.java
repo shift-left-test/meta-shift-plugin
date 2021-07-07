@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,20 +68,23 @@ public class TestFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath() throws IOException {
-    TestFactory.create(utils.getPath("path-to-unknown"));
+  public void testCreateWithUnknownPath()
+      throws IOException, InterruptedException {
+    TestFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory() throws IOException {
+  public void testCreateWithNoTaskDirectory()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    TestFactory.create(directory);
+    TestFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile() throws IOException {
+  public void testCreateWithNoFile()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "test").getParentFile();
-    TestFactory.create(directory);
+    TestFactory.create(new FilePath(directory));
   }
 
   @Test
@@ -88,7 +92,7 @@ public class TestFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("/testsuite>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(directory);
+    TestFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -97,7 +101,7 @@ public class TestFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "test", "1.xml");
-    objects = TestFactory.create(directory);
+    objects = TestFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -106,7 +110,7 @@ public class TestFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<testsuites> </testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    objects = TestFactory.create(directory);
+    objects = TestFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -122,7 +126,7 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(directory);
+    TestFactory.create(new FilePath(directory));
   }
 
   @Test
@@ -135,7 +139,7 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    objects = TestFactory.create(directory);
+    objects = TestFactory.create(new FilePath(directory));
     assertEquals(1, objects.size());
 
     Iterator<TestData> iterator = objects.iterator();
@@ -167,7 +171,7 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    objects = TestFactory.create(directory);
+    objects = TestFactory.create(new FilePath(directory));
     assertEquals(4, objects.size());
 
     Iterator<TestData> iterator = objects.iterator();
@@ -218,7 +222,7 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "D", "4.xml");
-    objects = TestFactory.create(directory);
+    objects = TestFactory.create(new FilePath(directory));
     assertEquals(4, objects.size());
 
     Iterator<TestData> iterator = objects.iterator();

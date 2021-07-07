@@ -24,9 +24,8 @@
 
 package com.lge.plugins.metashift.models.xml;
 
-import com.lge.plugins.metashift.utils.DigestUtils;
 import com.lge.plugins.metashift.utils.LruCache;
-import java.io.File;
+import hudson.FilePath;
 import java.io.IOException;
 import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
@@ -64,15 +63,19 @@ public class SimpleXmlParser {
    * Default constructor.
    *
    * @param file path to the xml file
+   * @throws ParserConfigurationException if failed to parse the file
+   * @throws IOException                  if failed to parse the file
+   * @throws SAXException                 if failed to parse the file
+   * @throws InterruptedException         if an interruption occurs
    */
-  public SimpleXmlParser(final File file)
-      throws ParserConfigurationException, IOException, SAXException {
-    String checksum = DigestUtils.sha1(file, file.getAbsolutePath());
+  public SimpleXmlParser(final FilePath file)
+      throws ParserConfigurationException, IOException, SAXException, InterruptedException {
+    String checksum = file.digest();
     if (!objects.containsKey(checksum)) {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = factory.newDocumentBuilder();
       builder.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
-      Document document = builder.parse(file);
+      Document document = builder.parse(file.read());
       document.getDocumentElement().normalize();
       objects.put(checksum, document);
     }

@@ -38,7 +38,6 @@ import hudson.model.Action;
 import hudson.model.Actionable;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -74,8 +73,8 @@ public class RecipeAction extends Actionable implements Action {
     this.metrics.parse(recipe);
 
     // parse metadata.json
-    JSONObject metadata = JsonUtils.createObject(new File(
-        reportRoot.child(this.name).child("metadata.json").toURI()));
+    JSONObject metadata = JsonUtils.createObject(
+        reportRoot.child(this.name).child("metadata.json"));
 
     listener.getLogger().println("Create shared state cache report");
     this.addAction(new RecipeSharedStateCacheAction(

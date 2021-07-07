@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,20 +68,23 @@ public class CommentFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateSetWithUnknownPath() throws IOException {
-    CommentFactory.create(utils.getPath("path-to-unknown"));
+  public void testCreateSetWithUnknownPath()
+      throws IOException, InterruptedException {
+    CommentFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory() throws IOException {
+  public void testCreateWithNoTaskDirectory()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    CommentFactory.create(directory);
+    CommentFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile() throws IOException {
+  public void testCreateWithNoFile()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
-    CommentFactory.create(directory);
+    CommentFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -88,7 +92,7 @@ public class CommentFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    CommentFactory.create(directory);
+    CommentFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -101,7 +105,7 @@ public class CommentFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    CommentFactory.create(directory);
+    CommentFactory.create(new FilePath(directory));
   }
 
   @Test
@@ -109,7 +113,7 @@ public class CommentFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = CommentFactory.create(directory);
+    objects = CommentFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -131,7 +135,7 @@ public class CommentFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = CommentFactory.create(directory);
+    objects = CommentFactory.create(new FilePath(directory));
     assertEquals(1, objects.size());
 
     Iterator<CommentData> iterator = objects.iterator();
@@ -157,7 +161,7 @@ public class CommentFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = CommentFactory.create(directory);
+    objects = CommentFactory.create(new FilePath(directory));
     assertEquals(2, objects.size());
 
     Iterator<CommentData> iterator = objects.iterator();

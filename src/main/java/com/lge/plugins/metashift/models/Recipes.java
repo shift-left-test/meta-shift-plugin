@@ -24,7 +24,8 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.io.File;
+import hudson.FilePath;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,7 +59,8 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
    * @param path to directory
    * @throws IllegalArgumentException if the path is invalid
    */
-  public Recipes(final File path) throws IllegalArgumentException {
+  public Recipes(final FilePath path)
+      throws IllegalArgumentException, InterruptedException, IOException {
     this(path, NullPrintStream.NULL_PRINT_STREAM);
   }
 
@@ -69,7 +71,8 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
    * @param logger object
    * @throws IllegalArgumentException if the path is invalid
    */
-  public Recipes(final File path, final PrintStream logger) throws IllegalArgumentException {
+  public Recipes(final FilePath path, final PrintStream logger)
+      throws IllegalArgumentException, InterruptedException, IOException {
     this();
     if (!path.exists()) {
       throw new IllegalArgumentException("Directory not found: " + path);
@@ -77,9 +80,9 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
-    File[] directories = path.listFiles(File::isDirectory);
+    List<FilePath> directories = path.listDirectories();
     if (directories != null) {
-      for (File directory : directories) {
+      for (FilePath directory : directories) {
         logger.println("[Recipes] " + directory.getName() + ": processing");
         this.add(new Recipe(directory));
       }

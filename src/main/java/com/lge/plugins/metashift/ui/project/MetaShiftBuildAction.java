@@ -42,7 +42,6 @@ import hudson.model.Actionable;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -67,7 +66,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
   private final Criteria criteria;
   private final QualifiedRecipeCounter qualifiedRecipeCounter;
   private Metrics metrics;
-  private MetricStatistics metricStatistics;
+  private final MetricStatistics metricStatistics;
 
   private final DataSource dataSource;
 
@@ -84,7 +83,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
     this.dataSource = dataSource;
     this.metrics = new Metrics(criteria);
 
-    Recipes recipes = new Recipes(new File(reportRoot.toURI()), listener.getLogger());
+    Recipes recipes = new Recipes(reportRoot, listener.getLogger());
 
     listener.getLogger().println("Parse project recipes metrics");
     this.metrics = new Metrics(criteria);

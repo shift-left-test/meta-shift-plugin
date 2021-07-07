@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,20 +66,23 @@ public class RecipeSizeFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath() throws IOException {
-    RecipeSizeFactory.create(utils.getPath("path-to-unknown"));
+  public void testCreateWithUnknownPath()
+      throws IOException, InterruptedException {
+    RecipeSizeFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory() throws IOException {
+  public void testCreateWithNoTaskDirectory()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    RecipeSizeFactory.create(directory);
+    RecipeSizeFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile() throws IOException {
+  public void testCreateWithNoFile()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkrecipe").getParentFile();
-    RecipeSizeFactory.create(directory);
+    RecipeSizeFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -86,7 +90,7 @@ public class RecipeSizeFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    RecipeSizeFactory.create(directory);
+    RecipeSizeFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -94,7 +98,7 @@ public class RecipeSizeFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'lines_of_code' : [ { 'file': 'a.bb' } ] }");
     utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    RecipeSizeFactory.create(directory);
+    RecipeSizeFactory.create(new FilePath(directory));
   }
 
   @Test
@@ -102,7 +106,7 @@ public class RecipeSizeFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'lines_of_code': [] }");
     utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    objects = RecipeSizeFactory.create(directory);
+    objects = RecipeSizeFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -119,7 +123,7 @@ public class RecipeSizeFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    objects = RecipeSizeFactory.create(directory);
+    objects = RecipeSizeFactory.create(new FilePath(directory));
     assertEquals(1, objects.size());
 
     Iterator<RecipeSizeData> iterator = objects.iterator();
@@ -143,7 +147,7 @@ public class RecipeSizeFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    objects = RecipeSizeFactory.create(directory);
+    objects = RecipeSizeFactory.create(new FilePath(directory));
     assertEquals(2, objects.size());
 
     Iterator<RecipeSizeData> iterator = objects.iterator();

@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,20 +70,23 @@ public class RecipeViolationFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateListWithUnknownPath() throws IOException {
-    RecipeViolationFactory.create(utils.getPath("path-to-unknown"));
+  public void testCreateListWithUnknownPath()
+      throws IOException, InterruptedException {
+    RecipeViolationFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory() throws IOException {
+  public void testCreateWithNoTaskDirectory()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    RecipeViolationFactory.create(directory);
+    RecipeViolationFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile() throws IOException {
+  public void testCreateWithNoFile()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkrecipe").getParentFile();
-    RecipeViolationFactory.create(directory);
+    RecipeViolationFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -90,7 +94,7 @@ public class RecipeViolationFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    RecipeViolationFactory.create(directory);
+    RecipeViolationFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -98,7 +102,7 @@ public class RecipeViolationFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'issues': [ { 'file': 'a.bb', 'line': 1, 'severity': 'info' } ] }");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    RecipeViolationFactory.create(directory);
+    RecipeViolationFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -117,7 +121,7 @@ public class RecipeViolationFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    RecipeViolationFactory.create(directory);
+    RecipeViolationFactory.create(new FilePath(directory));
   }
 
   @Test
@@ -125,7 +129,7 @@ public class RecipeViolationFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'issues': [ ] }");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    objects = RecipeViolationFactory.create(directory);
+    objects = RecipeViolationFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -145,7 +149,7 @@ public class RecipeViolationFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    objects = RecipeViolationFactory.create(directory);
+    objects = RecipeViolationFactory.create(new FilePath(directory));
     assertEquals(1, objects.size());
 
     Iterator<RecipeViolationData> iterator = objects.iterator();
@@ -182,7 +186,7 @@ public class RecipeViolationFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    objects = RecipeViolationFactory.create(directory);
+    objects = RecipeViolationFactory.create(new FilePath(directory));
     assertEquals(3, objects.size());
 
     Iterator<RecipeViolationData> iterator = objects.iterator();

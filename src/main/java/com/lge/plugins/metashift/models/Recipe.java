@@ -36,7 +36,7 @@ import com.lge.plugins.metashift.models.factory.RecipeSizeFactory;
 import com.lge.plugins.metashift.models.factory.RecipeViolationFactory;
 import com.lge.plugins.metashift.models.factory.SharedStateCacheFactory;
 import com.lge.plugins.metashift.models.factory.TestFactory;
-import java.io.File;
+import hudson.FilePath;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public final class Recipe extends Data<Recipe> implements Streamable {
   @FunctionalInterface
   private interface FactoryFunction<T, R> {
 
-    R apply(T t) throws IOException;
+    R apply(T t) throws IOException, InterruptedException;
   }
 
   /**
@@ -92,7 +92,8 @@ public final class Recipe extends Data<Recipe> implements Streamable {
    * @param path to recipe directory
    * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
    */
-  public Recipe(final File path) throws IllegalArgumentException {
+  public Recipe(final FilePath path)
+      throws IllegalArgumentException, InterruptedException, IOException {
     this(path, NullPrintStream.NULL_PRINT_STREAM);
   }
 
@@ -107,7 +108,7 @@ public final class Recipe extends Data<Recipe> implements Streamable {
    * @return task object
    */
   private Callable<Void> newTask(String name, Class<?> clazz,
-      FactoryFunction<File, List<?>> functor, File path, PrintStream logger) {
+      FactoryFunction<FilePath, List<?>> functor, FilePath path, PrintStream logger) {
     return () -> {
       try {
         logger.printf("[Recipe] %s: processing the %s data%n", getRecipe(), name);
@@ -130,7 +131,8 @@ public final class Recipe extends Data<Recipe> implements Streamable {
    * @param logger object
    * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
    */
-  public Recipe(final File path, final PrintStream logger) throws IllegalArgumentException {
+  public Recipe(final FilePath path, final PrintStream logger)
+      throws IllegalArgumentException, InterruptedException, IOException {
     this(path.getName());
     if (!path.exists()) {
       throw new IllegalArgumentException("Directory not found: " + path);

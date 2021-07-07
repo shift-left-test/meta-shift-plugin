@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,20 +69,23 @@ public class CodeSizeFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath() throws IOException {
-    CodeSizeFactory.create(utils.getPath("path-to-unknown"));
+  public void testCreateWithUnknownPath()
+      throws IOException, InterruptedException {
+    CodeSizeFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory() throws IOException {
+  public void testCreateWithNoTaskDirectory()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    CodeSizeFactory.create(directory);
+    CodeSizeFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile() throws IOException {
+  public void testCreateWithNoFile()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
-    CodeSizeFactory.create(directory);
+    CodeSizeFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -89,7 +93,7 @@ public class CodeSizeFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    CodeSizeFactory.create(directory);
+    CodeSizeFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -97,7 +101,7 @@ public class CodeSizeFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'size': [ { 'file': 'a.file' } ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    CodeSizeFactory.create(directory);
+    CodeSizeFactory.create(new FilePath(directory));
   }
 
   @Test
@@ -105,7 +109,7 @@ public class CodeSizeFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = CodeSizeFactory.create(directory);
+    objects = CodeSizeFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -127,7 +131,7 @@ public class CodeSizeFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = CodeSizeFactory.create(directory);
+    objects = CodeSizeFactory.create(new FilePath(directory));
     assertEquals(1, objects.size());
 
     Iterator<CodeSizeData> iterator = objects.iterator();
@@ -155,7 +159,7 @@ public class CodeSizeFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = CodeSizeFactory.create(directory);
+    objects = CodeSizeFactory.create(new FilePath(directory));
     assertEquals(2, objects.size());
 
     Iterator<CodeSizeData> iterator = objects.iterator();

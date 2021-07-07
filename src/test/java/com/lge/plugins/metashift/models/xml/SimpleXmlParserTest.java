@@ -29,9 +29,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -59,10 +60,11 @@ public class SimpleXmlParserTest {
     builder = new StringBuilder();
   }
 
-  private void prepare() throws IOException, SAXException, ParserConfigurationException {
+  private void prepare()
+      throws IOException, SAXException, ParserConfigurationException, InterruptedException {
     File file = utils.getPath("test.xml");
     utils.writeLines(builder, file);
-    parser = new SimpleXmlParser(file);
+    parser = new SimpleXmlParser(new FilePath(file));
   }
 
   @Test
@@ -71,9 +73,9 @@ public class SimpleXmlParserTest {
     assertEquals(0, parser.getChildNodes("X").size());
   }
 
-  @Test(expected = FileNotFoundException.class)
+  @Test(expected = NoSuchFileException.class)
   public void testWithUnknownPath() throws Exception {
-    new SimpleXmlParser(utils.getPath("path-to-unknown"));
+    new SimpleXmlParser(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = SAXParseException.class)
@@ -141,7 +143,7 @@ public class SimpleXmlParserTest {
 
   @Test
   public void testParseXmlWithDtdManyTimes()
-      throws IOException, ParserConfigurationException, SAXException {
+      throws IOException, ParserConfigurationException, SAXException, InterruptedException {
     builder
         .append("<?xml version=\"1.0\"?>")
         .append("<!DOCTYPE coverage ")
@@ -149,7 +151,7 @@ public class SimpleXmlParserTest {
         .append("<coverage></coverage>");
     prepare();
     for (int i = 0; i < 1000; i++) {
-      parser = new SimpleXmlParser(utils.getPath("test.xml"));
+      parser = new SimpleXmlParser(new FilePath(utils.getPath("test.xml")));
     }
   }
 }

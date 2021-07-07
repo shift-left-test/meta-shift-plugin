@@ -29,14 +29,13 @@ import com.lge.plugins.metashift.models.MajorRecipeViolationData;
 import com.lge.plugins.metashift.models.MinorRecipeViolationData;
 import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.utils.JsonUtils;
-import java.io.File;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 
 /**
  * A factory class for the RecipeViolationData objects.
@@ -44,6 +43,32 @@ import org.apache.commons.io.FileUtils;
  * @author Sung Gon Kim
  */
 public class RecipeViolationFactory {
+
+  /**
+   * Create a set of objects by parsing a report file from the given path.
+   *
+   * @param path to the report directory
+   * @return a list of objects
+   * @throws IllegalArgumentException if failed to parse report files
+   * @throws IOException              if failed to locate report files
+   * @throws InterruptedException     if an interruption occurs
+   */
+  public static List<RecipeViolationData> create(final FilePath path)
+      throws IllegalArgumentException, IOException, InterruptedException {
+    List<RecipeViolationData> list = new ArrayList<>();
+    String recipe = path.getName();
+    FilePath report = path.child("checkrecipe").child("recipe_violations.json");
+    try {
+      JSONObject json = JsonUtils.createObject(report);
+      for (Object o : json.getJSONArray("issues")) {
+        list.add(createInstance(recipe, (JSONObject) o));
+      }
+    } catch (JSONException e) {
+      throw new IllegalArgumentException("Failed to parse: " + report, e);
+    }
+    Collections.sort(list);
+    return list;
+  }
 
   /**
    * Create a RecipeViolationData object.
@@ -68,30 +93,5 @@ public class RecipeViolationFactory {
       default:
         throw new JSONException("Unknown severity value: " + severity);
     }
-  }
-
-  /**
-   * Create a set of objects by parsing a report file from the given path.
-   *
-   * @param path to the report directory
-   * @return a list of objects
-   * @throws IllegalArgumentException if failed to parse report files
-   * @throws IOException              if failed to locate report files
-   */
-  public static List<RecipeViolationData> create(final File path)
-      throws IllegalArgumentException, IOException {
-    List<RecipeViolationData> list = new ArrayList<>();
-    String recipe = path.getName();
-    File report = FileUtils.getFile(path, "checkrecipe", "recipe_violations.json");
-    try {
-      JSONObject json = JsonUtils.createObject(report);
-      for (Object o : json.getJSONArray("issues")) {
-        list.add(createInstance(recipe, (JSONObject) o));
-      }
-    } catch (JSONException e) {
-      throw new IllegalArgumentException("Failed to parse: " + report, e);
-    }
-    Collections.sort(list);
-    return list;
   }
 }

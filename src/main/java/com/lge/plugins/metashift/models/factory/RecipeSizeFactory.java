@@ -26,14 +26,13 @@ package com.lge.plugins.metashift.models.factory;
 
 import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.utils.JsonUtils;
-import java.io.File;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 
 /**
  * A factory class for RecipeSizeData objects.
@@ -49,12 +48,13 @@ public class RecipeSizeFactory {
    * @return a list of objects
    * @throws IllegalArgumentException if failed to parse report files
    * @throws IOException              if failed to locate report files
+   * @throws InterruptedException     if an interruption occurs
    */
-  public static List<RecipeSizeData> create(final File path)
-      throws IllegalArgumentException, IOException {
+  public static List<RecipeSizeData> create(final FilePath path)
+      throws IllegalArgumentException, IOException, InterruptedException {
     List<RecipeSizeData> list = new ArrayList<>();
     String recipe = path.getName();
-    File report = FileUtils.getFile(path, "checkrecipe", "files.json");
+    FilePath report = path.child("checkrecipe").child("files.json");
     try {
       JSONObject json = JsonUtils.createObject(report);
       for (Object o : json.getJSONArray("lines_of_code")) {

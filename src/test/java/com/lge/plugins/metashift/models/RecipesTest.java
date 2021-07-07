@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -95,57 +96,64 @@ public class RecipesTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateWithUnknownPath() {
-    new Recipes(utils.getPath("path-to-unknown"));
+  public void testCreateWithUnknownPath()
+      throws IOException, InterruptedException {
+    new Recipes(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateWithoutDirectory() throws IOException {
-    new Recipes(utils.createFile("path-to-file"));
+  public void testCreateWithoutDirectory()
+      throws IOException, InterruptedException {
+    new Recipes(new FilePath(utils.createFile("path-to-file")));
   }
 
   @Test
-  public void testCreateWithEmptyReportDirectory() throws IOException {
+  public void testCreateWithEmptyReportDirectory()
+      throws IOException, InterruptedException {
     File report = utils.createDirectory("report");
-    recipes = new Recipes(report);
+    recipes = new Recipes(new FilePath(report));
     assertEquals(0, recipes.size());
   }
 
   @Test
-  public void testCreateWithoutSubDirectories() throws IOException {
+  public void testCreateWithoutSubDirectories()
+      throws IOException, InterruptedException {
     File report = utils.createDirectory("report");
     utils.createFile(report, "a.file");
-    recipes = new Recipes(report);
+    recipes = new Recipes(new FilePath(report));
     assertEquals(0, recipes.size());
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateWithInvalidDirectories() throws IOException {
+  public void testCreateWithInvalidDirectories()
+      throws IOException, InterruptedException {
     File report = utils.createDirectory("report");
     utils.createDirectory(report, "invalid");
-    new Recipes(report);
+    new Recipes(new FilePath(report));
   }
 
   @Test
-  public void testCreateWithMultipleDirectories() throws IOException {
+  public void testCreateWithMultipleDirectories()
+      throws IOException, InterruptedException {
     File report = utils.createDirectory("report");
     utils.createDirectory(report, "cmake-project-1.0.0-r0");
     utils.createDirectory(report, "qmake5-project-1.0.0-r0");
     utils.createDirectory(report, "autotools-project-1.0.0-r0");
-    recipes = new Recipes(report);
+    recipes = new Recipes(new FilePath(report));
     assertEquals(3, recipes.size());
     assertEquals(0, recipes.objects(Data.class).count());
     assertFalse(recipes.isAvailable(Data.class));
   }
 
   @Test
-  public void testRecipeLogs() throws IOException {
+  public void testRecipeLogs()
+      throws IOException, InterruptedException {
     File report = utils.createDirectory("report");
     utils.createDirectory(report, "cmake-project-1.0.0-r0");
     utils.createDirectory(report, "qmake5-project-1.0.0-r0");
     utils.createDirectory(report, "autotools-project-1.0.0-r0");
     PrintStream logger = Mockito.mock(PrintStream.class);
-    recipes = new Recipes(report, logger);
+    recipes = new Recipes(new FilePath(report), logger);
     Mockito.verify(logger).println("[Recipes] cmake-project-1.0.0-r0: processing");
     Mockito.verify(logger).println("[Recipes] qmake5-project-1.0.0-r0: processing");
     Mockito.verify(logger).println("[Recipes] autotools-project-1.0.0-r0: processing");

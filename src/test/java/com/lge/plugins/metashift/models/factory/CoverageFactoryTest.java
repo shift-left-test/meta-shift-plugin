@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,20 +69,23 @@ public class CoverageFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath() throws IOException {
-    CoverageFactory.create(utils.getPath("path-to-unknown"));
+  public void testCreateWithUnknownPath()
+      throws IOException, InterruptedException {
+    CoverageFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory() throws IOException {
+  public void testCreateWithNoTaskDirectory()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    CoverageFactory.create(directory);
+    CoverageFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile() throws IOException {
+  public void testCreateWithNoFile()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "coverage").getParentFile();
-    CoverageFactory.create(directory);
+    CoverageFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -92,7 +96,7 @@ public class CoverageFactoryTest {
         .append("  <methods>")
         .append("    <method name='func1()'>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(directory);
+    CoverageFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -100,7 +104,7 @@ public class CoverageFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(directory);
+    CoverageFactory.create(new FilePath(directory));
   }
 
   @Test
@@ -108,7 +112,7 @@ public class CoverageFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<classes> </classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(directory);
+    objects = CoverageFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -130,7 +134,7 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(directory);
+    objects = CoverageFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -153,7 +157,7 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(directory);
+    objects = CoverageFactory.create(new FilePath(directory));
     assertEquals(1, objects.size());
 
     Iterator<CoverageData> iterator = objects.iterator();
@@ -191,7 +195,7 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(directory);
+    objects = CoverageFactory.create(new FilePath(directory));
     assertEquals(4, objects.size());
 
     Iterator<CoverageData> iterator = objects.iterator();
@@ -248,7 +252,7 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(directory);
+    objects = CoverageFactory.create(new FilePath(directory));
     assertEquals(4, objects.size());
 
     Iterator<CoverageData> iterator = objects.iterator();

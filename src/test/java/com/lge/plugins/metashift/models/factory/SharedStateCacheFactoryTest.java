@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,20 +59,23 @@ public class SharedStateCacheFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath() throws IOException {
-    SharedStateCacheFactory.create(utils.getPath("path-to-unknown"));
+  public void testCreateWithUnknownPath()
+      throws IOException, InterruptedException {
+    SharedStateCacheFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory() throws IOException {
+  public void testCreateWithNoTaskDirectory()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    SharedStateCacheFactory.create(directory);
+    SharedStateCacheFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile() throws IOException {
+  public void testCreateWithNoFile()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcache").getParentFile();
-    SharedStateCacheFactory.create(directory);
+    SharedStateCacheFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -79,7 +83,7 @@ public class SharedStateCacheFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    SharedStateCacheFactory.create(directory);
+    SharedStateCacheFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -91,7 +95,7 @@ public class SharedStateCacheFactoryTest {
         .append("  'Shared State': { }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    SharedStateCacheFactory.create(directory);
+    SharedStateCacheFactory.create(new FilePath(directory));
   }
 
   @Test
@@ -103,7 +107,7 @@ public class SharedStateCacheFactoryTest {
         .append("  'Shared State': { 'Found': [], 'Missed': [] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    objects = SharedStateCacheFactory.create(directory);
+    objects = SharedStateCacheFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -116,7 +120,7 @@ public class SharedStateCacheFactoryTest {
         .append("  'Shared State': { 'Found': [], 'Missed': [] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    objects = SharedStateCacheFactory.create(directory);
+    objects = SharedStateCacheFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -129,7 +133,7 @@ public class SharedStateCacheFactoryTest {
         .append("  'Shared State': { 'Found': ['D:do_X'], 'Missed': ['E:do_X'] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    objects = SharedStateCacheFactory.create(directory);
+    objects = SharedStateCacheFactory.create(new FilePath(directory));
     assertEquals(2, objects.size());
   }
 
@@ -142,7 +146,7 @@ public class SharedStateCacheFactoryTest {
         .append("  'Shared State': { 'Found': ['D:do_X'], 'Missed': ['E:do_X'] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    objects = SharedStateCacheFactory.create(directory);
+    objects = SharedStateCacheFactory.create(new FilePath(directory));
     assertEquals(2, objects.size());
   }
 }

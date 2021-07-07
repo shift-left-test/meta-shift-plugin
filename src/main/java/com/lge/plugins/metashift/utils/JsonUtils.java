@@ -24,15 +24,12 @@
 
 package com.lge.plugins.metashift.utils;
 
-import java.io.BufferedInputStream;
+import hudson.FilePath;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 /**
  * JsonUtils class.
@@ -57,11 +54,12 @@ public class JsonUtils {
    * @param file to a json file
    * @return a JSON object
    */
-  public static synchronized JSONObject createObject(final File file) throws IOException {
+  public static synchronized JSONObject createObject(final FilePath file)
+      throws IOException, InterruptedException {
     if (file == null) {
       return JsonUtils.EMPTY;
     }
-    String checksum = DigestUtils.sha1(file, file.getAbsolutePath());
+    String checksum = file.digest();
     if (!objects.containsKey(checksum)) {
       objects.put(checksum, getObject(file));
     }
@@ -75,9 +73,9 @@ public class JsonUtils {
    * @return a JSON object
    * @throws IOException if failed to operate with the file
    */
-  private static JSONObject getObject(final File file) throws IOException {
-    InputStream is = new BufferedInputStream(new FileInputStream(file));
-    return JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
+  private static JSONObject getObject(final FilePath file)
+      throws IOException, InterruptedException {
+    return JSONObject.fromObject(file.readToString());
   }
 
   /**

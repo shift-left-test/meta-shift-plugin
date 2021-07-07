@@ -29,14 +29,13 @@ import com.lge.plugins.metashift.models.InfoCodeViolationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.MinorCodeViolationData;
 import com.lge.plugins.metashift.utils.JsonUtils;
-import java.io.File;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 
 /**
  * A factory class for the CodeViolationData objects.
@@ -52,12 +51,13 @@ public class CodeViolationFactory {
    * @return a list of objects
    * @throws IllegalArgumentException if failed to parse report files
    * @throws IOException              if failed to locate report files
+   * @throws InterruptedException     if an interruption occurs
    */
-  public static List<CodeViolationData> create(final File path)
-      throws IllegalArgumentException, IOException {
+  public static List<CodeViolationData> create(final FilePath path)
+      throws IllegalArgumentException, IOException, InterruptedException {
     List<CodeViolationData> list = new ArrayList<>();
     String recipe = path.getName();
-    File report = FileUtils.getFile(path, "checkcode", "sage_report.json");
+    FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       JSONObject json = JsonUtils.createObject(report);
       for (Object o : json.getJSONArray("violations")) {

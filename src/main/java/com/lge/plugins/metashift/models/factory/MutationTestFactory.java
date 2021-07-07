@@ -30,13 +30,12 @@ import com.lge.plugins.metashift.models.SkippedMutationTestData;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
 import com.lge.plugins.metashift.models.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.models.xml.Tag;
-import java.io.File;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.io.FileUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -53,12 +52,13 @@ public class MutationTestFactory {
    * @return a list of objects
    * @throws IllegalArgumentException if failed to parse report files
    * @throws IOException              if failed to locate report files
+   * @throws InterruptedException     if an interruption occurs
    */
-  public static List<MutationTestData> create(final File path)
-      throws IllegalArgumentException, IOException {
+  public static List<MutationTestData> create(final FilePath path)
+      throws IllegalArgumentException, IOException, InterruptedException {
     List<MutationTestData> list = new ArrayList<>();
     String recipe = path.getName();
-    File report = FileUtils.getFile(path, "checktest", "mutations.xml");
+    FilePath report = path.child("checktest").child("mutations.xml");
     if (!report.exists()) {
       throw new IOException("Unable to locate the file: " + report);
     }

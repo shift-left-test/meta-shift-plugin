@@ -30,13 +30,12 @@ import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.models.xml.Tag;
 import com.lge.plugins.metashift.models.xml.TagList;
-import java.io.File;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.io.FileUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -53,12 +52,13 @@ public class CoverageFactory {
    * @return a list of objects
    * @throws IllegalArgumentException if failed to parse report files
    * @throws IOException              if failed to locate report files
+   * @throws InterruptedException     if an interruption occurs
    */
-  public static List<CoverageData> create(final File path)
-      throws IllegalArgumentException, IOException {
+  public static List<CoverageData> create(final FilePath path)
+      throws IllegalArgumentException, IOException, InterruptedException {
     List<CoverageData> list = new ArrayList<>();
     String recipe = path.getName();
-    File report = FileUtils.getFile(path, "coverage", "coverage.xml");
+    FilePath report = path.child("coverage").child("coverage.xml");
     if (!report.exists()) {
       throw new IOException("Unable to locate the file:" + report);
     }

@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -70,20 +71,23 @@ public class MutationTestFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath() throws IOException {
-    MutationTestFactory.create(utils.getPath("path-to-unknown"));
+  public void testCreateWithUnknownPath()
+      throws IOException, InterruptedException {
+    MutationTestFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory() throws IOException {
+  public void testCreateWithNoTaskDirectory()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    MutationTestFactory.create(directory);
+    MutationTestFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile() throws IOException {
+  public void testCreateWithNoFile()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checktest").getParentFile();
-    MutationTestFactory.create(directory);
+    MutationTestFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -91,7 +95,7 @@ public class MutationTestFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("<mutation>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    MutationTestFactory.create(directory);
+    MutationTestFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -104,7 +108,7 @@ public class MutationTestFactoryTest {
         .append("  </mutation>")
         .append("</mutations>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    MutationTestFactory.create(directory);
+    MutationTestFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -112,7 +116,7 @@ public class MutationTestFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    MutationTestFactory.create(directory);
+    MutationTestFactory.create(new FilePath(directory));
   }
 
   @Test
@@ -120,7 +124,7 @@ public class MutationTestFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<mutations></mutations>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    objects = MutationTestFactory.create(directory);
+    objects = MutationTestFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -140,7 +144,7 @@ public class MutationTestFactoryTest {
         .append("  </mutation>")
         .append("</mutations>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    objects = MutationTestFactory.create(directory);
+    objects = MutationTestFactory.create(new FilePath(directory));
     assertEquals(1, objects.size());
 
     Iterator<MutationTestData> iterator = objects.iterator();
@@ -181,7 +185,7 @@ public class MutationTestFactoryTest {
         .append("  </mutation>")
         .append("</mutations>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    objects = MutationTestFactory.create(directory);
+    objects = MutationTestFactory.create(new FilePath(directory));
     assertEquals(3, objects.size());
 
     Iterator<MutationTestData> iterator = objects.iterator();

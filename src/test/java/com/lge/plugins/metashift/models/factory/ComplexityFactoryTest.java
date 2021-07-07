@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,20 +70,23 @@ public class ComplexityFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath() throws IOException {
-    ComplexityFactory.create(utils.getPath("path-to-unknown"));
+  public void testCreateWithUnknownPath()
+      throws IOException, InterruptedException {
+    ComplexityFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory() throws IOException {
+  public void testCreateWithNoTaskDirectory()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    ComplexityFactory.create(directory);
+    ComplexityFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile() throws IOException {
+  public void testCreateWithNoFile()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
-    ComplexityFactory.create(directory);
+    ComplexityFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -90,7 +94,7 @@ public class ComplexityFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(directory);
+    ComplexityFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -98,7 +102,7 @@ public class ComplexityFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'complexity': [ { 'file': 'a.file' } ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(directory);
+    ComplexityFactory.create(new FilePath(directory));
   }
 
   @Test
@@ -106,7 +110,7 @@ public class ComplexityFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'complexity': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = ComplexityFactory.create(directory);
+    objects = ComplexityFactory.create(new FilePath(directory));
     assertEquals(0, objects.size());
   }
 
@@ -126,7 +130,7 @@ public class ComplexityFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = ComplexityFactory.create(directory);
+    objects = ComplexityFactory.create(new FilePath(directory));
     assertEquals(1, objects.size());
 
     Iterator<ComplexityData> iterator = objects.iterator();
@@ -163,7 +167,7 @@ public class ComplexityFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = ComplexityFactory.create(directory);
+    objects = ComplexityFactory.create(new FilePath(directory));
     assertEquals(3, objects.size());
 
     Iterator<ComplexityData> iterator = objects.iterator();
@@ -202,7 +206,7 @@ public class ComplexityFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = ComplexityFactory.create(directory);
+    objects = ComplexityFactory.create(new FilePath(directory));
     assertEquals(3, objects.size());
 
     Iterator<ComplexityData> iterator = objects.iterator();

@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -263,31 +264,36 @@ public class RecipeTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeWithUnknownPath() {
-    new Recipe(utils.getPath("path-to-unknown"));
+  public void testCreateRecipeWithUnknownPath()
+      throws IOException, InterruptedException {
+    new Recipe(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeWithoutDirectory() throws IOException {
-    new Recipe(utils.createFile("path-to-file"));
+  public void testCreateRecipeWithoutDirectory()
+      throws IOException, InterruptedException {
+    new Recipe(new FilePath(utils.createFile("path-to-file")));
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeWithMalformedDirectoryName() throws IOException {
-    new Recipe(utils.createDirectory("report", "ABC"));
+  public void testCreateRecipeWithMalformedDirectoryName()
+      throws IOException, InterruptedException {
+    new Recipe(new FilePath(utils.createDirectory("report", "ABC")));
   }
 
   @Test
-  public void testCreateRecipeWithEmptyRecipeDirectory() throws IOException {
+  public void testCreateRecipeWithEmptyRecipeDirectory()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "cmake-project-1.0.0-r0");
-    Recipe recipe = new Recipe(directory);
+    Recipe recipe = new Recipe(new FilePath(directory));
     assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
     assertEquals(0, recipe.objects(Data.class).count());
     assertFalse(recipe.isAvailable(Data.class));
   }
 
   @Test
-  public void testParseReport() throws IOException {
+  public void testParseReport()
+      throws IOException, InterruptedException {
     File report = utils.createDirectory("report", "A-1.0.0-r0");
     File source = utils.createDirectory("source");
     prepareMetadata(report, source);
@@ -298,7 +304,7 @@ public class RecipeTest {
     prepareRecipeSizeFile(report, source);
     prepareRecipeViolationFile(report, source);
 
-    Recipe recipe = new Recipe(report);
+    Recipe recipe = new Recipe(new FilePath(report));
     assertEquals(6, recipe.objects(Data.class).count());
     assertTrue(recipe.isAvailable(CodeViolationData.class));
     assertTrue(recipe.isAvailable(ComplexityData.class));
@@ -308,10 +314,11 @@ public class RecipeTest {
   }
 
   @Test
-  public void testRecipeLogs() throws IOException {
+  public void testRecipeLogs()
+      throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     PrintStream logger = Mockito.mock(PrintStream.class);
-    new Recipe(directory, logger);
+    new Recipe(new FilePath(directory), logger);
     Mockito.verify(logger, Mockito.times(12))
         .printf(Mockito.startsWith("[Recipe] %s: processing"),
             Mockito.anyString(), Mockito.anyString());

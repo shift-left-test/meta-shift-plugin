@@ -31,14 +31,13 @@ import com.lge.plugins.metashift.models.SkippedTestData;
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.models.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.models.xml.Tag;
-import java.io.File;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.io.FileUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -55,21 +54,21 @@ public class TestFactory {
    * @return a list of objects
    * @throws IllegalArgumentException if failed to parse report files
    * @throws IOException              if failed to locate report files
+   * @throws InterruptedException     if an interruption occurs
    */
-  public static List<TestData> create(final File path)
-      throws IllegalArgumentException, IOException {
+  public static List<TestData> create(final FilePath path)
+      throws IllegalArgumentException, IOException, InterruptedException {
     List<TestData> list = new ArrayList<>();
     String recipe = path.getName();
-    String[] extensions = {"xml"};
-    File directory = new File(path, "test");
+    FilePath directory = path.child("test");
     if (!directory.exists()) {
       throw new IOException("Unable to locate the directory: " + directory);
     }
-    Collection<File> files = FileUtils.listFiles(directory, extensions, true);
-    if (files.isEmpty()) {
+    FilePath[] files = path.list("test/**/*.xml");
+    if (files.length == 0) {
       throw new IOException("Unable to locate any files under: " + directory);
     }
-    for (File file : files) {
+    for (FilePath file : files) {
       try {
         list.addAll(parseFile(recipe, file));
       } catch (ParserConfigurationException | SAXException | IOException ignored) {
@@ -89,9 +88,10 @@ public class TestFactory {
    * @throws ParserConfigurationException if failed to parse the xml files
    * @throws IOException                  if failed to parse the xml files
    * @throws SAXException                 if failed to parse the xml files
+   * @throws InterruptedException         if an interruption occurs
    */
-  private static Collection<? extends TestData> parseFile(final String recipe, final File file)
-      throws ParserConfigurationException, IOException, SAXException {
+  private static Collection<? extends TestData> parseFile(final String recipe, final FilePath file)
+      throws ParserConfigurationException, IOException, SAXException, InterruptedException {
     List<TestData> list = new ArrayList<>();
     SimpleXmlParser parser = new SimpleXmlParser(file);
     for (Tag testsuite : parser.getChildNodes("testsuite")) {

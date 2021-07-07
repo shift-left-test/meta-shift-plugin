@@ -26,14 +26,13 @@ package com.lge.plugins.metashift.models.factory;
 
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.utils.JsonUtils;
-import java.io.File;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 
 /**
  * A factory class for PremirrorCacheData objects.
@@ -49,12 +48,13 @@ public class PremirrorCacheFactory {
    * @return a list of objects
    * @throws IllegalArgumentException if failed to parse report files
    * @throws IOException              if failed to locate report files
+   * @throws InterruptedException     if an interruption occurs
    */
-  public static List<PremirrorCacheData> create(final File path)
-      throws IllegalArgumentException, IOException {
+  public static List<PremirrorCacheData> create(final FilePath path)
+      throws IllegalArgumentException, IOException, InterruptedException {
     List<PremirrorCacheData> list = new ArrayList<>();
     String recipe = path.getName();
-    File report = FileUtils.getFile(path, "checkcache", "caches.json");
+    FilePath report = path.child("checkcache").child("caches.json");
     try {
       JSONObject json = JsonUtils.createObject(report);
       for (Object o : json.getJSONObject("Premirror").getJSONArray("Found")) {
