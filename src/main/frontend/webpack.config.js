@@ -1,5 +1,3 @@
-
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const path = require('path')
 const rewrite = require('express-urlrewrite')
 const glob = require('glob')
@@ -70,7 +68,6 @@ module.exports = {
     },
   },
   plugins: [
-    new MonacoWebpackPlugin(),
   ],
   devServer: {
     before: function(app, server, compiler) {

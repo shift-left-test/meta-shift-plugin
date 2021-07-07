@@ -1,7 +1,7 @@
 import {html} from 'lit';
 import {customElement} from 'lit/decorators.js';
-
-import * as monaco from 'monaco-editor';
+import {EditorView, Decoration} from '@codemirror/view';
+import {RangeSet, RangeSetBuilder} from '@codemirror/rangeset';
 
 import {FileDetail} from '../common/file-detail';
 
@@ -77,25 +77,34 @@ export class ComplexityFileView extends FileDetail {
   }
 
   /**
-   * source decorations.
+   * return source decorations.
+   * @param {unknown} view
    * @return {unknown}
    */
-  getSourceDecorations() : {range:monaco.Range, options: unknown}[] {
-    // create source file decoration info
-    const decorations = [];
-    for (let i = 0; i < this.dataList.length; i++) {
-      const data = this.dataList[i];
-      decorations.push({
-        range: new monaco.Range(data.start, 1, data.end, 1),
-        options: {
-          isWholeLine: true,
-          className: data.value >= this.complexityLevel ?
-            'sourceComplex' : 'sourceNotComplex',
-          glyphMarginClassName: 'soureMarginBlock',
-        },
-      });
+  getSourceDecorations(view: EditorView) : RangeSet<Decoration> {
+    const sourceComplexBlock = Decoration.line({
+      attributes: {class: 'sourceComplex'},
+    });
+    const sourceNotComplexBlock = Decoration.line({
+      attributes: {class: 'sourceNotComplex'},
+    });
+    const builder = new RangeSetBuilder<Decoration>();
+    for (const {from, to} of view.visibleRanges) {
+      for (let pos = from; pos <= to;) {
+        const line = view.state.doc.lineAt(pos);
+        if (this.dataList.some((data) =>
+          data.start <= line.number && data.end >= line.number &&
+          data.value >= this.complexityLevel)) {
+          builder.add(line.from, line.from, sourceComplexBlock);
+        } else if (this.dataList.some((data) =>
+          data.start <= line.number && data.end >= line.number &&
+          data.value < this.complexityLevel)) {
+          builder.add(line.from, line.from, sourceNotComplexBlock);
+        }
+        pos = line.to + 1;
+      }
     }
 
-    return decorations;
+    return builder.finish();
   }
 }

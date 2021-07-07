@@ -178,10 +178,10 @@
         width: 100%;
       }
     }
-
-    .tabulator-header {
-      color: white;
+    
+    .tabulator-col-content {
       background-color: black;
+      color: white;
     }
   }
 
@@ -192,12 +192,16 @@
     height: 500px;
 
     .source-code-editor {
+      display: inline-block;
       width: 100%;
       height: calc(100% - 56px);
       border: 1px solid grey
     }
 
-    // monaco editor
+    .cm-editor {
+      height: 100%;
+    }
+    // source editor
     .sourceMarginBlock {
       background: red;
     }
