@@ -69,21 +69,18 @@ public class CodeSizeFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath()
-      throws IOException, InterruptedException {
+  public void testCreateWithUnknownPath() throws IOException, InterruptedException {
     CodeSizeFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     CodeSizeFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
     CodeSizeFactory.create(new FilePath(directory));
   }

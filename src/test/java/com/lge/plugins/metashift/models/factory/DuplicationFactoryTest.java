@@ -59,8 +59,8 @@ public class DuplicationFactoryTest {
     objects = new ArrayList<>();
   }
 
-  private void assertValues(DuplicationData object, String recipe, String file,
-      long lines, long duplicatedLines) {
+  private void assertValues(DuplicationData object, String recipe, String file, long lines,
+      long duplicatedLines) {
     assertEquals(recipe, object.getRecipe());
     assertEquals(file, object.getFile());
     assertEquals(lines, object.getLines());
@@ -68,21 +68,18 @@ public class DuplicationFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath()
-      throws IOException, InterruptedException {
+  public void testCreateWithUnknownPath() throws IOException, InterruptedException {
     DuplicationFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     DuplicationFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
     DuplicationFactory.create(new FilePath(directory));
   }

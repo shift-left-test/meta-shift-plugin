@@ -70,21 +70,18 @@ public class ComplexityFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath()
-      throws IOException, InterruptedException {
+  public void testCreateWithUnknownPath() throws IOException, InterruptedException {
     ComplexityFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     ComplexityFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
     ComplexityFactory.create(new FilePath(directory));
   }

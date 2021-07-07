@@ -70,21 +70,18 @@ public class RecipeViolationFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateListWithUnknownPath()
-      throws IOException, InterruptedException {
+  public void testCreateListWithUnknownPath() throws IOException, InterruptedException {
     RecipeViolationFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     RecipeViolationFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkrecipe").getParentFile();
     RecipeViolationFactory.create(new FilePath(directory));
   }

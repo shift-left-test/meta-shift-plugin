@@ -58,26 +58,22 @@ public class JsonUtilsTest {
   }
 
   @Test
-  public void testCreateWithNullFile()
-      throws IOException, InterruptedException {
+  public void testCreateWithNullFile() throws IOException, InterruptedException {
     assertEquals(JsonUtils.EMPTY, JsonUtils.createObject(null));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithUnknownPath()
-      throws IOException, InterruptedException {
+  public void testCreateWithUnknownPath() throws IOException, InterruptedException {
     JsonUtils.createObject(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoneFile()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoneFile() throws IOException, InterruptedException {
     JsonUtils.createObject(new FilePath(utils.createDirectory("directory")));
   }
 
   @Test
-  public void testCreateWithIdenticalFile()
-      throws IOException, InterruptedException {
+  public void testCreateWithIdenticalFile() throws IOException, InterruptedException {
     builder.append("{ }");
     File file = utils.createFile("test.json");
     utils.writeLines(builder, file);
@@ -87,8 +83,7 @@ public class JsonUtilsTest {
   }
 
   @Test
-  public void testCreateWithIdenticalContents()
-      throws IOException, InterruptedException {
+  public void testCreateWithIdenticalContents() throws IOException, InterruptedException {
     builder.append("{ }");
     File file1 = utils.createFile("test1.json");
     utils.writeLines(builder, file1);
@@ -100,8 +95,7 @@ public class JsonUtilsTest {
   }
 
   @Test
-  public void testCreateWithDifferentContents()
-      throws IOException, InterruptedException {
+  public void testCreateWithDifferentContents() throws IOException, InterruptedException {
     builder = new StringBuilder();
     builder.append("{ }");
     File file1 = utils.createFile("test1.json");

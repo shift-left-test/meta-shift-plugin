@@ -59,8 +59,8 @@ public class CommentFactoryTest {
     objects = new ArrayList<>();
   }
 
-  private void assertValues(CommentData object, String recipe, String file,
-      long lines, long commentLines) {
+  private void assertValues(CommentData object, String recipe, String file, long lines,
+      long commentLines) {
     assertEquals(recipe, object.getRecipe());
     assertEquals(file, object.getFile());
     assertEquals(lines, object.getLines());
@@ -68,21 +68,18 @@ public class CommentFactoryTest {
   }
 
   @Test(expected = IOException.class)
-  public void testCreateSetWithUnknownPath()
-      throws IOException, InterruptedException {
+  public void testCreateSetWithUnknownPath() throws IOException, InterruptedException {
     CommentFactory.create(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoTaskDirectory()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     CommentFactory.create(new FilePath(directory));
   }
 
   @Test(expected = IOException.class)
-  public void testCreateWithNoFile()
-      throws IOException, InterruptedException {
+  public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
     CommentFactory.create(new FilePath(directory));
   }

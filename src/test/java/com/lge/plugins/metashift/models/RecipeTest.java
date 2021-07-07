@@ -29,6 +29,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.fixture.FakeRecipe;
+import com.lge.plugins.metashift.fixture.FakeReportBuilder;
+import com.lge.plugins.metashift.fixture.FakeScript;
+import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
@@ -58,130 +62,14 @@ public class RecipeTest {
   private TemporaryFileUtils utils;
   private Recipe origin;
   private Recipe same;
+  private FakeReportBuilder builder;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     origin = new Recipe("cmake-project-1.0.0-r0");
     same = new Recipe("cmake-project-1.0.0-r0");
-  }
-
-  private void prepareMetadata(File report, File source) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(String.format("{ 'S': '%s' }", source.getAbsolutePath().replace('\\', '/')));
-    utils.writeLines(sb, report, "metadata.json");
-  }
-
-  private void prepareSourceFiles(File source) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("#include<stdio>").append("int main() {").append("  return 0;").append("}");
-    utils.writeLines(sb, source, "test.cpp");
-
-    sb = new StringBuilder();
-    sb.append("inherit cmake").append("SRC_URI = 'git://path/to/repo'");
-    utils.writeLines(sb, source, "test.bb");
-  }
-
-  private void prepareSageReport(File report, File source) {
-    String absolutePath = source.getAbsolutePath().replace('\\', '/');
-    StringBuilder sb = new StringBuilder();
-    sb
-        .append("{")
-        .append("  'size': [], ")
-        .append("  'violations': [")
-        .append("    {")
-        .append("      'file': '../my-source/test.cpp',")
-        .append("      'line': 1,")
-        .append("      'column': 100,")
-        .append("      'rule': 'NPE',")
-        .append("      'message': 'NPE_message',")
-        .append("      'description': 'NPE_desc',")
-        .append("      'severity': 'error',")
-        .append("      'level': 'major',")
-        .append("      'tool': 'cppcheck'")
-        .append("    }")
-        .append("  ], ")
-        .append("  'complexity': [ ")
-        .append("    {")
-        .append(String.format("      'file': '%s/test.cpp', ", absolutePath))
-        .append("      'function': 'main()', ")
-        .append("      'start': 1, ")
-        .append("      'end': 1, ")
-        .append("      'value': 1 ")
-        .append("    }")
-        .append("  ]")
-        .append("}");
-    utils.writeLines(sb, report, "checkcode", "sage_report.json");
-  }
-
-  private void prepareCoverageFile(File report) {
-    StringBuilder sb = new StringBuilder();
-    sb
-        .append("<classes>")
-        .append("  <class filename='test.cpp'>")
-        .append("    <methods>")
-        .append("      <method name='main()'>")
-        .append("        <lines>")
-        .append("          <line number='1'/>")
-        .append("        </lines>")
-        .append("      </method>")
-        .append("    </methods>")
-        .append("    <lines>")
-        .append("      <line branch='false' hits='1' number='2'/>")
-        .append("    </lines>")
-        .append("  </class>")
-        .append("</classes>");
-    utils.writeLines(sb, report, "coverage", "coverage.xml");
-  }
-
-  private void prepareMutationTestFile(File report) {
-    StringBuilder sb = new StringBuilder();
-    sb
-        .append("<mutations>")
-        .append("  <mutation detected='true'>")
-        .append("    <sourceFile>test.cpp</sourceFile>")
-        .append("    <sourceFilePath>test.cpp</sourceFilePath>")
-        .append("    <mutatedClass>A</mutatedClass>")
-        .append("    <mutatedMethod>main</mutatedMethod>")
-        .append("    <lineNumber>1</lineNumber>")
-        .append("    <mutator>AOR</mutator>")
-        .append("    <killingTest>test1</killingTest>")
-        .append("  </mutation>")
-        .append("</mutations>");
-    utils.writeLines(sb, report, "checktest", "mutations.xml");
-  }
-
-  private void prepareRecipeViolationFile(File report, File source) {
-    String absolutePath = source.getAbsolutePath().replace('\\', '/');
-    StringBuilder sb = new StringBuilder();
-    sb
-        .append("{")
-        .append("  'issues': [")
-        .append("    {")
-        .append(String.format("      'file': '%s/test.bb', ", absolutePath))
-        .append("      'line': 1,")
-        .append("      'rule': 'checksum',")
-        .append("      'severity': 'error',")
-        .append("      'description': 'checksum error'")
-        .append("    }")
-        .append("  ]")
-        .append("}");
-    utils.writeLines(sb, report, "checkrecipe", "recipe_violations.json");
-  }
-
-  private void prepareRecipeSizeFile(File report, File source) {
-    String absolutePath = source.getAbsolutePath().replace('\\', '/');
-    StringBuilder sb = new StringBuilder();
-    sb
-        .append("{")
-        .append("  'lines_of_code': [")
-        .append("    {")
-        .append(String.format("      'file': '%s/test.bb', ", absolutePath))
-        .append("      'code_lines': 3")
-        .append("    }")
-        .append("  ]")
-        .append("}");
-    utils.writeLines(sb, report, "checkrecipe", "files.json");
+    builder = new FakeReportBuilder();
   }
 
   @Test
@@ -264,14 +152,12 @@ public class RecipeTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeWithUnknownPath()
-      throws IOException, InterruptedException {
+  public void testCreateRecipeWithUnknownPath() throws IOException, InterruptedException {
     new Recipe(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeWithoutDirectory()
-      throws IOException, InterruptedException {
+  public void testCreateRecipeWithoutDirectory() throws IOException, InterruptedException {
     new Recipe(new FilePath(utils.createFile("path-to-file")));
   }
 
@@ -282,8 +168,7 @@ public class RecipeTest {
   }
 
   @Test
-  public void testCreateRecipeWithEmptyRecipeDirectory()
-      throws IOException, InterruptedException {
+  public void testCreateRecipeWithEmptyRecipeDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "cmake-project-1.0.0-r0");
     Recipe recipe = new Recipe(new FilePath(directory));
     assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
@@ -292,30 +177,46 @@ public class RecipeTest {
   }
 
   @Test
-  public void testParseReport()
-      throws IOException, InterruptedException {
-    File report = utils.createDirectory("report", "A-1.0.0-r0");
+  public void testParseReport() throws IOException, InterruptedException {
     File source = utils.createDirectory("source");
-    prepareMetadata(report, source);
-    prepareSourceFiles(source);
-    prepareSageReport(report, source);
-    prepareCoverageFile(report);
-    prepareMutationTestFile(report);
-    prepareRecipeSizeFile(report, source);
-    prepareRecipeViolationFile(report, source);
+    File report = utils.createDirectory("report");
+    FakeRecipe fakeRecipe = new FakeRecipe(source)
+        .setPremirror(1, 2)
+        .setSharedState(3, 4)
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeSource(10, 5, 5, 3)
+            .setComplexity(100, 1, 2)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
 
-    Recipe recipe = new Recipe(new FilePath(report));
-    assertEquals(6, recipe.objects(Data.class).count());
-    assertTrue(recipe.isAvailable(CodeViolationData.class));
-    assertTrue(recipe.isAvailable(ComplexityData.class));
-    assertTrue(recipe.isAvailable(StatementCoverageData.class));
-    assertTrue(recipe.isAvailable(MutationTestData.class));
+    Recipe recipe = new Recipe(new FilePath(new File(report, fakeRecipe.getRecipe())));
+    assertEquals(1, recipe.objects(CommentData.class).count());
+    assertEquals(1, recipe.objects(DuplicationData.class).count());
+    assertEquals(3, recipe.objects(PremirrorCacheData.class).count());
+    assertEquals(7, recipe.objects(SharedStateCacheData.class).count());
+    assertEquals(6, recipe.objects(CodeViolationData.class).count());
+    assertEquals(3, recipe.objects(ComplexityData.class).count());
+    assertEquals(6, recipe.objects(RecipeViolationData.class).count());
+    assertEquals(10, recipe.objects(TestData.class).count());
+    assertEquals(3, recipe.objects(StatementCoverageData.class).count());
+    assertEquals(7, recipe.objects(BranchCoverageData.class).count());
+    assertEquals(6, recipe.objects(MutationTestData.class).count());
+
+    assertTrue(recipe.isAvailable(CacheData.class));
     assertTrue(recipe.isAvailable(RecipeViolationData.class));
+    assertTrue(recipe.isAvailable(CodeViolationData.class));
+    assertTrue(recipe.isAvailable(TestData.class));
+    assertTrue(recipe.isAvailable(CoverageData.class));
+    assertTrue(recipe.isAvailable(MutationTestData.class));
   }
 
   @Test
-  public void testRecipeLogs()
-      throws IOException, InterruptedException {
+  public void testRecipeLogs() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     PrintStream logger = Mockito.mock(PrintStream.class);
     new Recipe(new FilePath(directory), logger);
