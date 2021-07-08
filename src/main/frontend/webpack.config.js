@@ -71,7 +71,7 @@ module.exports = {
   ],
   devServer: {
     before: function(app, server, compiler) {
-      app.use(rewrite(/\/jenkins\/static\/.*\/plugin\/metashift\/js\/(.*)/, '/metashift/js/$1'));
+      app.use(rewrite(/\/jenkins\/static\/.*\/plugin\/meta-shift\/js\/(.*)/, '/meta-shift/js/$1'));
     },
     proxy: {
       '/jenkins': {
@@ -79,7 +79,7 @@ module.exports = {
       },
     },
     contentBase: path.join(__dirname, '../webapp/js'),
-    publicPath: '/metashift/js/',
+    publicPath: '/meta-shift/js/',
     hot: true,
     compress: true,
     host: '0.0.0.0',

@@ -3,15 +3,15 @@
   <j:new var="h" className="hudson.Functions" />
   ${h.initPageVariables(context)}
 
-  <link rel="preload" href="${resURL}/plugin/metashift/js/fonts/JetBrainsMono-Italic-VariableFont_wght.ttf"
+  <link rel="preload" href="${resURL}/plugin/meta-shift/js/fonts/JetBrainsMono-Italic-VariableFont_wght.ttf"
     as="font" type="font/ttf" crossorigin="anonymous" />
-  <link rel="preload" href="${resURL}/plugin/metashift/js/fonts/JetBrainsMono-VariableFont_wght.ttf"
+  <link rel="preload" href="${resURL}/plugin/meta-shift/js/fonts/JetBrainsMono-VariableFont_wght.ttf"
     as="font" type="font/ttf" crossorigin="anonymous" />
-  <link rel="preload" href="${resURL}/plugin/metashift/js/fonts/RobotoCondensed-Bold.ttf"
+  <link rel="preload" href="${resURL}/plugin/meta-shift/js/fonts/RobotoCondensed-Bold.ttf"
     as="font" type="font/ttf" crossorigin="anonymous" />
-  <link rel="preload" href="${resURL}/plugin/metashift/js/fonts/RobotoCondensed-Light.ttf"
+  <link rel="preload" href="${resURL}/plugin/meta-shift/js/fonts/RobotoCondensed-Light.ttf"
     as="font" type="font/ttf" crossorigin="anonymous" />
-  <link rel="preload" href="${resURL}/plugin/metashift/js/fonts/RobotoCondensed-LightItalic.ttf"
+  <link rel="preload" href="${resURL}/plugin/meta-shift/js/fonts/RobotoCondensed-LightItalic.ttf"
     as="font" type="font/ttf" crossorigin="anonymous"/>
-  <script type="text/javascript" src="${resURL}/plugin/metashift/js/bundle.js"/>
+  <script type="text/javascript" src="${resURL}/plugin/meta-shift/js/bundle.js"/>
 </j:jelly>

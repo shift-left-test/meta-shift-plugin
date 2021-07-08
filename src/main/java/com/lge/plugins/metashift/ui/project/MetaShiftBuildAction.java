@@ -121,7 +121,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
 
   @Override
   public String getIconFileName() {
-    return "/plugin/metashift/img/meta_shift_first.png";
+    return "/plugin/meta-shift/img/meta_shift_first.png";
   }
 
   @Override

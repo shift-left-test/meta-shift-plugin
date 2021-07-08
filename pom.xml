@@ -10,7 +10,7 @@
     <relativePath/>
   </parent>
   <groupId>com.lge.plugins</groupId>
-  <artifactId>metashift</artifactId>
+  <artifactId>meta-shift</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <properties>
