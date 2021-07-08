@@ -236,7 +236,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
         }
       } else {
         throw new IllegalArgumentException(
-            String.format("Meta Shift Error: report path[%s] does not exist!!!",
+            String.format("meta-shift-plugin error: report path[%s] does not exist!!!",
                 reportPath.toURI().toString()));
       }
     }

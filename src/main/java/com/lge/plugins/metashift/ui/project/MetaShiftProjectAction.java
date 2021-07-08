@@ -64,7 +64,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
 
   @Override
   public String getDisplayName() {
-    return "Meta Shift Report";
+    return "meta-shift Report";
   }
 
   /**

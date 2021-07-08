@@ -1,15 +1,17 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" 
-xmlns:c="/charts">
-  <l:layout title="Meta-Shift Report">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:c="/charts">
+  <l:layout title="meta-shift Report">
     <st:adjunct includes="com.lge.plugins.metashift.front"/>
-    <st:include it="${it.project}" page="sidepanel.jelly" />
+    <st:include it="${it.project}" page="sidepanel.jelly"/>
     <l:main-panel>
       <div class="metashift">
         <div class="page">
-        <h2>Meta Shift</h2>
-        <p>The report has never been published.</p>
+          <h2>Report Not Found</h2>
+          <p>The meta-shift report you were looking for could not be found. It might have been
+            removed, or did not exist in the first place.
+          </p>
         </div>
       </div>
     </l:main-panel>

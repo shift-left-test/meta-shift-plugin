@@ -126,7 +126,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
 
   @Override
   public String getDisplayName() {
-    return "Meta Shift Report";
+    return "meta-shift Report";
   }
 
   @Override

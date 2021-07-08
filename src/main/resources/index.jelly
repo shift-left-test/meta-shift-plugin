@@ -1,4 +1,5 @@
 <?jelly escape-by-default='true'?>
 <div>
-    Meta shift jenkeins plugin.
+  This plugin collects the various code metrics reported by a Yocto based project integrated with the
+  meta-shift layer to visualize the results.
 </div>

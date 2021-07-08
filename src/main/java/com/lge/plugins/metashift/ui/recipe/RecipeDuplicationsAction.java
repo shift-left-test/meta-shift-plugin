@@ -37,7 +37,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
- * MetaShift recipe's duplication detail view action class.
+ * Duplication detail view action class.
  */
 public class RecipeDuplicationsAction
     extends RecipeActionChild {

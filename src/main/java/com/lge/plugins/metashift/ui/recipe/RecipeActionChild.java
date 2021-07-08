@@ -35,7 +35,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.Stapler;
 
 /**
- * MetaShift recipe's detail view common feature class.
+ * Detail view common feature class.
  */
 public abstract class RecipeActionChild implements Action {
 
