@@ -41,7 +41,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 /**
  * violation detail view action class base.
  */
-public abstract class RecipeViolationActionBase<T extends ViolationData> 
+public abstract class RecipeViolationActionBase<T extends ViolationData<?>>
     extends RecipeActionChild {
 
   static final String STORE_KEY_FILEVIOLATIONLIST = "FileViolationList";
@@ -54,10 +54,10 @@ public abstract class RecipeViolationActionBase<T extends ViolationData>
   /**
    * constructor.
    *
-   * @param parent     parent action
-   * @param listener   logger
-   * @param recipe     recipe
-   * @param metadata   metadata
+   * @param parent   parent action
+   * @param listener logger
+   * @param recipe   recipe
+   * @param metadata metadata
    */
   public RecipeViolationActionBase(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,

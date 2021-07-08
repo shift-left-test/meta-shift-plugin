@@ -43,10 +43,10 @@ public class RecipeBranchCoverageAction
   /**
    * constructor.
    *
-   * @param parent     parent action
-   * @param listener   logger
-   * @param recipe     recipe
-   * @param metadata   metadata
+   * @param parent   parent action
+   * @param listener logger
+   * @param recipe   recipe
+   * @param metadata metadata
    */
   public RecipeBranchCoverageAction(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,

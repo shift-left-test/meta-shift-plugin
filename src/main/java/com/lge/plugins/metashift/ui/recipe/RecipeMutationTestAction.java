@@ -46,7 +46,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class RecipeMutationTestAction extends RecipeActionChild {
 
   static final String STORE_KEY_MUTATIONTESTLIST = "MutationTestList";
-  
+
   // statistics data
   private final long killedCount;
   private final long survivedCount;
@@ -55,10 +55,10 @@ public class RecipeMutationTestAction extends RecipeActionChild {
   /**
    * constructor.
    *
-   * @param parent     parent action
-   * @param listener   logger
-   * @param recipe     recipe
-   * @param metadata   metadata
+   * @param parent   parent action
+   * @param listener logger
+   * @param recipe   recipe
+   * @param metadata metadata
    */
   public RecipeMutationTestAction(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,

@@ -154,7 +154,7 @@ public abstract class RecipeActionChild implements Action {
   /**
    * return metricStatics rendering model.
    *
-   * @return jsonobject
+   * @return json object
    */
   public JSONObject getMetricStatisticsJson() {
     JSONObject result = this.getMetricStatistics().toJsonObject();

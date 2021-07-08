@@ -50,10 +50,10 @@ public abstract class RecipeCoverageActionBase<T extends CoverageData>
   /**
    * constructor.
    *
-   * @param parent     parent action
-   * @param listener   logger
-   * @param recipe     recipe
-   * @param metadata   metadata
+   * @param parent   parent action
+   * @param listener logger
+   * @param recipe   recipe
+   * @param metadata metadata
    */
   public RecipeCoverageActionBase(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,

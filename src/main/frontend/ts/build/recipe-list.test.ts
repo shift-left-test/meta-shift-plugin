@@ -48,67 +48,67 @@ suite('recipe-list', () => {
     await elementUpdated(el);
 
     let elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="name"');
+        'div.tabulator-cell[tabulator-field="name"]');
     assert.equal(elChild.textContent, 'test',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="lines"');
+        'div.tabulator-cell[tabulator-field="lines"]');
     assert.include(elChild.textContent, '10',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="premirrorCache"');
+        'div.tabulator-cell[tabulator-field="premirrorCache"]');
     assert.include(elChild.textContent, '20%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="sharedStateCache"');
+        'div.tabulator-cell[tabulator-field="sharedStateCache"]');
     assert.include(elChild.textContent, '30%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="recipeViolations"');
+        'div.tabulator-cell[tabulator-field="recipeViolations"]');
     assert.include(elChild.textContent, '0.40',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="comments"');
+        'div.tabulator-cell[tabulator-field="comments"]');
     assert.include(elChild.textContent, '50%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="codeViolations"');
+        'div.tabulator-cell[tabulator-field="codeViolations"]');
     assert.include(elChild.textContent, '0.60',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="complexity"');
+        'div.tabulator-cell[tabulator-field="complexity"]');
     assert.include(elChild.textContent, '70%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="duplications"');
+        'div.tabulator-cell[tabulator-field="duplications"]');
     assert.include(elChild.textContent, '80%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="test"');
+        'div.tabulator-cell[tabulator-field="test"]');
     assert.include(elChild.textContent, '90%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="statementCoverage"');
+        'div.tabulator-cell[tabulator-field="statementCoverage"]');
     assert.include(elChild.textContent, '100%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="branchCoverage"');
+        'div.tabulator-cell[tabulator-field="branchCoverage"]');
     assert.include(elChild.textContent, '99%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="mutationTest"');
+        'div.tabulator-cell[tabulator-field="mutationTest"]');
     assert.include(elChild.textContent, '11%',
         elChild.outerHTML);
   });
@@ -143,67 +143,67 @@ suite('recipe-list', () => {
     await elementUpdated(el);
 
     let elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="name"');
+        'div.tabulator-cell[tabulator-field="name"]');
     assert.equal(elChild.textContent, 'test',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="lines"');
+        'div.tabulator-cell[tabulator-field="lines"]');
     assert.include(elChild.textContent, '10',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="premirrorCache"');
+        'div.tabulator-cell[tabulator-field="premirrorCache"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="sharedStateCache"');
+        'div.tabulator-cell[tabulator-field="sharedStateCache"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="recipeViolations"');
+        'div.tabulator-cell[tabulator-field="recipeViolations"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="comments"');
+        'div.tabulator-cell[tabulator-field="comments"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="codeViolations"');
+        'div.tabulator-cell[tabulator-field="codeViolations"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="complexity"');
+        'div.tabulator-cell[tabulator-field="complexity"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="duplications"');
+        'div.tabulator-cell[tabulator-field="duplications"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="test"');
+        'div.tabulator-cell[tabulator-field="test"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="statementCoverage"');
+        'div.tabulator-cell[tabulator-field="statementCoverage"]');
     assert.include(elChild.textContent, '100%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="branchCoverage"');
+        'div.tabulator-cell[tabulator-field="branchCoverage"]');
     assert.include(elChild.textContent, '99%',
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="mutationTest"');
+        'div.tabulator-cell[tabulator-field="mutationTest"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
   });

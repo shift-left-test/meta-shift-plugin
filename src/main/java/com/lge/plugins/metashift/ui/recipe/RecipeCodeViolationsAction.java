@@ -41,10 +41,10 @@ public class RecipeCodeViolationsAction
   /**
    * constructor.
    *
-   * @param parent     parent action
-   * @param listener   logger
-   * @param recipe     recipe
-   * @param metadata   metadata
+   * @param parent   parent action
+   * @param listener logger
+   * @param recipe   recipe
+   * @param metadata metadata
    */
   public RecipeCodeViolationsAction(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,

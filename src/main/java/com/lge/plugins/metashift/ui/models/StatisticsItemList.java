@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import net.sf.json.JSONArray;
 
 /**
- * recipe mettics statistics item list class.
+ * recipe metric statistics item list class.
  */
 public class StatisticsItemList
     extends ArrayList<StatisticsItemList.Item> {

@@ -51,10 +51,10 @@ public class RecipeTestAction extends RecipeActionChild {
   /**
    * constructor.
    *
-   * @param parent     parent action
-   * @param listener   logger
-   * @param recipe     recipe
-   * @param metadata   metadata
+   * @param parent   parent action
+   * @param listener logger
+   * @param recipe   recipe
+   * @param metadata metadata
    */
   public RecipeTestAction(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,

@@ -34,13 +34,14 @@ import net.sf.json.JSONObject;
  * Actionable class with metrics.
  */
 public abstract class MetricsActionBase extends Actionable {
+
   private final Metrics metrics;
 
   /**
    * constructor.
    *
-   * @param criteria criteria
-   * @param streamable metrics parsing applies to 
+   * @param criteria   criteria
+   * @param streamable metrics parsing applies to
    */
   public MetricsActionBase(Criteria criteria, Streamable streamable) {
     super();

@@ -49,8 +49,9 @@ import org.kohsuke.stapler.export.ExportedBean;
  */
 @ExportedBean
 public class RecipeAction extends MetricsActionBase implements Action {
+
   MetaShiftBuildAction parent;
-  
+
   @Exported(visibility = 999)
   public String name;
 

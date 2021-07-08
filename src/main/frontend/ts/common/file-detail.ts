@@ -120,7 +120,7 @@ export class FileDetail extends LitElement {
       console.log('shell');
     }
 
-    // TODO: detect langeage from file extension.
+    // TODO: detect language from file extension.
     this.codeEditor.setState(EditorState.create({
       doc: response['content'],
       extensions: [
@@ -129,7 +129,7 @@ export class FileDetail extends LitElement {
         defaultHighlightStyle,
         EditorView.editable.of(false),
         syntaxHighlighter,
-        this.addDecotation(),
+        this.addDecoration(),
       ],
     }));
 
@@ -140,7 +140,7 @@ export class FileDetail extends LitElement {
    * show decoration
    * @return {unknown}
    */
-  addDecotation() : Extension {
+  addDecoration() : Extension {
     const that = this;
     const showBlocks = ViewPlugin.fromClass(class {
       decorations: DecorationSet

@@ -128,7 +128,7 @@ public abstract class ViolationData<T> extends Data<T> {
   }
 
   /**
-   * Returnss the level of the violation.
+   * Returns the level of the violation.
    *
    * @return level of the violation
    */

@@ -43,10 +43,10 @@ public class RecipeStatementCoverageAction
   /**
    * constructor.
    *
-   * @param parent     parent action
-   * @param listener   logger
-   * @param recipe     recipe
-   * @param metadata   metadata
+   * @param parent   parent action
+   * @param listener logger
+   * @param recipe   recipe
+   * @param metadata metadata
    */
   public RecipeStatementCoverageAction(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
@@ -71,7 +71,7 @@ public class RecipeStatementCoverageAction
     fileCoverage.put("file", file);
     fileCoverage.put("coverage",
         lines.size() > 0 ? (double) coveredLines.size() / (double) lines.size() : 0);
-    
+
     return fileCoverage;
   }
 
