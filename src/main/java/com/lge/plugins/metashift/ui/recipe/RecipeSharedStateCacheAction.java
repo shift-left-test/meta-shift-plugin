@@ -27,14 +27,13 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
-import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * Shared state cache availability detail view action class.
@@ -42,27 +41,25 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class RecipeSharedStateCacheAction
     extends RecipeActionChild {
 
-  static final String STORE_KEY_CACHELIST = "SharedStateCacheList";
-
   /**
    * constructor.
    *
    * @param parent     parent action
    * @param listener   logger
-   * @param dataSource datasource
    * @param recipe     recipe
    * @param metadata   metadata
    */
   public RecipeSharedStateCacheAction(
-      RecipeAction parent, TaskListener listener, VirtualChannel channel,
-      DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent);
+      RecipeAction parent, VirtualChannel channel, JSONObject metadata,
+      String name, String url, boolean percentScale,
+      TaskListener listener, Recipe recipe) {
+    super(parent, channel, metadata, name, url, percentScale);
 
     JSONArray cacheList = JSONArray.fromObject(
         recipe.objects(SharedStateCacheData.class).toArray());
 
     try {
-      dataSource.put(cacheList, this.getParentAction().getName(), STORE_KEY_CACHELIST);
+      this.setTableModelJson(cacheList);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -70,42 +67,14 @@ public class RecipeSharedStateCacheAction
   }
 
   @Override
-  public String getIconFileName() {
-    return "document.png";
+  public SummaryStatistics getMetricStatistics() {
+    return this.getParentAction().getMetricStatistics()
+        .getSharedStateCache();
   }
 
   @Override
-  public String getDisplayName() {
-    return "Shared State Cache";
-  }
-
-  @Override
-  public String getUrlName() {
-    return "sharedstate_cache";
-  }
-
-  @Override
-  public String getScale() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getSharedStateCache();
-    if (evaluator.isAvailable()) {
-      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
-    } else {
-      return "N/A";
-    }
-  }
-
-  @Override
-  public JSONObject getMetricStatistics() {
-    JSONObject result = this.getParentAction().getMetricStatistics()
-        .getSharedStateCache().toJsonObject();
-
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getSharedStateCache();
-
-    result.put("scale", evaluator.getRatio());
-    result.put("available", evaluator.isAvailable());
-    result.put("percent", true);
-
-    return result;
+  public Evaluator<?> getEvaluator() {
+    return this.getParentAction().getMetrics().getSharedStateCache();
   }
 
   @Override
@@ -121,16 +90,5 @@ public class RecipeSharedStateCacheAction
         (int) (evaluator.getDenominator() - evaluator.getNumerator()));
 
     return stats.toJsonArray();
-  }
-
-  /**
-   * return paginated cache availability list.
-   *
-   * @return cache availability list
-   */
-  @JavaScriptMethod
-  public JSONArray getRecipeCaches() {
-    return this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_CACHELIST);
   }
 }

@@ -26,8 +26,8 @@ package com.lge.plugins.metashift.ui.recipe;
 
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import com.lge.plugins.metashift.models.TestData;
-import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -36,14 +36,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * Test detail view action class.
  */
 public class RecipeTestAction extends RecipeActionChild {
-
-  static final String STORE_KEY_TESTLIST = "TestList";
 
   // statistics data
   private final long passedCount;
@@ -56,14 +53,14 @@ public class RecipeTestAction extends RecipeActionChild {
    *
    * @param parent     parent action
    * @param listener   logger
-   * @param dataSource datasource
    * @param recipe     recipe
    * @param metadata   metadata
    */
   public RecipeTestAction(
-      RecipeAction parent, TaskListener listener, VirtualChannel channel,
-      DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent);
+      RecipeAction parent, VirtualChannel channel, JSONObject metadata,
+      String name, String url, boolean percentScale,
+      TaskListener listener, Recipe recipe) {
+    super(parent, channel, metadata, name, url, percentScale);
 
     List<TestData> testList = recipe.objects(TestData.class).collect(Collectors.toList());
 
@@ -79,7 +76,7 @@ public class RecipeTestAction extends RecipeActionChild {
         .filter(o -> o.getStatus().equals("SKIPPED")).count();
 
     try {
-      dataSource.put(testArray, this.getParentAction().getName(), STORE_KEY_TESTLIST);
+      this.setTableModelJson(testArray);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -87,42 +84,14 @@ public class RecipeTestAction extends RecipeActionChild {
   }
 
   @Override
-  public String getIconFileName() {
-    return "document.png";
+  public SummaryStatistics getMetricStatistics() {
+    return this.getParentAction().getMetricStatistics()
+        .getTest();
   }
 
   @Override
-  public String getDisplayName() {
-    return "Test";
-  }
-
-  @Override
-  public String getUrlName() {
-    return "test";
-  }
-
-  @Override
-  public String getScale() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getTest();
-    if (evaluator.isAvailable()) {
-      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
-    } else {
-      return "N/A";
-    }
-  }
-
-  @Override
-  public JSONObject getMetricStatistics() {
-    JSONObject result = this.getParentAction().getMetricStatistics()
-        .getTest().toJsonObject();
-
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getTest();
-
-    result.put("scale", evaluator.getRatio());
-    result.put("available", evaluator.isAvailable());
-    result.put("percent", true);
-
-    return result;
+  public Evaluator<?> getEvaluator() {
+    return this.getParentAction().getMetrics().getTest();
   }
 
   @Override
@@ -144,15 +113,5 @@ public class RecipeTestAction extends RecipeActionChild {
         skippedCount);
 
     return stats.toJsonArray();
-  }
-
-  /**
-   * return paginated test list.
-   *
-   * @return test list
-   */
-  @JavaScriptMethod
-  public JSONArray getRecipeTests() {
-    return getDataSource().get(getParentAction().getName(), STORE_KEY_TESTLIST);
   }
 }

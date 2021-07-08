@@ -27,7 +27,7 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -46,8 +46,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class RecipeMutationTestAction extends RecipeActionChild {
 
   static final String STORE_KEY_MUTATIONTESTLIST = "MutationTestList";
-  static final String STORE_KEY_FILEMUTATIONTESTSTAT = "FileMutationTestStat";
-
+  
   // statistics data
   private final long killedCount;
   private final long survivedCount;
@@ -58,14 +57,14 @@ public class RecipeMutationTestAction extends RecipeActionChild {
    *
    * @param parent     parent action
    * @param listener   logger
-   * @param dataSource datasource
    * @param recipe     recipe
    * @param metadata   metadata
    */
   public RecipeMutationTestAction(
-      RecipeAction parent, TaskListener listener, VirtualChannel channel,
-      DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent);
+      RecipeAction parent, VirtualChannel channel, JSONObject metadata,
+      String name, String url, boolean percentScale,
+      TaskListener listener, Recipe recipe) {
+    super(parent, channel, metadata, name, url, percentScale);
 
     List<MutationTestData> mutationTestList =
         recipe.objects(MutationTestData.class).collect(Collectors.toList());
@@ -104,8 +103,8 @@ public class RecipeMutationTestAction extends RecipeActionChild {
       fileMutationTestArray.add(fileMutationTest);
 
       try {
-        this.saveFileContents(channel, metadata, file);
-        dataSource.put(testList,
+        this.saveFileContents(file);
+        this.getDataSource().put(testList,
             this.getParentAction().getName(), file, STORE_KEY_MUTATIONTESTLIST);
       } catch (IOException | InterruptedException e) {
         listener.getLogger().println(e.getMessage());
@@ -114,8 +113,7 @@ public class RecipeMutationTestAction extends RecipeActionChild {
     });
 
     try {
-      dataSource.put(fileMutationTestArray,
-          this.getParentAction().getName(), STORE_KEY_FILEMUTATIONTESTSTAT);
+      this.setTableModelJson(fileMutationTestArray);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -123,42 +121,14 @@ public class RecipeMutationTestAction extends RecipeActionChild {
   }
 
   @Override
-  public String getIconFileName() {
-    return "document.png";
+  public SummaryStatistics getMetricStatistics() {
+    return this.getParentAction().getMetricStatistics()
+        .getMutationTest();
   }
 
   @Override
-  public String getDisplayName() {
-    return "Mutation Test";
-  }
-
-  @Override
-  public String getUrlName() {
-    return "mutation_test";
-  }
-
-  @Override
-  public String getScale() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getMutationTest();
-    if (evaluator.isAvailable()) {
-      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
-    } else {
-      return "N/A";
-    }
-  }
-
-  @Override
-  public JSONObject getMetricStatistics() {
-    JSONObject result = this.getParentAction().getMetricStatistics()
-        .getMutationTest().toJsonObject();
-
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getMutationTest();
-
-    result.put("scale", evaluator.getRatio());
-    result.put("available", evaluator.isAvailable());
-    result.put("percent", true);
-
-    return result;
+  public Evaluator<?> getEvaluator() {
+    return this.getParentAction().getMetrics().getMutationTest();
   }
 
   @Override
@@ -177,17 +147,6 @@ public class RecipeMutationTestAction extends RecipeActionChild {
         skippedCount);
 
     return stats.toJsonArray();
-  }
-
-  /**
-   * return paginated mutation test list.
-   *
-   * @return mutation test list
-   */
-  @JavaScriptMethod
-  public JSONArray getRecipeMutationTests() {
-    return this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_FILEMUTATIONTESTSTAT);
   }
 
   /**

@@ -27,149 +27,33 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.StatisticsItemList;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * Branch coverage detail view action class.
  */
-public class RecipeBranchCoverageAction extends RecipeActionChild {
-
-  static final String STORE_KEY_COVERAGELIST = "BranchCoverageList";
-  static final String STORE_KEY_FILECOVERAGESTAT = "FileBranchCoverageStat";
+public class RecipeBranchCoverageAction
+    extends RecipeCoverageActionBase<BranchCoverageData> {
 
   /**
    * constructor.
    *
    * @param parent     parent action
    * @param listener   logger
-   * @param dataSource datasource
    * @param recipe     recipe
    * @param metadata   metadata
    */
   public RecipeBranchCoverageAction(
-      RecipeAction parent, TaskListener listener, VirtualChannel channel,
-      DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent);
-
-    List<BranchCoverageData> coverageDataList =
-        recipe.objects(BranchCoverageData.class).collect(Collectors.toList());
-
-    HashMap<String, List<BranchCoverageData>> fileCoverageList = new HashMap<>();
-
-    for (BranchCoverageData coverageData : coverageDataList) {
-      String file = coverageData.getFile();
-
-      if (!fileCoverageList.containsKey(file)) {
-        fileCoverageList.put(file, new ArrayList<>());
-      }
-
-      fileCoverageList.get(file).add(coverageData);
-    }
-
-    JSONArray fileCoverageArray = new JSONArray();
-
-    fileCoverageList.forEach((file, coverageList) -> {
-      HashSet<LineIndex> indexes = new HashSet<>();
-      HashSet<LineIndex> coveredIndexes = new HashSet<>();
-
-      for (BranchCoverageData data : coverageList) {
-        LineIndex lineIndex = new LineIndex(data.getLine(), data.getIndex());
-
-        indexes.add(lineIndex);
-        if (data.isCovered()) {
-          coveredIndexes.add(lineIndex);
-        }
-      }
-
-      JSONObject fileCoverage = new JSONObject();
-      fileCoverage.put("file", file);
-      fileCoverage.put("coverage",
-          indexes.size() > 0 ? (double) coveredIndexes.size() / (double) indexes.size() : 0);
-      fileCoverageArray.add(fileCoverage);
-
-      try {
-        this.saveFileContents(channel, metadata, file);
-        dataSource.put(coverageList,
-            this.getParentAction().getName(), file, STORE_KEY_COVERAGELIST);
-      } catch (IOException | InterruptedException e) {
-        listener.getLogger().println(e.getMessage());
-        e.printStackTrace(listener.getLogger());
-      }
-    });
-
-    try {
-      dataSource.put(fileCoverageArray,
-          this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
-    } catch (IOException e) {
-      listener.getLogger().println(e.getMessage());
-      e.printStackTrace(listener.getLogger());
-    }
-  }
-
-  @Override
-  public String getIconFileName() {
-    return "document.png";
-  }
-
-  @Override
-  public String getDisplayName() {
-    return "Branch Coverage";
-  }
-
-  @Override
-  public String getUrlName() {
-    return "branch_coverage";
-  }
-
-  @Override
-  public String getScale() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getBranchCoverage();
-    if (evaluator.isAvailable()) {
-      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
-    } else {
-      return "N/A";
-    }
-  }
-
-  @Override
-  public JSONObject getMetricStatistics() {
-    JSONObject result = this.getParentAction().getMetricStatistics()
-        .getBranchCoverage().toJsonObject();
-
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getBranchCoverage();
-
-    result.put("scale", evaluator.getRatio());
-    result.put("available", evaluator.isAvailable());
-    result.put("percent", true);
-
-    return result;
-  }
-
-  @Override
-  public JSONArray getStatistics() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getBranchCoverage();
-
-    StatisticsItemList stats = new StatisticsItemList();
-    stats.addItem("Covered", "valid-good",
-        (int) (evaluator.getRatio() * 100),
-        (int) evaluator.getNumerator());
-    stats.addItem("UnCovered", "invalid",
-        (int) ((1 - evaluator.getRatio()) * 100),
-        (int) (evaluator.getDenominator() - evaluator.getNumerator()));
-
-    return stats.toJsonArray();
+      RecipeAction parent, VirtualChannel channel, JSONObject metadata,
+      String name, String url, boolean percentScale,
+      TaskListener listener, Recipe recipe) {
+    super(parent, channel, metadata, name, url, percentScale, listener, recipe,
+        BranchCoverageData.class);
   }
 
   /**
@@ -194,30 +78,35 @@ public class RecipeBranchCoverageAction extends RecipeActionChild {
     }
   }
 
-  /**
-   * return paginated coverage list.
-   *
-   * @return coverage list
-   */
-  @JavaScriptMethod
-  public JSONArray getRecipeFiles() {
-    return this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
+  protected JSONObject generateFileCoverage(String file, List<BranchCoverageData> coverageList) {
+    HashSet<LineIndex> indexes = new HashSet<>();
+    HashSet<LineIndex> coveredIndexes = new HashSet<>();
+
+    for (BranchCoverageData data : coverageList) {
+      LineIndex lineIndex = new LineIndex(data.getLine(), data.getIndex());
+
+      indexes.add(lineIndex);
+      if (data.isCovered()) {
+        coveredIndexes.add(lineIndex);
+      }
+    }
+
+    JSONObject fileCoverage = new JSONObject();
+    fileCoverage.put("file", file);
+    fileCoverage.put("coverage",
+        indexes.size() > 0 ? (double) coveredIndexes.size() / (double) indexes.size() : 0);
+
+    return fileCoverage;
   }
 
-  /**
-   * return file coverage info.
-   */
-  @JavaScriptMethod
-  public JSONObject getFileCoverageDetail(String codePath) {
-    JSONObject result = new JSONObject();
+  @Override
+  public SummaryStatistics getMetricStatistics() {
+    return this.getParentAction().getMetricStatistics()
+        .getBranchCoverage();
+  }
 
-    List<BranchCoverageData> dataList = this.getDataSource().get(
-        this.getParentAction().getName(), codePath, STORE_KEY_COVERAGELIST);
-
-    result.put("dataList", dataList);
-    result.put("content", this.readFileContents(codePath));
-
-    return result;
+  @Override
+  public Evaluator<?> getEvaluator() {
+    return this.getParentAction().getMetrics().getBranchCoverage();
   }
 }

@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.ui.project;
 
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -225,10 +226,11 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
         FilePath buildPath = new FilePath(run.getRootDir());
         DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
+        Recipes recipes = new Recipes(reportPath, listener.getLogger());
 
         listener.getLogger().println("Create project report");
         MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
-            run, listener, criteria, reportPath, dataSource);
+            run, listener, criteria, reportPath, dataSource, recipes);
         run.addAction(buildAction);
 
         if (!buildAction.getMetrics().isStable(criteria)) {

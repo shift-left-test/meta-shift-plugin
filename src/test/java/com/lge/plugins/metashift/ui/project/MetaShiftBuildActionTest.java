@@ -31,6 +31,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
@@ -85,8 +86,10 @@ public class MetaShiftBuildActionTest {
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
+    FilePath reportPath = workspace.child("report");
+    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, workspace.child("report"), dataSource);
+        taskListener, config, reportPath, dataSource, recipes);
 
     assertEquals("meta-shift Report", buildAction.getDisplayName());
     assertEquals(3, buildAction.getRecipes().size());
@@ -134,8 +137,10 @@ public class MetaShiftBuildActionTest {
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
+    FilePath reportPath = workspace.child("report");
+    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, workspace.child("report"), dataSource);
+        taskListener, config, reportPath, dataSource, recipes);
     run.addAction(buildAction);
 
     assertNull(buildAction.getPreviousBuildAction());
@@ -143,8 +148,9 @@ public class MetaShiftBuildActionTest {
     FreeStyleBuild run2 = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource2 = new DataSource(new FilePath(
         new FilePath(run2.getRootDir()), "meta-shift-report"));
+    Recipes recipes2 = new Recipes(reportPath, taskListener.getLogger());
     MetaShiftBuildAction buildAction2 = new MetaShiftBuildAction(run2,
-        taskListener, config, workspace.child("report"), dataSource2);
+        taskListener, config, reportPath, dataSource2, recipes2);
     run2.addAction(buildAction2);
 
     assertNotNull(buildAction2.getPreviousBuildAction());

@@ -29,6 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
@@ -87,8 +88,10 @@ public class MetaShiftProjectActionTest {
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
+    FilePath reportPath = workspace.child("report");
+    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());    
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, workspace.child("report"), dataSource);
+        taskListener, config, reportPath, dataSource, recipes);
     run.addAction(buildAction);
 
     projectAction.doIndex(req, rsp);
@@ -108,8 +111,10 @@ public class MetaShiftProjectActionTest {
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
+    FilePath reportPath = workspace.child("report");
+    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());    
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, workspace.child("report"), dataSource);
+        taskListener, config, reportPath, dataSource, recipes);
     run.addAction(buildAction);
 
     JSONObject chartModel2 = projectAction.getTrendChartModel();

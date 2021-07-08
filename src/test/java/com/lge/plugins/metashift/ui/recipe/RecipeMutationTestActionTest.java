@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import hudson.FilePath;
@@ -83,9 +84,10 @@ public class RecipeMutationTestActionTest {
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
+    FilePath reportPath = workspace.child("report");
+    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());    
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, workspace.child("report"), dataSource);
-
+        taskListener, config, reportPath, dataSource, recipes);
     RecipeAction recipeAction = buildAction.getActions(RecipeAction.class).stream()
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
     Objects.requireNonNull(recipeAction);
@@ -101,7 +103,7 @@ public class RecipeMutationTestActionTest {
                 + "{\"count\":0,\"width\":0,\"label\":\"Skipped\",\"clazz\":\"invalid\"}]"),
         statistics);
 
-    JSONArray mutationTests = action.getRecipeMutationTests();
+    JSONArray mutationTests = action.getTableModelJson();
     assertContainsKey(mutationTests.getJSONObject(0),
         "file", "survived", "killed", "skipped");
 

@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import hudson.FilePath;
@@ -83,8 +84,10 @@ public class RecipePremirrorCacheActionTest {
     FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
+    FilePath reportPath = workspace.child("report");
+    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());    
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, workspace.child("report"), dataSource);
+        taskListener, config, reportPath, dataSource, recipes);
 
     RecipeAction recipeAction = buildAction.getActions(RecipeAction.class).stream()
         .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
@@ -100,7 +103,7 @@ public class RecipePremirrorCacheActionTest {
                 + "{\"count\":0,\"width\":0,\"label\":\"Uncached\",\"clazz\":\"invalid\"}]"),
         statistics);
 
-    JSONArray recipeCaches = action.getRecipeCaches();
+    JSONArray recipeCaches = action.getTableModelJson();
     assertContainsKey(recipeCaches.getJSONObject(0),
         "signature", "available");
   }

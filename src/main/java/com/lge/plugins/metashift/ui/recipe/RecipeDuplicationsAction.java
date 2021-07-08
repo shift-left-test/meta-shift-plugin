@@ -27,14 +27,13 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * Duplication detail view action class.
@@ -42,27 +41,25 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class RecipeDuplicationsAction
     extends RecipeActionChild {
 
-  static final String STORE_KEY_DUPLICATIONLIST = "DuplicationList";
-
   /**
    * constructor.
    *
    * @param parent     parent action
    * @param listener   logger
-   * @param dataSource datasource
    * @param recipe     recipe
    * @param metadata   metadata
    */
   public RecipeDuplicationsAction(
-      RecipeAction parent, TaskListener listener, VirtualChannel channel,
-      DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent);
+      RecipeAction parent, VirtualChannel channel, JSONObject metadata,
+      String name, String url, boolean percentScale,
+      TaskListener listener, Recipe recipe) {
+    super(parent, channel, metadata, name, url, percentScale);
 
     JSONArray duplicationList = JSONArray.fromObject(
         recipe.objects(DuplicationData.class).toArray());
 
     try {
-      dataSource.put(duplicationList, this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
+      this.setTableModelJson(duplicationList);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -70,42 +67,14 @@ public class RecipeDuplicationsAction
   }
 
   @Override
-  public String getIconFileName() {
-    return "document.png";
+  public SummaryStatistics getMetricStatistics() {
+    return this.getParentAction().getMetricStatistics()
+        .getDuplications();
   }
 
   @Override
-  public String getDisplayName() {
-    return "Duplications";
-  }
-
-  @Override
-  public String getUrlName() {
-    return "duplications";
-  }
-
-  @Override
-  public String getScale() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getDuplications();
-    if (evaluator.isAvailable()) {
-      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
-    } else {
-      return "N/A";
-    }
-  }
-
-  @Override
-  public JSONObject getMetricStatistics() {
-    JSONObject result = this.getParentAction().getMetricStatistics()
-        .getDuplications().toJsonObject();
-
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getDuplications();
-
-    result.put("scale", evaluator.getRatio());
-    result.put("available", evaluator.isAvailable());
-    result.put("percent", true);
-
-    return result;
+  public Evaluator<?> getEvaluator() {
+    return this.getParentAction().getMetrics().getDuplications();
   }
 
   @Override
@@ -121,16 +90,5 @@ public class RecipeDuplicationsAction
         (int) (evaluator.getDenominator() - evaluator.getNumerator()));
 
     return stats.toJsonArray();
-  }
-
-  /**
-   * return paginated duplication list.
-   *
-   * @return duplication list
-   */
-  @JavaScriptMethod
-  public JSONArray getRecipeFiles() {
-    return this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_DUPLICATIONLIST);
   }
 }

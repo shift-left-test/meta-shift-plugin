@@ -34,11 +34,11 @@ import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.ui.MetricsActionBase;
 import com.lge.plugins.metashift.ui.models.RecipesTreemapModel;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
-import hudson.model.Actionable;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -56,7 +56,7 @@ import org.kohsuke.stapler.export.ExportedBean;
  * The main post build action class.
  */
 @ExportedBean
-public class MetaShiftBuildAction extends Actionable implements RunAction2 {
+public class MetaShiftBuildAction extends MetricsActionBase implements RunAction2 {
 
   static final String STORE_KEY_RECIPEMETRICSLIST = "RecipeMetricsList";
 
@@ -65,29 +65,20 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
 
   private final Criteria criteria;
   private final QualifiedRecipeCounter qualifiedRecipeCounter;
-  private Metrics metrics;
   private final MetricStatistics metricStatistics;
-
   private final DataSource dataSource;
 
   /**
    * Default constructor.
    */
   public MetaShiftBuildAction(Run<?, ?> run, TaskListener listener,
-      Criteria criteria, FilePath reportRoot, DataSource dataSource)
+      Criteria criteria, FilePath reportRoot, DataSource dataSource, Recipes recipes)
       throws IOException, InterruptedException {
-    super();
+    super(criteria, recipes);
 
     this.run = run;
     this.criteria = criteria;
     this.dataSource = dataSource;
-    this.metrics = new Metrics(criteria);
-
-    Recipes recipes = new Recipes(reportRoot, listener.getLogger());
-
-    listener.getLogger().println("Parse project recipes metrics");
-    this.metrics = new Metrics(criteria);
-    this.metrics.parse(recipes);
 
     this.metricStatistics = new MetricStatistics(criteria);
     this.metricStatistics.parse(recipes);
@@ -101,7 +92,7 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
     for (Recipe recipe : recipes) {
       listener.getLogger().printf("Create recipe[%s] report%n", recipe.getRecipe());
       RecipeAction recipeAction = new RecipeAction(
-          this, listener, criteria, reportRoot, dataSource, recipe);
+          this, listener, criteria, reportRoot, recipe);
       this.addAction(recipeAction);
       long codeLines = recipeAction.getMetrics().getCodeSize() != null
           ? recipeAction.getMetrics().getCodeSize().getLines() : 0;
@@ -168,10 +159,6 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
     return this.run;
   }
 
-  public Metrics getMetrics() {
-    return this.metrics;
-  }
-
   public MetricStatistics getMetricStatistics() {
     return this.metricStatistics;
   }
@@ -229,54 +216,6 @@ public class MetaShiftBuildAction extends Actionable implements RunAction2 {
    */
   public long getTestedRecipes() {
     return qualifiedRecipeCounter.getTestedRecipes().getNumerator();
-  }
-
-  public JSONObject getCodeSizeJson() {
-    return metrics.getCodeSize().toJsonObject();
-  }
-
-  public JSONObject getPremirrorCacheJson() {
-    return metrics.getPremirrorCache().toJsonObject();
-  }
-
-  public JSONObject getSharedStateCacheJson() {
-    return metrics.getSharedStateCache().toJsonObject();
-  }
-
-  public JSONObject getCodeViolationsJson() {
-    return metrics.getCodeViolations().toJsonObject();
-  }
-
-  public JSONObject getCommentsJson() {
-    return metrics.getComments().toJsonObject();
-  }
-
-  public JSONObject getComplexityJson() {
-    return metrics.getComplexity().toJsonObject();
-  }
-
-  public JSONObject getStatementCoverageJson() {
-    return metrics.getStatementCoverage().toJsonObject();
-  }
-
-  public JSONObject getBranchCoverageJson() {
-    return metrics.getBranchCoverage().toJsonObject();
-  }
-
-  public JSONObject getDuplicationsJson() {
-    return metrics.getDuplications().toJsonObject();
-  }
-
-  public JSONObject getMutationTestJson() {
-    return metrics.getMutationTest().toJsonObject();
-  }
-
-  public JSONObject getRecipeViolationsJson() {
-    return metrics.getRecipeViolations().toJsonObject();
-  }
-
-  public JSONObject getTestJson() {
-    return metrics.getTest().toJsonObject();
   }
 
   private transient MetaShiftBuildAction previousAction;

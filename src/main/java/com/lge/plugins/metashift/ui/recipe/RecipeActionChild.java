@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.ui.recipe;
 
+import com.lge.plugins.metashift.metrics.Evaluator;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.FilePath;
 import hudson.model.Action;
@@ -33,21 +35,54 @@ import java.io.IOException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * Detail view common feature class.
  */
 public abstract class RecipeActionChild implements Action {
 
+  static final String STORE_KEY_TABLE_MODEL = "TableModel";
+
   private final RecipeAction parent;
+
+  // used for read recipe file from remote.
+  private final transient VirtualChannel channel;
+  private final transient JSONObject metadata;
+
+  private final String name;
+  private final String url;
+  private final boolean percentScale;
 
   /**
    * constructor.
    *
    * @param parent parent action
    */
-  public RecipeActionChild(RecipeAction parent) {
+  public RecipeActionChild(RecipeAction parent, VirtualChannel channel, JSONObject metadata,
+      String name, String url, boolean percentScale) {
     this.parent = parent;
+    this.channel = channel;
+    this.metadata = metadata;
+
+    this.name = name;
+    this.url = url;
+    this.percentScale = percentScale;
+  }
+
+  @Override
+  public String getIconFileName() {
+    return "document.png";
+  }
+
+  @Override
+  public String getDisplayName() {
+    return this.name;
+  }
+
+  @Override
+  public String getUrlName() {
+    return this.url;
   }
 
   public RecipeAction getParentAction() {
@@ -58,10 +93,24 @@ public abstract class RecipeActionChild implements Action {
     return this.parent.getParentAction().getDataSource();
   }
 
+  public Run<?, ?> getRun() {
+    return this.parent.getRun();
+  }
+
+  public String getUrlParameter(String paramName) {
+    return Stapler.getCurrentRequest().getParameter(paramName);
+  }
+
+  public abstract SummaryStatistics getMetricStatistics();
+
+  public abstract Evaluator<?> getEvaluator();
+
+  public abstract JSONArray getStatistics();
+
   /**
    * save code path content to DataSource.
    */
-  public void saveFileContents(VirtualChannel channel, JSONObject metadata, String codePath)
+  public void saveFileContents(String codePath)
       throws IOException, InterruptedException {
     if (this.getDataSource().has(this.parent.getName(), "FILE", codePath)) {
       return;
@@ -70,9 +119,9 @@ public abstract class RecipeActionChild implements Action {
     FilePath file;
     // if not absolute path, append recipe root.
     if (codePath.startsWith("/")) {
-      file = new FilePath(channel, codePath);
+      file = new FilePath(this.channel, codePath);
     } else {
-      file = new FilePath(new FilePath(channel, metadata.getString("S")), codePath);
+      file = new FilePath(new FilePath(this.channel, this.metadata.getString("S")), codePath);
     }
 
     String contents = file.readToString();
@@ -84,17 +133,49 @@ public abstract class RecipeActionChild implements Action {
     return this.getDataSource().get(this.parent.getName(), "FILE", codePath);
   }
 
-  public Run<?, ?> getRun() {
-    return this.parent.getRun();
+  /**
+   * return scale.
+   *
+   * @return string
+   */
+  public String getScale() {
+    Evaluator<?> evaluator = this.getEvaluator();
+    if (evaluator.isAvailable()) {
+      if (this.percentScale) {
+        return String.format("%d%%", (long) (evaluator.getRatio() * 100));
+      } else {
+        return String.format("%.2f", evaluator.getRatio());
+      }
+    } else {
+      return "N/A";
+    }
   }
 
-  public abstract String getScale();
+  /**
+   * return metricStatics rendering model.
+   *
+   * @return jsonobject
+   */
+  public JSONObject getMetricStatisticsJson() {
+    JSONObject result = this.getMetricStatistics().toJsonObject();
 
-  public abstract JSONObject getMetricStatistics();
+    Evaluator<?> evaluator = this.getEvaluator();
 
-  public abstract JSONArray getStatistics();
+    result.put("scale", evaluator.getRatio());
+    result.put("available", evaluator.isAvailable());
+    result.put("percent", this.percentScale);
 
-  public String getUrlParameter(String paramName) {
-    return Stapler.getCurrentRequest().getParameter(paramName);
+    return result;
+  }
+
+  protected void setTableModelJson(JSONArray model) throws IOException {
+    this.getDataSource().put(model,
+        this.getParentAction().getName(), this.name, STORE_KEY_TABLE_MODEL);
+  }
+
+  @JavaScriptMethod
+  public JSONArray getTableModelJson() {
+    return this.getDataSource().get(
+        this.getParentAction().getName(), this.name, STORE_KEY_TABLE_MODEL);
   }
 }

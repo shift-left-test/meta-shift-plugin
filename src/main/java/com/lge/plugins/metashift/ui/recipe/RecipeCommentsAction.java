@@ -27,14 +27,13 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * Comment detail view action class.
@@ -42,27 +41,25 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 public class RecipeCommentsAction
     extends RecipeActionChild {
 
-  static final String STORE_KEY_COMMENTLIST = "CommentList";
-
   /**
    * constructor.
    *
    * @param parent     parent action
    * @param listener   logger
-   * @param dataSource datasource
    * @param recipe     recipe
    * @param metadata   metadata
    */
   public RecipeCommentsAction(
-      RecipeAction parent, TaskListener listener, VirtualChannel channel,
-      DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent);
+      RecipeAction parent, VirtualChannel channel, JSONObject metadata,
+      String name, String url, boolean percentScale,
+      TaskListener listener, Recipe recipe) {
+    super(parent, channel, metadata, name, url, percentScale);
 
     JSONArray commentArray = JSONArray.fromObject(
         recipe.objects(CommentData.class).toArray());
 
     try {
-      dataSource.put(commentArray, this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
+      this.setTableModelJson(commentArray);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -70,42 +67,14 @@ public class RecipeCommentsAction
   }
 
   @Override
-  public String getIconFileName() {
-    return "document.png";
+  public SummaryStatistics getMetricStatistics() {
+    return this.getParentAction().getMetricStatistics()
+        .getComments();
   }
 
   @Override
-  public String getDisplayName() {
-    return "Comments";
-  }
-
-  @Override
-  public String getUrlName() {
-    return "comments";
-  }
-
-  @Override
-  public String getScale() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getComments();
-    if (evaluator.isAvailable()) {
-      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
-    } else {
-      return "N/A";
-    }
-  }
-
-  @Override
-  public JSONObject getMetricStatistics() {
-    JSONObject result = this.getParentAction().getMetricStatistics()
-        .getComments().toJsonObject();
-
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getComments();
-
-    result.put("scale", evaluator.getRatio());
-    result.put("available", evaluator.isAvailable());
-    result.put("percent", true);
-
-    return result;
+  public Evaluator<?> getEvaluator() {
+    return this.getParentAction().getMetrics().getComments();
   }
 
   @Override
@@ -121,16 +90,5 @@ public class RecipeCommentsAction
         (int) (evaluator.getDenominator() - evaluator.getNumerator()));
 
     return stats.toJsonArray();
-  }
-
-  /**
-   * return paginated comment list.
-   *
-   * @return comment list
-   */
-  @JavaScriptMethod
-  public JSONArray getRecipeFiles() {
-    return this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_COMMENTLIST);
   }
 }

@@ -30,12 +30,11 @@ import com.lge.plugins.metashift.metrics.MetricStatistics;
 import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.ui.MetricsActionBase;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import hudson.model.Action;
-import hudson.model.Actionable;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import java.io.IOException;
@@ -49,11 +48,9 @@ import org.kohsuke.stapler.export.ExportedBean;
  * The recipe action class.
  */
 @ExportedBean
-public class RecipeAction extends Actionable implements Action {
-
+public class RecipeAction extends MetricsActionBase implements Action {
   MetaShiftBuildAction parent;
-  private final Metrics metrics;
-
+  
   @Exported(visibility = 999)
   public String name;
 
@@ -61,16 +58,12 @@ public class RecipeAction extends Actionable implements Action {
    * Default constructor.
    */
   public RecipeAction(MetaShiftBuildAction parent, TaskListener listener,
-      Criteria criteria, FilePath reportRoot, DataSource dataSource, Recipe recipe)
+      Criteria criteria, FilePath reportRoot, Recipe recipe)
       throws IOException, InterruptedException {
-    super();
+    super(criteria, recipe);
 
     this.name = recipe.getRecipe();
     this.parent = parent;
-
-    listener.getLogger().printf("Parse recipe[%s] metrics%n", recipe.getRecipe());
-    this.metrics = new Metrics(criteria);
-    this.metrics.parse(recipe);
 
     // parse metadata.json
     JSONObject metadata = JsonUtils.createObject(
@@ -78,37 +71,48 @@ public class RecipeAction extends Actionable implements Action {
 
     listener.getLogger().println("Create shared state cache report");
     this.addAction(new RecipeSharedStateCacheAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Shared State Cache", "sharedstate_cache", true,
+        listener, recipe));
     listener.getLogger().println("Create premirror cache report");
     this.addAction(new RecipePremirrorCacheAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Premirror Cache", "premirror_cache", true,
+        listener, recipe));
     listener.getLogger().println("Create code violations report");
     this.addAction(new RecipeCodeViolationsAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Code Violations", "code_violations", false,
+        listener, recipe));
     listener.getLogger().println("Create comments report");
     this.addAction(new RecipeCommentsAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Comments", "comments", true,
+        listener, recipe));
     listener.getLogger().println("Create complexity report");
     this.addAction(new RecipeComplexityAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Complexity", "complexity", true,
+        listener, recipe));
     listener.getLogger().println("Create statement coverage report");
     this.addAction(new RecipeStatementCoverageAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Statement Coverage", "statement_coverage", true,
+        listener, recipe));
     listener.getLogger().println("Create branch coverage report");
     this.addAction(new RecipeBranchCoverageAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Branch Coverage", "branch_coverage", true,
+        listener, recipe));
     listener.getLogger().println("Create duplications report");
     this.addAction(new RecipeDuplicationsAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Duplications", "duplications", true,
+        listener, recipe));
     listener.getLogger().println("Create mutation test report");
     this.addAction(new RecipeMutationTestAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Mutation Test", "mutation_test", true,
+        listener, recipe));
     listener.getLogger().println("Create recipe violations report");
     this.addAction(new RecipeRecipeViolationsAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Recipe Violations", "recipe_violations", false,
+        listener, recipe));
     listener.getLogger().println("Create unit test report");
     this.addAction(new RecipeTestAction(
-        this, listener, reportRoot.getChannel(), dataSource, recipe, metadata));
+        this, reportRoot.getChannel(), metadata, "Test", "test", true,
+        listener, recipe));
   }
 
   public MetaShiftBuildAction getParentAction() {
@@ -117,10 +121,6 @@ public class RecipeAction extends Actionable implements Action {
 
   public Run<?, ?> getRun() {
     return this.parent.getRun();
-  }
-
-  public Metrics getMetrics() {
-    return this.metrics;
   }
 
   public MetricStatistics getMetricStatistics() {
@@ -177,51 +177,8 @@ public class RecipeAction extends Actionable implements Action {
     return CodeSizeDelta.between(previous, current).toJsonObject().discard("recipes");
   }
 
+  @Override
   public JSONObject getCodeSizeJson() {
-    return metrics.getCodeSize().toJsonObject().discard("recipes");
-  }
-
-  public JSONObject getPremirrorCacheJson() {
-    return metrics.getPremirrorCache().toJsonObject();
-  }
-
-  public JSONObject getSharedStateCacheJson() {
-    return metrics.getSharedStateCache().toJsonObject();
-  }
-
-  public JSONObject getCodeViolationsJson() {
-    return metrics.getCodeViolations().toJsonObject();
-  }
-
-  public JSONObject getCommentsJson() {
-    return metrics.getComments().toJsonObject();
-  }
-
-  public JSONObject getComplexityJson() {
-    return metrics.getComplexity().toJsonObject();
-  }
-
-  public JSONObject getStatementCoverageJson() {
-    return metrics.getStatementCoverage().toJsonObject();
-  }
-
-  public JSONObject getBranchCoverageJson() {
-    return metrics.getBranchCoverage().toJsonObject();
-  }
-
-  public JSONObject getDuplicationsJson() {
-    return metrics.getDuplications().toJsonObject();
-  }
-
-  public JSONObject getMutationTestJson() {
-    return metrics.getMutationTest().toJsonObject();
-  }
-
-  public JSONObject getRecipeViolationsJson() {
-    return metrics.getRecipeViolations().toJsonObject();
-  }
-
-  public JSONObject getTestJson() {
-    return metrics.getTest().toJsonObject();
+    return this.getMetrics().getCodeSize().toJsonObject().discard("recipes");
   }
 }

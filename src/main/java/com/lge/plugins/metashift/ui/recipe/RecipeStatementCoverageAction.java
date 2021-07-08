@@ -27,173 +27,62 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.StatementCoverageData;
-import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.models.StatisticsItemList;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * Statement coverage detail view action class.
  */
-public class RecipeStatementCoverageAction extends RecipeActionChild {
-
-  static final String STORE_KEY_COVERAGELIST = "StatementCoverageList";
-  static final String STORE_KEY_FILECOVERAGESTAT = "FileStatementCoverageStat";
+public class RecipeStatementCoverageAction
+    extends RecipeCoverageActionBase<StatementCoverageData> {
 
   /**
    * constructor.
    *
    * @param parent     parent action
    * @param listener   logger
-   * @param dataSource datasource
    * @param recipe     recipe
    * @param metadata   metadata
    */
   public RecipeStatementCoverageAction(
-      RecipeAction parent, TaskListener listener, VirtualChannel channel,
-      DataSource dataSource, Recipe recipe, JSONObject metadata) {
-    super(parent);
+      RecipeAction parent, VirtualChannel channel, JSONObject metadata,
+      String name, String url, boolean percentScale,
+      TaskListener listener, Recipe recipe) {
+    super(parent, channel, metadata, name, url, percentScale, listener, recipe,
+        StatementCoverageData.class);
+  }
 
-    List<StatementCoverageData> coverageDataList =
-        recipe.objects(StatementCoverageData.class).collect(Collectors.toList());
+  protected JSONObject generateFileCoverage(String file, List<StatementCoverageData> coverageList) {
+    HashSet<Long> lines = new HashSet<>();
+    HashSet<Long> coveredLines = new HashSet<>();
 
-    HashMap<String, List<StatementCoverageData>> fileCoverageList = new HashMap<>();
-
-    for (StatementCoverageData coverageData : coverageDataList) {
-      String file = coverageData.getFile();
-
-      if (!fileCoverageList.containsKey(file)) {
-        fileCoverageList.put(file, new ArrayList<>());
+    for (StatementCoverageData data : coverageList) {
+      lines.add(data.getLine());
+      if (data.isCovered()) {
+        coveredLines.add(data.getLine());
       }
-
-      fileCoverageList.get(file).add(coverageData);
     }
 
-    JSONArray fileCoverageArray = new JSONArray();
-
-    fileCoverageList.forEach((file, coverageList) -> {
-      HashSet<Long> lines = new HashSet<>();
-      HashSet<Long> coveredLines = new HashSet<>();
-
-      for (StatementCoverageData data : coverageList) {
-        lines.add(data.getLine());
-        if (data.isCovered()) {
-          coveredLines.add(data.getLine());
-        }
-      }
-
-      JSONObject fileCoverage = new JSONObject();
-      fileCoverage.put("file", file);
-      fileCoverage.put("coverage",
-          lines.size() > 0 ? (double) coveredLines.size() / (double) lines.size() : 0);
-      fileCoverageArray.add(fileCoverage);
-
-      try {
-        this.saveFileContents(channel, metadata, file);
-        dataSource.put(coverageList,
-            this.getParentAction().getName(), file, STORE_KEY_COVERAGELIST);
-      } catch (IOException | InterruptedException e) {
-        listener.getLogger().println(e.getMessage());
-        e.printStackTrace(listener.getLogger());
-      }
-    });
-
-    try {
-      dataSource.put(fileCoverageArray,
-          this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
-    } catch (IOException e) {
-      listener.getLogger().println(e.getMessage());
-      e.printStackTrace(listener.getLogger());
-    }
+    JSONObject fileCoverage = new JSONObject();
+    fileCoverage.put("file", file);
+    fileCoverage.put("coverage",
+        lines.size() > 0 ? (double) coveredLines.size() / (double) lines.size() : 0);
+    
+    return fileCoverage;
   }
 
   @Override
-  public String getIconFileName() {
-    return "document.png";
+  public SummaryStatistics getMetricStatistics() {
+    return this.getParentAction().getMetricStatistics()
+        .getStatementCoverage();
   }
 
   @Override
-  public String getDisplayName() {
-    return "Statement Coverage";
-  }
-
-  @Override
-  public String getUrlName() {
-    return "statement_coverage";
-  }
-
-  @Override
-  public String getScale() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getStatementCoverage();
-    if (evaluator.isAvailable()) {
-      return String.format("%d%%", (long) (evaluator.getRatio() * 100));
-    } else {
-      return "N/A";
-    }
-  }
-
-  @Override
-  public JSONObject getMetricStatistics() {
-    JSONObject result = this.getParentAction().getMetricStatistics()
-        .getStatementCoverage().toJsonObject();
-
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getStatementCoverage();
-
-    result.put("scale", evaluator.getRatio());
-    result.put("available", evaluator.isAvailable());
-    result.put("percent", true);
-
-    return result;
-  }
-
-  @Override
-  public JSONArray getStatistics() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getStatementCoverage();
-
-    StatisticsItemList stats = new StatisticsItemList();
-    stats.addItem("Covered", "valid-good",
-        (int) (evaluator.getRatio() * 100),
-        (int) evaluator.getNumerator());
-    stats.addItem("UnCovered", "invalid",
-        (int) ((1 - evaluator.getRatio()) * 100),
-        (int) (evaluator.getDenominator() - evaluator.getNumerator()));
-
-    return stats.toJsonArray();
-  }
-
-  /**
-   * return paginated coverage list.
-   *
-   * @return coverage list
-   */
-  @JavaScriptMethod
-  public JSONArray getRecipeFiles() {
-    return this.getDataSource().get(
-        this.getParentAction().getName(), STORE_KEY_FILECOVERAGESTAT);
-  }
-
-  /**
-   * return file coverage info.
-   */
-  @JavaScriptMethod
-  public JSONObject getFileCoverageDetail(String codePath) {
-    JSONObject result = new JSONObject();
-
-    List<StatementCoverageData> dataList = this.getDataSource().get(
-        this.getParentAction().getName(), codePath, STORE_KEY_COVERAGELIST);
-
-    result.put("dataList", dataList);
-    result.put("content", this.readFileContents(codePath));
-
-    return result;
+  public Evaluator<?> getEvaluator() {
+    return this.getParentAction().getMetrics().getStatementCoverage();
   }
 }

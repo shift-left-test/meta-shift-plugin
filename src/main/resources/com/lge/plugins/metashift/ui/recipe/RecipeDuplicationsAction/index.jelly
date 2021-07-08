@@ -12,7 +12,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <h2>${it.parentAction.displayName}</h2>
         <h3>Duplications</h3>
         <h4>Scale <span class="metrics-scale">${it.scale}</span></h4>
-        <scale-bar class="section" statistics='${it.metricStatistics}'></scale-bar>
+        <scale-bar class="section" statistics='${it.metricStatisticsJson}'></scale-bar>
         <h4>Statistics</h4>
         <statistics-bar class="section" items='${it.statistics}'/>
         <h4>Details</h4>
@@ -24,7 +24,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <script type="text/javascript">
       {
         document.querySelector("duplication-files").setAjaxFunc(
-          proxy.getRecipeFiles
+          proxy.getTableModelJson
         )
       }
       </script>
