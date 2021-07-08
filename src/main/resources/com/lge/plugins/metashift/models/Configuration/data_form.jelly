@@ -28,9 +28,8 @@
     display: inline-block;
     }
   </style>
-
-  <f:entry title="Criteria" field="criteria">
-    <div class="evaluate"><b>Mark</b>**
+  <f:entry title="Configuration" field="criteria">
+    <div class="evaluate"><b>Unstable</b>
     </div>
     <div class="title">
       <b>Metric</b>
@@ -226,8 +225,4 @@
         clazz="rate-input"/>%
     </div>
   </f:entry>
-  <div>
-    ** Mark a build as "UNSTABLE" on the metric evaluation failure.
-  </div>
-
 </j:jelly>

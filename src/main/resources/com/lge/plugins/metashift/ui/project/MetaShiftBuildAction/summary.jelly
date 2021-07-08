@@ -4,7 +4,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <st:adjunct includes="com.lge.plugins.metashift.front"/>
   <div class="metashift">
   <div class="page">
-    <h2>meta-shift Summary</h2>
+    <h2>Overview</h2>
     <h3>Build Performance</h3>
     <div class="metrics-row">
       <metrics-simple-view title="Premirror Cache" class="summary percent"
@@ -38,7 +38,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <metrics-simple-view title="Mutation Tests" class="summary percent"
         metricsValue="${it.mutationTestJson}" />
     </div>
-    <a href="metashift_build">show detail...</a>
+    <p>
+      <a href="metashift_build">Find out more</a>
+    </p>
   </div>
   </div>
 </j:jelly>
