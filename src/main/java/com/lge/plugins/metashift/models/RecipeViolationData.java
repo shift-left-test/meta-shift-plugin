@@ -29,42 +29,12 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public abstract class RecipeViolationData extends Data<RecipeViolationData> {
+public abstract class RecipeViolationData extends ViolationData<RecipeViolationData> {
 
   /**
    * Represents the UUID of the class.
    */
   private static final long serialVersionUID = -5849334727328868160L;
-
-  /**
-   * Represents the name of the file.
-   */
-  private final String file;
-
-  /**
-   * Represents the line number.
-   */
-  private final long line;
-
-  /**
-   * Represents the violation rule.
-   */
-  private final String rule;
-
-  /**
-   * Represents the description of the violation.
-   */
-  private final String description;
-
-  /**
-   * Represents the severity of the violation.
-   */
-  private final String severity;
-
-  /**
-   * Represents the level of the violation.
-   */
-  private final String level;
 
   /**
    * Default constructor.
@@ -80,22 +50,16 @@ public abstract class RecipeViolationData extends Data<RecipeViolationData> {
   public RecipeViolationData(final String recipe, final String file,
       final long line, final String rule, final String description,
       final String severity, final String level) {
-    super(recipe);
-    this.file = file;
-    this.line = line;
-    this.rule = rule;
-    this.description = description;
-    this.severity = severity;
-    this.level = level;
+    super(recipe, file, line, rule, description, severity, level);
   }
 
   @Override
   public final int compareTo(final RecipeViolationData other) {
     return compareEach(
         getRecipe().compareTo(other.getRecipe()),
-        file.compareTo(other.file),
-        Long.compare(line, other.line),
-        rule.compareTo(other.rule)
+        getFile().compareTo(other.getFile()),
+        Long.compare(getLine(), other.getLine()),
+        getRule().compareTo(other.getRule())
     );
   }
 
@@ -115,60 +79,6 @@ public abstract class RecipeViolationData extends Data<RecipeViolationData> {
 
   @Override
   public final int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file, line, rule);
-  }
-
-  /**
-   * Return the file of the recipe violation.
-   *
-   * @return file
-   */
-  public final String getFile() {
-    return file;
-  }
-
-  /**
-   * Return the line number of the recipe violation.
-   *
-   * @return line number
-   */
-  public final long getLine() {
-    return line;
-  }
-
-  /**
-   * Return the rule of the recipe violation.
-   *
-   * @return rule
-   */
-  public final String getRule() {
-    return rule;
-  }
-
-  /**
-   * Return the description of the recipe violation.
-   *
-   * @return description
-   */
-  public final String getDescription() {
-    return description;
-  }
-
-  /**
-   * Return the severity of the recipe violation.
-   *
-   * @return severity
-   */
-  public final String getSeverity() {
-    return severity;
-  }
-
-  /**
-   * Returns the level of the recipe violation.
-   *
-   * @return level of the violation
-   */
-  public final String getLevel() {
-    return level;
+    return computeHashCode(getClass(), getRecipe(), getFile(), getLine(), getRule());
   }
 }

@@ -29,7 +29,7 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public abstract class CodeViolationData extends Data<CodeViolationData> {
+public abstract class CodeViolationData extends ViolationData<CodeViolationData> {
 
   /**
    * Represents the UUID of the class.
@@ -37,24 +37,9 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
   private static final long serialVersionUID = -4358435516364346298L;
 
   /**
-   * Represents the name fo the file.
-   */
-  private final String file;
-
-  /**
-   * Represents the line number.
-   */
-  private final long line;
-
-  /**
    * Represents the column number.
    */
   private final long column;
-
-  /**
-   * Represents the rule.
-   */
-  private final String rule;
 
   /**
    * Represents the message.
@@ -62,24 +47,9 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
   private final String message;
 
   /**
-   * Represents the description.
-   */
-  private final String description;
-
-  /**
-   * Represents the severity.
-   */
-  private final String severity;
-
-  /**
    * Represents the tool.
    */
   private final String tool;
-
-  /**
-   * Represents the level of the violation.
-   */
-  private final String level;
 
   /**
    * Default constructor.
@@ -100,26 +70,20 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
       final String rule, final String message,
       final String description,
       final String severity, final String tool, final String level) {
-    super(recipe);
-    this.file = file;
-    this.line = line;
+    super(recipe, file, line, rule, description, severity, level);
     this.column = column;
-    this.rule = rule;
     this.message = message;
-    this.description = description;
-    this.severity = severity;
     this.tool = tool;
-    this.level = level;
   }
 
   @Override
   public final int compareTo(final CodeViolationData other) {
     return compareEach(
         getRecipe().compareTo(other.getRecipe()),
-        file.compareTo(other.file),
-        Long.compare(line, other.line),
+        getFile().compareTo(other.getFile()),
+        Long.compare(getLine(), other.getLine()),
         Long.compare(column, other.column),
-        rule.compareTo(other.rule),
+        getRule().compareTo(other.getRule()),
         tool.compareTo(other.tool)
     );
   }
@@ -140,25 +104,7 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
 
   @Override
   public final int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file, line, column, rule, tool);
-  }
-
-  /**
-   * Returns the filename of the violation.
-   *
-   * @return file
-   */
-  public final String getFile() {
-    return file;
-  }
-
-  /**
-   * Returns the line number of the violation.
-   *
-   * @return line
-   */
-  public final long getLine() {
-    return line;
+    return computeHashCode(getClass(), getRecipe(), getFile(), getLine(), column, getRule(), tool);
   }
 
   /**
@@ -171,15 +117,6 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
   }
 
   /**
-   * Returns the rule name of the violation.
-   *
-   * @return rule
-   */
-  public final String getRule() {
-    return rule;
-  }
-
-  /**
    * Returns the message of the violation.
    *
    * @return message
@@ -189,38 +126,11 @@ public abstract class CodeViolationData extends Data<CodeViolationData> {
   }
 
   /**
-   * Returns the description of the violation.
-   *
-   * @return description
-   */
-  public final String getDescription() {
-    return description;
-  }
-
-  /**
-   * Returns the severity of the rule.
-   *
-   * @return severity
-   */
-  public final String getSeverity() {
-    return severity;
-  }
-
-  /**
    * Returns the name of the tool used.
    *
    * @return tool name
    */
   public final String getTool() {
     return tool;
-  }
-
-  /**
-   * Returns the level of the violation.
-   *
-   * @return level of the violation
-   */
-  public final String getLevel() {
-    return level;
   }
 }
