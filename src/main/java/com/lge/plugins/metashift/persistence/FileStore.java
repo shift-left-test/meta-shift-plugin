@@ -27,11 +27,15 @@ package com.lge.plugins.metashift.persistence;
 import com.lge.plugins.metashift.utils.DigestUtils;
 import hudson.FilePath;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -121,8 +125,9 @@ public class FileStore {
   public byte[] get(final String key) {
     try {
       JSONObject indices = createObject(referer);
-      File target = new File(objects, indices.getString(key));
-      return FileUtils.readFileToByteArray(target);
+      File file = new File(objects, indices.getString(key));
+      GZIPInputStream gis = new GZIPInputStream(new BufferedInputStream(new FileInputStream(file)));
+      return IOUtils.toByteArray(gis);
     } catch (IOException | JSONException ignored) {
       return null;
     }
@@ -138,14 +143,18 @@ public class FileStore {
   public synchronized void put(final String key, final byte[] value) throws IOException {
     JSONObject indices = createObject(referer);
     String checksum = DigestUtils.sha1(value);
-    File target = FileUtils.getFile(objects, checksum.substring(0, 2), checksum.substring(2));
-    if (!target.exists()) {
-      FileUtils.writeByteArrayToFile(target, value);
+    File file = FileUtils.getFile(objects, checksum.substring(0, 2), checksum.substring(2));
+    if (!file.exists()) {
+      FileUtils.forceMkdirParent(file);
+      try (GZIPOutputStream gos = new GZIPOutputStream(
+          new BufferedOutputStream(new FileOutputStream(file)))) {
+        IOUtils.write(value, gos);
+      }
     }
     if (indices.has(key)) {
       indices.remove(key);
     }
-    indices.put(key, objects.toURI().relativize(target.toURI()).getPath());
+    indices.put(key, objects.toURI().relativize(file.toURI()).getPath());
     FileUtils.writeStringToFile(referer, indices.toString(2), StandardCharsets.UTF_8);
   }
 }
