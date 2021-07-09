@@ -136,7 +136,7 @@
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
         clazz="rate-input"/>%
     </div>
-    <div class="limit">Complex limit</div>
+    <div class="limit">Complexity Level</div>
     <div class="input">
       <f:number field="complexityLevel"
         value="${it.complexityLevel}"
