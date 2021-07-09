@@ -100,8 +100,8 @@ public class RecipeSharedStateCacheActionTest {
 
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray
-            .fromObject("[{\"count\":187,\"width\":93,\"label\":\"Cached\",\"clazz\":\"valid-good\"},"
-                + "{\"count\":13,\"width\":6,\"label\":\"Uncached\",\"clazz\":\"invalid\"}]"),
+            .fromObject("[{\"count\":187,\"width\":93,\"label\":\"Hits\",\"clazz\":\"valid-good\"},"
+                + "{\"count\":13,\"width\":6,\"label\":\"Misses\",\"clazz\":\"invalid\"}]"),
         statistics);
 
     JSONArray recipeCaches = action.getTableModelJson();

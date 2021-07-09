@@ -80,15 +80,13 @@ public class RecipePremirrorCacheAction
   @Override
   public JSONArray getStatistics() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getPremirrorCache();
-
     StatisticsItemList stats = new StatisticsItemList();
-    stats.addItem("Cached", "valid-good",
+    stats.addItem("Hits", "valid-good",
         (int) (evaluator.getRatio() * 100),
         (int) evaluator.getNumerator());
-    stats.addItem("Uncached", "invalid",
+    stats.addItem("Misses", "invalid",
         (int) ((1 - evaluator.getRatio()) * 100),
         (int) (evaluator.getDenominator() - evaluator.getNumerator()));
-
     return stats.toJsonArray();
   }
 }

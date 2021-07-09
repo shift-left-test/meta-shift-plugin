@@ -99,8 +99,8 @@ public class RecipePremirrorCacheActionTest {
 
     JSONArray statistics = action.getStatistics();
     assertEquals(JSONArray
-            .fromObject("[{\"count\":100,\"width\":100,\"label\":\"Cached\",\"clazz\":\"valid-good\"},"
-                + "{\"count\":0,\"width\":0,\"label\":\"Uncached\",\"clazz\":\"invalid\"}]"),
+            .fromObject("[{\"count\":100,\"width\":100,\"label\":\"Hits\",\"clazz\":\"valid-good\"},"
+                + "{\"count\":0,\"width\":0,\"label\":\"Misses\",\"clazz\":\"invalid\"}]"),
         statistics);
 
     JSONArray recipeCaches = action.getTableModelJson();
