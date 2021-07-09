@@ -47,7 +47,7 @@ public final class CommentEvaluator extends PositiveEvaluator<CommentEvaluator> 
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isCommentsAsUnstable() || isQualified();
+    return !status.isCommentsAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

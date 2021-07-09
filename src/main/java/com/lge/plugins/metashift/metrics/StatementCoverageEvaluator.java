@@ -49,7 +49,7 @@ public class StatementCoverageEvaluator extends PositiveEvaluator<StatementCover
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isStatementCoverageAsUnstable() || isQualified();
+    return !status.isStatementCoverageAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

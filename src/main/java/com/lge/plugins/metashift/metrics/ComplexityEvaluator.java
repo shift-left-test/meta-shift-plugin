@@ -56,7 +56,7 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isComplexityAsUnstable() || isQualified();
+    return !status.isComplexityAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

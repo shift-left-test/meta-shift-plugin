@@ -49,7 +49,7 @@ public class BranchCoverageEvaluator extends PositiveEvaluator<BranchCoverageEva
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isBranchCoverageAsUnstable() || isQualified();
+    return !status.isBranchCoverageAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

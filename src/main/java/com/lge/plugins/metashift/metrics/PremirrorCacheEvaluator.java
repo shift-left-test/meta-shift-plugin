@@ -47,7 +47,7 @@ public class PremirrorCacheEvaluator extends PositiveEvaluator<PremirrorCacheEva
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isPremirrorCacheAsUnstable() || isQualified();
+    return !status.isPremirrorCacheAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

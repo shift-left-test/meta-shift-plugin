@@ -47,7 +47,7 @@ public class SharedStateCacheEvaluator extends PositiveEvaluator<SharedStateCach
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isSharedStateCacheAsUnstable() || isQualified();
+    return !status.isSharedStateCacheAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

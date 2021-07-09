@@ -47,7 +47,7 @@ public final class DuplicationEvaluator extends NegativeEvaluator<DuplicationEva
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isDuplicationsAsUnstable() || isQualified();
+    return !status.isDuplicationsAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

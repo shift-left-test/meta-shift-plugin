@@ -107,7 +107,7 @@ public final class MutationTestEvaluator extends PositiveEvaluator<MutationTestE
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isMutationTestAsUnstable() || isQualified();
+    return !status.isMutationTestAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

@@ -51,7 +51,7 @@ public final class CodeViolationEvaluator extends ViolationEvaluator<CodeViolati
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isCodeViolationsAsUnstable() || isQualified();
+    return !status.isCodeViolationsAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

@@ -27,10 +27,11 @@ package com.lge.plugins.metashift.metrics;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertCounter;
 import static com.lge.plugins.metashift.metrics.TestUtils.assertEvaluator;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.Recipe;
@@ -53,9 +54,9 @@ public class StatementCoverageEvaluatorTest {
 
   @Before
   public void setUp() {
-    Criteria criteria = new Configuration();
-    criteria.setStatementCoverageThreshold(50);
-    evaluator = new StatementCoverageEvaluator(criteria);
+    Configuration configuration = new Configuration();
+    configuration.setStatementCoverageThreshold(50);
+    evaluator = new StatementCoverageEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
     recipes.add(recipe);
@@ -173,6 +174,44 @@ public class StatementCoverageEvaluatorTest {
     recipe.add(new StatementCoverageData("A-1.0.0-r0", "a.file", 1, true));
     assertEquals(1, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
+  }
+
+  @Test
+  public void testUnstableBuildStatusWithNoAvailableData() {
+    BuildStatus status = new Configuration();
+    status.setStatementCoverageAsUnstable(true);
+    evaluator.parse(recipe);
+    assertTrue(evaluator.isStable(status));
+  }
+
+  @Test
+  public void testUnstableBuildStatusWithQualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setStatementCoverageAsUnstable(true);
+    recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
+    recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
+    evaluator.parse(recipe);
+    assertTrue(evaluator.isStable(status));
+  }
+
+  @Test
+  public void testUnstableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setStatementCoverageAsUnstable(true);
+    recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
+    recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, false));
+    evaluator.parse(recipe);
+    assertFalse(evaluator.isStable(status));
+  }
+
+  @Test
+  public void testStableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setStatementCoverageAsUnstable(false);
+    recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
+    recipe.add(new StatementCoverageData("A-B-C", "a.file", 1, false));
+    evaluator.parse(recipe);
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test

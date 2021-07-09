@@ -122,7 +122,7 @@ public final class TestEvaluator extends PositiveEvaluator<TestEvaluator> {
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isTestAsUnstable() || isQualified();
+    return !status.isTestAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

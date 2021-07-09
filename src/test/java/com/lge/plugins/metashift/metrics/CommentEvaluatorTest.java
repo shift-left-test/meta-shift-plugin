@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
@@ -49,11 +50,10 @@ public class CommentEvaluatorTest {
   private CommentEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
-  private Configuration configuration;
 
   @Before
   public void setUp() {
-    configuration = new Configuration();
+    Configuration configuration = new Configuration();
     configuration.setCommentThreshold(50);
     evaluator = new CommentEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
@@ -155,29 +155,38 @@ public class CommentEvaluatorTest {
   }
 
   @Test
-  public void testIsStableReturnFalseWithEmptyRecipe() {
+  public void testUnstableBuildStatusWithNoAvailableData() {
+    BuildStatus status = new Configuration();
+    status.setCommentsAsUnstable(true);
     evaluator.parse(recipe);
-    assertFalse(evaluator.isStable(configuration));
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+  public void testUnstableBuildStatusWithQualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setCommentsAsUnstable(true);
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     evaluator.parse(recipe);
-    configuration.setCommentsAsUnstable(false);
-    assertTrue(evaluator.isStable(configuration));
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnFalseWithEmptyRecipes() {
-    evaluator.parse(recipes);
-    assertFalse(evaluator.isStable(configuration));
+  public void testUnstableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setCommentsAsUnstable(true);
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 0));
+    evaluator.parse(recipe);
+    assertFalse(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
-    evaluator.parse(recipes);
-    configuration.setCommentsAsUnstable(false);
-    assertTrue(evaluator.isStable(configuration));
+  public void testStableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setCommentsAsUnstable(false);
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 0));
+    evaluator.parse(recipe);
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test

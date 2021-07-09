@@ -49,11 +49,10 @@ public class CodeSizeEvaluatorTest {
   private CodeSizeEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
-  private Configuration configuration;
 
   @Before
   public void setUp() {
-    configuration = new Configuration();
+    Configuration configuration = new Configuration();
     evaluator = new CodeSizeEvaluator();
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
@@ -134,7 +133,8 @@ public class CodeSizeEvaluatorTest {
   }
 
   @Test
-  public void testIsStableWithEmptyRecipe() {
+  public void testBuildStatusWithEmptyRecipe() {
+    Configuration configuration = new Configuration();
     evaluator.parse(recipe);
     assertTrue(evaluator.isStable(configuration));
   }

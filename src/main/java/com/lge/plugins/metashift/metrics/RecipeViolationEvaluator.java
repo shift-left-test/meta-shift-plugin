@@ -51,7 +51,7 @@ public final class RecipeViolationEvaluator extends ViolationEvaluator<RecipeVio
 
   @Override
   public boolean isStable(BuildStatus status) {
-    return !status.isRecipeViolationsAsUnstable() || isQualified();
+    return !status.isRecipeViolationsAsUnstable() || !isAvailable() || isQualified();
   }
 
   @Override

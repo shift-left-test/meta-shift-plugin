@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
@@ -52,11 +53,10 @@ public class TestEvaluatorTest {
   private TestEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
-  private Configuration configuration;
 
   @Before
   public void setUp() {
-    configuration = new Configuration();
+    Configuration configuration = new Configuration();
     configuration.setTestThreshold(50);
     evaluator = new TestEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
@@ -198,29 +198,38 @@ public class TestEvaluatorTest {
   }
 
   @Test
-  public void testIsStableReturnFalseWithEmptyRecipe() {
+  public void testUnstableBuildStatusWithNoAvailableData() {
+    BuildStatus status = new Configuration();
+    status.setTestAsUnstable(true);
     evaluator.parse(recipe);
-    assertFalse(evaluator.isStable(configuration));
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+  public void testUnstableBuildStatusWithQualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setTestAsUnstable(true);
+    recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
     evaluator.parse(recipe);
-    configuration.setTestAsUnstable(false);
-    assertTrue(evaluator.isStable(configuration));
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnFalseWithEmptyRecipes() {
-    evaluator.parse(recipes);
-    assertFalse(evaluator.isStable(configuration));
+  public void testUnstableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setTestAsUnstable(true);
+    recipe.add(new FailedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    evaluator.parse(recipe);
+    assertFalse(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
-    evaluator.parse(recipes);
-    configuration.setTestAsUnstable(false);
-    assertTrue(evaluator.isStable(configuration));
+  public void testStableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setTestAsUnstable(false);
+    recipe.add(new FailedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    evaluator.parse(recipe);
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test

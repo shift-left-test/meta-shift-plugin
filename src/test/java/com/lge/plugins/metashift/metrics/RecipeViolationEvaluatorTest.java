@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.InfoRecipeViolationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
@@ -52,11 +53,10 @@ public class RecipeViolationEvaluatorTest {
   private RecipeViolationEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
-  private Configuration configuration;
 
   @Before
   public void setUp() {
-    configuration = new Configuration();
+    Configuration configuration = new Configuration();
     configuration.setRecipeViolationThreshold(0.5);
     evaluator = new RecipeViolationEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
@@ -214,29 +214,41 @@ public class RecipeViolationEvaluatorTest {
   }
 
   @Test
-  public void testIsStableReturnFalseWithEmptyRecipe() {
+  public void testUnstableBuildStatusWithNoAvailableData() {
+    BuildStatus status = new Configuration();
+    status.setRecipeViolationsAsUnstable(true);
     evaluator.parse(recipe);
-    assertFalse(evaluator.isStable(configuration));
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+  public void testUnstableBuildStatusWithQualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setRecipeViolationsAsUnstable(true);
+    recipe.add(new RecipeSizeData("A-1.0.0-r0", "a.file", 10));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
     evaluator.parse(recipe);
-    configuration.setRecipeViolationsAsUnstable(false);
-    assertTrue(evaluator.isStable(configuration));
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnFalseWithEmptyRecipes() {
-    evaluator.parse(recipes);
-    assertFalse(evaluator.isStable(configuration));
+  public void testUnstableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setRecipeViolationsAsUnstable(true);
+    recipe.add(new RecipeSizeData("A-1.0.0-r0", "a.file", 1));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
+    evaluator.parse(recipe);
+    assertFalse(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
-    evaluator.parse(recipes);
-    configuration.setRecipeViolationsAsUnstable(false);
-    assertTrue(evaluator.isStable(configuration));
+  public void testStableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setRecipeViolationsAsUnstable(false);
+    recipe.add(new RecipeSizeData("A-1.0.0-r0", "a.file", 1));
+    recipe.add(new MajorRecipeViolationData("A-1.0.0-r0", "a.file", 1, "major", "major", "major"));
+    evaluator.parse(recipe);
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test

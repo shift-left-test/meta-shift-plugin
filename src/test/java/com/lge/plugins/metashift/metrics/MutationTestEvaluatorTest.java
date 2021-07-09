@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.KilledMutationTestData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
@@ -51,11 +52,10 @@ public class MutationTestEvaluatorTest {
   private MutationTestEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
-  private Configuration configuration;
 
   @Before
   public void setUp() {
-    configuration = new Configuration();
+    Configuration configuration = new Configuration();
     configuration.setMutationTestThreshold(50);
     evaluator = new MutationTestEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
@@ -184,29 +184,38 @@ public class MutationTestEvaluatorTest {
   }
 
   @Test
-  public void testIsStableReturnFalseWithEmptyRecipe() {
+  public void testUnstableBuildStatusWithNoAvailableData() {
+    BuildStatus status = new Configuration();
+    status.setMutationTestAsUnstable(true);
     evaluator.parse(recipe);
-    assertFalse(evaluator.isStable(configuration));
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+  public void testUnstableBuildStatusWithQualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setMutationTestAsUnstable(true);
+    recipe.add(new KilledMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
     evaluator.parse(recipe);
-    configuration.setMutationTestAsUnstable(false);
-    assertTrue(evaluator.isStable(configuration));
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnFalseWithEmptyRecipes() {
-    evaluator.parse(recipes);
-    assertFalse(evaluator.isStable(configuration));
+  public void testUnstableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setMutationTestAsUnstable(true);
+    recipe.add(new SurvivedMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
+    evaluator.parse(recipe);
+    assertFalse(evaluator.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
-    evaluator.parse(recipes);
-    configuration.setMutationTestAsUnstable(false);
-    assertTrue(evaluator.isStable(configuration));
+  public void testStableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setMutationTestAsUnstable(false);
+    recipe.add(new SurvivedMutationTestData("A-1.0.0-r0", "c.file", "C", "f()", 1, "AOR", "TC"));
+    evaluator.parse(recipe);
+    assertTrue(evaluator.isStable(status));
   }
 
   @Test

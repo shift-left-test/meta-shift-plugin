@@ -31,6 +31,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
+import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.ComplexityData;
@@ -78,13 +79,12 @@ public class MetricsTest {
   private Metrics metrics;
   private Recipe recipe;
   private Recipes recipes;
-  private Configuration configuration;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    configuration = new Configuration();
+    Configuration configuration = new Configuration();
     configuration.setPremirrorCacheThreshold(50);
     configuration.setSharedStateCacheThreshold(50);
     configuration.setRecipeViolationThreshold(0.5);
@@ -520,49 +520,36 @@ public class MetricsTest {
   }
 
   @Test
-  public void testIsStableReturnFalseWithEmptyRecipe() {
+  public void testUnstableBuildStatusWithQualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setCommentsAsUnstable(true);
+    status.setDuplicationsAsUnstable(true);
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0));
     metrics.parse(recipe);
-    assertFalse(metrics.isStable(configuration));
+    assertTrue(metrics.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnTrueWithEmptyRecipeWhenStableSet() {
+  public void testUnstableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setCommentsAsUnstable(true);
+    status.setDuplicationsAsUnstable(true);
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     metrics.parse(recipe);
-    configuration.setPremirrorCacheAsUnstable(false);
-    configuration.setSharedStateCacheAsUnstable(false);
-    configuration.setRecipeViolationsAsUnstable(false);
-    configuration.setCommentsAsUnstable(false);
-    configuration.setCodeViolationsAsUnstable(false);
-    configuration.setComplexityAsUnstable(false);
-    configuration.setDuplicationsAsUnstable(false);
-    configuration.setTestAsUnstable(false);
-    configuration.setStatementCoverageAsUnstable(false);
-    configuration.setBranchCoverageAsUnstable(false);
-    configuration.setMutationTestAsUnstable(false);
-    assertTrue(metrics.isStable(configuration));
+    assertFalse(metrics.isStable(status));
   }
 
   @Test
-  public void testIsStableReturnFalseWithEmptyRecipes() {
-    metrics.parse(recipes);
-    assertFalse(metrics.isStable(configuration));
-  }
-
-  @Test
-  public void testIsStableReturnTrueWithEmptyRecipesWhenStableSet() {
-    metrics.parse(recipes);
-    configuration.setPremirrorCacheAsUnstable(false);
-    configuration.setSharedStateCacheAsUnstable(false);
-    configuration.setRecipeViolationsAsUnstable(false);
-    configuration.setCommentsAsUnstable(false);
-    configuration.setCodeViolationsAsUnstable(false);
-    configuration.setComplexityAsUnstable(false);
-    configuration.setDuplicationsAsUnstable(false);
-    configuration.setTestAsUnstable(false);
-    configuration.setStatementCoverageAsUnstable(false);
-    configuration.setBranchCoverageAsUnstable(false);
-    configuration.setMutationTestAsUnstable(false);
-    assertTrue(metrics.isStable(configuration));
+  public void testStableBuildStatusWithUnqualifiedData() {
+    BuildStatus status = new Configuration();
+    status.setCommentsAsUnstable(false);
+    status.setDuplicationsAsUnstable(false);
+    recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
+    metrics.parse(recipe);
+    assertTrue(metrics.isStable(status));
   }
 
   @Test
