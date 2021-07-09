@@ -47,6 +47,9 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+/**
+ * Unit tests for the MetaShiftProjectAction class.
+ */
 public class MetaShiftProjectActionTest {
 
   @Rule
@@ -89,7 +92,7 @@ public class MetaShiftProjectActionTest {
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
     FilePath reportPath = workspace.child("report");
-    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());    
+    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
         taskListener, config, reportPath, dataSource, recipes);
     run.addAction(buildAction);
@@ -112,7 +115,7 @@ public class MetaShiftProjectActionTest {
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
     FilePath reportPath = workspace.child("report");
-    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());    
+    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
         taskListener, config, reportPath, dataSource, recipes);
     run.addAction(buildAction);

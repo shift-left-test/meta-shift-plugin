@@ -44,6 +44,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.JenkinsRule;
 
+/**
+ * Unit tests for the RecipeCodeViolationAction class.
+ */
 public class RecipeCodeViolationActionTest {
 
   @Rule
@@ -77,7 +80,7 @@ public class RecipeCodeViolationActionTest {
     DataSource dataSource = new DataSource(new FilePath(
         new FilePath(run.getRootDir()), "meta-shift-report"));
     FilePath reportPath = workspace.child("report");
-    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());    
+    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
         taskListener, config, reportPath, dataSource, recipes);
 

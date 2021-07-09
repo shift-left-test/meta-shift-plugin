@@ -177,12 +177,10 @@ public class RecipeTest {
   }
 
   @Test
-  public void testParseReport() throws IOException, InterruptedException {
+  public void testParseSingleSourceFiles() throws IOException, InterruptedException {
     File source = utils.createDirectory("source");
     File report = utils.createDirectory("report");
-    FakeRecipe fakeRecipe = new FakeRecipe(source)
-        .setPremirror(1, 2)
-        .setSharedState(3, 4)
+    FakeRecipe fakeRecipe = new FakeRecipe(source).setPremirror(1, 2).setSharedState(3, 4)
         .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 5, 5, 3)
             .setComplexity(100, 1, 2)
@@ -195,10 +193,10 @@ public class RecipeTest {
     builder.toFile(report);
 
     Recipe recipe = new Recipe(new FilePath(new File(report, fakeRecipe.getRecipe())));
-    assertEquals(1, recipe.objects(CommentData.class).count());
-    assertEquals(1, recipe.objects(DuplicationData.class).count());
     assertEquals(3, recipe.objects(PremirrorCacheData.class).count());
     assertEquals(7, recipe.objects(SharedStateCacheData.class).count());
+    assertEquals(1, recipe.objects(CommentData.class).count());
+    assertEquals(1, recipe.objects(DuplicationData.class).count());
     assertEquals(6, recipe.objects(CodeViolationData.class).count());
     assertEquals(3, recipe.objects(ComplexityData.class).count());
     assertEquals(6, recipe.objects(RecipeViolationData.class).count());
@@ -213,6 +211,44 @@ public class RecipeTest {
     assertTrue(recipe.isAvailable(TestData.class));
     assertTrue(recipe.isAvailable(CoverageData.class));
     assertTrue(recipe.isAvailable(MutationTestData.class));
+  }
+
+  @Test
+  public void testParseMultipleSourceFiles() throws IOException, InterruptedException {
+    File source = utils.createDirectory("source");
+    File report = utils.createDirectory("report");
+    FakeRecipe fakeRecipe = new FakeRecipe(source).setPremirror(1, 2).setSharedState(3, 4)
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeSource(10, 5, 5, 3)
+            .setComplexity(100, 1, 2)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3))
+        .add(new FakeSource(10, 5, 5, 3)
+            .setComplexity(100, 1, 2)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+
+    Recipe recipe = new Recipe(new FilePath(new File(report, fakeRecipe.getRecipe())));
+    assertEquals(3, recipe.objects(PremirrorCacheData.class).count());
+    assertEquals(7, recipe.objects(SharedStateCacheData.class).count());
+    assertEquals(2, recipe.objects(CommentData.class).count());
+    assertEquals(2, recipe.objects(DuplicationData.class).count());
+    assertEquals(12, recipe.objects(CodeViolationData.class).count());
+    assertEquals(6, recipe.objects(ComplexityData.class).count());
+    assertEquals(12, recipe.objects(RecipeViolationData.class).count());
+    assertEquals(20, recipe.objects(TestData.class).count());
+    assertEquals(6, recipe.objects(StatementCoverageData.class).count());
+    assertEquals(14, recipe.objects(BranchCoverageData.class).count());
+    assertEquals(12, recipe.objects(MutationTestData.class).count());
   }
 
   @Test
