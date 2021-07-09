@@ -99,7 +99,7 @@ public class RecipeMutationTestAction extends RecipeActionChild {
       fileMutationTest.put("survived",
           testList.stream().filter(o -> o.getStatus().equals("SURVIVED")).count());
       fileMutationTest.put("skipped",
-          testList.stream().filter(o -> o.getStatus().equals("ERROR")).count());
+          testList.stream().filter(o -> o.getStatus().equals("SKIPPED")).count());
       fileMutationTestArray.add(fileMutationTest);
 
       try {
