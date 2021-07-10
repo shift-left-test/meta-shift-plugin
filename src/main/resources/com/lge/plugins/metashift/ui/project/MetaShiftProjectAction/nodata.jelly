@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:c="/charts">
-  <l:layout title="meta-shift Report">
+  <l:layout title="meta-shift report">
     <st:adjunct includes="com.lge.plugins.metashift.front"/>
     <st:include it="${it.project}" page="sidepanel.jelly"/>
     <l:main-panel>

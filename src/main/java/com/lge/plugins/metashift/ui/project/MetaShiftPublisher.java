@@ -110,7 +110,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
     @Override
     public String getDisplayName() {
-      return "Publish the meta-shift Report";
+      return "Publish the meta-shift report";
     }
 
     @Override

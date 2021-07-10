@@ -117,7 +117,7 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
 
   @Override
   public String getDisplayName() {
-    return "meta-shift Report";
+    return "meta-shift report";
   }
 
   @Override

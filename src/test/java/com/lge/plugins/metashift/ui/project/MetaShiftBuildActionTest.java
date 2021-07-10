@@ -91,7 +91,7 @@ public class MetaShiftBuildActionTest {
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
         taskListener, config, reportPath, dataSource, recipes);
 
-    assertEquals("meta-shift Report", buildAction.getDisplayName());
+    assertEquals("meta-shift report", buildAction.getDisplayName());
     assertEquals(3, buildAction.getRecipes().size());
     assertNotNull(buildAction.getMetrics());
     assertEquals(config, buildAction.getCriteria());
