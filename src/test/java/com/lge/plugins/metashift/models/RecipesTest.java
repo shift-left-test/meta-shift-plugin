@@ -224,8 +224,6 @@ public class RecipesTest {
     utils.createDirectory(report, "autotools-project-1.0.0-r0");
     PrintStream logger = Mockito.mock(PrintStream.class);
     recipes = new Recipes(new FilePath(report), logger);
-    Mockito.verify(logger).println("[Recipes] cmake-project-1.0.0-r0: processing");
-    Mockito.verify(logger).println("[Recipes] qmake5-project-1.0.0-r0: processing");
-    Mockito.verify(logger).println("[Recipes] autotools-project-1.0.0-r0: processing");
+    Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe reports%n", 3);
   }
 }

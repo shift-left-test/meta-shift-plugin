@@ -84,11 +84,16 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
-    for (FilePath directory : path.listDirectories()) {
-      logger.println("[Recipes] " + directory.getName() + ": processing");
-      this.add(new Recipe(directory));
+
+    List<FilePath> directories = path.listDirectories();
+    logger.printf("[meta-shift-plugin] -> Found %d recipe reports%n", directories.size());
+    logger.println("[meta-shift-plugin] Parsing the meta-shift report...");
+    for (FilePath directory : directories) {
+      logger.printf("[meta-shift-plugin] -> %s%n", directory.getName());
+      this.add(new Recipe(directory, logger));
     }
     Collections.sort(this);
+    logger.println("[meta-shift-plugin] Successfully parsed.");
   }
 
   @Override

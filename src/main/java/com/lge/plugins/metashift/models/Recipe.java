@@ -102,23 +102,19 @@ public final class Recipe extends Data<Recipe> implements Streamable {
   /**
    * Creates new task to trigger a given factory method.
    *
-   * @param name    of the task
    * @param clazz   object type
    * @param functor to parse the file
    * @param path    to the report directory
-   * @param logger  for logging
    * @return task object
    */
-  private Callable<Void> newTask(String name, Class<?> clazz,
-      FactoryFunction<FilePath, List<?>> functor, FilePath path, PrintStream logger) {
+  private Callable<Void> newTask(Class<?> clazz, FactoryFunction<FilePath, List<?>> functor,
+      FilePath path) {
     return () -> {
       try {
-        logger.printf("[Recipe] %s: processing the %s data%n", getRecipe(), name);
         List<?> parsed = functor.apply(path);
         objects.addAll(parsed);
         classes.add(clazz);
         parsed.forEach(o -> classes.add(o.getClass()));
-        logger.printf("[Recipe] %s: finished processing the %s data%n", getRecipe(), name);
       } catch (IOException ignored) {
         // ignored
       }
@@ -145,23 +141,18 @@ public final class Recipe extends Data<Recipe> implements Streamable {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
     List<Callable<Void>> callables = Arrays.asList(
-        newTask("premirror cache", PremirrorCacheData.class, PremirrorCacheFactory::create,
-            path, logger),
-        newTask("shared state cache", SharedStateCacheData.class, SharedStateCacheFactory::create,
-            path, logger),
-        newTask("code size", CodeSizeData.class, CodeSizeFactory::create, path, logger),
-        newTask("code violation", CodeViolationData.class, CodeViolationFactory::create,
-            path, logger),
-        newTask("comment", CommentData.class, CommentFactory::create, path, logger),
-        newTask("complexity", ComplexityData.class, ComplexityFactory::create, path, logger),
-        newTask("coverage", CoverageData.class, CoverageFactory::create, path, logger),
-        newTask("duplication", DuplicationData.class, DuplicationFactory::create, path, logger),
-        newTask("mutation test", MutationTestData.class, MutationTestFactory::create,
-            path, logger),
-        newTask("recipe size", RecipeSizeData.class, RecipeSizeFactory::create, path, logger),
-        newTask("recipe violation", RecipeViolationData.class, RecipeViolationFactory::create,
-            path, logger),
-        newTask("test", TestData.class, TestFactory::create, path, logger)
+        newTask(PremirrorCacheData.class, PremirrorCacheFactory::create, path),
+        newTask(SharedStateCacheData.class, SharedStateCacheFactory::create, path),
+        newTask(CodeSizeData.class, CodeSizeFactory::create, path),
+        newTask(CodeViolationData.class, CodeViolationFactory::create, path),
+        newTask(CommentData.class, CommentFactory::create, path),
+        newTask(ComplexityData.class, ComplexityFactory::create, path),
+        newTask(CoverageData.class, CoverageFactory::create, path),
+        newTask(DuplicationData.class, DuplicationFactory::create, path),
+        newTask(MutationTestData.class, MutationTestFactory::create, path),
+        newTask(RecipeSizeData.class, RecipeSizeFactory::create, path),
+        newTask(RecipeViolationData.class, RecipeViolationFactory::create, path),
+        newTask(TestData.class, TestFactory::create, path)
     );
     try {
       ExecutorService executor = Executors.newWorkStealingPool();
@@ -169,7 +160,7 @@ public final class Recipe extends Data<Recipe> implements Streamable {
         future.get();
       }
     } catch (Exception e) {
-      logger.printf("[Recipe] %s: %s%n", getRecipe(), e);
+      logger.printf("[meta-shift-plugin] %s: %s%n", getRecipe(), e);
     }
   }
 

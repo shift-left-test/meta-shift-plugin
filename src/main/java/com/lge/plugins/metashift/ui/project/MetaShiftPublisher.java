@@ -42,8 +42,12 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.time.Duration;
+import java.time.Instant;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -205,44 +209,58 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     }
   }
 
+  private String getFormattedTime(long millis) {
+    return DurationFormatUtils.formatDuration(millis, "HH:mm:ss.S");
+  }
+
   @Override
   public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
       throws InterruptedException, IOException {
-    listener.getLogger().printf("%s - begin%n", this.getDescriptor().getDisplayName());
-
     Result result = run.getResult();
-
-    if (result != null && result.isBetterOrEqualTo(Result.UNSTABLE)) {
-      EnvVars env = run.getEnvironment(listener);
-      FilePath reportPath = workspace.child(env.expand(this.reportRoot));
-      if (reportPath.exists()) {
-        Configuration criteria = this.localCriteria;
-        if (criteria != null) {
-          listener.getLogger().println("Use project criteria");
-        } else {
-          criteria = ((DescriptorImpl) getDescriptor()).getCriteria();
-          listener.getLogger().println("Use global criteria");
-        }
-
-        FilePath buildPath = new FilePath(run.getRootDir());
-        DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
-        Recipes recipes = new Recipes(reportPath, listener.getLogger());
-
-        listener.getLogger().println("Create project report");
-        MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
-            run, listener, criteria, reportPath, dataSource, recipes);
-        run.addAction(buildAction);
-
-        if (!buildAction.getMetrics().isStable(criteria)) {
-          run.setResult(Result.UNSTABLE);
-        }
-      } else {
-        throw new IllegalArgumentException(
-            String.format("meta-shift-plugin error: report path[%s] does not exist!!!",
-                reportPath.toURI().toString()));
-      }
+    if (result == null || result.isWorseOrEqualTo(Result.UNSTABLE)) {
+      return;
     }
-    listener.getLogger().printf("%s - end%n", this.getDescriptor().getDisplayName());
+
+    PrintStream logger = listener.getLogger();
+    logger.println("[meta-shift-plugin] Scanning for the meta-shift report...");
+
+    Instant started = Instant.now();
+    logger.printf("[meta-shift-plugin] Started at %s%n", started.toString());
+
+    EnvVars env = run.getEnvironment(listener);
+    FilePath reportPath = workspace.child(env.expand(this.reportRoot));
+    logger.printf("[meta-shift-plugin] Searching for all recipe reports in %s%n", reportPath);
+
+    if (!reportPath.exists()) {
+      throw new IllegalArgumentException(
+          String.format("Unable to locate the directory: %s", reportPath.toURI().toString()));
+    }
+
+    Configuration criteria = this.localCriteria;
+    if (criteria == null) {
+      criteria = ((DescriptorImpl) getDescriptor()).getCriteria();
+    }
+
+    FilePath buildPath = new FilePath(run.getRootDir());
+    DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
+    Recipes recipes = new Recipes(reportPath, listener.getLogger());
+
+    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
+        run, listener, criteria, reportPath, dataSource, recipes);
+    run.addAction(buildAction);
+
+    Instant finished = Instant.now();
+    logger.printf("[meta-shift-plugin] Finished at %s%n", finished.toString());
+
+    logger.printf("[meta-shift-plugin] Total time: %s%n",
+        getFormattedTime(Duration.between(started, finished).toMillis()));
+
+    if (!buildAction.getMetrics().isStable(criteria)) {
+      logger.println("[meta-shift-plugin] NOTE: one of the metrics does not meet the goal.");
+      run.setResult(Result.UNSTABLE);
+    }
+
+    logger.println("[meta-shift-plugin] Done.");
   }
 
   @Override

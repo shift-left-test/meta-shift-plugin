@@ -43,6 +43,7 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -83,14 +84,16 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
     this.metricStatistics = new MetricStatistics(criteria);
     this.metricStatistics.parse(recipes);
 
-    listener.getLogger().println("Parse qualified recipe counter");
     this.qualifiedRecipeCounter = new QualifiedRecipeCounter(criteria);
     this.qualifiedRecipeCounter.parse(recipes);
 
     JSONArray recipeMetricsArray = new JSONArray();
 
+    PrintStream logger = listener.getLogger();
+
+    logger.println("[meta-shift-plugin] Publishing the meta-shift results...");
     for (Recipe recipe : recipes) {
-      listener.getLogger().printf("Create recipe[%s] report%n", recipe.getRecipe());
+      logger.printf("[meta-shift-plugin] -> %s%n", recipe.getRecipe());
       RecipeAction recipeAction = new RecipeAction(
           this, listener, criteria, reportRoot, recipe);
       this.addAction(recipeAction);
@@ -108,6 +111,8 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
     }
+
+    logger.println("[meta-shift-plugin] Successfully published.");
   }
 
   @Override

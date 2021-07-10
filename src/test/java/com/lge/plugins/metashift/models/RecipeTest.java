@@ -37,7 +37,6 @@ import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -48,7 +47,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
 
 /**
  * Unit tests for the Recipe class.
@@ -249,16 +247,6 @@ public class RecipeTest {
     assertEquals(6, recipe.objects(StatementCoverageData.class).count());
     assertEquals(14, recipe.objects(BranchCoverageData.class).count());
     assertEquals(12, recipe.objects(MutationTestData.class).count());
-  }
-
-  @Test
-  public void testRecipeLogs() throws IOException, InterruptedException {
-    File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    PrintStream logger = Mockito.mock(PrintStream.class);
-    new Recipe(new FilePath(directory), logger);
-    Mockito.verify(logger, Mockito.times(12))
-        .printf(Mockito.startsWith("[Recipe] %s: processing"),
-            Mockito.anyString(), Mockito.anyString());
   }
 
   @Test

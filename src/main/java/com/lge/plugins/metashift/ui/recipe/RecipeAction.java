@@ -70,47 +70,36 @@ public class RecipeAction extends MetricsActionBase implements Action {
     JSONObject metadata = JsonUtils.createObject(
         reportRoot.child(this.name).child("metadata.json"));
 
-    listener.getLogger().println("Create shared state cache report");
     this.addAction(new RecipeSharedStateCacheAction(
         this, reportRoot.getChannel(), metadata, "Shared State Cache", "sharedstate_cache", true,
         listener, recipe));
-    listener.getLogger().println("Create premirror cache report");
     this.addAction(new RecipePremirrorCacheAction(
         this, reportRoot.getChannel(), metadata, "Premirror Cache", "premirror_cache", true,
         listener, recipe));
-    listener.getLogger().println("Create code violations report");
     this.addAction(new RecipeCodeViolationsAction(
         this, reportRoot.getChannel(), metadata, "Code Violations", "code_violations", false,
         listener, recipe));
-    listener.getLogger().println("Create comments report");
     this.addAction(new RecipeCommentsAction(
         this, reportRoot.getChannel(), metadata, "Comments", "comments", true,
         listener, recipe));
-    listener.getLogger().println("Create complexity report");
     this.addAction(new RecipeComplexityAction(
         this, reportRoot.getChannel(), metadata, "Complexity", "complexity", true,
         listener, recipe));
-    listener.getLogger().println("Create statement coverage report");
     this.addAction(new RecipeStatementCoverageAction(
         this, reportRoot.getChannel(), metadata, "Statement Coverage", "statement_coverage", true,
         listener, recipe));
-    listener.getLogger().println("Create branch coverage report");
     this.addAction(new RecipeBranchCoverageAction(
         this, reportRoot.getChannel(), metadata, "Branch Coverage", "branch_coverage", true,
         listener, recipe));
-    listener.getLogger().println("Create duplications report");
     this.addAction(new RecipeDuplicationsAction(
         this, reportRoot.getChannel(), metadata, "Duplications", "duplications", true,
         listener, recipe));
-    listener.getLogger().println("Create mutation test report");
     this.addAction(new RecipeMutationTestAction(
         this, reportRoot.getChannel(), metadata, "Mutation Test", "mutation_test", true,
         listener, recipe));
-    listener.getLogger().println("Create recipe violations report");
     this.addAction(new RecipeRecipeViolationsAction(
         this, reportRoot.getChannel(), metadata, "Recipe Violations", "recipe_violations", false,
         listener, recipe));
-    listener.getLogger().println("Create unit test report");
     this.addAction(new RecipeTestAction(
         this, reportRoot.getChannel(), metadata, "Test", "test", true,
         listener, recipe));
