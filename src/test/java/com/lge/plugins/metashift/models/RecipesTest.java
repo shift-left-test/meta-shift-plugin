@@ -25,7 +25,6 @@
 package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
@@ -135,14 +134,23 @@ public class RecipesTest {
 
   @Test
   public void testCreateWithMultipleDirectories() throws IOException, InterruptedException {
+    File source = utils.createDirectory("source");
     File report = utils.createDirectory("report");
-    utils.createDirectory(report, "cmake-project-1.0.0-r0");
-    utils.createDirectory(report, "qmake5-project-1.0.0-r0");
-    utils.createDirectory(report, "autotools-project-1.0.0-r0");
+    builder
+        .add(new FakeRecipe(source)
+            .add(new FakeScript(10))
+            .add(new FakeSource(10, 3, 2, 0)))
+        .add(new FakeRecipe(source)
+            .add(new FakeScript(20))
+            .add(new FakeSource(20, 6, 5, 0)))
+        .add(new FakeRecipe(source)
+            .add(new FakeScript(30))
+            .add(new FakeSource(30, 9, 8, 0)));
+    builder.toFile(report);
+
     recipes = new Recipes(new FilePath(report));
     assertEquals(3, recipes.size());
-    assertEquals(0, recipes.objects(Data.class).count());
-    assertFalse(recipes.isAvailable(Data.class));
+    assertEquals(3, recipes.objects(CodeSizeData.class).count());
   }
 
   @Test
@@ -217,7 +225,7 @@ public class RecipesTest {
   }
 
   @Test
-  public void testRecipeLogs() throws IOException, InterruptedException {
+  public void testRemovesRecipesWithNoSourceFiles() throws IOException, InterruptedException {
     File report = utils.createDirectory("report");
     utils.createDirectory(report, "cmake-project-1.0.0-r0");
     utils.createDirectory(report, "qmake5-project-1.0.0-r0");
@@ -225,5 +233,6 @@ public class RecipesTest {
     PrintStream logger = Mockito.mock(PrintStream.class);
     recipes = new Recipes(new FilePath(report), logger);
     Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe reports%n", 3);
+    Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipes removed.%n", 3);
   }
 }

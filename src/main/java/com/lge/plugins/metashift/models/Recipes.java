@@ -95,8 +95,12 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
       logger.printf("[meta-shift-plugin] -> %s%n", directory.getName());
       this.add(new Recipe(directory, logger));
     }
-
     Collections.sort(this);
+
+    logger.println("[meta-shift-plugin] Removing recipes with no source files...");
+    this.removeIf(recipe -> !recipe.isAvailable(CodeSizeData.class));
+    logger.printf("[meta-shift-plugin] -> %d recipes removed.%n", directories.size() - this.size());
+
     logger.println("[meta-shift-plugin] Successfully parsed.");
   }
 
