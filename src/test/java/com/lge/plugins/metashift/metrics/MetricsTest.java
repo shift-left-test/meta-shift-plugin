@@ -202,7 +202,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedCommentData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new CommentData("B-1.0.0-r0", "b.file", 10, 0));
     metrics.parse(recipes);
     assertEvaluator(metrics.getComments(), true, false);
@@ -211,7 +213,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedCommentData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 20, 1, 1));
     recipe.add(new CommentData("B-1.0.0-r0", "b.file", 20, 15));
     metrics.parse(recipes);
     assertEvaluator(metrics.getComments(), true, true);
@@ -220,6 +224,7 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedComplexityData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     recipe.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     metrics.parse(recipes);
@@ -229,6 +234,7 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedComplexityData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     recipe.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 0));
     metrics.parse(recipes);
@@ -282,7 +288,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedDuplicationData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 5, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 5, 0));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     metrics.parse(recipes);
     assertEvaluator(metrics.getDuplications(), true, false);
@@ -291,7 +299,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedDuplicationData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 20, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 0));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     metrics.parse(recipes);
     assertEvaluator(metrics.getDuplications(), true, true);
@@ -535,6 +545,8 @@ public class MetricsTest {
     BuildStatus status = new Configuration();
     status.setCommentsAsUnstable(true);
     status.setDuplicationsAsUnstable(true);
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     metrics.parse(recipe);

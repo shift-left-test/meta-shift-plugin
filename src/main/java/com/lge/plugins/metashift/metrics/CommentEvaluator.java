@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.BuildStatus;
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Streamable;
@@ -52,7 +53,7 @@ public final class CommentEvaluator extends PositiveEvaluator<CommentEvaluator> 
 
   @Override
   protected void parseImpl(final Streamable c) {
-    setAvailable(c.isAvailable(CommentData.class));
+    setAvailable(c.isAvailable(CodeSizeData.class) && c.isAvailable(CommentData.class));
     setDenominator(c.objects(CommentData.class).mapToLong(CommentData::getLines).sum());
     setNumerator(c.objects(CommentData.class).mapToLong(CommentData::getCommentLines).sum());
   }

@@ -31,6 +31,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.BuildStatus;
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
@@ -86,6 +87,7 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 6));
     evaluator.parse(recipe);
 
@@ -95,6 +97,7 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 4));
     evaluator.parse(recipe);
 
@@ -120,9 +123,11 @@ public class DuplicationEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 5, 0));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new DuplicationData("B-1.0.0-r0", "a.file", 10, 10));
     recipes.add(recipe);
     evaluator.parse(recipes);
@@ -134,9 +139,11 @@ public class DuplicationEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 0));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new DuplicationData("B-1.0.0-r0", "a.file", 10, 10));
     recipes.add(recipe);
     evaluator.parse(recipes);
@@ -173,6 +180,7 @@ public class DuplicationEvaluatorTest {
   public void testUnstableBuildStatusWithUnqualifiedData() {
     BuildStatus status = new Configuration();
     status.setDuplicationsAsUnstable(true);
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     evaluator.parse(recipe);
     assertFalse(evaluator.isStable(status));
@@ -189,6 +197,7 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testJsonObject() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 4));
     evaluator.parse(recipe);
 

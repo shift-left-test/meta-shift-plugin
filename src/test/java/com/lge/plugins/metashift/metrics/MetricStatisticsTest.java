@@ -142,7 +142,9 @@ public class MetricStatisticsTest {
 
   @Test
   public void testGetComments() {
+    recipe1.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe1.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe2.add(new CodeSizeData("B-1.0.0-r0", "b.file", 10, 1, 1));
     recipe2.add(new CommentData("B-1.0.0-r0", "a.file", 10, 0));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     stats.parse(recipes);
@@ -151,7 +153,9 @@ public class MetricStatisticsTest {
 
   @Test
   public void testGetComplexity() {
+    recipe1.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe1.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 100));
+    recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 10, 1, 1));
     recipe2.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 1));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     stats.parse(recipes);
@@ -182,7 +186,9 @@ public class MetricStatisticsTest {
 
   @Test
   public void testGetDuplications() {
+    recipe1.add(new CodeSizeData("A-1.0.0-r0", "a.file", 5, 1, 1));
     recipe1.add(new DuplicationData("A-1.0.0-r0", "a.file", 5, 5));
+    recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 5, 1, 1));
     recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 5, 0));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     stats.parse(recipes);
@@ -220,6 +226,7 @@ public class MetricStatisticsTest {
 
   @Test
   public void testParseRecipesWithMultipleData() {
+    recipe1.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe1.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
     recipe1.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
@@ -251,6 +258,7 @@ public class MetricStatisticsTest {
 
   @Test
   public void testParseMetricsWithMultipleData() {
+    recipe1.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe1.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
     recipe1.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe1.add(new StatementCoverageData("A-B-C", "a.file", 1, true));

@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.BuildStatus;
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Streamable;
@@ -65,7 +66,7 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
         .sorted(Comparator.comparingLong(ComplexityData::getValue).reversed())
         .collect(Collectors.toList());
 
-    setAvailable(c.isAvailable(ComplexityData.class));
+    setAvailable(c.isAvailable(CodeSizeData.class) && c.isAvailable(ComplexityData.class));
     setDenominator(objects.stream().distinct().count());
     setNumerator(objects.stream().distinct().filter(o -> o.getValue() >= level).count());
   }

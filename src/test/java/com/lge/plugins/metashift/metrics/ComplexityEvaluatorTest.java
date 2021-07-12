@@ -31,6 +31,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.BuildStatus;
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
@@ -87,6 +88,7 @@ public class ComplexityEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     evaluator.parse(recipe);
 
@@ -96,6 +98,7 @@ public class ComplexityEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new ComplexityData("A-1.0.0-r0", "b.file", "f()", 5, 10, 5));
     recipe.add(new ComplexityData("A-1.0.0-r0", "c.file", "f()", 5, 10, 4));
     evaluator.parse(recipe);
@@ -106,6 +109,7 @@ public class ComplexityEvaluatorTest {
 
   @Test
   public void testParseRecipeWithDuplicates() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new ComplexityData("A-1.0.0-r0", "b.file", "f()", 1, 2, 0));
     recipe.add(new ComplexityData("A-1.0.0-r0", "b.file", "f()", 3, 4, 5));
     evaluator.parse(recipe);
@@ -132,9 +136,11 @@ public class ComplexityEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     recipes.add(recipe);
     evaluator.parse(recipes);
@@ -146,9 +152,11 @@ public class ComplexityEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 5));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 0));
     recipes.add(recipe);
     evaluator.parse(recipes);
@@ -185,6 +193,7 @@ public class ComplexityEvaluatorTest {
   public void testUnstableBuildStatusWithUnqualifiedData() {
     BuildStatus status = new Configuration();
     status.setComplexityAsUnstable(true);
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "c.file", 10, 1, 1));
     recipe.add(new ComplexityData("A-1.0.0-r0", "c.file", "f()", 5, 10, 100));
     evaluator.parse(recipe);
     assertFalse(evaluator.isStable(status));
@@ -201,6 +210,7 @@ public class ComplexityEvaluatorTest {
 
   @Test
   public void testToJsonObject() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new ComplexityData("A-1.0.0-r0", "b.file", "f()", 5, 10, 5));
     recipe.add(new ComplexityData("A-1.0.0-r0", "c.file", "f()", 5, 10, 4));
     evaluator.parse(recipe);

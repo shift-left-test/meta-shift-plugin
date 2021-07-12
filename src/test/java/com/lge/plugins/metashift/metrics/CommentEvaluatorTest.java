@@ -31,6 +31,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.BuildStatus;
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
@@ -86,7 +87,9 @@ public class CommentEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "b.file", 10, 0));
     evaluator.parse(recipe);
 
@@ -96,7 +99,9 @@ public class CommentEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "b.file", 10, 5));
     evaluator.parse(recipe);
 
@@ -122,9 +127,11 @@ public class CommentEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new CommentData("B-1.0.0-r0", "b.file", 10, 0));
     recipes.add(recipe);
     evaluator.parse(recipes);
@@ -136,9 +143,11 @@ public class CommentEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
+    recipe.add(new CodeSizeData("B-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new CommentData("B-1.0.0-r0", "b.file", 20, 15));
     recipes.add(recipe);
     evaluator.parse(recipes);
@@ -175,6 +184,7 @@ public class CommentEvaluatorTest {
   public void testUnstableBuildStatusWithUnqualifiedData() {
     BuildStatus status = new Configuration();
     status.setCommentsAsUnstable(true);
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 0));
     evaluator.parse(recipe);
     assertFalse(evaluator.isStable(status));
@@ -191,7 +201,9 @@ public class CommentEvaluatorTest {
 
   @Test
   public void testToJsonObject() {
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "b.file", 10, 5));
     evaluator.parse(recipe);
 

@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.BuildStatus;
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Streamable;
@@ -52,7 +53,7 @@ public final class DuplicationEvaluator extends NegativeEvaluator<DuplicationEva
 
   @Override
   protected void parseImpl(final Streamable c) {
-    setAvailable(c.isAvailable(DuplicationData.class));
+    setAvailable(c.isAvailable(CodeSizeData.class) && c.isAvailable(DuplicationData.class));
     setDenominator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum());
     setNumerator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getDuplicatedLines)
         .sum());
