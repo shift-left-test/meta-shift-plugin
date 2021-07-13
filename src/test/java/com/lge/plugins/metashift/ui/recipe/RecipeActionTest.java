@@ -25,20 +25,21 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
+import com.lge.plugins.metashift.fixture.FakeRecipe;
+import com.lge.plugins.metashift.fixture.FakeReportBuilder;
+import com.lge.plugins.metashift.fixture.FakeScript;
+import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Recipes;
-import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
-import hudson.FilePath;
+import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
+import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
-import hudson.model.TaskListener;
+import hudson.model.Result;
 import java.io.File;
-import java.net.URL;
 import java.util.List;
-import java.util.Objects;
 import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,65 +58,184 @@ public class RecipeActionTest {
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 
-  private TaskListener taskListener;
-  private Configuration config;
   private FreeStyleProject project;
-  private FilePath workspace;
+  private TemporaryFileUtils utils;
 
   @Before
   public void setUp() throws Exception {
-    taskListener = jenkins.createTaskListener();
+    utils = new TemporaryFileUtils(folder);
 
     project = jenkins.createFreeStyleProject();
-
-    URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("report.zip"));
-    FilePath reportZip = new FilePath(new File(url.toURI()));
-    workspace = new FilePath(folder.newFolder("WORKSPACE"));
-    reportZip.unzip(workspace);
-
-    config = new Configuration();
-  }
-
-  private void assertContainsKey(JSONObject object, String... keys) {
-    for (String key : keys) {
-      assertTrue("Key: " + key, object.containsKey(key));
-    }
+    File workspace = utils.getPath("workspace");
+    project.setCustomWorkspace(workspace.getAbsolutePath());
+    MetaShiftPublisher publisher = new MetaShiftPublisher("report",
+        new Configuration());
+    project.getPublishersList().add(publisher);
   }
 
   @Test
   public void testCreate() throws Exception {
-    FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
-    DataSource dataSource = new DataSource(new FilePath(
-        new FilePath(run.getRootDir()), "meta-shift-report"));
-    FilePath reportPath = workspace.child("report");
-    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, reportPath, dataSource, recipes);
-
+    File report = utils.getPath("workspace", "report");
+    report.delete();
+    FakeReportBuilder builder = new FakeReportBuilder();
+    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
+    fakeRecipe
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeSource(10, 4, 5, 6)
+            .setComplexity(10, 5, 6)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
+    
     List<RecipeAction> recipeActions = buildAction.getActions(RecipeAction.class);
 
-    assertEquals(3, recipeActions.size());
+    assertEquals(1, recipeActions.size());
 
     RecipeAction recipeAction = recipeActions.get(0);
 
-    assertContainsKey(recipeAction.getCodeSizeDeltaJson(),
-        "functions", "classes", "files", "lines");
-    assertContainsKey(recipeAction.getCodeSizeJson(), "qualified", "functions", "classes",
-        "available", "files", "threshold", "lines", "denominator", "numerator", "ratio");
+    assertEquals(fakeRecipe.getRecipe(), recipeAction.getDisplayName());
 
-    String[] evaluatorJsonFields = new String[]{"qualified", "available", "threshold",
-        "denominator", "numerator", "ratio"};
+    JSONObject codeSizeDeltaJson = recipeAction.getCodeSizeDeltaJson();
+    assertEquals(0, codeSizeDeltaJson.getInt("functions"));
+    assertEquals(0, codeSizeDeltaJson.getInt("classes"));
+    assertEquals(1, codeSizeDeltaJson.getInt("files"));
+    assertEquals(10, codeSizeDeltaJson.getInt("lines"));
 
-    assertContainsKey(recipeAction.getPremirrorCacheJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getSharedStateCacheJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getCodeViolationsJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getCommentsJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getComplexityJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getStatementCoverageJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getBranchCoverageJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getDuplicationsJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getMutationTestJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getRecipeViolationsJson(), evaluatorJsonFields);
-    assertContainsKey(recipeAction.getTestJson(), evaluatorJsonFields);
+    JSONObject codeSizeJson = recipeAction.getCodeSizeJson();
+    assertEquals(false, codeSizeJson.getBoolean("qualified"));
+    assertEquals(0, codeSizeJson.getInt("functions"));
+    assertEquals(0, codeSizeJson.getInt("classes"));
+    // TODO: available is false, is it right?
+    assertEquals(false, codeSizeJson.getBoolean("available"));
+    assertEquals(1, codeSizeJson.getInt("files"));
+    assertEquals(0, codeSizeJson.getInt("threshold"));
+    assertEquals(10, codeSizeJson.getInt("lines"));
+    assertEquals(0, codeSizeJson.getInt("denominator"));
+    assertEquals(0, codeSizeJson.getInt("numerator"));
+    assertEquals(0, codeSizeJson.getInt("ratio"));
+
+    JSONObject premirrorCacheJson = recipeAction.getPremirrorCacheJson();
+    assertEquals(false, premirrorCacheJson.getBoolean("qualified"));
+    assertEquals(true, premirrorCacheJson.getBoolean("available"));
+    assertEquals(0.8, premirrorCacheJson.getDouble("threshold"), 0.0);
+    assertEquals(0, premirrorCacheJson.getInt("denominator"));
+    assertEquals(0, premirrorCacheJson.getInt("numerator"));
+    assertEquals(0, premirrorCacheJson.getDouble("ratio"), 0.0);
+
+    JSONObject sharedStateCacheJson = recipeAction.getSharedStateCacheJson();
+    assertEquals(false, sharedStateCacheJson.getBoolean("qualified"));
+    assertEquals(true, sharedStateCacheJson.getBoolean("available"));
+    assertEquals(0.8, sharedStateCacheJson.getDouble("threshold"), 0.0);
+    assertEquals(0, sharedStateCacheJson.getInt("denominator"));
+    assertEquals(0, sharedStateCacheJson.getInt("numerator"));
+    assertEquals(0, sharedStateCacheJson.getDouble("ratio"), 0.0);
+
+    JSONObject codeViolationJson = recipeAction.getCodeViolationsJson();
+    assertEquals(false, codeViolationJson.getBoolean("qualified"));
+    assertEquals(true, codeViolationJson.getBoolean("available"));
+    assertEquals(0.1, codeViolationJson.getDouble("threshold"), 0.0);
+    assertEquals(10, codeViolationJson.getInt("denominator"));
+    assertEquals(6, codeViolationJson.getInt("numerator"));
+    assertEquals(0.6, codeViolationJson.getDouble("ratio"), 0.0);
+
+    JSONObject commentsJson = recipeAction.getCommentsJson();
+    assertEquals(true, commentsJson.getBoolean("qualified"));
+    assertEquals(true, commentsJson.getBoolean("available"));
+    assertEquals(0.3, commentsJson.getDouble("threshold"), 0.0);
+    assertEquals(10, commentsJson.getInt("denominator"));
+    assertEquals(5, commentsJson.getInt("numerator"));
+    assertEquals(0.5, commentsJson.getDouble("ratio"), 0.0);
+
+    JSONObject complexityJson = recipeAction.getComplexityJson();
+    assertEquals(false, complexityJson.getBoolean("qualified"));
+    assertEquals(true, complexityJson.getBoolean("available"));
+    assertEquals(0.1, complexityJson.getDouble("threshold"), 0.0);
+    assertEquals(11, complexityJson.getInt("denominator"));
+    assertEquals(5, complexityJson.getInt("numerator"));
+    assertEquals(0.45, complexityJson.getDouble("ratio"), 0.01);
+
+    JSONObject statementCoverageJson = recipeAction.getStatementCoverageJson();
+    assertEquals(false, statementCoverageJson.getBoolean("qualified"));
+    assertEquals(true, statementCoverageJson.getBoolean("available"));
+    assertEquals(0.8, statementCoverageJson.getDouble("threshold"), 0.0);
+    assertEquals(3, statementCoverageJson.getInt("denominator"));
+    assertEquals(1, statementCoverageJson.getInt("numerator"));
+    assertEquals(0.33, statementCoverageJson.getDouble("ratio"), 0.01);
+
+    JSONObject branchCoverageJson = recipeAction.getBranchCoverageJson();
+    assertEquals(true, branchCoverageJson.getBoolean("qualified"));
+    assertEquals(true, branchCoverageJson.getBoolean("available"));
+    assertEquals(0.4, branchCoverageJson.getDouble("threshold"), 0.0);
+    assertEquals(7, branchCoverageJson.getInt("denominator"));
+    assertEquals(3, branchCoverageJson.getInt("numerator"));
+    assertEquals(0.42, branchCoverageJson.getDouble("ratio"), 0.01);
+
+    JSONObject duplicationsJson = recipeAction.getDuplicationsJson();
+    assertEquals(false, duplicationsJson.getBoolean("qualified"));
+    assertEquals(true, duplicationsJson.getBoolean("available"));
+    assertEquals(0.1, duplicationsJson.getDouble("threshold"), 0.0);
+    assertEquals(10, duplicationsJson.getInt("denominator"));
+    assertEquals(6, duplicationsJson.getInt("numerator"));
+    assertEquals(0.6, duplicationsJson.getDouble("ratio"), 0.0);
+
+    JSONObject mutationTestJson = recipeAction.getMutationTestJson();
+    assertEquals(false, mutationTestJson.getBoolean("qualified"));
+    assertEquals(true, mutationTestJson.getBoolean("available"));
+    assertEquals(0.85, mutationTestJson.getDouble("threshold"), 0.0);
+    assertEquals(6, mutationTestJson.getInt("denominator"));
+    assertEquals(1, mutationTestJson.getInt("numerator"));
+    assertEquals(0.16, mutationTestJson.getDouble("ratio"), 0.01);
+
+    JSONObject recipeViolationsJson = recipeAction.getRecipeViolationsJson();
+    assertEquals(false, recipeViolationsJson.getBoolean("qualified"));
+    assertEquals(true, recipeViolationsJson.getBoolean("available"));
+    assertEquals(0.1, recipeViolationsJson.getDouble("threshold"), 0.0);
+    assertEquals(10, recipeViolationsJson.getInt("denominator"));
+    assertEquals(6, recipeViolationsJson.getInt("numerator"));
+    assertEquals(0.6, recipeViolationsJson.getDouble("ratio"), 0.0);
+
+    JSONObject testJson = recipeAction.getTestJson();
+    assertEquals(false, testJson.getBoolean("qualified"));
+    assertEquals(true, testJson.getBoolean("available"));
+    assertEquals(0.95, testJson.getDouble("threshold"), 0.0);
+    assertEquals(10, testJson.getInt("denominator"));
+    assertEquals(1, testJson.getInt("numerator"));
+    assertEquals(0.1, testJson.getDouble("ratio"), 0.0);
+  }
+
+  @Test
+  public void testDelta() throws Exception {
+    File report = utils.getPath("workspace", "report");
+    report.delete();
+    FakeReportBuilder builder = new FakeReportBuilder();
+    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
+    fakeRecipe
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeSource(10, 4, 5, 6)
+            .setComplexity(10, 5, 6)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    assertNotNull(run);
+    FreeStyleBuild run2 = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+
+    MetaShiftBuildAction buildAction = run2.getAction(MetaShiftBuildAction.class);
+    RecipeAction recipeAction = buildAction.getAction(RecipeAction.class);
+    JSONObject codeSizeDeltaJson = recipeAction.getCodeSizeDeltaJson();
+    assertEquals(0, codeSizeDeltaJson.getInt("functions"));
+    assertEquals(0, codeSizeDeltaJson.getInt("classes"));
+    assertEquals(0, codeSizeDeltaJson.getInt("files"));
+    assertEquals(0, codeSizeDeltaJson.getInt("lines"));
   }
 }

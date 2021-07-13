@@ -24,9 +24,24 @@
 
 package com.lge.plugins.metashift.ui.project;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import com.lge.plugins.metashift.fixture.FakeRecipe;
+import com.lge.plugins.metashift.fixture.FakeReportBuilder;
+import com.lge.plugins.metashift.fixture.FakeScript;
+import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.ui.recipe.RecipeAction;
+import com.lge.plugins.metashift.ui.recipe.RecipeActionChild;
+import com.lge.plugins.metashift.utils.TemporaryFileUtils;
+import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
+import hudson.model.Result;
+import hudson.util.FormValidation;
 import java.io.File;
+import java.util.List;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -45,6 +60,18 @@ public class MetaShiftPublisherTest {
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
 
+  private TemporaryFileUtils utils;
+  private WebClient client;
+
+  @Before
+  public void setUp() throws Exception {
+    utils = new TemporaryFileUtils(folder);
+
+    // HtmlUnit does not play well with JavaScript
+    client = jenkins.createWebClient();
+    client.getOptions().setThrowExceptionOnScriptError(false);
+  }
+
   @Test
   public void testConfigureRoundTripWithEmptyDirectory() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
@@ -53,14 +80,165 @@ public class MetaShiftPublisherTest {
         new Configuration());
     project.getPublishersList().add(before);
 
-    // HtmlUnit does not play well with JavaScript
-    WebClient client = jenkins.createWebClient();
-    client.getOptions().setThrowExceptionOnScriptError(false);
-
     jenkins.submit(client.getPage(project, "configure").getFormByName("config"));
 
     jenkins.assertEqualDataBoundBeans(
         new MetaShiftPublisher(report.getAbsolutePath(), new Configuration()),
         project.getPublishersList().get(0));
+  }
+
+  @Test
+  public void testPerform() throws Exception {
+    FreeStyleProject project = jenkins.createFreeStyleProject();
+    File workspace = utils.getPath("workspace");
+    File report = utils.getPath("workspace", "report");
+    project.setCustomWorkspace(workspace.getAbsolutePath());
+    MetaShiftPublisher publisher = new MetaShiftPublisher("report",
+        null);
+    project.getPublishersList().add(publisher);
+
+    FakeReportBuilder builder = new FakeReportBuilder();
+    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
+    fakeRecipe
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeSource(10, 4, 5, 6)
+            .setComplexity(10, 5, 6)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+
+    // verify MetaShiftBuildAction created.
+    assertEquals(1, run.getActions(MetaShiftBuildAction.class).size());
+
+    MetaShiftBuildAction action = run.getAction(MetaShiftBuildAction.class);
+    assertEquals(run, action.getRun());
+
+    // verify RecipeAction created.
+    assertEquals(1, action.getActions(RecipeAction.class).size());
+    RecipeAction recipeAction = action.getAction(RecipeAction.class);
+    assertEquals(run, recipeAction.getRun());
+
+    // verify RecipeActionChild created.
+    List<RecipeActionChild> children = recipeAction.getActions(RecipeActionChild.class);
+    assertEquals(11, children.size());
+    assertEquals(run, children.get(0).getRun());
+    assertEquals("document.png", children.get(0).getIconFileName());
+  }
+
+  @Test
+  public void testPerformWithLocalCriteria() throws Exception {
+    FreeStyleProject project = jenkins.createFreeStyleProject();
+    File workspace = utils.getPath("workspace");
+    File report = utils.getPath("workspace", "report");
+    project.setCustomWorkspace(workspace.getAbsolutePath());
+    MetaShiftPublisher publisher = new MetaShiftPublisher("report",
+        new Configuration());
+    project.getPublishersList().add(publisher);
+
+    FakeReportBuilder builder = new FakeReportBuilder();
+    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
+    fakeRecipe
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeSource(10, 4, 5, 6)
+            .setComplexity(10, 5, 6)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+
+    // verify MetaShiftBuildAction created.
+    assertEquals(1, run.getActions(MetaShiftBuildAction.class).size());
+
+    MetaShiftBuildAction action = run.getAction(MetaShiftBuildAction.class);
+    assertEquals(run, action.getRun());
+
+    // verify RecipeAction created.
+    assertEquals(1, action.getActions(RecipeAction.class).size());
+    RecipeAction recipeAction = action.getAction(RecipeAction.class);
+    assertEquals(run, recipeAction.getRun());
+
+    // verify RecipeActionChild created.
+    List<RecipeActionChild> children = recipeAction.getActions(RecipeActionChild.class);
+    assertEquals(11, children.size());
+    assertEquals(run, children.get(0).getRun());
+    assertEquals("document.png", children.get(0).getIconFileName());
+  }
+
+  @Test
+  public void testPerformReportPathException() throws Exception {
+    FreeStyleProject project = jenkins.createFreeStyleProject();
+    File workspace = utils.getPath("workspace");
+    project.setCustomWorkspace(workspace.getAbsolutePath());
+    MetaShiftPublisher publisher = new MetaShiftPublisher("reportDummy",
+        new Configuration());
+    project.getPublishersList().add(publisher);
+
+    // Fail with invalid report path.
+    jenkins.buildAndAssertStatus(Result.FAILURE, project);
+  }
+
+  @Test
+  public void testDoCheckThreshold() {
+    MetaShiftPublisher.DescriptorImpl impl = new MetaShiftPublisher.DescriptorImpl();
+    
+    assertEquals(FormValidation.ok(), impl.doCheckThreshold("0"));
+    assertEquals(FormValidation.ok(), impl.doCheckThreshold("10"));
+    assertEquals(FormValidation.ok(), impl.doCheckThreshold("100"));
+    assertEquals(FormValidation.ok(), impl.doCheckThreshold("0.0"));
+    assertEquals(FormValidation.ok(), impl.doCheckThreshold("0.0001"));
+    assertEquals(FormValidation.ok(), impl.doCheckThreshold("10.0"));
+    assertEquals(FormValidation.ok(), impl.doCheckThreshold("10.1"));
+    assertEquals(FormValidation.ok(), impl.doCheckThreshold("110"));
+
+    assertNotEquals(FormValidation.ok(), impl.doCheckThreshold(null));
+    assertNotEquals(FormValidation.ok(), impl.doCheckThreshold("-10"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckThreshold("test"));
+  }
+
+  @Test
+  public void testDoCheckPercentThreshold() {
+    MetaShiftPublisher.DescriptorImpl impl = new MetaShiftPublisher.DescriptorImpl();
+    
+    assertEquals(FormValidation.ok(), impl.doCheckPercentThreshold("0"));
+    assertEquals(FormValidation.ok(), impl.doCheckPercentThreshold("10"));
+    assertEquals(FormValidation.ok(), impl.doCheckPercentThreshold("100"));
+
+    assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold("0.0"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold("0.0001"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold("10.0"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold("10.1"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold("110"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold(null));
+    assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold("-10"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckThreshold("test"));
+  }
+
+  @Test
+  public void testDoCheckLimit() {
+    MetaShiftPublisher.DescriptorImpl impl = new MetaShiftPublisher.DescriptorImpl();
+    
+    assertEquals(FormValidation.ok(), impl.doCheckLimit("0"));
+    assertEquals(FormValidation.ok(), impl.doCheckLimit("10"));
+    assertEquals(FormValidation.ok(), impl.doCheckLimit("100"));
+    assertEquals(FormValidation.ok(), impl.doCheckLimit("110"));
+
+    assertNotEquals(FormValidation.ok(), impl.doCheckLimit("0.0"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckLimit("0.0001"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckLimit("10.0"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckLimit("10.1"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckLimit(null));
+    assertNotEquals(FormValidation.ok(), impl.doCheckLimit("-10"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckThreshold("test"));
   }
 }

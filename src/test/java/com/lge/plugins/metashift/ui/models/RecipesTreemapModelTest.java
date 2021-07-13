@@ -28,6 +28,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sf.json.JSONArray;
 import org.junit.Test;
 
@@ -37,9 +40,22 @@ public class RecipesTreemapModelTest {
   public void testInitData() {
     RecipesTreemapModel model = new RecipesTreemapModel();
 
-    assertEquals(JSONArray.fromObject(
-        "[{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,0]},"
-            + "{\"path\":\"\",\"link\":\"\",\"name\":\"\",\"value\":[0,100]}]"),
+    Map [] expectedSeries = {
+      new HashMap<String, Object>() {{
+        put("path", "");
+        put("link", "");
+        put("name", "");
+        put("value", new int [] {0, 0});
+      }},
+      new HashMap<String, Object>() {{
+        put("path", "");
+        put("link", "");
+        put("name", "");
+        put("value", new int [] {0, 100});
+      }}
+    };
+
+    assertEquals(JSONArray.fromObject(expectedSeries),
         JSONArray.fromObject(model.getSeries()));
   }
 

@@ -32,8 +32,13 @@ import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Test;
@@ -54,18 +59,75 @@ public class BuildTrendModelTest {
 
     assertEquals(Collections.emptyList(), model.getBuilds());
 
-    assertEquals(JSONArray.fromObject(
-        "[{\"data\":[],\"name\":\"PremirrorCache\",\"type\":\"line\",\"yAxisIndex\":0},"
-            + "{\"data\":[],\"name\":\"SharedStateCache\",\"type\":\"line\",\"yAxisIndex\":0},"
-            + "{\"data\":[],\"name\":\"RecipeViolation\",\"type\":\"line\",\"yAxisIndex\":1},"
-            + "{\"data\":[],\"name\":\"Comment\",\"type\":\"line\",\"yAxisIndex\":0},"
-            + "{\"data\":[],\"name\":\"CodeViolation\",\"type\":\"line\",\"yAxisIndex\":1},"
-            + "{\"data\":[],\"name\":\"Complexity\",\"type\":\"line\",\"yAxisIndex\":0},"
-            + "{\"data\":[],\"name\":\"Duplication\",\"type\":\"line\",\"yAxisIndex\":0},"
-            + "{\"data\":[],\"name\":\"Test\",\"type\":\"line\",\"yAxisIndex\":0},"
-            + "{\"data\":[],\"name\":\"StatementCoverage\",\"type\":\"line\",\"yAxisIndex\":0},"
-            + "{\"data\":[],\"name\":\"BranchCoverage\",\"type\":\"line\",\"yAxisIndex\":0},"
-            + "{\"data\":[],\"name\":\"Mutation\",\"type\":\"line\",\"yAxisIndex\":0}]"),
+    Map [] expectedSeries = {
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "PremirrorCache");
+        put("type", "line");
+        put("yAxisIndex", 0);
+      }},
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "SharedStateCache");
+        put("type", "line");
+        put("yAxisIndex", 0);
+      }},
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "RecipeViolation");
+        put("type", "line");
+        put("yAxisIndex", 1);
+      }},
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "Comment");
+        put("type", "line");
+        put("yAxisIndex", 0);
+      }},
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "CodeViolation");
+        put("type", "line");
+        put("yAxisIndex", 1);
+      }},
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "Complexity");
+        put("type", "line");
+        put("yAxisIndex", 0);
+      }},
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "Duplication");
+        put("type", "line");
+        put("yAxisIndex", 0);
+      }},
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "Test");
+        put("type", "line");
+        put("yAxisIndex", 0);
+      }},
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "StatementCoverage");
+        put("type", "line");
+        put("yAxisIndex", 0);
+      }},
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "BranchCoverage");
+        put("type", "line");
+        put("yAxisIndex", 0);
+      }},
+      new HashMap<String, Object>() {{
+        put("data", new ArrayList<>());
+        put("name", "Mutation");
+        put("type", "line");
+        put("yAxisIndex", 0);
+      }},
+    };
+    assertEquals(JSONArray.fromObject(expectedSeries),
         JSONArray.fromObject(model.getSeries()));
   }
 
@@ -82,16 +144,27 @@ public class BuildTrendModelTest {
     model.addData("#1", metrics);
     assertEquals(Collections.singletonList("#1"), model.getBuilds());
 
+    Map expectedSeries1 = new HashMap<String, Object>() {{
+      put("data", new int [] {0});
+      put("name", "PremirrorCache");
+      put("type", "line");
+      put("yAxisIndex", 0);
+    }};
+
     assertTrue(JSONArray.fromObject(model.getSeries()).contains(
-        JSONObject.fromObject(
-            "{\"data\":[0],\"name\":\"PremirrorCache\",\"type\":\"line\",\"yAxisIndex\":0}")));
+        JSONObject.fromObject(expectedSeries1)));
 
     model.addData("#2", metrics);
     assertEquals(Arrays.asList("#2", "#1"), model.getBuilds());
 
+    Map expectedSeries2 = new HashMap<String, Object>() {{
+      put("data", new int [] {0, 0});
+      put("name", "PremirrorCache");
+      put("type", "line");
+      put("yAxisIndex", 0);
+    }};
     assertTrue(JSONArray.fromObject(model.getSeries()).contains(
-        JSONObject.fromObject(
-            "{\"data\":[0, 0],\"name\":\"PremirrorCache\",\"type\":\"line\",\"yAxisIndex\":0}")));
+        JSONObject.fromObject(expectedSeries2)));
   }
 
   @Test

@@ -25,19 +25,22 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
+import com.lge.plugins.metashift.fixture.FakeRecipe;
+import com.lge.plugins.metashift.fixture.FakeReportBuilder;
+import com.lge.plugins.metashift.fixture.FakeScript;
+import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Recipes;
-import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
-import hudson.FilePath;
+import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
+import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
-import hudson.model.TaskListener;
+import hudson.model.Result;
 import java.io.File;
-import java.net.URL;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Before;
@@ -57,61 +60,82 @@ public class RecipeStatementCoverageActionTest {
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 
-  private TaskListener taskListener;
-  private Configuration config;
   private FreeStyleProject project;
-  private FilePath workspace;
+  private TemporaryFileUtils utils;
 
   @Before
   public void setUp() throws Exception {
-    taskListener = jenkins.createTaskListener();
+    utils = new TemporaryFileUtils(folder);
 
     project = jenkins.createFreeStyleProject();
-
-    URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("report.zip"));
-    FilePath reportZip = new FilePath(new File(url.toURI()));
-    workspace = new FilePath(folder.newFolder("WORKSPACE"));
-    reportZip.unzip(workspace);
-
-    config = new Configuration();
-  }
-
-  private void assertContainsKey(JSONObject object, String... keys) {
-    for (String key : keys) {
-      assertTrue("Key: " + key, object.containsKey(key));
-    }
+    File workspace = utils.getPath("workspace");
+    project.setCustomWorkspace(workspace.getAbsolutePath());
+    MetaShiftPublisher publisher = new MetaShiftPublisher("report",
+        new Configuration());
+    project.getPublishersList().add(publisher);
   }
 
   @Test
   public void testCreate() throws Exception {
-    FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
-    DataSource dataSource = new DataSource(new FilePath(
-        new FilePath(run.getRootDir()), "meta-shift-report"));
-    FilePath reportPath = workspace.child("report");
-    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, reportPath, dataSource, recipes);
+    File report = utils.getPath("workspace", "report");
+    report.delete();
+    FakeReportBuilder builder = new FakeReportBuilder();
+    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
+    fakeRecipe
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeSource(10, 4, 5, 6)
+            .setComplexity(10, 5, 6)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
-    RecipeAction recipeAction = buildAction.getActions(RecipeAction.class).stream()
-        .filter(o -> o.getName().equals("autotools-project-1.0.0-r0")).findFirst().orElse(null);
-    Objects.requireNonNull(recipeAction);
+    MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
+    RecipeAction recipeAction = buildAction.getAction(RecipeAction.class);
+    assertNotNull(recipeAction);
     RecipeStatementCoverageAction action = recipeAction
         .getAction(RecipeStatementCoverageAction.class);
 
-    String scale = action.getScale();
-    assertEquals("66%", scale);
+    assertEquals("statement_coverage", action.getUrlName());
 
-    JSONArray statistics = action.getStatistics();
-    assertEquals(JSONArray
-            .fromObject("[{\"count\":8,\"width\":66,\"label\":\"Covered\",\"clazz\":\"valid-good\"},"
-                + "{\"count\":4,\"width\":33,\"label\":\"UnCovered\",\"clazz\":\"invalid\"}]"),
-        statistics);
+    assertEquals("33%", action.getScale());
+
+    JSONObject metricStatistics = action.getMetricStatisticsJson();
+    assertEquals(0.33, metricStatistics.getDouble("average"), 0.01);
+    assertEquals(0.33, metricStatistics.getDouble("min"), 0.01);
+    assertEquals(0.33, metricStatistics.getDouble("max"), 0.01);
+    assertEquals(1, metricStatistics.getInt("count"));
+    assertEquals(0.33, metricStatistics.getDouble("sum"), 0.01);
+    assertEquals(0.33, metricStatistics.getDouble("scale"), 0.01);
+    assertEquals(true, metricStatistics.getBoolean("available"));
+    assertEquals(true, metricStatistics.getBoolean("percent"));
+
+    Map [] expectedStatistics = {
+      new HashMap<String, Object>() {{
+        put("count", 1);
+        put("width", 33);
+        put("label", "Covered");
+        put("clazz", "valid-good");
+      }},
+      new HashMap<String, Object>() {{
+        put("count", 2);
+        put("width", 66);
+        put("label", "UnCovered");
+        put("clazz", "invalid");
+      }}
+    };
+    assertEquals(JSONArray.fromObject(expectedStatistics), action.getStatistics());
 
     JSONArray recipeFiles = action.getTableModelJson();
-    assertContainsKey(recipeFiles.getJSONObject(0),
-        "coverage", "file");
+    assertEquals(0.33, recipeFiles.getJSONObject(0).getDouble("coverage"), 0.01);
 
-    // TODO: getFileCoverageDetail can't test
-    // because we can't determine source file path to metadata.json in test env
+    String filePath = recipeFiles.getJSONObject(0).getString("file");
+    JSONObject fileDetail = action.getFileCoverageDetail(filePath);
+    assertNotNull(fileDetail.getString("content"));
+    assertEquals(3, fileDetail.getJSONArray("dataList").size());
   }
 }

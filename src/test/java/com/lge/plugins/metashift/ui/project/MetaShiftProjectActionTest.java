@@ -28,16 +28,15 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Recipes;
-import com.lge.plugins.metashift.persistence.DataSource;
-import hudson.FilePath;
+import com.lge.plugins.metashift.fixture.FakeRecipe;
+import com.lge.plugins.metashift.fixture.FakeReportBuilder;
+import com.lge.plugins.metashift.fixture.FakeScript;
+import com.lge.plugins.metashift.fixture.FakeSource;
+import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
-import hudson.model.TaskListener;
+import hudson.model.Result;
 import java.io.File;
-import java.net.URL;
-import java.util.Objects;
 import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
@@ -58,23 +57,16 @@ public class MetaShiftProjectActionTest {
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 
-  private TaskListener taskListener;
-  private Configuration config;
   private FreeStyleProject project;
-  private FilePath workspace;
+  private TemporaryFileUtils utils;
 
   @Before
   public void setUp() throws Exception {
-    taskListener = jenkins.createTaskListener();
+    utils = new TemporaryFileUtils(folder);
 
     project = jenkins.createFreeStyleProject();
-
-    URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("report.zip"));
-    FilePath reportZip = new FilePath(new File(url.toURI()));
-    workspace = new FilePath(folder.newFolder("WORKSPACE"));
-    reportZip.unzip(workspace);
-
-    config = new Configuration();
+    File workspace = utils.getPath("workspace");
+    project.setCustomWorkspace(workspace.getAbsolutePath());
   }
 
   @Test
@@ -88,14 +80,25 @@ public class MetaShiftProjectActionTest {
 
     verify(rsp).sendRedirect2("nodata");
 
-    FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
-    DataSource dataSource = new DataSource(new FilePath(
-        new FilePath(run.getRootDir()), "meta-shift-report"));
-    FilePath reportPath = workspace.child("report");
-    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, reportPath, dataSource, recipes);
-    run.addAction(buildAction);
+    File report = utils.getPath("workspace", "report");
+    report.delete();
+    FakeReportBuilder builder = new FakeReportBuilder();
+    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
+    fakeRecipe
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeSource(10, 4, 5, 6)
+            .setComplexity(10, 5, 6)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    MetaShiftPublisher publisher = new MetaShiftPublisher("report", null);
+    project.getPublishersList().add(publisher);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
 
     projectAction.doIndex(req, rsp);
 
@@ -104,21 +107,45 @@ public class MetaShiftProjectActionTest {
 
   @Test
   public void testGetTrendChartModel() throws Exception {
+    // run without meta-shift publisher
+    jenkins.buildAndAssertSuccess(project);
+    
+    // run with invalid report path
+    MetaShiftPublisher publisher = new MetaShiftPublisher("reportDummy", null);
+    project.getPublishersList().add(publisher);
+
     MetaShiftProjectAction projectAction = new MetaShiftProjectAction(project);
 
+    assertEquals(project, projectAction.getProject());
+    
     JSONObject chartModel = projectAction.getTrendChartModel();
     assertEquals(11, chartModel.getJSONArray("legend").size());
     assertEquals(11, chartModel.getJSONArray("series").size());
     assertEquals(0, chartModel.getJSONArray("builds").size());
 
-    FreeStyleBuild run = jenkins.buildAndAssertSuccess(project);
-    DataSource dataSource = new DataSource(new FilePath(
-        new FilePath(run.getRootDir()), "meta-shift-report"));
-    FilePath reportPath = workspace.child("report");
-    Recipes recipes = new Recipes(reportPath, taskListener.getLogger());
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(run,
-        taskListener, config, reportPath, dataSource, recipes);
-    run.addAction(buildAction);
+    File report = utils.getPath("workspace", "report");
+    report.delete();
+    FakeReportBuilder builder = new FakeReportBuilder();
+    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
+    fakeRecipe
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeSource(10, 4, 5, 6)
+            .setComplexity(10, 5, 6)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+
+    jenkins.buildAndAssertStatus(Result.FAILURE, project);
+    project.getPublishersList().remove(publisher);
+
+    // run with valid report path
+    publisher = new MetaShiftPublisher("report", null);
+    project.getPublishersList().add(publisher);
+    jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
     JSONObject chartModel2 = projectAction.getTrendChartModel();
     assertEquals(11, chartModel2.getJSONArray("legend").size());

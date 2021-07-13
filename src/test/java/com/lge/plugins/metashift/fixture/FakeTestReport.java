@@ -61,9 +61,10 @@ public class FakeTestReport implements FakeReport {
     report.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     report.add("<testsuites tests=\"1\" name=\"AllTests\">");
     report.add(String.format("<testsuite name=\"%s.Test\" tests=\"1\" >", recipe.getRecipe()));
-    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\" />",
+    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\">",
         RandomStringUtils.randomAlphabetic(5, 20), recipe.getRecipe()));
     report.add("<failure message=\"failure_message\">failure details</failure>");
+    report.add("</testcase>");
     report.add("</testsuite>");
     report.add("</testsuites>");
     FileUtils.writeLines(path, report);
@@ -74,9 +75,10 @@ public class FakeTestReport implements FakeReport {
     report.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     report.add("<testsuites tests=\"1\" name=\"AllTests\">");
     report.add(String.format("<testsuite name=\"%s.Test\" tests=\"1\" >", recipe.getRecipe()));
-    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\" />",
+    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\">",
         RandomStringUtils.randomAlphabetic(5, 20), recipe.getRecipe()));
     report.add("<error message=\"error_message\">error details</error>");
+    report.add("</testcase>");
     report.add("</testsuite>");
     report.add("</testsuites>");
     FileUtils.writeLines(path, report);
@@ -87,9 +89,10 @@ public class FakeTestReport implements FakeReport {
     report.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     report.add("<testsuites tests=\"1\" name=\"AllTests\">");
     report.add(String.format("<testsuite name=\"%s.Test\" tests=\"1\" >", recipe.getRecipe()));
-    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\" />",
+    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\">",
         RandomStringUtils.randomAlphabetic(5, 20), recipe.getRecipe()));
     report.add("<skipped message=\"skipped_message\">skipped details</skipped>");
+    report.add("</testcase>");
     report.add("</testsuite>");
     report.add("</testsuites>");
     FileUtils.writeLines(path, report);
