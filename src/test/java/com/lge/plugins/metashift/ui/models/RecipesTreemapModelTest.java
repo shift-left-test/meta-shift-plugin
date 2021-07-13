@@ -45,12 +45,14 @@ public class RecipesTreemapModelTest {
         put("path", "");
         put("link", "");
         put("name", "");
+        put("target", "_self");
         put("value", new int [] {0, 0});
       }},
       new HashMap<String, Object>() {{
         put("path", "");
         put("link", "");
         put("name", "");
+        put("target", "_self");
         put("value", new int [] {0, 100});
       }}
     };

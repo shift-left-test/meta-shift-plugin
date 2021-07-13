@@ -43,7 +43,7 @@ public class RecipesTreemapModel {
     private final String name;
     private final String link;
     private final String path;
-
+  
     /**
      * constructor.
      */
@@ -69,6 +69,10 @@ public class RecipesTreemapModel {
 
     public String getPath() {
       return path;
+    }
+
+    public String getTarget() {
+      return "_self";
     }
   }
 

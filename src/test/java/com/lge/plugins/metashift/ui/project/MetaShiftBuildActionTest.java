@@ -101,18 +101,21 @@ public class MetaShiftBuildActionTest {
         put("path", "");
         put("link", "");
         put("name", "");
+        put("target", "_self");
         put("value", new int [] {0, 0});
       }},
       new HashMap<String, Object>() {{
         put("path", "");
         put("link", "");
         put("name", "");
+        put("target", "_self");
         put("value", new int [] {0, 100});
       }},
       new HashMap<String, Object>() {{
         put("path", "");
         put("link", fakeRecipe.getRecipe());
         put("name", fakeRecipe.getRecipe());
+        put("target", "_self");
         put("value", new int [] {10, 18});
       }},
     };
@@ -141,96 +144,93 @@ public class MetaShiftBuildActionTest {
     assertEquals(0, codeSizeJson.getInt("numerator"));
     assertEquals(0, codeSizeJson.getInt("ratio"));
 
-    String[] evaluatorJsonFields = new String[]{"qualified", "available", "threshold",
-        "denominator", "numerator", "ratio"};
+    JSONObject premirrorCacheJson = buildAction.getPremirrorCacheJson();
+    assertEquals(false, premirrorCacheJson.getBoolean("qualified"));
+    assertEquals(true, premirrorCacheJson.getBoolean("available"));
+    assertEquals(0.8, premirrorCacheJson.getDouble("threshold"), 0.0);
+    assertEquals(0, premirrorCacheJson.getInt("denominator"));
+    assertEquals(0, premirrorCacheJson.getInt("numerator"));
+    assertEquals(0, premirrorCacheJson.getDouble("ratio"), 0.0);
 
-        JSONObject premirrorCacheJson = buildAction.getPremirrorCacheJson();
-        assertEquals(false, premirrorCacheJson.getBoolean("qualified"));
-        assertEquals(true, premirrorCacheJson.getBoolean("available"));
-        assertEquals(0.8, premirrorCacheJson.getDouble("threshold"), 0.0);
-        assertEquals(0, premirrorCacheJson.getInt("denominator"));
-        assertEquals(0, premirrorCacheJson.getInt("numerator"));
-        assertEquals(0, premirrorCacheJson.getDouble("ratio"), 0.0);
-    
-        JSONObject sharedStateCacheJson = buildAction.getSharedStateCacheJson();
-        assertEquals(false, sharedStateCacheJson.getBoolean("qualified"));
-        assertEquals(true, sharedStateCacheJson.getBoolean("available"));
-        assertEquals(0.8, sharedStateCacheJson.getDouble("threshold"), 0.0);
-        assertEquals(0, sharedStateCacheJson.getInt("denominator"));
-        assertEquals(0, sharedStateCacheJson.getInt("numerator"));
-        assertEquals(0, sharedStateCacheJson.getDouble("ratio"), 0.0);
-    
-        JSONObject codeViolationJson = buildAction.getCodeViolationsJson();
-        assertEquals(false, codeViolationJson.getBoolean("qualified"));
-        assertEquals(true, codeViolationJson.getBoolean("available"));
-        assertEquals(0.1, codeViolationJson.getDouble("threshold"), 0.0);
-        assertEquals(10, codeViolationJson.getInt("denominator"));
-        assertEquals(6, codeViolationJson.getInt("numerator"));
-        assertEquals(0.6, codeViolationJson.getDouble("ratio"), 0.0);
-    
-        JSONObject commentsJson = buildAction.getCommentsJson();
-        assertEquals(true, commentsJson.getBoolean("qualified"));
-        assertEquals(true, commentsJson.getBoolean("available"));
-        assertEquals(0.3, commentsJson.getDouble("threshold"), 0.0);
-        assertEquals(10, commentsJson.getInt("denominator"));
-        assertEquals(5, commentsJson.getInt("numerator"));
-        assertEquals(0.5, commentsJson.getDouble("ratio"), 0.0);
-    
-        JSONObject complexityJson = buildAction.getComplexityJson();
-        assertEquals(false, complexityJson.getBoolean("qualified"));
-        assertEquals(true, complexityJson.getBoolean("available"));
-        assertEquals(0.1, complexityJson.getDouble("threshold"), 0.0);
-        assertEquals(11, complexityJson.getInt("denominator"));
-        assertEquals(5, complexityJson.getInt("numerator"));
-        assertEquals(0.45, complexityJson.getDouble("ratio"), 0.01);
-    
-        JSONObject statementCoverageJson = buildAction.getStatementCoverageJson();
-        assertEquals(false, statementCoverageJson.getBoolean("qualified"));
-        assertEquals(true, statementCoverageJson.getBoolean("available"));
-        assertEquals(0.8, statementCoverageJson.getDouble("threshold"), 0.0);
-        assertEquals(3, statementCoverageJson.getInt("denominator"));
-        assertEquals(1, statementCoverageJson.getInt("numerator"));
-        assertEquals(0.33, statementCoverageJson.getDouble("ratio"), 0.01);
-    
-        JSONObject branchCoverageJson = buildAction.getBranchCoverageJson();
-        assertEquals(true, branchCoverageJson.getBoolean("qualified"));
-        assertEquals(true, branchCoverageJson.getBoolean("available"));
-        assertEquals(0.4, branchCoverageJson.getDouble("threshold"), 0.0);
-        assertEquals(7, branchCoverageJson.getInt("denominator"));
-        assertEquals(3, branchCoverageJson.getInt("numerator"));
-        assertEquals(0.42, branchCoverageJson.getDouble("ratio"), 0.01);
-    
-        JSONObject duplicationsJson = buildAction.getDuplicationsJson();
-        assertEquals(false, duplicationsJson.getBoolean("qualified"));
-        assertEquals(true, duplicationsJson.getBoolean("available"));
-        assertEquals(0.1, duplicationsJson.getDouble("threshold"), 0.0);
-        assertEquals(10, duplicationsJson.getInt("denominator"));
-        assertEquals(6, duplicationsJson.getInt("numerator"));
-        assertEquals(0.6, duplicationsJson.getDouble("ratio"), 0.0);
-    
-        JSONObject mutationTestJson = buildAction.getMutationTestJson();
-        assertEquals(false, mutationTestJson.getBoolean("qualified"));
-        assertEquals(true, mutationTestJson.getBoolean("available"));
-        assertEquals(0.85, mutationTestJson.getDouble("threshold"), 0.0);
-        assertEquals(6, mutationTestJson.getInt("denominator"));
-        assertEquals(1, mutationTestJson.getInt("numerator"));
-        assertEquals(0.16, mutationTestJson.getDouble("ratio"), 0.01);
-    
-        JSONObject recipeViolationsJson = buildAction.getRecipeViolationsJson();
-        assertEquals(false, recipeViolationsJson.getBoolean("qualified"));
-        assertEquals(true, recipeViolationsJson.getBoolean("available"));
-        assertEquals(0.1, recipeViolationsJson.getDouble("threshold"), 0.0);
-        assertEquals(10, recipeViolationsJson.getInt("denominator"));
-        assertEquals(6, recipeViolationsJson.getInt("numerator"));
-        assertEquals(0.6, recipeViolationsJson.getDouble("ratio"), 0.0);
-    
-        JSONObject testJson = buildAction.getTestJson();
-        assertEquals(false, testJson.getBoolean("qualified"));
-        assertEquals(true, testJson.getBoolean("available"));
-        assertEquals(0.95, testJson.getDouble("threshold"), 0.0);
-        assertEquals(10, testJson.getInt("denominator"));
-        assertEquals(1, testJson.getInt("numerator"));
-        assertEquals(0.1, testJson.getDouble("ratio"), 0.0);    
+    JSONObject sharedStateCacheJson = buildAction.getSharedStateCacheJson();
+    assertEquals(false, sharedStateCacheJson.getBoolean("qualified"));
+    assertEquals(true, sharedStateCacheJson.getBoolean("available"));
+    assertEquals(0.8, sharedStateCacheJson.getDouble("threshold"), 0.0);
+    assertEquals(0, sharedStateCacheJson.getInt("denominator"));
+    assertEquals(0, sharedStateCacheJson.getInt("numerator"));
+    assertEquals(0, sharedStateCacheJson.getDouble("ratio"), 0.0);
+
+    JSONObject codeViolationJson = buildAction.getCodeViolationsJson();
+    assertEquals(false, codeViolationJson.getBoolean("qualified"));
+    assertEquals(true, codeViolationJson.getBoolean("available"));
+    assertEquals(0.1, codeViolationJson.getDouble("threshold"), 0.0);
+    assertEquals(10, codeViolationJson.getInt("denominator"));
+    assertEquals(6, codeViolationJson.getInt("numerator"));
+    assertEquals(0.6, codeViolationJson.getDouble("ratio"), 0.0);
+
+    JSONObject commentsJson = buildAction.getCommentsJson();
+    assertEquals(true, commentsJson.getBoolean("qualified"));
+    assertEquals(true, commentsJson.getBoolean("available"));
+    assertEquals(0.3, commentsJson.getDouble("threshold"), 0.0);
+    assertEquals(10, commentsJson.getInt("denominator"));
+    assertEquals(5, commentsJson.getInt("numerator"));
+    assertEquals(0.5, commentsJson.getDouble("ratio"), 0.0);
+
+    JSONObject complexityJson = buildAction.getComplexityJson();
+    assertEquals(false, complexityJson.getBoolean("qualified"));
+    assertEquals(true, complexityJson.getBoolean("available"));
+    assertEquals(0.1, complexityJson.getDouble("threshold"), 0.0);
+    assertEquals(11, complexityJson.getInt("denominator"));
+    assertEquals(5, complexityJson.getInt("numerator"));
+    assertEquals(0.45, complexityJson.getDouble("ratio"), 0.01);
+
+    JSONObject statementCoverageJson = buildAction.getStatementCoverageJson();
+    assertEquals(false, statementCoverageJson.getBoolean("qualified"));
+    assertEquals(true, statementCoverageJson.getBoolean("available"));
+    assertEquals(0.8, statementCoverageJson.getDouble("threshold"), 0.0);
+    assertEquals(3, statementCoverageJson.getInt("denominator"));
+    assertEquals(1, statementCoverageJson.getInt("numerator"));
+    assertEquals(0.33, statementCoverageJson.getDouble("ratio"), 0.01);
+
+    JSONObject branchCoverageJson = buildAction.getBranchCoverageJson();
+    assertEquals(true, branchCoverageJson.getBoolean("qualified"));
+    assertEquals(true, branchCoverageJson.getBoolean("available"));
+    assertEquals(0.4, branchCoverageJson.getDouble("threshold"), 0.0);
+    assertEquals(7, branchCoverageJson.getInt("denominator"));
+    assertEquals(3, branchCoverageJson.getInt("numerator"));
+    assertEquals(0.42, branchCoverageJson.getDouble("ratio"), 0.01);
+
+    JSONObject duplicationsJson = buildAction.getDuplicationsJson();
+    assertEquals(false, duplicationsJson.getBoolean("qualified"));
+    assertEquals(true, duplicationsJson.getBoolean("available"));
+    assertEquals(0.1, duplicationsJson.getDouble("threshold"), 0.0);
+    assertEquals(10, duplicationsJson.getInt("denominator"));
+    assertEquals(6, duplicationsJson.getInt("numerator"));
+    assertEquals(0.6, duplicationsJson.getDouble("ratio"), 0.0);
+
+    JSONObject mutationTestJson = buildAction.getMutationTestJson();
+    assertEquals(false, mutationTestJson.getBoolean("qualified"));
+    assertEquals(true, mutationTestJson.getBoolean("available"));
+    assertEquals(0.85, mutationTestJson.getDouble("threshold"), 0.0);
+    assertEquals(6, mutationTestJson.getInt("denominator"));
+    assertEquals(1, mutationTestJson.getInt("numerator"));
+    assertEquals(0.16, mutationTestJson.getDouble("ratio"), 0.01);
+
+    JSONObject recipeViolationsJson = buildAction.getRecipeViolationsJson();
+    assertEquals(false, recipeViolationsJson.getBoolean("qualified"));
+    assertEquals(true, recipeViolationsJson.getBoolean("available"));
+    assertEquals(0.1, recipeViolationsJson.getDouble("threshold"), 0.0);
+    assertEquals(10, recipeViolationsJson.getInt("denominator"));
+    assertEquals(6, recipeViolationsJson.getInt("numerator"));
+    assertEquals(0.6, recipeViolationsJson.getDouble("ratio"), 0.0);
+
+    JSONObject testJson = buildAction.getTestJson();
+    assertEquals(false, testJson.getBoolean("qualified"));
+    assertEquals(true, testJson.getBoolean("available"));
+    assertEquals(0.95, testJson.getDouble("threshold"), 0.0);
+    assertEquals(10, testJson.getInt("denominator"));
+    assertEquals(1, testJson.getInt("numerator"));
+    assertEquals(0.1, testJson.getDouble("ratio"), 0.0);
   }
 
   @Test
