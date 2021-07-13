@@ -51,6 +51,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -62,15 +63,14 @@ import org.kohsuke.stapler.StaplerRequest;
 public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
   private final String reportRoot;
-  private final Configuration customConfiguration;
+  private Configuration customConfiguration;
 
   /**
    * Default constructor.
    */
   @DataBoundConstructor
-  public MetaShiftPublisher(String reportRoot, Configuration customConfiguration) {
+  public MetaShiftPublisher(String reportRoot) {
     this.reportRoot = reportRoot;
-    this.customConfiguration = customConfiguration;
   }
 
   public String getReportRoot() {
@@ -79,6 +79,11 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
   public boolean isUseCustomConfiguration() {
     return this.customConfiguration != null;
+  }
+
+  @DataBoundSetter
+  public void setCustomConfiguration(Configuration customConfiguration) {
+    this.customConfiguration = customConfiguration;
   }
 
   public Configuration getCustomConfiguration() {

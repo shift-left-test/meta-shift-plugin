@@ -95,7 +95,7 @@ public class MetaShiftProjectActionTest {
             .setMutationTests(1, 2, 3));
     builder.add(fakeRecipe);
     builder.toFile(report);
-    MetaShiftPublisher publisher = new MetaShiftPublisher("report", null);
+    MetaShiftPublisher publisher = new MetaShiftPublisher("report");
     project.getPublishersList().add(publisher);
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
@@ -111,7 +111,7 @@ public class MetaShiftProjectActionTest {
     jenkins.buildAndAssertSuccess(project);
     
     // run with invalid report path
-    MetaShiftPublisher publisher = new MetaShiftPublisher("reportDummy", null);
+    MetaShiftPublisher publisher = new MetaShiftPublisher("reportDummy");
     project.getPublishersList().add(publisher);
 
     MetaShiftProjectAction projectAction = new MetaShiftProjectAction(project);
@@ -143,7 +143,7 @@ public class MetaShiftProjectActionTest {
     project.getPublishersList().remove(publisher);
 
     // run with valid report path
-    publisher = new MetaShiftPublisher("report", null);
+    publisher = new MetaShiftPublisher("report");
     project.getPublishersList().add(publisher);
     jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 

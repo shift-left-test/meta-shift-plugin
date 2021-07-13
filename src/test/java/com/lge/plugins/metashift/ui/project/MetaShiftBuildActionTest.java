@@ -67,8 +67,7 @@ public class MetaShiftBuildActionTest {
     project = jenkins.createFreeStyleProject();
     File workspace = utils.getPath("workspace");
     project.setCustomWorkspace(workspace.getAbsolutePath());
-    MetaShiftPublisher publisher = new MetaShiftPublisher("report",
-        new Configuration());
+    MetaShiftPublisher publisher = new MetaShiftPublisher("report");
     project.getPublishersList().add(publisher);
   }
 

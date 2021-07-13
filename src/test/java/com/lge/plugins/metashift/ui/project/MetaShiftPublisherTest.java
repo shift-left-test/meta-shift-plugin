@@ -76,14 +76,13 @@ public class MetaShiftPublisherTest {
   public void testConfigureRoundTripWithEmptyDirectory() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
     File report = folder.newFolder("path", "to", "report");
-    MetaShiftPublisher before = new MetaShiftPublisher(report.getAbsolutePath(),
-        new Configuration());
+    MetaShiftPublisher before = new MetaShiftPublisher(report.getAbsolutePath());
     project.getPublishersList().add(before);
 
     jenkins.submit(client.getPage(project, "configure").getFormByName("config"));
 
     jenkins.assertEqualDataBoundBeans(
-        new MetaShiftPublisher(report.getAbsolutePath(), new Configuration()),
+        new MetaShiftPublisher(report.getAbsolutePath()),
         project.getPublishersList().get(0));
   }
 
@@ -93,8 +92,7 @@ public class MetaShiftPublisherTest {
     File workspace = utils.getPath("workspace");
     File report = utils.getPath("workspace", "report");
     project.setCustomWorkspace(workspace.getAbsolutePath());
-    MetaShiftPublisher publisher = new MetaShiftPublisher("report",
-        null);
+    MetaShiftPublisher publisher = new MetaShiftPublisher("report");
     project.getPublishersList().add(publisher);
 
     FakeReportBuilder builder = new FakeReportBuilder();
@@ -137,8 +135,8 @@ public class MetaShiftPublisherTest {
     File workspace = utils.getPath("workspace");
     File report = utils.getPath("workspace", "report");
     project.setCustomWorkspace(workspace.getAbsolutePath());
-    MetaShiftPublisher publisher = new MetaShiftPublisher("report",
-        new Configuration());
+    MetaShiftPublisher publisher = new MetaShiftPublisher("report");
+    publisher.setCustomConfiguration(new Configuration());
     project.getPublishersList().add(publisher);
 
     FakeReportBuilder builder = new FakeReportBuilder();
@@ -180,8 +178,7 @@ public class MetaShiftPublisherTest {
     FreeStyleProject project = jenkins.createFreeStyleProject();
     File workspace = utils.getPath("workspace");
     project.setCustomWorkspace(workspace.getAbsolutePath());
-    MetaShiftPublisher publisher = new MetaShiftPublisher("reportDummy",
-        new Configuration());
+    MetaShiftPublisher publisher = new MetaShiftPublisher("reportDummy");
     project.getPublishersList().add(publisher);
 
     // Fail with invalid report path.
