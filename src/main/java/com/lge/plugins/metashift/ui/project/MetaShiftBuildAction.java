@@ -30,7 +30,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.metrics.MetricStatistics;
 import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.metrics.QualifiedRecipeCounter;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
@@ -64,7 +64,7 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
   private transient Run<?, ?> run;
   private transient List<RecipeAction> recipeActions;
 
-  private final Criteria criteria;
+  private final Configuration configuration;
   private final QualifiedRecipeCounter qualifiedRecipeCounter;
   private final MetricStatistics metricStatistics;
   private final DataSource dataSource;
@@ -73,18 +73,18 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
    * Default constructor.
    */
   public MetaShiftBuildAction(Run<?, ?> run, TaskListener listener,
-      Criteria criteria, FilePath reportRoot, DataSource dataSource, Recipes recipes)
+      Configuration configuration, FilePath reportRoot, DataSource dataSource, Recipes recipes)
       throws IOException, InterruptedException {
-    super(criteria, recipes);
+    super(configuration, recipes);
 
     this.run = run;
-    this.criteria = criteria;
+    this.configuration = configuration;
     this.dataSource = dataSource;
 
-    this.metricStatistics = new MetricStatistics(criteria);
+    this.metricStatistics = new MetricStatistics(configuration);
     this.metricStatistics.parse(recipes);
 
-    this.qualifiedRecipeCounter = new QualifiedRecipeCounter(criteria);
+    this.qualifiedRecipeCounter = new QualifiedRecipeCounter(configuration);
     this.qualifiedRecipeCounter.parse(recipes);
 
     JSONArray recipeMetricsArray = new JSONArray();
@@ -95,7 +95,7 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
     for (Recipe recipe : recipes) {
       logger.printf("[meta-shift-plugin] -> %s%n", recipe.getRecipe());
       RecipeAction recipeAction = new RecipeAction(
-          this, listener, criteria, reportRoot, recipe);
+          this, listener, configuration, reportRoot, recipe);
       this.addAction(recipeAction);
       long codeLines = recipeAction.getMetrics().getCodeSize() != null
           ? recipeAction.getMetrics().getCodeSize().getLines() : 0;
@@ -151,8 +151,8 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
     return getUrlName();
   }
 
-  public Criteria getCriteria() {
-    return this.criteria;
+  public Configuration getConfiguration() {
+    return this.configuration;
   }
 
   /**

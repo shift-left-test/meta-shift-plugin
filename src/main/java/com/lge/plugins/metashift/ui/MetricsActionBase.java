@@ -25,7 +25,7 @@
 package com.lge.plugins.metashift.ui;
 
 import com.lge.plugins.metashift.metrics.Metrics;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Streamable;
 import hudson.model.Actionable;
 import net.sf.json.JSONObject;
@@ -40,13 +40,13 @@ public abstract class MetricsActionBase extends Actionable {
   /**
    * constructor.
    *
-   * @param criteria   criteria
-   * @param streamable metrics parsing applies to
+   * @param configuration configuration
+   * @param streamable    metrics parsing applies to
    */
-  public MetricsActionBase(Criteria criteria, Streamable streamable) {
+  public MetricsActionBase(Configuration configuration, Streamable streamable) {
     super();
 
-    this.metrics = new Metrics(criteria);
+    this.metrics = new Metrics(configuration);
     this.metrics.parse(streamable);
   }
 

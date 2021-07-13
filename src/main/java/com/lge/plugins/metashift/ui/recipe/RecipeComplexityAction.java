@@ -81,7 +81,7 @@ public class RecipeComplexityAction
 
     JSONArray fileComplexityArray = new JSONArray();
     complexityLevel =
-        this.getParentAction().getParentAction().getCriteria().getComplexityLevel();
+        this.getParentAction().getParentAction().getConfiguration().getComplexityLevel();
 
     fileComplexityList.forEach((file, complexityList) -> {
       JSONObject fileComplexity = new JSONObject();

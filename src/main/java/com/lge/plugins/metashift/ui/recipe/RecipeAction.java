@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.CodeSizeDelta;
 import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
 import com.lge.plugins.metashift.metrics.MetricStatistics;
 import com.lge.plugins.metashift.metrics.Metrics;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.ui.MetricsActionBase;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
@@ -59,9 +59,9 @@ public class RecipeAction extends MetricsActionBase implements Action {
    * Default constructor.
    */
   public RecipeAction(MetaShiftBuildAction parent, TaskListener listener,
-      Criteria criteria, FilePath reportRoot, Recipe recipe)
+      Configuration configuration, FilePath reportRoot, Recipe recipe)
       throws IOException, InterruptedException {
-    super(criteria, recipe);
+    super(configuration, recipe);
 
     this.name = recipe.getRecipe();
     this.parent = parent;

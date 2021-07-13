@@ -24,17 +24,17 @@ xmlns:c="/charts">
             metricsValue="${it.premirrorCacheJson}"
             delta="${it.premirrorCacheDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.premirrorCache.ratio}"
-            threshold="${it.criteria.premirrorCacheThreshold}" />
+            threshold="${it.configuration.premirrorCacheThreshold}" />
           <metrics-simple-view title="Shared State Cache" class="percent"
             metricsValue="${it.sharedStateCacheJson}"
             delta="${it.sharedStateCacheDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.sharedStateCache.ratio}"
-            threshold="${it.criteria.sharedStateCacheThreshold}" />
+            threshold="${it.configuration.sharedStateCacheThreshold}" />
           <metrics-simple-view title="Recipe Violations"
             metricsValue="${it.recipeViolationsJson}"
             delta="${it.recipeViolationsDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.recipeViolations.ratio}"
-            threshold="${it.criteria.recipeViolationThreshold}" />
+            threshold="${it.configuration.recipeViolationThreshold}" />
         </div>
         <h3>Code Quality</h3>
         <h4>Static Analysis</h4>
@@ -43,22 +43,22 @@ xmlns:c="/charts">
             metricsValue="${it.commentsJson}"
             delta="${it.commentsDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.comments.ratio}"
-            threshold="${it.criteria.commentThreshold}" />
+            threshold="${it.configuration.commentThreshold}" />
           <metrics-simple-view title="Code Violations"
             metricsValue="${it.codeViolationsJson}"
             delta="${it.codeViolationsDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.codeViolations.ratio}"
-            threshold="${it.criteria.codeViolationThreshold}" />
+            threshold="${it.configuration.codeViolationThreshold}" />
           <metrics-simple-view title="Complexity" class="percent"
             metricsValue="${it.complexityJson}"
             delta="${it.complexityDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.complexity.ratio}"
-            threshold="${it.criteria.complexityThreshold}" />
+            threshold="${it.configuration.complexityThreshold}" />
           <metrics-simple-view title="Duplications" class="percent"
             metricsValue="${it.duplicationsJson}"
             delta="${it.duplicationsDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.duplications.ratio}"
-            threshold="${it.criteria.duplicationThreshold}" />
+            threshold="${it.configuration.duplicationThreshold}" />
         </div>
         <h4>Dynamic Testing</h4>
         <div class="section">
@@ -70,22 +70,22 @@ xmlns:c="/charts">
             metricsValue="${it.testJson}"
             delta="${it.testDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.test.ratio}"
-            threshold="${it.criteria.testThreshold}" />
+            threshold="${it.configuration.testThreshold}" />
           <metrics-simple-view title="Statement Coverage" class="percent"
             metricsValue="${it.statementCoverageJson}"
             delta="${it.statementCoverageDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.statementCoverage.ratio}"
-            threshold="${it.criteria.statementCoverageThreshold}" />
+            threshold="${it.configuration.statementCoverageThreshold}" />
           <metrics-simple-view title="Branch Coverage" class="percent"
             metricsValue="${it.branchCoverageJson}"
             delta="${it.branchCoverageDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.branchCoverage.ratio}"
-            threshold="${it.criteria.branchCoverageThreshold}" />
+            threshold="${it.configuration.branchCoverageThreshold}" />
           <metrics-simple-view title="Mutation Tests" class="percent"
             metricsValue="${it.mutationTestJson}"
             delta="${it.mutationTestDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.mutationTest.ratio}"
-            threshold="${it.criteria.mutationTestThreshold}" />
+            threshold="${it.configuration.mutationTestThreshold}" />
         </div>
         <h3>Recipes</h3>
         <div>

@@ -61,27 +61,27 @@ import org.kohsuke.stapler.StaplerRequest;
 public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
   private final String reportRoot;
-  private final Configuration localCriteria;
+  private final Configuration customConfiguration;
 
   /**
    * Default constructor.
    */
   @DataBoundConstructor
-  public MetaShiftPublisher(String reportRoot, Configuration localCriteria) {
+  public MetaShiftPublisher(String reportRoot, Configuration customConfiguration) {
     this.reportRoot = reportRoot;
-    this.localCriteria = localCriteria;
+    this.customConfiguration = customConfiguration;
   }
 
   public String getReportRoot() {
     return reportRoot;
   }
 
-  public boolean isUseLocalCriteria() {
-    return this.localCriteria != null;
+  public boolean isUseCustomConfiguration() {
+    return this.customConfiguration != null;
   }
 
-  public Configuration getLocalCriteria() {
-    return this.localCriteria;
+  public Configuration getCustomConfiguration() {
+    return this.customConfiguration;
   }
 
   /**
@@ -89,15 +89,15 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
    *
    * <p>
    * Symbol "metashift" is annotated for pipeline job simple usage. pipeline script example below.
-   * metashift reportRoot:'report_test/report',  localCriteria: null
+   * metashift reportRoot:'report_test/report',  customConfiguration: null
    * </p>
    */
   @Symbol("metashift")
   @Extension
   public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-    // global criteria variable
-    private Configuration criteria;
+    // global configuration variable
+    private Configuration configuration;
 
     /**
      * Default constructor.
@@ -119,7 +119,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
     @Override
     public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-      req.bindJSON(this.getCriteria(), formData);
+      req.bindJSON(this.getConfiguration(), formData);
 
       save();
 
@@ -196,16 +196,16 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     }
 
     /**
-     * Returns the criteria.
+     * Returns the configuration.
      *
-     * @return criteria
+     * @return configuration
      */
-    public Configuration getCriteria() {
-      if (this.criteria == null) {
-        this.criteria = new Configuration();
+    public Configuration getConfiguration() {
+      if (this.configuration == null) {
+        this.configuration = new Configuration();
       }
 
-      return this.criteria;
+      return this.configuration;
     }
   }
 
@@ -236,9 +236,9 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
           String.format("Unable to locate the directory: %s", reportPath.toURI().toString()));
     }
 
-    Configuration criteria = this.localCriteria;
-    if (criteria == null) {
-      criteria = ((DescriptorImpl) getDescriptor()).getCriteria();
+    Configuration configuration = this.customConfiguration;
+    if (configuration == null) {
+      configuration = ((DescriptorImpl) getDescriptor()).getConfiguration();
     }
 
     FilePath buildPath = new FilePath(run.getRootDir());
@@ -246,7 +246,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     Recipes recipes = new Recipes(reportPath, listener.getLogger());
 
     MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
-        run, listener, criteria, reportPath, dataSource, recipes);
+        run, listener, configuration, reportPath, dataSource, recipes);
     run.addAction(buildAction);
 
     Instant finished = Instant.now();
@@ -255,7 +255,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     logger.printf("[meta-shift-plugin] Total time: %s%n",
         getFormattedTime(Duration.between(started, finished).toMillis()));
 
-    if (!buildAction.getMetrics().isStable(criteria)) {
+    if (!buildAction.getMetrics().isStable(configuration)) {
       logger.println("[meta-shift-plugin] NOTE: one of the metrics does not meet the goal.");
       run.setResult(Result.UNSTABLE);
     }

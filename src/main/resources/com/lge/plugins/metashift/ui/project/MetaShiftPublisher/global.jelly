@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
   <f:section title="The meta-shift plugin for Jenkins">
-    <f:block name="criteria">
-      <st:include page="data_form.jelly"  it="${instance.criteria}"
+    <f:block name="configuration">
+      <st:include page="data_form.jelly"  it="${instance.configuration}"
         class="com.lge.plugins.metashift.models.Configuration"/>
     </f:block>
   </f:section>

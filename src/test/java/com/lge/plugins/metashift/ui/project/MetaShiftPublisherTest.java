@@ -132,7 +132,7 @@ public class MetaShiftPublisherTest {
   }
 
   @Test
-  public void testPerformWithLocalCriteria() throws Exception {
+  public void testPerformWithCustomConfiguration() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
     File workspace = utils.getPath("workspace");
     File report = utils.getPath("workspace", "report");
