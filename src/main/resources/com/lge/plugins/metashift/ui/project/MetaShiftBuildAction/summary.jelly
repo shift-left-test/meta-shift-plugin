@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <st:adjunct includes="com.lge.plugins.metashift.front"/>
   <div class="metashift">
@@ -38,9 +38,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <metrics-simple-view title="Mutation Tests" class="summary percent"
         metricsValue="${it.mutationTestJson}" />
     </div>
-    <p>
-      <a href="metashift_build">Find out more</a>
-    </p>
   </div>
   </div>
 </j:jelly>
