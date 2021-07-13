@@ -25,36 +25,47 @@ export class RecipeList extends LitElement {
         formatter: this.lineOfCodeFormatter.bind(this)},
       {title: 'Premirror Cache', field: 'premirrorCache',
         formatter: this.qualifierPercentCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Shared State Cache', field: 'sharedStateCache',
         formatter: this.qualifierPercentCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Recipe Violations', field: 'recipeViolations',
         formatter: this.qualifierCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Comment', field: 'comments',
         formatter: this.qualifierPercentCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Code Violations', field: 'codeViolations',
         formatter: this.qualifierCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Complexity', field: 'complexity',
         formatter: this.qualifierPercentCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Duplications', field: 'duplications',
         formatter: this.qualifierPercentCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Unit Tests', field: 'test',
         formatter: this.qualifierPercentCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Statement Coverage', field: 'statementCoverage',
         formatter: this.qualifierPercentCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Branch Coverage', field: 'branchCoverage',
         formatter: this.qualifierPercentCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Mutation Tests', field: 'mutationTest',
         formatter: this.qualifierPercentCellformatter.bind(this),
+        sorter: this.qualifierSorter.bind(this),
         hozAlign: 'left', widthGrow: 1},
     ];
   }
@@ -151,6 +162,16 @@ export class RecipeList extends LitElement {
     } else {
       return `<div>N/A</div>`;
     }
+  }
+
+  /**
+   * sort function for qualifier.
+   * @param {unknown} a
+   * @param {unknown} b
+   * @return {unknown}
+   */
+  private qualifierSorter(a, b) {
+    return a.ratio - b.ratio;
   }
 
   /**
