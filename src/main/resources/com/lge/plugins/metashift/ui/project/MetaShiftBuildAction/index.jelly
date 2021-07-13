@@ -23,7 +23,7 @@ xmlns:c="/charts">
           <metrics-simple-view title="Premirror Cache" class="percent"
             metricsValue="${it.premirrorCacheJson}"
             delta="${it.premirrorCacheDelta}"
-            qualifiedRate="${it.premirrorCacheQualifiedRate}"
+            qualifiedRate="${it.qualifiedRecipeCounter.premirrorCache.ratio}"
             threshold="${it.criteria.premirrorCacheThreshold}" />
           <metrics-simple-view title="Shared State Cache" class="percent"
             metricsValue="${it.sharedStateCacheJson}"
