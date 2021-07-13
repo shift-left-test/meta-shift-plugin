@@ -45,12 +45,12 @@ suite('duplication-files', () => {
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="lines"]');
-    assert.equal(elChild.textContent, '100',
+    assert.include(elChild.textContent, '100',
         elChild.outerHTML);
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="duplicatedLines"]');
-    assert.equal(elChild.textContent, '50',
+    assert.include(elChild.textContent, '50',
         elChild.outerHTML);
   });
 });

@@ -45,12 +45,12 @@ suite('complexity-files', () => {
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="functions"]');
-    assert.equal(elChild.textContent, '10',
+    assert.include(elChild.textContent, '10',
         elChild.outerHTML);
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="complexFunctions"]');
-    assert.equal(elChild.textContent, '20',
+    assert.include(elChild.textContent, '20',
         elChild.outerHTML);
   });
 });

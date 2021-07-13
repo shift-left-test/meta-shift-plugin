@@ -50,7 +50,7 @@ export class StatisticsBar extends LitElement {
     <div class="legend">${itemList.map(
       (item: StatisticsItem, i) =>
         html`<div class="label ${item.clazz}">
-          ${item.label} ${item.width}% (${item.count})</div>
+          ${item.label} ${item.width}% (${item.count.toLocaleString()})</div>
           ${i < itemList.length - 1 ?
             html`<div class="spacer"></div>` : html``}`)}
     </div>`;

@@ -46,17 +46,17 @@ suite('mutation-test-list', () => {
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="killed"]');
-    assert.equal(elChild.textContent, '3',
+    assert.include(elChild.textContent, '3',
         elChild.outerHTML);
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="survived"]');
-    assert.equal(elChild.textContent, '2',
+    assert.include(elChild.textContent, '2',
         elChild.outerHTML);
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="skipped"]');
-    assert.equal(elChild.textContent, '1',
+    assert.include(elChild.textContent, '1',
         elChild.outerHTML);
   });
 });

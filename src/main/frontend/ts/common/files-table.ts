@@ -95,4 +95,14 @@ export class FilesTable extends LitElement {
       }
     });
   }
+
+  /**
+   * line of code formatter.
+   * @param {unknown} cell
+   * @return {unknown}
+   */
+  protected localeNumberString(cell: any) : unknown {
+    return `<div class="locale-number">
+      ${cell.getValue().toLocaleString()}</div>`;
+  }
 }

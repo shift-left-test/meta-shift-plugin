@@ -51,12 +51,12 @@ suite('comment-files', () => {
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="lines"]');
-    assert.equal(elChild.textContent, '20',
+    assert.include(elChild.textContent, '20',
         elChild.outerHTML);
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="commentLines"]');
-    assert.equal(elChild.textContent, '2',
+    assert.include(elChild.textContent, '2',
         elChild.outerHTML);
   });
 });

@@ -15,8 +15,10 @@ export class DuplicationFiles extends FilesTable {
 
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'file', widthGrow: 1},
-      {title: 'Lines', field: 'lines', width: 100},
-      {title: 'DuplicatedLines', field: 'duplicatedLines', width: 200},
+      {title: 'Lines', field: 'lines', width: 100,
+        formatter: this.localeNumberString.bind(this)},
+      {title: 'DuplicatedLines', field: 'duplicatedLines', width: 200,
+        formatter: this.localeNumberString.bind(this)},
     ];
   }
 }

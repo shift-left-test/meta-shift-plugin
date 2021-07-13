@@ -46,17 +46,17 @@ suite('code-violation-files', () => {
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="major"]');
-    assert.equal(elChild.textContent, '1',
+    assert.include(elChild.textContent, '1',
         elChild.outerHTML);
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="minor"]');
-    assert.equal(elChild.textContent, '2',
+    assert.include(elChild.textContent, '2',
         elChild.outerHTML);
 
     elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="info"]');
-    assert.equal(elChild.textContent, '3',
+    assert.include(elChild.textContent, '3',
         elChild.outerHTML);
   });
 });

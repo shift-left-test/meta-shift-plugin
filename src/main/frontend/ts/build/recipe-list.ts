@@ -107,7 +107,7 @@ export class RecipeList extends LitElement {
    * @return {unknown}
    */
   private lineOfCodeFormatter(cell) {
-    return `<div class="progress-bar-legend">
+    return `<div class="locale-number">
       ${cell.getValue().toLocaleString()}</div>`;
   }
 
