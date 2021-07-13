@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.ui.project;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
+import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -232,8 +233,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     logger.printf("[meta-shift-plugin] Searching for all recipe reports in %s%n", reportPath);
 
     if (!reportPath.exists()) {
-      throw new IllegalArgumentException(
-          String.format("Unable to locate the directory: %s", reportPath.toURI().toString()));
+      throw new AbortException("No report directory found in " + reportPath);
     }
 
     Configuration configuration = this.customConfiguration;
@@ -241,23 +241,28 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       configuration = ((DescriptorImpl) getDescriptor()).getConfiguration();
     }
 
-    FilePath buildPath = new FilePath(run.getRootDir());
-    DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
-    Recipes recipes = new Recipes(reportPath, listener.getLogger());
+    try {
+      FilePath buildPath = new FilePath(run.getRootDir());
+      DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
 
-    MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
-        run, listener, configuration, reportPath, dataSource, recipes);
-    run.addAction(buildAction);
+      Recipes recipes = new Recipes(reportPath, listener.getLogger());
 
-    Instant finished = Instant.now();
-    logger.printf("[meta-shift-plugin] Finished at %s%n", finished.toString());
+      MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
+          run, listener, configuration, reportPath, dataSource, recipes);
+      run.addAction(buildAction);
 
-    logger.printf("[meta-shift-plugin] Total time: %s%n",
-        getFormattedTime(Duration.between(started, finished).toMillis()));
+      Instant finished = Instant.now();
+      logger.printf("[meta-shift-plugin] Finished at %s%n", finished.toString());
 
-    if (!buildAction.getMetrics().isStable(configuration)) {
-      logger.println("[meta-shift-plugin] NOTE: one of the metrics does not meet the goal.");
-      run.setResult(Result.UNSTABLE);
+      logger.printf("[meta-shift-plugin] Total time: %s%n",
+          getFormattedTime(Duration.between(started, finished).toMillis()));
+
+      if (!buildAction.getMetrics().isStable(configuration)) {
+        logger.println("[meta-shift-plugin] NOTE: one of the metrics does not meet the goal.");
+        run.setResult(Result.UNSTABLE);
+      }
+    } catch (IllegalArgumentException | IOException e) {
+      throw new AbortException(e.getMessage());
     }
 
     logger.println("[meta-shift-plugin] Done.");
