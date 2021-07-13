@@ -10,7 +10,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <h1>${it.run.project.displayName} ${it.run.displayName}</h1>
         <h2>${it.displayName}</h2>
         <h3>Lines of Code</h3>
-        <div class="metrics-row">
+        <div class="section">
           <code-size
             codeSize="${it.codeSizeJson}"
             codeSizeDelta="${it.codeSizeDeltaJson}"
@@ -18,7 +18,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         </div>
 
         <h3>Build Performance</h3>
-        <div class="metrics-row">
+        <div class="section">
           <metrics-simple-view title="Premirror Cache" class="percent"
             url="premirror_cache"
             metricsValue="${it.premirrorCacheJson}"
@@ -34,7 +34,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         </div>
         <h3>Code Quality</h3>
         <h4>Static Analysis</h4>
-        <div class="metrics-row">
+        <div class="section">
           <metrics-simple-view title="Comments" class="percent"
             url="comments"
             metricsValue="${it.commentsJson}"
@@ -53,7 +53,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
             threshold="${it.parentAction.criteria.duplicationThreshold}" />
         </div>
         <h4>Dynamic Testing</h4>
-        <div class="metrics-row">
+        <div class="section">
           <metrics-simple-view title="Unit Tests" class="percent"
             url="test"
             metricsValue="${it.testJson}"

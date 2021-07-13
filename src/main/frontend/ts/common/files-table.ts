@@ -9,7 +9,9 @@ import Tabulator from 'tabulator-tables';
 export class FilesTable extends LitElement {
   @property() page
   @property({type: String}) sort
+  @property({type: String}) select
   @query('.files-table') filesTable
+
 
   private tabulatorTable: Tabulator;
   protected columns;
@@ -45,12 +47,16 @@ export class FilesTable extends LitElement {
    * first updated
    */
   firstUpdated() : void {
+    const hasRowClick = this.classList.contains('row-click');
+
     this.tabulatorTable = new Tabulator(this.filesTable, {
-      rowClick: this._handleFileClicked.bind(this),
+      selectable: hasRowClick,
+      rowClick: hasRowClick ? this._handleFileClicked.bind(this) : null,
       pagination: 'local',
       paginationSize: 10,
       layout: 'fitColumns', // fit columns to width of table (optional)
       columns: this.columns,
+      index: 'file',
     });
   }
 
@@ -84,6 +90,9 @@ export class FilesTable extends LitElement {
       const sortinfo = JSON.parse(JSON.parse(that.sort));
       that.tabulatorTable.setSort(sortinfo);
       that.tabulatorTable.setPage(that.page);
+      if (that.select) {
+        that.tabulatorTable.selectRow(that.select);
+      }
     });
   }
 }

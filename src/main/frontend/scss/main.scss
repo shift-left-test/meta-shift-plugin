@@ -61,28 +61,15 @@
     font-size: 20px;
   }
 
-  .metrics-row {
-    padding: 0px 30px 0px 30px;
-  }
-
-  .metrics-scale {
-    font-size: 40px;
-  }
-
   .section {
     padding-left: 40px;
     display: inline-block;
     width: 100%;
   }
 
-  .ico {
-    padding: 0px 20px 5px 10px;
-    background-position: 50%;
-    background-size: 24px 24px;
-    background-repeat: no-repeat;
-    float: right;
-    height: 24px;
-    content:"";
+  // recipe metrics detail page scale value
+  .metrics-scale {
+    font-size: 40px;
   }
 
   .metashift-code {
@@ -90,7 +77,17 @@
   }
 
   .cm-line {
-    font-family: 'MetaShiftCode';
+    @extend .metashift-code;
+  }
+
+  .ico {
+    padding: 0px 35px 5px 10px;
+    background-position: 50%;
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+    float: right;
+    height: 24px;
+    content:"";
   }
 
   // icon
@@ -112,28 +109,23 @@
     background-image: url('../img/remove_circle_black_36dp.png');
   }
 
-  .text-na {
-    color: $na-text-color;
-  }
-
-  .text-pass {
-    color: #00ff00;
-  }
-
-  .text-fail  {
-    color: #ff0000;
+  .badge {
+    border-radius: 6px;
+    color: #fff;
+    font-weight: bold;
+    padding: 3px;
   }
 
   .bg-na {
-    background-color: #00ff00;
+    background-color: #303030;
   }
 
   .bg-pass {
-    background-color: #00ff00;
+    background-color: #1ea01e;
   }
 
   .bg-fail {
-    background-color: #ff0000;
+    background-color: #9e1e1e;
   }
 
   .bg-error {
@@ -205,28 +197,25 @@
     .cm-editor {
       height: 100%;
     }
-    // source editor
-    .sourceMarginBlock {
-      background: red;
-    }
+
     .sourceBlock {
-      background: lightblue;
+      background: $source-block;
     }
 
     .sourceCovered {
-      background: green;
+      background: $source-good;
     }
 
     .sourceUncovered {
-      background: red;
+      background: $source-bad;
     }
 
     .sourceNotComplex {
-      background: green;
+      background: $source-good;
     }
 
     .sourceComplex {
-      background: red;
+      background: $source-bad;
     }
 
     .gutter {
@@ -281,7 +270,6 @@ code-size {
   }
 
   .size-number {
-    //font-family: 'MetaShiftBold';
     font-weight: bold;
     font-size: 30px;
     line-height: 30px;
@@ -305,6 +293,10 @@ metrics-simple-view {
     border: 1px solid;
     border-radius: 3px;
     border-color: gray;
+  }
+
+  .text-na {
+    color: $na-text-color;
   }
 
   .title {
@@ -348,7 +340,13 @@ metrics-simple-view {
 }
 
 metrics-simple-view.summary {
-  width: 180px;
+  width: 190px;
+  .ico {
+    padding: 0px 20px 5px 10px;
+  }
+  .title {
+    padding-top: 2px;
+  }
 }
 
 metrics-simple-view.has-url:hover {

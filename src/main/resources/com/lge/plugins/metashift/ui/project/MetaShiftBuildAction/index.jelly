@@ -11,7 +11,7 @@ xmlns:c="/charts">
       <div class="page">
         <h1>${it.run.project.displayName} ${it.run.displayName}</h1>
         <h3>Lines of Code</h3>
-        <div class="metrics-row">
+        <div class="section">
           <code-size
             codeSize="${it.codeSizeJson}"
             codeSizeDelta="${it.codeSizeDeltaJson}"
@@ -19,7 +19,7 @@ xmlns:c="/charts">
         </div>
 
         <h3>Build Performance</h3>
-        <div class="metrics-row">
+        <div class="section">
           <metrics-simple-view title="Premirror Cache" class="percent"
             metricsValue="${it.premirrorCacheJson}"
             delta="${it.premirrorCacheDelta}"
@@ -38,7 +38,7 @@ xmlns:c="/charts">
         </div>
         <h3>Code Quality</h3>
         <h4>Static Analysis</h4>
-        <div class="metrics-row">
+        <div class="section">
           <metrics-simple-view title="Comments" class="percent"
             metricsValue="${it.commentsJson}"
             delta="${it.commentsDelta}"
@@ -61,7 +61,7 @@ xmlns:c="/charts">
             threshold="${it.criteria.duplicationThreshold}" />
         </div>
         <h4>Dynamic Testing</h4>
-        <div class="metrics-row">
+        <div class="section">
           <tested-simple-view title="Tested Recipes"
             tested="${it.testedRecipes}"
             recipes="${it.metrics.codeSize.recipes}"
@@ -91,7 +91,7 @@ xmlns:c="/charts">
         <div>
           <recipe-treemap />
         </div>
-        <div class="metrics-row">
+        <div class="section">
           <recipe-list />
         </div>
       </div>

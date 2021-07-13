@@ -25,7 +25,7 @@ export class FileDetail extends LitElement {
   private codeEditor: EditorView;
   protected dataList;
 
-  protected currentLine;
+  protected currentLine: number;
 
   @property() filePath;
   @property({type: Number}) scrollX;

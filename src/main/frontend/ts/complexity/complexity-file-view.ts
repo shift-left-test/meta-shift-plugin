@@ -55,7 +55,7 @@ export class ComplexityFileView extends FileDetail {
    * update data list.
    * @param {number} newLine
    */
-  protected updateDataList(newLine) : void {
+  protected updateDataList(newLine: number) : void {
     if (newLine != undefined && newLine === this.currentLine) {
       return;
     }

@@ -16,9 +16,10 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <h4>Statistics</h4>
         <statistics-bar class="section" items='${it.statistics}'/>
         <h4>Details</h4>
-        <recipe-violation-files class="section"
+        <recipe-violation-files class="section row-click"
           page='${it.getUrlParameter("page")}'
-          sort='${it.getUrlParameter("sort")}' />
+          sort='${it.getUrlParameter("sort")}'
+          select='${it.getUrlParameter("file")}' />
         <recipe-violation-file-view class="section" filePath='${it.getUrlParameter("file")}'
           scrollX='${it.getUrlParameter("scrollX")}' scrollY='${it.getUrlParameter("scrollY")}' />
       </div>
