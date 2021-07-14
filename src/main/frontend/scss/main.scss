@@ -266,6 +266,7 @@ code-size {
     text-align: center;
     width: 200px;
     padding: 5px;
+    background-color: rgb(247, 247, 239);
   }
 
   .title {
@@ -547,10 +548,45 @@ recipe-treemap {
     }
   }
 
+  .tooltip-title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+  }
   .tooltip-body {
     text-align: center;
     width: 100%;
+    min-width: 400px;
+    align-content: center;
+  }
+  .tooltip-column {
+    display: inline-block;
+    width: 190px;
+    vertical-align: top;
+  }
+  .tooltip-column-gap {
+    display: inline-block;
+    width: 10px;
+  }
+  .tooltip-section {
     font-weight: bold;
+    margin-top: 10px;
+  }
+  .tooltip-qualified-key {
+    width: 140px;
+    text-align: right;
+    display: inline-block;
+  }
+  .tooltip-qualified-value {
+    width: 50px;
+    text-align: left;
+    display: inline-block;
+  }
+  .good {
+    color: rgb(10, 150, 10);
+  }
+  .bad {
+    color: $valid-bad-color;
   }
 }
 

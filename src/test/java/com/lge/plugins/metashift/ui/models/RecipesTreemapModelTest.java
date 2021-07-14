@@ -31,8 +31,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.lge.plugins.metashift.metrics.Metrics;
+import com.lge.plugins.metashift.models.Configuration;
+
 import net.sf.json.JSONArray;
 import org.junit.Test;
+
+import hudson.scheduler.Hash;
 
 public class RecipesTreemapModelTest {
 
@@ -47,6 +52,7 @@ public class RecipesTreemapModelTest {
         put("name", "");
         put("target", "_self");
         put("value", new int [] {0, 0});
+        put("qualifiedMap", new HashMap<String, Boolean>());
       }},
       new HashMap<String, Object>() {{
         put("path", "");
@@ -54,6 +60,7 @@ public class RecipesTreemapModelTest {
         put("name", "");
         put("target", "_self");
         put("value", new int [] {0, 100});
+        put("qualifiedMap", new HashMap<String, Boolean>());
       }}
     };
 
@@ -65,12 +72,13 @@ public class RecipesTreemapModelTest {
   public void testAdd() {
     RecipesTreemapModel model = new RecipesTreemapModel();
 
-    model.add("test", "testpath", 1, 2);
+    Metrics metrics = new Metrics(new Configuration());
+    model.add("test", metrics);
     System.out.println(JSONArray.fromObject(model.getSeries()));
-    int[] values = {1, 2};
+    long[] values = {0, 0};
 
-    assertNotNull(model.getSeries().stream().filter(o -> o.getName().equals("test")
-        && o.getPath().equals("testpath") && Arrays.equals(o.getValue(), values))
+    assertNotNull(model.getSeries().stream().filter(o ->
+        "test".equals(o.getName()) && Arrays.equals(o.getValue(), values))
         .findAny().orElse(null));
   }
 }

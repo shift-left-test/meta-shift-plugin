@@ -196,9 +196,7 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
     RecipesTreemapModel model = new RecipesTreemapModel();
 
     for (RecipeAction recipeAction : this.getRecipes()) {
-      model.add(recipeAction.getName(), "",
-          (int) recipeAction.getMetrics().getCodeSize().getLines(),
-          (int) (recipeAction.getMetrics().getRatio() * 100));
+      model.add(recipeAction.getName(), recipeAction.getMetrics());
     }
     return model.toJsonObject();
   }

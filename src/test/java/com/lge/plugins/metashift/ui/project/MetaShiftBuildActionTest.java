@@ -33,7 +33,6 @@ import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
-import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -102,6 +101,7 @@ public class MetaShiftBuildActionTest {
         put("name", "");
         put("target", "_self");
         put("value", new int [] {0, 0});
+        put("qualifiedMap", new HashMap<String, Boolean>());
       }},
       new HashMap<String, Object>() {{
         put("path", "");
@@ -109,6 +109,7 @@ public class MetaShiftBuildActionTest {
         put("name", "");
         put("target", "_self");
         put("value", new int [] {0, 100});
+        put("qualifiedMap", new HashMap<String, Boolean>());
       }},
       new HashMap<String, Object>() {{
         put("path", "");
@@ -116,6 +117,19 @@ public class MetaShiftBuildActionTest {
         put("name", fakeRecipe.getRecipe());
         put("target", "_self");
         put("value", new int [] {10, 18});
+        put("qualifiedMap", new HashMap<String, Boolean>() {{
+          put("Recipe Violations", false);
+          put("Duplications", false);
+          put("Branch Coverage", true);
+          put("Premirror Cache", false);
+          put("Shared State Cache", false);
+          put("Comments", true);
+          put("Mutation Tests", false);
+          put("Unit Tests", false);
+          put("Statement Coverage", false);
+          put("Code Violations", false);
+          put("Complexity", false);
+        }});
       }},
     };
     assertEquals(JSONArray.fromObject(expectedSeries),

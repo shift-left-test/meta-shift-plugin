@@ -20,52 +20,65 @@ export class RecipeList extends LitElement {
     super();
 
     this.columns = [ // Define Table Columns
-      {title: 'Recipes', field: 'name', widthGrow: 1},
+      {title: 'Recipes', field: 'name',
+        tooltip: true,
+        widthGrow: 1},
       {title: 'Lines of Code', field: 'lines',
         formatter: this.lineOfCodeFormatter.bind(this)},
       {title: 'Premirror Cache', field: 'premirrorCache',
         formatter: this.qualifierPercentCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Shared State Cache', field: 'sharedStateCache',
         formatter: this.qualifierPercentCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Recipe Violations', field: 'recipeViolations',
         formatter: this.qualifierCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Comment', field: 'comments',
         formatter: this.qualifierPercentCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Code Violations', field: 'codeViolations',
         formatter: this.qualifierCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Complexity', field: 'complexity',
         formatter: this.qualifierPercentCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Duplications', field: 'duplications',
         formatter: this.qualifierPercentCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Unit Tests', field: 'test',
         formatter: this.qualifierPercentCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Statement Coverage', field: 'statementCoverage',
         formatter: this.qualifierPercentCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Branch Coverage', field: 'branchCoverage',
         formatter: this.qualifierPercentCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
       {title: 'Mutation Tests', field: 'mutationTest',
         formatter: this.qualifierPercentCellformatter.bind(this),
         sorter: this.qualifierSorter.bind(this),
+        tooltip: this.qualifierTooltip.bind(this),
         hozAlign: 'left', widthGrow: 1},
     ];
   }
@@ -87,9 +100,9 @@ export class RecipeList extends LitElement {
   }
 
   /**
-   * called after updated.
+   * called after first updated.
    */
-  updated() : void {
+  firstUpdated() : void {
     this.tabulatorTable = new Tabulator(
         this.recipesTable, {
           rowClick: this._handleRecipeClicked.bind(this),
@@ -97,6 +110,7 @@ export class RecipeList extends LitElement {
           paginationSize: 10,
           layout: 'fitColumns', // fit columns to width of table (optional)
           columns: this.columns,
+          tooltipsHeader: true,
         }
     );
   }
@@ -160,7 +174,7 @@ export class RecipeList extends LitElement {
       </div>
       `;
     } else {
-      return `<div>N/A</div>`;
+      return `<div class="progress-bar-legend">N/A</div>`;
     }
   }
 
@@ -172,6 +186,21 @@ export class RecipeList extends LitElement {
    */
   private qualifierSorter(a, b) {
     return a.ratio - b.ratio;
+  }
+
+  /**
+   * tootip for qualifier cell.
+   * @param {unknown} cell
+   * @return {unknown}
+   */
+  private qualifierTooltip(cell: any) {
+    if (cell.getValue().available) {
+      return cell.getValue().numerator.toLocaleString() +
+        ' / ' +
+        cell.getValue().denominator.toLocaleString();
+    }
+
+    return 'N/A';
   }
 
   /**

@@ -43,6 +43,69 @@ export class RecipeTreemap extends LitElement {
   }
 
   /**
+   * return qualified string.
+   * @param {unknown}qualifiedMap
+   * @param {string} key
+   * @return {string}
+   */
+  private generateQualifiedTooltipString(qualifiedMap, key) {
+    const qualified = qualifiedMap[key];
+    if (qualified != undefined) {
+      return `<div><div class="tooltip-qualified-key">${key}:</div>
+      <div class="tooltip-qualified-value ${qualified ? 'good' : 'bad'}">
+        ${qualified ? 'PASS' : 'FAIL'}</div>
+      </div>`;
+    } else {
+      return `<div><div class="tooltip-qualified-key">${key}:</div>
+      <div class="tooltip-qualified-value">N/A</div>
+      </div>`;
+    }
+  }
+  /**
+   * return tooltip string with metrics.
+   * @param {unknown} qualifiedMap
+   * @return {string}
+   */
+  private qualifiedTooltip(qualifiedMap) {
+    let tooltip = '';
+    // build performance
+    tooltip += '<div class="tooltip-column">';
+    tooltip += '<div class="tooltip-section">Build Performance</div>';
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Premirror Cache');
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Shared State Cache');
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Recipe Violations');
+    tooltip += '</div>';
+
+    tooltip += '<div class="tooltip-column-gap"></div>';
+
+    // code quality
+    tooltip += '<div class="tooltip-column">';
+    tooltip += '<div class="tooltip-section">Code Quality</div>';
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Comments');
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Code Violations');
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Complexity');
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Duplications');
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Unit Tests');
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Statement Coverage');
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Branch Coverage');
+    tooltip += this.generateQualifiedTooltipString(
+        qualifiedMap, 'Mutation Tests');
+    tooltip += '</div>';
+
+    return tooltip;
+  }
+
+  /**
    * set ajax func.
    * @param {unknown} requestTreemapChartModel
    */
@@ -50,26 +113,19 @@ export class RecipeTreemap extends LitElement {
     const that = this;
 
     requestTreemapChartModel(function(model) {
-      const formatUtil = echarts.format;
+      // const formatUtil = echarts.format;
       const option = {
         title: {
           show: false,
         },
         tooltip: {
           formatter: function(info) {
-            const value = info.value;
-            const treePathInfo = info.treePathInfo;
-            const treePath = [];
-
-            for (let i = 1; i < treePathInfo.length; i++) {
-              treePath.push(treePathInfo[i].name);
+            if (info.data.qualifiedMap !== undefined) {
+              return `<div class="tooltip-title">
+                ${info.name}</div>
+                <div class="tooltip-body">
+                ${that.qualifiedTooltip(info.data.qualifiedMap)}<div>`;
             }
-
-            return [
-              `<div class="tooltip-title">
-              ${formatUtil.encodeHTML(treePath.join('/'))}</div>`,
-              `<div class="tooltip-body">${value[1]}<div>`,
-            ].join('');
           },
         },
         series: [{

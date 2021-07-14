@@ -24,8 +24,11 @@
 
 package com.lge.plugins.metashift.ui.models;
 
+import com.lge.plugins.metashift.metrics.Metrics;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.sf.json.JSONObject;
 
 /**
@@ -38,25 +41,88 @@ public class RecipesTreemapModel {
    */
   public static class TreemapData {
 
-    private final int value;
-    private final int quality;
+    private final long value;
+    private final long quality;
     private final String name;
     private final String link;
-    private final String path;
+    private final Map<String, Boolean> qualifiedMap;
   
     /**
      * constructor.
      */
-    public TreemapData(String name, String path, int value, int quality) {
+    public TreemapData(String name, Metrics metrics) {
       this.name = name;
       this.link = name;
-      this.path = path;
-      this.value = value;
-      this.quality = quality;
+
+      this.qualifiedMap = new HashMap<>();
+
+      if (metrics != null) {
+        this.value = metrics.getCodeSize().getLines();
+        this.quality = (long) (metrics.getRatio() * 100);
+        
+        if (metrics.getPremirrorCache().isAvailable()) {
+          this.qualifiedMap.put("Premirror Cache",
+              metrics.getPremirrorCache().isQualified());
+        }
+        if (metrics.getSharedStateCache().isAvailable()) {
+          this.qualifiedMap.put("Shared State Cache",
+              metrics.getSharedStateCache().isQualified());
+        }
+        if (metrics.getRecipeViolations().isAvailable()) {
+          this.qualifiedMap.put("Recipe Violations",
+              metrics.getRecipeViolations().isQualified());
+        }
+        if (metrics.getComments().isAvailable()) {
+          this.qualifiedMap.put("Comments",
+              metrics.getComments().isQualified());
+        }
+        if (metrics.getCodeViolations().isAvailable()) {
+          this.qualifiedMap.put("Code Violations",
+              metrics.getCodeViolations().isQualified());
+        }
+        if (metrics.getComplexity().isAvailable()) {
+          this.qualifiedMap.put("Complexity",
+              metrics.getComplexity().isQualified());
+        }
+        if (metrics.getDuplications().isAvailable()) {
+          this.qualifiedMap.put("Duplications",
+              metrics.getDuplications().isQualified());
+        }
+        if (metrics.getTest().isAvailable()) {
+          this.qualifiedMap.put("Unit Tests",
+              metrics.getTest().isQualified());
+        }
+        if (metrics.getStatementCoverage().isAvailable()) {
+          this.qualifiedMap.put("Statement Coverage",
+              metrics.getStatementCoverage().isQualified());
+        }
+        if (metrics.getBranchCoverage().isAvailable()) {
+          this.qualifiedMap.put("Branch Coverage",
+              metrics.getBranchCoverage().isQualified());
+        }
+        if (metrics.getMutationTest().isAvailable()) {
+          this.qualifiedMap.put("Mutation Tests",
+              metrics.getMutationTest().isQualified());
+        }  
+      } else {
+        this.value = 0;
+        this.quality = 0;
+      }
     }
 
-    public int[] getValue() {
-      return new int[]{value, quality};
+    /**
+     * constructor.
+     */
+    public TreemapData(long value, long quality) {
+      this.name = null;
+      this.link = null;
+      this.value = value;
+      this.quality = quality;
+      this.qualifiedMap = new HashMap<>();
+    }
+
+    public long[] getValue() {
+      return new long[]{value, quality};
     }
 
     public String getName() {
@@ -67,12 +133,18 @@ public class RecipesTreemapModel {
       return link;
     }
 
+    // echart api needs path property.
     public String getPath() {
-      return path;
+      return "";
     }
 
+    // echart link option for node click target
     public String getTarget() {
       return "_self";
+    }
+
+    public Map<String, Boolean> getQualifiedMap() {
+      return qualifiedMap;
     }
   }
 
@@ -85,12 +157,12 @@ public class RecipesTreemapModel {
     this.series = new ArrayList<>();
 
     // add quality boundary
-    this.series.add(new TreemapData("", "", 0, 0));
-    this.series.add(new TreemapData("", "", 0, 100));
+    this.series.add(new TreemapData(0, 0));
+    this.series.add(new TreemapData(0, 100));
   }
 
-  public void add(String name, String path, int value, int quality) {
-    series.add(new TreemapData(name, path, value, quality));
+  public void add(String name, Metrics metrics) {
+    series.add(new TreemapData(name, metrics));
   }
 
   public List<TreemapData> getSeries() {
