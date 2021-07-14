@@ -41,6 +41,10 @@ import hudson.model.Result;
 import hudson.util.FormValidation;
 import java.io.File;
 import java.util.List;
+
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -154,6 +158,49 @@ public class MetaShiftPublisherTest {
     builder.toFile(report);
     
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+
+    // verify MetaShiftBuildAction created.
+    assertEquals(1, run.getActions(MetaShiftBuildAction.class).size());
+
+    MetaShiftBuildAction action = run.getAction(MetaShiftBuildAction.class);
+    assertEquals(run, action.getRun());
+
+    // verify RecipeAction created.
+    assertEquals(1, action.getActions(RecipeAction.class).size());
+    RecipeAction recipeAction = action.getAction(RecipeAction.class);
+    assertEquals(run, recipeAction.getRun());
+
+    // verify RecipeActionChild created.
+    List<RecipeActionChild> children = recipeAction.getActions(RecipeActionChild.class);
+    assertEquals(11, children.size());
+    assertEquals(run, children.get(0).getRun());
+    assertEquals("document.png", children.get(0).getIconFileName());
+  }
+
+  @Test
+  public void pipelineJobTest() throws Exception {
+    WorkflowJob project = jenkins.createProject(WorkflowJob.class);
+    File workspace = utils.getPath("workspace");
+    File report = utils.getPath("workspace", "report");
+    FakeReportBuilder builder = new FakeReportBuilder();
+    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
+    fakeRecipe
+        .add(new FakeScript(10, 1, 2, 3))
+        .add(new FakeSource(10, 4, 5, 6)
+            .setComplexity(10, 5, 6)
+            .setCodeViolations(1, 2, 3)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+
+    project.setDefinition(new CpsFlowDefinition("" +
+      "node {" +
+      String.format(" metashift reportRoot:'%s'", report.getAbsolutePath()) +
+      "}", true));
+    WorkflowRun run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
     // verify MetaShiftBuildAction created.
     assertEquals(1, run.getActions(MetaShiftBuildAction.class).size());

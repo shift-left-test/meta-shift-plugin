@@ -38,7 +38,6 @@ import com.lge.plugins.metashift.ui.MetricsActionBase;
 import com.lge.plugins.metashift.ui.models.RecipesTreemapModel;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import hudson.FilePath;
-import hudson.model.AbstractBuild;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -235,8 +234,7 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
       return previousAction;
     }
 
-    AbstractBuild<?, ?> build = ((AbstractBuild<?, ?>) this.run)
-        .getPreviousNotFailedBuild();
+    Run<?, ?> build = this.run.getPreviousNotFailedBuild();
     while (build != null) {
       if (build.getResult() != Result.FAILURE) {
         previousAction = build.getAction(MetaShiftBuildAction.class);

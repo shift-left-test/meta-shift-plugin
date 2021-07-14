@@ -222,10 +222,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   @Override
   public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
       throws InterruptedException, IOException {
-    Result result = run.getResult();
-    if (result == null || result.isWorseOrEqualTo(Result.UNSTABLE)) {
-      return;
-    }
+    Result runResult = run.getResult() == null ? Result.SUCCESS : run.getResult();
 
     PrintStream logger = listener.getLogger();
     logger.println("[meta-shift-plugin] Scanning for the meta-shift report...");
@@ -264,7 +261,9 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
       if (!buildAction.getMetrics().isStable(configuration)) {
         logger.println("[meta-shift-plugin] NOTE: one of the metrics does not meet the goal.");
-        run.setResult(Result.UNSTABLE);
+        if (runResult.isBetterThan(Result.UNSTABLE)) {
+          run.setResult(Result.UNSTABLE);
+        }
       }
     } catch (IllegalArgumentException | IOException e) {
       throw new AbortException(e.getMessage());
