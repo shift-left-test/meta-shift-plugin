@@ -39,4 +39,26 @@ suite('tested-simple-view', () => {
     assert.include(elChild.textContent, '10%',
         elChild.outerHTML);
   });
+
+  test('property-no-recipes', async () => {
+    const el = (await fixture(html`
+        <tested-simple-view title="test"
+          tested='0'
+          recipes='0'
+          delta='0'
+        ></tested-simple-view>`
+    )) as TestedSimpleView;
+
+    let elChild = el.querySelector('div.title');
+    assert.include(elChild.textContent, 'test',
+        elChild.outerHTML);
+
+    elChild = el.querySelector('div.size-number');
+    assert.include(elChild.textContent, '0%',
+        elChild.outerHTML);
+
+    elChild = el.querySelector('div.size-diff');
+    assert.include(elChild.textContent, '0%',
+        elChild.outerHTML);
+  });
 });

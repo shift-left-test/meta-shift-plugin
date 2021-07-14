@@ -30,12 +30,15 @@ export class TestedSimpleView extends LitElement {
     const diffDirection = this.delta == 0 ? '' :
         (this.delta > 0 ? '▲' : '▼');
 
+    const testRate = this.recipes > 0 ?
+      Math.floor(this.tested / this.recipes * 100) : 0;
+
     return html`<div class="board">
       <div class="title">
         <b>${this.title}</b>
       </div>
       <div class="size-number">
-       ${Math.floor(this.tested / this.recipes * 100)}%
+       ${testRate}%
       </div>
       ${!isSummary ?
         html`
