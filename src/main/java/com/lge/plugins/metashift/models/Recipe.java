@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -159,8 +160,18 @@ public final class Recipe extends Data<Recipe> implements Streamable {
       for (Future<Void> future : executor.invokeAll(callables)) {
         future.get();
       }
-    } catch (Exception e) {
-      logger.printf("[meta-shift-plugin] %s: %s%n", getRecipe(), e);
+    } catch (ExecutionException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof IllegalArgumentException) {
+        throw new IllegalArgumentException(cause);
+      }
+      if (cause instanceof InterruptedException) {
+        throw new InterruptedException(cause.getMessage());
+      }
+      if (cause instanceof IOException) {
+        throw new IOException(cause);
+      }
+      throw new RuntimeException(cause);
     }
   }
 
