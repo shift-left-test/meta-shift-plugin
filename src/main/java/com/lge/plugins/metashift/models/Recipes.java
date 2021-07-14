@@ -93,7 +93,7 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
     logger.println("[meta-shift-plugin] Parsing the meta-shift report...");
     for (FilePath directory : directories) {
       logger.printf("[meta-shift-plugin] -> %s%n", directory.getName());
-      this.add(new Recipe(directory, logger));
+      this.add(new Recipe(directory));
     }
     Collections.sort(this);
 

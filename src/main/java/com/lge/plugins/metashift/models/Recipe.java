@@ -38,7 +38,6 @@ import com.lge.plugins.metashift.models.factory.SharedStateCacheFactory;
 import com.lge.plugins.metashift.models.factory.TestFactory;
 import hudson.FilePath;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +50,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
-import org.apache.commons.io.output.NullPrintStream;
 
 /**
  * Represents a recipe containing various data objects for metrics.
@@ -88,19 +86,6 @@ public final class Recipe extends Data<Recipe> implements Streamable {
   private final List<Object> objects;
 
   /**
-   * Create a Recipe object using the given recipe directory.
-   *
-   * @param path to the recipe directory
-   * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
-   * @throws InterruptedException     if an interruption occurs
-   * @throws IOException              if the file IO fails
-   */
-  public Recipe(final FilePath path)
-      throws IllegalArgumentException, InterruptedException, IOException {
-    this(path, NullPrintStream.NULL_PRINT_STREAM);
-  }
-
-  /**
    * Creates new task to trigger a given factory method.
    *
    * @param clazz   object type
@@ -126,13 +111,12 @@ public final class Recipe extends Data<Recipe> implements Streamable {
   /**
    * Create a Recipe object using the given recipe directory.
    *
-   * @param path   to the recipe directory
-   * @param logger object
+   * @param path to the recipe directory
    * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
    * @throws InterruptedException     if an interruption occurs
    * @throws IOException              if a file IO fails
    */
-  public Recipe(final FilePath path, final PrintStream logger)
+  public Recipe(final FilePath path)
       throws IllegalArgumentException, InterruptedException, IOException {
     this(path.getName());
     if (!path.exists()) {
