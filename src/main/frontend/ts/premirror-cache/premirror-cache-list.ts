@@ -17,5 +17,6 @@ export class PremirrorCacheList extends FilesTable {
       {title: 'Signature', field: 'signature', widthGrow: 1},
       {title: 'Available', field: 'available', width: 100},
     ];
+    this.defalutSortColumn = 'signature';
   }
 }

@@ -223,6 +223,7 @@ export class RecipeList extends LitElement {
 
     requestFilesFunc(function(model) {
       that.tabulatorTable.setData(model.responseJSON);
+      that.tabulatorTable.setSort([{column: 'name', dir: 'asc'}]);
     });
     this.requestFileDetailFunc = requestFileDetailFunc;
   }

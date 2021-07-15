@@ -15,6 +15,7 @@ export class FilesTable extends LitElement {
 
   private tabulatorTable: Tabulator;
   protected columns;
+  protected defalutSortColumn;
 
   /**
    * constructor.
@@ -25,6 +26,7 @@ export class FilesTable extends LitElement {
     this.columns = [];
     this.page = 1;
     this.sort = '"[]"';
+    this.defalutSortColumn = 'file';
   }
 
   /**
@@ -87,7 +89,12 @@ export class FilesTable extends LitElement {
     requestFilesFunc(function(model) {
       that.tabulatorTable.setData(model.responseJSON);
       // to remove quotes parameter string, parse twice.
-      const sortinfo = JSON.parse(JSON.parse(that.sort));
+      let sortinfo = JSON.parse(JSON.parse(that.sort));
+      if (sortinfo.length == 0) {
+        sortinfo = [
+          {column: that.defalutSortColumn, dir: 'asc'},
+        ];
+      }
       that.tabulatorTable.setSort(sortinfo);
       that.tabulatorTable.setPage(that.page);
       if (that.select) {

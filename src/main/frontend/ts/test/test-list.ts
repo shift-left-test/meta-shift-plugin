@@ -21,6 +21,7 @@ export class TestList extends FilesTable {
         formatter: this._statusCellFormatter.bind(this)},
       {title: 'message', field: 'message', widthGrow: 2},
     ];
+    this.defalutSortColumn = 'status';
   }
 
   /**
