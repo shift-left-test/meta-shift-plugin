@@ -37,12 +37,14 @@ import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -172,6 +174,19 @@ public class RecipeTest {
     assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
     assertEquals(0, recipe.objects(Data.class).count());
     assertFalse(recipe.isAvailable(Data.class));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testParseInvalidFormatFiles() throws IOException, InterruptedException {
+    File source = utils.createDirectory("source");
+    File report = utils.createDirectory("report");
+    FakeRecipe fakeRecipe = new FakeRecipe(source);
+    fakeRecipe.add(new FakeSource(10, 5, 5, 0));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    File file = FileUtils.getFile(report, fakeRecipe.getRecipe(), "checkcode", "sage_report.json");
+    FileUtils.write(file, "{ }", StandardCharsets.UTF_8);
+    new Recipe(new FilePath(new File(report, fakeRecipe.getRecipe())));
   }
 
   @Test

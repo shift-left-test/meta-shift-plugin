@@ -26,14 +26,14 @@ package com.lge.plugins.metashift.models.factory;
 
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,40 +50,50 @@ public class RecipeViolationFactoryTest {
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
   private StringBuilder builder;
-  private List<RecipeViolationData> objects;
+  private DataList dataList;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    objects = new ArrayList<>();
+    dataList = new DataList();
   }
 
-  private void assertValues(RecipeViolationData object, String recipe, String file, long line,
-      String rule, String severity, String description) {
-    assertEquals(recipe, object.getRecipe());
-    assertEquals(file, object.getFile());
-    assertEquals(line, object.getLine());
-    assertEquals(rule, object.getRule());
-    assertEquals(severity, object.getSeverity());
-    assertEquals(description, object.getDescription());
+  private void assertDataList(boolean isAvailable, int size) {
+    assertEquals(isAvailable, dataList.isAvailable(RecipeViolationData.class));
+    assertEquals(size, dataList.size());
   }
 
-  @Test(expected = IOException.class)
+  private void assertValues(int index, String recipe, String file, long line, String rule,
+      String severity, String description) {
+    List<RecipeViolationData> objects = dataList.objects(RecipeViolationData.class)
+        .collect(Collectors.toList());
+    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(file, objects.get(index).getFile());
+    assertEquals(line, objects.get(index).getLine());
+    assertEquals(rule, objects.get(index).getRule());
+    assertEquals(severity, objects.get(index).getSeverity());
+    assertEquals(description, objects.get(index).getDescription());
+  }
+
+  @Test
   public void testCreateListWithUnknownPath() throws IOException, InterruptedException {
-    RecipeViolationFactory.create(new FilePath(utils.getPath("path-to-unknown")));
+    RecipeViolationFactory.create(new FilePath(utils.getPath("unknown-path")), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    RecipeViolationFactory.create(new FilePath(directory));
+    RecipeViolationFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkrecipe").getParentFile();
-    RecipeViolationFactory.create(new FilePath(directory));
+    RecipeViolationFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -91,7 +101,7 @@ public class RecipeViolationFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    RecipeViolationFactory.create(new FilePath(directory));
+    RecipeViolationFactory.create(new FilePath(directory), dataList);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -99,7 +109,7 @@ public class RecipeViolationFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'issues': [ { 'file': 'a.bb', 'line': 1, 'severity': 'info' } ] }");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    RecipeViolationFactory.create(new FilePath(directory));
+    RecipeViolationFactory.create(new FilePath(directory), dataList);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -118,7 +128,7 @@ public class RecipeViolationFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    RecipeViolationFactory.create(new FilePath(directory));
+    RecipeViolationFactory.create(new FilePath(directory), dataList);
   }
 
   @Test
@@ -126,8 +136,8 @@ public class RecipeViolationFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'issues': [ ] }");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    objects = RecipeViolationFactory.create(new FilePath(directory));
-    assertEquals(0, objects.size());
+    RecipeViolationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
   }
 
   @Test
@@ -146,11 +156,9 @@ public class RecipeViolationFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    objects = RecipeViolationFactory.create(new FilePath(directory));
-    assertEquals(1, objects.size());
-
-    Iterator<RecipeViolationData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C-1.0.0-r0", "a.file", 1, "checksum", "error", "checksum error");
+    RecipeViolationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 1);
+    assertValues(0, "C-1.0.0-r0", "a.file", 1, "checksum", "error", "checksum error");
   }
 
   @Test
@@ -183,12 +191,10 @@ public class RecipeViolationFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    objects = RecipeViolationFactory.create(new FilePath(directory));
-    assertEquals(3, objects.size());
-
-    Iterator<RecipeViolationData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", 1, "checksum", "error", "checksum error");
-    assertValues(iterator.next(), "D-1.0.0-r0", "b.file", 2, "indent", "warning", "indent warning");
-    assertValues(iterator.next(), "D-1.0.0-r0", "c.file", 3, "typo", "info", "typo info");
+    RecipeViolationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 3);
+    assertValues(0, "D-1.0.0-r0", "a.file", 1, "checksum", "error", "checksum error");
+    assertValues(1, "D-1.0.0-r0", "b.file", 2, "indent", "warning", "indent warning");
+    assertValues(2, "D-1.0.0-r0", "c.file", 3, "typo", "info", "typo info");
   }
 }

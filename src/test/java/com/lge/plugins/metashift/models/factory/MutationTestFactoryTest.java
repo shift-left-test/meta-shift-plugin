@@ -26,14 +26,14 @@ package com.lge.plugins.metashift.models.factory;
 
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,41 +50,51 @@ public class MutationTestFactoryTest {
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
   private StringBuilder builder;
-  private List<MutationTestData> objects;
+  private DataList dataList;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    objects = new ArrayList<>();
+    dataList = new DataList();
   }
 
-  private void assertValues(MutationTestData object, String recipe, String file,
-      String mutatedClass, String mutatedMethod, long line, String mutator, String killingTest) {
-    assertEquals(recipe, object.getRecipe());
-    assertEquals(file, object.getFile());
-    assertEquals(mutatedClass, object.getMutatedClass());
-    assertEquals(mutatedMethod, object.getMutatedMethod());
-    assertEquals(line, object.getLine());
-    assertEquals(mutator, object.getMutator());
-    assertEquals(killingTest, object.getKillingTest());
+  private void assertDataList(boolean isAvailable, int size) {
+    assertEquals(isAvailable, dataList.isAvailable(MutationTestData.class));
+    assertEquals(size, dataList.size());
   }
 
-  @Test(expected = IOException.class)
+  private void assertValues(int index, String recipe, String file, String mutatedClass,
+      String mutatedMethod, long line, String mutator, String killingTest) {
+    List<MutationTestData> objects = dataList.objects(MutationTestData.class)
+        .collect(Collectors.toList());
+    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(file, objects.get(index).getFile());
+    assertEquals(mutatedClass, objects.get(index).getMutatedClass());
+    assertEquals(mutatedMethod, objects.get(index).getMutatedMethod());
+    assertEquals(line, objects.get(index).getLine());
+    assertEquals(mutator, objects.get(index).getMutator());
+    assertEquals(killingTest, objects.get(index).getKillingTest());
+  }
+
+  @Test
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    MutationTestFactory.create(new FilePath(utils.getPath("path-to-unknown")));
+    MutationTestFactory.create(new FilePath(utils.getPath("path-to-unknown")), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    MutationTestFactory.create(new FilePath(directory));
+    MutationTestFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checktest").getParentFile();
-    MutationTestFactory.create(new FilePath(directory));
+    MutationTestFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -92,7 +102,7 @@ public class MutationTestFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("<mutation>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    MutationTestFactory.create(new FilePath(directory));
+    MutationTestFactory.create(new FilePath(directory), dataList);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -105,7 +115,7 @@ public class MutationTestFactoryTest {
         .append("  </mutation>")
         .append("</mutations>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    MutationTestFactory.create(new FilePath(directory));
+    MutationTestFactory.create(new FilePath(directory), dataList);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -113,7 +123,7 @@ public class MutationTestFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    MutationTestFactory.create(new FilePath(directory));
+    MutationTestFactory.create(new FilePath(directory), dataList);
   }
 
   @Test
@@ -121,8 +131,8 @@ public class MutationTestFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<mutations></mutations>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    objects = MutationTestFactory.create(new FilePath(directory));
-    assertEquals(0, objects.size());
+    MutationTestFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
   }
 
   @Test
@@ -141,11 +151,9 @@ public class MutationTestFactoryTest {
         .append("  </mutation>")
         .append("</mutations>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    objects = MutationTestFactory.create(new FilePath(directory));
-    assertEquals(1, objects.size());
-
-    Iterator<MutationTestData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C-1.0.0-r0", "path/to/a.file", "A", "func1", 1, "AOR", "test1");
+    MutationTestFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 1);
+    assertValues(0, "C-1.0.0-r0", "path/to/a.file", "A", "func1", 1, "AOR", "test1");
   }
 
   @Test
@@ -182,12 +190,10 @@ public class MutationTestFactoryTest {
         .append("  </mutation>")
         .append("</mutations>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    objects = MutationTestFactory.create(new FilePath(directory));
-    assertEquals(3, objects.size());
-
-    Iterator<MutationTestData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D-1.0.0-r0", "path/to/a.file", "A", "func1", 1, "AOR", "test1");
-    assertValues(iterator.next(), "D-1.0.0-r0", "path/to/b.file", "B", "func2", 2, "BOR", "test2");
-    assertValues(iterator.next(), "D-1.0.0-r0", "path/to/c.file", "C", "func3", 3, "COR", "test3");
+    MutationTestFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 3);
+    assertValues(0, "D-1.0.0-r0", "path/to/a.file", "A", "func1", 1, "AOR", "test1");
+    assertValues(1, "D-1.0.0-r0", "path/to/b.file", "B", "func2", 2, "BOR", "test2");
+    assertValues(2, "D-1.0.0-r0", "path/to/c.file", "C", "func3", 3, "COR", "test3");
   }
 }

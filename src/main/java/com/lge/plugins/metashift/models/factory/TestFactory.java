@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.models.factory;
 
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
@@ -48,39 +49,34 @@ import org.xml.sax.SAXException;
 public class TestFactory {
 
   /**
-   * Create a set of objects by parsing a report file from the given path.
+   * Creates a set of objects by parsing a report file from the given path.
    *
    * @param path to the report directory
-   * @return a list of objects
-   * @throws IllegalArgumentException if failed to parse report files
-   * @throws IOException              if failed to locate report files
-   * @throws InterruptedException     if an interruption occurs
+   * @throws IOException          if failed to locate report files
+   * @throws InterruptedException if an interruption occurs
    */
-  public static List<TestData> create(final FilePath path)
-      throws IllegalArgumentException, IOException, InterruptedException {
-    List<TestData> list = new ArrayList<>();
+  public static void create(final FilePath path, final DataList dataList)
+      throws IOException, InterruptedException {
+    List<TestData> objects = new ArrayList<>();
     String recipe = path.getName();
-    FilePath directory = path.child("test");
-    if (!directory.exists()) {
-      throw new IOException("Unable to locate the directory: " + directory);
-    }
-    FilePath[] files = path.list("test/**/*.xml");
-    if (files.length == 0) {
-      throw new IOException("Unable to locate any files under: " + directory);
-    }
-    for (FilePath file : files) {
-      try {
-        list.addAll(parseFile(recipe, file));
-      } catch (ParserConfigurationException | SAXException | IOException ignored) {
-        // ignored
+    try {
+      FilePath[] files = path.list("test/**/*.xml");
+      if (files.length == 0) {
+        return;
       }
+      for (FilePath file : files) {
+        objects.addAll(parseFile(recipe, file));
+      }
+      Collections.sort(objects);
+      dataList.addAll(objects);
+      dataList.add(TestData.class);
+    } catch (ParserConfigurationException | SAXException | IOException ignored) {
+      // ignored
     }
-    Collections.sort(list);
-    return list;
   }
 
   /**
-   * parse the report file to create list of test data.
+   * Parses the report file to create list of test data.
    *
    * @param recipe name
    * @param file   report file
@@ -104,7 +100,7 @@ public class TestFactory {
   }
 
   /**
-   * Create a test data instance using the given tag.
+   * Creates a test data instance using the given tag.
    *
    * @param recipe   name
    * @param suite    name

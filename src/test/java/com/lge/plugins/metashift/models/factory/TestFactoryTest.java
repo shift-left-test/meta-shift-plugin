@@ -26,14 +26,14 @@ package com.lge.plugins.metashift.models.factory;
 
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,38 +50,46 @@ public class TestFactoryTest {
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
   private StringBuilder builder;
-  private List<TestData> objects;
+  private DataList dataList;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    objects = new ArrayList<>();
+    dataList = new DataList();
   }
 
-  private void assertValues(TestData object, String recipe, String suite, String name,
-      String message) {
-    assertEquals(recipe, object.getRecipe());
-    assertEquals(suite, object.getSuite());
-    assertEquals(name, object.getName());
-    assertEquals(message, object.getMessage());
+  private void assertDataList(boolean isAvailable, int size) {
+    assertEquals(isAvailable, dataList.isAvailable(TestData.class));
+    assertEquals(size, dataList.size());
   }
 
-  @Test(expected = IOException.class)
+  private void assertValues(int index, String recipe, String suite, String name, String message) {
+    List<TestData> objects = dataList.objects(TestData.class).collect(Collectors.toList());
+    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(suite, objects.get(index).getSuite());
+    assertEquals(name, objects.get(index).getName());
+    assertEquals(message, objects.get(index).getMessage());
+  }
+
+  @Test
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    TestFactory.create(new FilePath(utils.getPath("path-to-unknown")));
+    TestFactory.create(new FilePath(utils.getPath("path-to-unknown")), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    TestFactory.create(new FilePath(directory));
+    TestFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "test").getParentFile();
-    TestFactory.create(new FilePath(directory));
+    TestFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
   @Test
@@ -89,8 +97,8 @@ public class TestFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("/testsuite>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(new FilePath(directory));
-    assertEquals(0, objects.size());
+    TestFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
   @Test
@@ -98,8 +106,8 @@ public class TestFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "test", "1.xml");
-    objects = TestFactory.create(new FilePath(directory));
-    assertEquals(0, objects.size());
+    TestFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
   @Test
@@ -107,8 +115,8 @@ public class TestFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<testsuites> </testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    objects = TestFactory.create(new FilePath(directory));
-    assertEquals(0, objects.size());
+    TestFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -123,7 +131,7 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(new FilePath(directory));
+    TestFactory.create(new FilePath(directory), dataList);
   }
 
   @Test
@@ -136,11 +144,9 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    objects = TestFactory.create(new FilePath(directory));
-    assertEquals(1, objects.size());
-
-    Iterator<TestData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C-1.0.0-r0", "A", "test1", "");
+    TestFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 1);
+    assertValues(0, "C-1.0.0-r0", "A", "test1", "");
   }
 
   @Test
@@ -168,14 +174,12 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    objects = TestFactory.create(new FilePath(directory));
-    assertEquals(4, objects.size());
-
-    Iterator<TestData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D-1.0.0-r0", "A", "test1", "");
-    assertValues(iterator.next(), "D-1.0.0-r0", "B", "test2", "failure");
-    assertValues(iterator.next(), "D-1.0.0-r0", "C", "test3", "error");
-    assertValues(iterator.next(), "D-1.0.0-r0", "D", "test4", "skipped");
+    TestFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 4);
+    assertValues(0, "D-1.0.0-r0", "A", "test1", "");
+    assertValues(1, "D-1.0.0-r0", "B", "test2", "failure");
+    assertValues(2, "D-1.0.0-r0", "C", "test3", "error");
+    assertValues(3, "D-1.0.0-r0", "D", "test4", "skipped");
   }
 
   @Test
@@ -219,13 +223,11 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "D", "4.xml");
-    objects = TestFactory.create(new FilePath(directory));
-    assertEquals(4, objects.size());
-
-    Iterator<TestData> iterator = objects.iterator();
-    assertValues(iterator.next(), "E-1.0.0-r0", "A", "test1", "");
-    assertValues(iterator.next(), "E-1.0.0-r0", "B", "test2", "failure");
-    assertValues(iterator.next(), "E-1.0.0-r0", "C", "test3", "error");
-    assertValues(iterator.next(), "E-1.0.0-r0", "D", "test4", "skipped");
+    TestFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 4);
+    assertValues(0, "E-1.0.0-r0", "A", "test1", "");
+    assertValues(1, "E-1.0.0-r0", "B", "test2", "failure");
+    assertValues(2, "E-1.0.0-r0", "C", "test3", "error");
+    assertValues(3, "E-1.0.0-r0", "D", "test4", "skipped");
   }
 }

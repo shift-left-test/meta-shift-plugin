@@ -27,13 +27,13 @@ package com.lge.plugins.metashift.models.factory;
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.ComplexityData;
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,40 +50,50 @@ public class ComplexityFactoryTest {
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
   private StringBuilder builder;
-  private List<ComplexityData> objects;
+  private DataList dataList;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    objects = new ArrayList<>();
+    dataList = new DataList();
   }
 
-  private void assertValues(ComplexityData object, String recipe, String file, String function,
-      long start, long end, long value) {
-    assertEquals(recipe, object.getRecipe());
-    assertEquals(file, object.getFile());
-    assertEquals(function, object.getFunction());
-    assertEquals(start, object.getStart());
-    assertEquals(end, object.getEnd());
-    assertEquals(value, object.getValue());
+  private void assertDataList(boolean isAvailable, int size) {
+    assertEquals(isAvailable, dataList.isAvailable(ComplexityData.class));
+    assertEquals(size, dataList.size());
   }
 
-  @Test(expected = IOException.class)
+  private void assertValues(int index, String recipe, String file, String function, long start,
+      long end, long value) {
+    List<ComplexityData> objects = dataList.objects(ComplexityData.class)
+        .collect(Collectors.toList());
+    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(file, objects.get(index).getFile());
+    assertEquals(function, objects.get(index).getFunction());
+    assertEquals(start, objects.get(index).getStart());
+    assertEquals(end, objects.get(index).getEnd());
+    assertEquals(value, objects.get(index).getValue());
+  }
+
+  @Test
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    ComplexityFactory.create(new FilePath(utils.getPath("path-to-unknown")));
+    ComplexityFactory.create(new FilePath(utils.getPath("path-to-unknown")), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    ComplexityFactory.create(new FilePath(directory));
+    ComplexityFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
-    ComplexityFactory.create(new FilePath(directory));
+    ComplexityFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -91,7 +101,7 @@ public class ComplexityFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(new FilePath(directory));
+    ComplexityFactory.create(new FilePath(directory), dataList);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -99,7 +109,7 @@ public class ComplexityFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'complexity': [ { 'file': 'a.file' } ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(new FilePath(directory));
+    ComplexityFactory.create(new FilePath(directory), dataList);
   }
 
   @Test
@@ -107,8 +117,8 @@ public class ComplexityFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'complexity': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = ComplexityFactory.create(new FilePath(directory));
-    assertEquals(0, objects.size());
+    ComplexityFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
   }
 
   @Test
@@ -127,15 +137,13 @@ public class ComplexityFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = ComplexityFactory.create(new FilePath(directory));
-    assertEquals(1, objects.size());
-
-    Iterator<ComplexityData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
+    ComplexityFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 1);
+    assertValues(0, "C-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
   }
 
   @Test
-  public void testCreateWithDuplicatedData() throws Exception {
+  public void testCreateWithOverlappedData() throws Exception {
     File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("{")
@@ -164,13 +172,11 @@ public class ComplexityFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = ComplexityFactory.create(new FilePath(directory));
-    assertEquals(3, objects.size());
-
-    Iterator<ComplexityData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", "func1()", 15, 20, 3);
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", "func1()", 25, 30, 7);
+    ComplexityFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 3);
+    assertValues(0, "D-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
+    assertValues(1, "D-1.0.0-r0", "a.file", "func1()", 15, 20, 3);
+    assertValues(2, "D-1.0.0-r0", "a.file", "func1()", 25, 30, 7);
   }
 
   @Test
@@ -203,12 +209,10 @@ public class ComplexityFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = ComplexityFactory.create(new FilePath(directory));
-    assertEquals(3, objects.size());
-
-    Iterator<ComplexityData> iterator = objects.iterator();
-    assertValues(iterator.next(), "E-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
-    assertValues(iterator.next(), "E-1.0.0-r0", "b.file", "func2()", 15, 20, 3);
-    assertValues(iterator.next(), "E-1.0.0-r0", "c.file", "func3()", 25, 30, 7);
+    ComplexityFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 3);
+    assertValues(0, "E-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
+    assertValues(1, "E-1.0.0-r0", "b.file", "func2()", 15, 20, 3);
+    assertValues(2, "E-1.0.0-r0", "c.file", "func3()", 25, 30, 7);
   }
 }

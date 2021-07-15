@@ -24,10 +24,12 @@
 
 package com.lge.plugins.metashift.models.factory;
 
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,31 +44,32 @@ import net.sf.json.JSONObject;
 public class PremirrorCacheFactory {
 
   /**
-   * Create a set of objects by parsing a report file from the given path.
+   * Creates a set of objects by parsing a report file from the given path.
    *
    * @param path to the report directory
-   * @return a list of objects
-   * @throws IllegalArgumentException if failed to parse report files
-   * @throws IOException              if failed to locate report files
-   * @throws InterruptedException     if an interruption occurs
+   * @throws IOException          if failed to locate report files
+   * @throws InterruptedException if an interruption occurs
    */
-  public static List<PremirrorCacheData> create(final FilePath path)
-      throws IllegalArgumentException, IOException, InterruptedException {
-    List<PremirrorCacheData> list = new ArrayList<>();
+  public static void create(final FilePath path, final DataList dataList)
+      throws IOException, InterruptedException {
+    List<PremirrorCacheData> objects = new ArrayList<>();
     String recipe = path.getName();
     FilePath report = path.child("checkcache").child("caches.json");
     try {
       JSONObject json = JsonUtils.createObject(report);
       for (Object o : json.getJSONObject("Premirror").getJSONArray("Found")) {
-        list.add(new PremirrorCacheData(recipe, (String) o, true));
+        objects.add(new PremirrorCacheData(recipe, (String) o, true));
       }
       for (Object o : json.getJSONObject("Premirror").getJSONArray("Missed")) {
-        list.add(new PremirrorCacheData(recipe, (String) o, false));
+        objects.add(new PremirrorCacheData(recipe, (String) o, false));
       }
+      Collections.sort(objects);
+      dataList.addAll(objects);
+      dataList.add(PremirrorCacheData.class);
     } catch (JSONException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
+    } catch (NoSuchFileException ignored) {
+      // ignored
     }
-    Collections.sort(list);
-    return list;
   }
 }

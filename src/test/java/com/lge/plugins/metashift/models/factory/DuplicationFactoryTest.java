@@ -26,14 +26,14 @@ package com.lge.plugins.metashift.models.factory;
 
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,38 +50,48 @@ public class DuplicationFactoryTest {
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
   private StringBuilder builder;
-  private List<DuplicationData> objects;
+  private DataList dataList;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    objects = new ArrayList<>();
+    dataList = new DataList();
   }
 
-  private void assertValues(DuplicationData object, String recipe, String file, long lines,
+  private void assertDataList(boolean isAvailable, int size) {
+    assertEquals(isAvailable, dataList.isAvailable(DuplicationData.class));
+    assertEquals(size, dataList.size());
+  }
+
+  private void assertValues(int index, String recipe, String file, long lines,
       long duplicatedLines) {
-    assertEquals(recipe, object.getRecipe());
-    assertEquals(file, object.getFile());
-    assertEquals(lines, object.getLines());
-    assertEquals(duplicatedLines, object.getDuplicatedLines());
+    List<DuplicationData> objects = dataList.objects(DuplicationData.class)
+        .collect(Collectors.toList());
+    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(file, objects.get(index).getFile());
+    assertEquals(lines, objects.get(index).getLines());
+    assertEquals(duplicatedLines, objects.get(index).getDuplicatedLines());
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    DuplicationFactory.create(new FilePath(utils.getPath("path-to-unknown")));
+    DuplicationFactory.create(new FilePath(utils.getPath("path-to-unknown")), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    DuplicationFactory.create(new FilePath(directory));
+    DuplicationFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
-    DuplicationFactory.create(new FilePath(directory));
+    DuplicationFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -89,7 +99,7 @@ public class DuplicationFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    DuplicationFactory.create(new FilePath(directory));
+    DuplicationFactory.create(new FilePath(directory), dataList);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -97,7 +107,7 @@ public class DuplicationFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'size': [ { 'file': 'a.file' } ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    DuplicationFactory.create(new FilePath(directory));
+    DuplicationFactory.create(new FilePath(directory), dataList);
   }
 
   @Test
@@ -105,8 +115,8 @@ public class DuplicationFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = DuplicationFactory.create(new FilePath(directory));
-    assertEquals(0, objects.size());
+    DuplicationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
   }
 
   @Test
@@ -123,11 +133,9 @@ public class DuplicationFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = DuplicationFactory.create(new FilePath(directory));
-    assertEquals(1, objects.size());
-
-    DuplicationData object = objects.iterator().next();
-    assertValues(object, "C-1.0.0-r0", "a.file", 20, 2);
+    DuplicationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 1);
+    assertValues(0, "C-1.0.0-r0", "a.file", 20, 2);
   }
 
   @Test
@@ -149,11 +157,9 @@ public class DuplicationFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = DuplicationFactory.create(new FilePath(directory));
-    assertEquals(2, objects.size());
-
-    Iterator<DuplicationData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", 10, 5);
-    assertValues(iterator.next(), "D-1.0.0-r0", "b.file", 20, 5);
+    DuplicationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 2);
+    assertValues(0, "D-1.0.0-r0", "a.file", 10, 5);
+    assertValues(1, "D-1.0.0-r0", "b.file", 20, 5);
   }
 }

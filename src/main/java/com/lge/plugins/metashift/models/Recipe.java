@@ -38,12 +38,8 @@ import com.lge.plugins.metashift.models.factory.SharedStateCacheFactory;
 import com.lge.plugins.metashift.models.factory.TestFactory;
 import hudson.FilePath;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -66,50 +62,37 @@ public final class Recipe extends Data<Recipe> implements Streamable {
   /**
    * Represents the functional interface of factory methods.
    *
-   * @param <T> input object type
-   * @param <R> output object type
+   * @param <T> first input type
+   * @param <V> second input type
    */
   @FunctionalInterface
-  private interface FactoryFunction<T, R> {
+  private interface FactoryFunction<T, V> {
 
-    R apply(T t) throws IOException, InterruptedException;
+    void apply(T t, V v) throws IOException, InterruptedException;
   }
 
   /**
-   * Represents the object availability.
+   * Represents the data list.
    */
-  private final Set<Class<?>> classes;
-
-  /**
-   * Represents the heterogeneous data list.
-   */
-  private final List<Object> objects;
+  private final DataList dataList;
 
   /**
    * Creates new task to trigger a given factory method.
    *
-   * @param clazz   object type
    * @param functor to parse the file
    * @param path    to the report directory
    * @return task object
    */
-  private Callable<Void> newTask(Class<?> clazz, FactoryFunction<FilePath, List<?>> functor,
-      FilePath path) {
+  private Callable<Void> newTask(FactoryFunction<FilePath, DataList> functor, FilePath path,
+      DataList dataList) {
     return () -> {
-      try {
-        List<?> parsed = functor.apply(path);
-        objects.addAll(parsed);
-        classes.add(clazz);
-        parsed.forEach(o -> classes.add(o.getClass()));
-      } catch (IOException ignored) {
-        // ignored
-      }
+      functor.apply(path, dataList);
       return null;
     };
   }
 
   /**
-   * Create a Recipe object using the given recipe directory.
+   * Creates a Recipe object using the given recipe directory.
    *
    * @param path to the recipe directory
    * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
@@ -125,19 +108,20 @@ public final class Recipe extends Data<Recipe> implements Streamable {
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
+
     List<Callable<Void>> callables = Arrays.asList(
-        newTask(PremirrorCacheData.class, PremirrorCacheFactory::create, path),
-        newTask(SharedStateCacheData.class, SharedStateCacheFactory::create, path),
-        newTask(CodeSizeData.class, CodeSizeFactory::create, path),
-        newTask(CodeViolationData.class, CodeViolationFactory::create, path),
-        newTask(CommentData.class, CommentFactory::create, path),
-        newTask(ComplexityData.class, ComplexityFactory::create, path),
-        newTask(CoverageData.class, CoverageFactory::create, path),
-        newTask(DuplicationData.class, DuplicationFactory::create, path),
-        newTask(MutationTestData.class, MutationTestFactory::create, path),
-        newTask(RecipeSizeData.class, RecipeSizeFactory::create, path),
-        newTask(RecipeViolationData.class, RecipeViolationFactory::create, path),
-        newTask(TestData.class, TestFactory::create, path)
+        newTask(CodeSizeFactory::create, path, dataList),
+        newTask(CodeViolationFactory::create, path, dataList),
+        newTask(CommentFactory::create, path, dataList),
+        newTask(ComplexityFactory::create, path, dataList),
+        newTask(CoverageFactory::create, path, dataList),
+        newTask(DuplicationFactory::create, path, dataList),
+        newTask(MutationTestFactory::create, path, dataList),
+        newTask(PremirrorCacheFactory::create, path, dataList),
+        newTask(RecipeSizeFactory::create, path, dataList),
+        newTask(RecipeViolationFactory::create, path, dataList),
+        newTask(SharedStateCacheFactory::create, path, dataList),
+        newTask(TestFactory::create, path, dataList)
     );
     try {
       ExecutorService executor = Executors.newWorkStealingPool();
@@ -147,15 +131,15 @@ public final class Recipe extends Data<Recipe> implements Streamable {
     } catch (ExecutionException e) {
       Throwable cause = e.getCause();
       if (cause instanceof IllegalArgumentException) {
-        throw new IllegalArgumentException(cause);
+        throw (IllegalArgumentException) cause;
       }
       if (cause instanceof InterruptedException) {
-        throw new InterruptedException(cause.getMessage());
+        throw (InterruptedException) cause;
       }
       if (cause instanceof IOException) {
-        throw new IOException(cause);
+        throw (IOException) cause;
       }
-      throw new RuntimeException(cause);
+      throw new RuntimeException("Unknown exception: " + cause.getMessage(), cause);
     }
   }
 
@@ -167,30 +151,27 @@ public final class Recipe extends Data<Recipe> implements Streamable {
    */
   public Recipe(final String recipe) throws IllegalArgumentException {
     super(recipe);
-    objects = Collections.synchronizedList(new ArrayList<>());
-    classes = Collections.synchronizedSet(new HashSet<>());
+    dataList = new DataList();
   }
 
   /**
-   * Adds the given object to the collection.
+   * Adds the given object to the list.
    *
    * @param object to add
    * @param <T>    object type
    */
   public <T> void add(final T object) {
-    objects.add(object);
-    classes.add(object.getClass());
+    dataList.add(object);
   }
 
   @Override
   public <T> boolean isAvailable(final Class<T> clazz) {
-    return classes.stream().anyMatch(clazz::isAssignableFrom);
+    return dataList.isAvailable(clazz);
   }
 
-  @SuppressWarnings({"unchecked", "PMD.UnnecessaryModifier"})
   @Override
   public <T> Stream<T> objects(final Class<T> clazz) {
-    return (Stream<T>) objects.stream().filter(o -> clazz.isAssignableFrom(o.getClass()));
+    return dataList.objects(clazz);
   }
 
   @Override

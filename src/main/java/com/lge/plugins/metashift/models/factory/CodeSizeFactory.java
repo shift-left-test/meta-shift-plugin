@@ -25,9 +25,11 @@
 package com.lge.plugins.metashift.models.factory;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,33 +44,35 @@ import net.sf.json.JSONObject;
 public class CodeSizeFactory {
 
   /**
-   * Create a set of objects by parsing a report file from the given path.
+   * Creates a set of objects by parsing a report file from the given path.
    *
-   * @param path to the report directory
-   * @return a list of objects
-   * @throws IllegalArgumentException if failed to parse report files
-   * @throws IOException              if failed to locate report files
-   * @throws InterruptedException     if an interruption occurs
+   * @param path     to the report directory
+   * @param dataList to store objects
+   * @throws IOException          if failed to locate report files
+   * @throws InterruptedException if an interruption occurs
    */
-  public static List<CodeSizeData> create(final FilePath path)
-      throws IllegalArgumentException, IOException, InterruptedException {
-    List<CodeSizeData> list = new ArrayList<>();
+  public static void create(final FilePath path, final DataList dataList)
+      throws IOException, InterruptedException {
+    List<CodeSizeData> objects = new ArrayList<>();
     String recipe = path.getName();
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       JSONObject json = JsonUtils.createObject(report);
       for (Object o : json.getJSONArray("size")) {
-        list.add(new CodeSizeData(recipe,
+        objects.add(new CodeSizeData(recipe,
             ((JSONObject) o).getString("file"),
             ((JSONObject) o).getLong("total_lines"),
             ((JSONObject) o).getLong("functions"),
             ((JSONObject) o).getLong("classes")
         ));
       }
+      Collections.sort(objects);
+      dataList.addAll(objects);
+      dataList.add(CodeSizeData.class);
     } catch (JSONException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
+    } catch (NoSuchFileException ignored) {
+      // ignored
     }
-    Collections.sort(list);
-    return list;
   }
 }

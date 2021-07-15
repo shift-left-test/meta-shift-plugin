@@ -27,13 +27,13 @@ package com.lge.plugins.metashift.models.factory;
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.CoverageData;
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,39 +50,48 @@ public class CoverageFactoryTest {
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
   private StringBuilder builder;
-  private List<CoverageData> objects;
+  private DataList dataList;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    objects = new ArrayList<>();
+    dataList = new DataList();
   }
 
-  private void assertValues(CoverageData object, String recipe, String file, long line, long index,
+  private void assertDataList(boolean isAvailable, int size) {
+    assertEquals(isAvailable, dataList.isAvailable(CoverageData.class));
+    assertEquals(size, dataList.size());
+  }
+
+  private void assertValues(int i, String recipe, String file, long line, long index,
       boolean covered) {
-    assertEquals(recipe, object.getRecipe());
-    assertEquals(file, object.getFile());
-    assertEquals(line, object.getLine());
-    assertEquals(index, object.getIndex());
-    assertEquals(covered, object.isCovered());
+    List<CoverageData> objects = dataList.objects(CoverageData.class).collect(Collectors.toList());
+    assertEquals(recipe, objects.get(i).getRecipe());
+    assertEquals(file, objects.get(i).getFile());
+    assertEquals(line, objects.get(i).getLine());
+    assertEquals(index, objects.get(i).getIndex());
+    assertEquals(covered, objects.get(i).isCovered());
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    CoverageFactory.create(new FilePath(utils.getPath("path-to-unknown")));
+    CoverageFactory.create(new FilePath(utils.getPath("path-to-unknown")), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    CoverageFactory.create(new FilePath(directory));
+    CoverageFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "coverage").getParentFile();
-    CoverageFactory.create(new FilePath(directory));
+    CoverageFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -93,7 +102,7 @@ public class CoverageFactoryTest {
         .append("  <methods>")
         .append("    <method name='func1()'>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory));
+    CoverageFactory.create(new FilePath(directory), dataList);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -101,7 +110,7 @@ public class CoverageFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory));
+    CoverageFactory.create(new FilePath(directory), dataList);
   }
 
   @Test
@@ -109,8 +118,8 @@ public class CoverageFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<classes> </classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(new FilePath(directory));
-    assertEquals(0, objects.size());
+    CoverageFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
   }
 
   @Test
@@ -131,8 +140,8 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(new FilePath(directory));
-    assertEquals(0, objects.size());
+    CoverageFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
   }
 
   @Test
@@ -154,11 +163,9 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(new FilePath(directory));
-    assertEquals(1, objects.size());
-
-    Iterator<CoverageData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C-1.0.0-r0", "a.cpp", 2, 0, true);
+    CoverageFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 1);
+    assertValues(0, "C-1.0.0-r0", "a.cpp", 2, 0, true);
   }
 
   @Test
@@ -192,14 +199,12 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(new FilePath(directory));
-    assertEquals(4, objects.size());
-
-    Iterator<CoverageData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", 1, 0, true);
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", 10, 0, false);
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", 30, 0, true);
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.cpp", 30, 1, false);
+    CoverageFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 4);
+    assertValues(0, "D-1.0.0-r0", "a.cpp", 1, 0, true);
+    assertValues(1, "D-1.0.0-r0", "a.cpp", 10, 0, false);
+    assertValues(2, "D-1.0.0-r0", "a.cpp", 30, 0, true);
+    assertValues(3, "D-1.0.0-r0", "a.cpp", 30, 1, false);
   }
 
   @Test
@@ -249,13 +254,11 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    objects = CoverageFactory.create(new FilePath(directory));
-    assertEquals(4, objects.size());
-
-    Iterator<CoverageData> iterator = objects.iterator();
-    assertValues(iterator.next(), "E-1.0.0-r0", "a.cpp", 1, 0, true);
-    assertValues(iterator.next(), "E-1.0.0-r0", "a.cpp", 10, 0, false);
-    assertValues(iterator.next(), "E-1.0.0-r0", "b.cpp", 30, 0, true);
-    assertValues(iterator.next(), "E-1.0.0-r0", "b.cpp", 30, 1, false);
+    CoverageFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 4);
+    assertValues(0, "E-1.0.0-r0", "a.cpp", 1, 0, true);
+    assertValues(1, "E-1.0.0-r0", "a.cpp", 10, 0, false);
+    assertValues(2, "E-1.0.0-r0", "b.cpp", 30, 0, true);
+    assertValues(3, "E-1.0.0-r0", "b.cpp", 30, 1, false);
   }
 }

@@ -27,13 +27,13 @@ package com.lge.plugins.metashift.models.factory;
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,39 +50,48 @@ public class CodeSizeFactoryTest {
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
   private StringBuilder builder;
-  private List<CodeSizeData> objects;
+  private DataList dataList;
 
   @Before
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    objects = new ArrayList<>();
+    dataList = new DataList();
   }
 
-  private void assertValues(CodeSizeData object, String recipe, String file,
-      long lines, long functions, long classes) {
-    assertEquals(recipe, object.getRecipe());
-    assertEquals(file, object.getFile());
-    assertEquals(lines, object.getLines());
-    assertEquals(functions, object.getFunctions());
-    assertEquals(classes, object.getClasses());
+  private void assertDataList(boolean isAvailable, int size) {
+    assertEquals(isAvailable, dataList.isAvailable(CodeSizeData.class));
+    assertEquals(size, dataList.size());
   }
 
-  @Test(expected = IOException.class)
+  private void assertValues(int index, String recipe, String file, long lines, long functions,
+      long classes) {
+    List<CodeSizeData> objects = dataList.objects(CodeSizeData.class).collect(Collectors.toList());
+    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(file, objects.get(index).getFile());
+    assertEquals(lines, objects.get(index).getLines());
+    assertEquals(functions, objects.get(index).getFunctions());
+    assertEquals(classes, objects.get(index).getClasses());
+  }
+
+  @Test
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    CodeSizeFactory.create(new FilePath(utils.getPath("path-to-unknown")));
+    CodeSizeFactory.create(new FilePath(utils.getPath("path-to-unknown")), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    CodeSizeFactory.create(new FilePath(directory));
+    CodeSizeFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
-    CodeSizeFactory.create(new FilePath(directory));
+    CodeSizeFactory.create(new FilePath(directory), dataList);
+    assertDataList(false, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -90,7 +99,7 @@ public class CodeSizeFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    CodeSizeFactory.create(new FilePath(directory));
+    CodeSizeFactory.create(new FilePath(directory), dataList);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -98,7 +107,7 @@ public class CodeSizeFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'size': [ { 'file': 'a.file' } ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    CodeSizeFactory.create(new FilePath(directory));
+    CodeSizeFactory.create(new FilePath(directory), dataList);
   }
 
   @Test
@@ -106,8 +115,8 @@ public class CodeSizeFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = CodeSizeFactory.create(new FilePath(directory));
-    assertEquals(0, objects.size());
+    CodeSizeFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
   }
 
   @Test
@@ -128,11 +137,9 @@ public class CodeSizeFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = CodeSizeFactory.create(new FilePath(directory));
-    assertEquals(1, objects.size());
-
-    Iterator<CodeSizeData> iterator = objects.iterator();
-    assertValues(iterator.next(), "C-1.0.0-r0", "a.file", 20, 15, 6);
+    CodeSizeFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 1);
+    assertValues(0, "C-1.0.0-r0", "a.file", 20, 15, 6);
   }
 
   @Test
@@ -156,11 +163,9 @@ public class CodeSizeFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    objects = CodeSizeFactory.create(new FilePath(directory));
-    assertEquals(2, objects.size());
-
-    Iterator<CodeSizeData> iterator = objects.iterator();
-    assertValues(iterator.next(), "D-1.0.0-r0", "a.file", 10, 10, 5);
-    assertValues(iterator.next(), "D-1.0.0-r0", "b.file", 20, 20, 10);
+    CodeSizeFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 2);
+    assertValues(0, "D-1.0.0-r0", "a.file", 10, 10, 5);
+    assertValues(1, "D-1.0.0-r0", "b.file", 20, 20, 10);
   }
 }
