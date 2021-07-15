@@ -4,7 +4,7 @@
   <j:set var="publisher_class" value="com.lge.plugins.metashift.ui.project.MetaShiftPublisher"/>
   <style>
     .rate-input {
-    width: 60px;
+    width: 80px;
     text-align: right;
     }
     .evaluate {
@@ -54,7 +54,7 @@
         value="${it.premirrorCacheThreshold}"
         default="${descriptor.configuration.premirrorCacheThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>%
+        clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>
   <f:entry field="SharedStateCache">
@@ -70,7 +70,7 @@
         value="${it.sharedStateCacheThreshold}"
         default="${descriptor.configuration.sharedStateCacheThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>%
+        clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>
   <f:entry field="RecipeViolation">
@@ -86,7 +86,7 @@
         value="${it.recipeViolationThreshold}"
         default="${descriptor.configuration.recipeViolationThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>
+        clazz="rate-input" step="0.01" min="0" />
     </div>
   </f:entry>
   <f:entry field="Comment">
@@ -102,7 +102,7 @@
         value="${it.commentThreshold}"
         default="${descriptor.configuration.commentThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>%
+        clazz="rate-input"  min="0" max="100" />%
     </div>
   </f:entry>
   <f:entry field="CodeViolation">
@@ -118,7 +118,7 @@
         value="${it.codeViolationThreshold}"
         default="${descriptor.configuration.codeViolationThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>
+        clazz="rate-input" step="0.01" min="0" />
     </div>
   </f:entry>
   <f:entry field="Complexity">
@@ -134,7 +134,7 @@
         value="${it.complexityThreshold}"
         default="${descriptor.configuration.complexityThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>%
+        clazz="rate-input" min="0" max="100" />%
     </div>
     <div class="limit">Complexity Level</div>
     <div class="input">
@@ -142,7 +142,7 @@
         value="${it.complexityLevel}"
         default="${descriptor.configuration.complexityLevel}"
         checkUrl="'descriptorByName/${publisher_class}/checkLimit?value='+escape(this.value)"
-        clazz="rate-input"/>
+        clazz="rate-input" min="0" />
     </div>
   </f:entry>
   <f:entry field="Duplication">
@@ -158,7 +158,7 @@
         value="${it.duplicationThreshold}"
         default="${descriptor.configuration.duplicationThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>%
+        clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>
   <f:entry field="UnitTest">
@@ -174,7 +174,7 @@
         value="${it.testThreshold}"
         default="${descriptor.configuration.testThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>%
+        clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>
   <f:entry field="StatementCoverage">
@@ -190,7 +190,7 @@
         value="${it.statementCoverageThreshold}"
         default="${descriptor.configuration.statementCoverageThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>%
+        clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>
   <f:entry field="BranchCoverage">
@@ -206,7 +206,7 @@
         value="${it.branchCoverageThreshold}"
         default="${descriptor.configuration.branchCoverageThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>%
+        clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>
   <f:entry field="MutationTest">
@@ -222,7 +222,7 @@
         value="${it.mutationTestThreshold}"
         default="${descriptor.configuration.mutationTestThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
-        clazz="rate-input"/>%
+        clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>
 </j:jelly>
