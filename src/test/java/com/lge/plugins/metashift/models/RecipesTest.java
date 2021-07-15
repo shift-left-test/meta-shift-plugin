@@ -235,4 +235,15 @@ public class RecipesTest {
     Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe reports%n", 3);
     Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipes removed.%n", 3);
   }
+
+  @Test
+  public void testRemovesRecipesWithHiddenDirectoryName() throws IOException, InterruptedException {
+    File report = utils.createDirectory("report");
+    utils.createDirectory(report, ".hidden-project-1.0.0-r0");
+    utils.createDirectory(report, "qmake5-project-1.0.0-r0");
+    PrintStream logger = Mockito.mock(PrintStream.class);
+    recipes = new Recipes(new FilePath(report), logger);
+    Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe reports%n", 1);
+    Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipes removed.%n", 1);
+  }
 }
