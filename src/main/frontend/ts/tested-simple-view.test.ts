@@ -20,14 +20,14 @@ suite('tested-simple-view', () => {
 
   test('property', async () => {
     const el = (await fixture(html`
-        <tested-simple-view title="test"
+        <tested-simple-view name="test"
           tested='3'
           recipes='10'
           delta='0.101010'
         ></tested-simple-view>`
     )) as TestedSimpleView;
 
-    let elChild = el.querySelector('div.title');
+    let elChild = el.querySelector('div.metrics-name');
     assert.include(elChild.textContent, 'test',
         elChild.outerHTML);
 
@@ -42,14 +42,14 @@ suite('tested-simple-view', () => {
 
   test('property-no-recipes', async () => {
     const el = (await fixture(html`
-        <tested-simple-view title="test"
+        <tested-simple-view name="test"
           tested='0'
           recipes='0'
           delta='0'
         ></tested-simple-view>`
     )) as TestedSimpleView;
 
-    let elChild = el.querySelector('div.title');
+    let elChild = el.querySelector('div.metrics-name');
     assert.include(elChild.textContent, 'test',
         elChild.outerHTML);
 

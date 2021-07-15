@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.metrics;
 
+import net.sf.json.JSONObject;
+
 /**
  * Counter class.
  *
@@ -104,5 +106,9 @@ public class Counter {
     long denominator = getDenominator();
     long numerator = getNumerator();
     return denominator > 0 ? (double) numerator / (double) denominator : 0.0;
+  }
+
+  public JSONObject toJsonObject() {
+    return JSONObject.fromObject(this);
   }
 }

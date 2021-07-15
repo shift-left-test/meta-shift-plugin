@@ -304,7 +304,7 @@ metrics-simple-view {
     color: $na-text-color;
   }
 
-  .title {
+  .metrics-name {
     width: 100%;
     padding-top: 8px;
     font-size: 16px;
@@ -336,11 +336,31 @@ metrics-simple-view {
     width: 100%;
     height: 10px;
     background-color: $metrics-simple-view-progress-bg-color;
+    position: relative;
+    .progress-bar {
+      height: 10px;
+      background-color: $metrics-simple-view-progress-color;
+    }
+
+    .progress-tooltip {
+      visibility: hidden;
+      width: 170px;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      padding: 5px 0;
+      border-radius: 3px;
+ 
+      position: absolute;
+      left: 20px;
+      z-index: 1;
+    }
   }
 
-  .progress-bar {
-    height: 10px;
-    background-color: $metrics-simple-view-progress-color;
+  .progress:hover {
+    .progress-tooltip {
+      visibility: visible;
+    }
   }
 }
 
@@ -367,7 +387,7 @@ tested-simple-view {
     color: rgb(0, 0, 158);
   }
 
-  .title {
+  .metrics-name {
     padding-left: 0px;
   }
 }

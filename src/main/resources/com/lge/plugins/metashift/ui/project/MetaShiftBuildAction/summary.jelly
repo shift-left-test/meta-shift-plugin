@@ -7,35 +7,35 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <h2>Overview</h2>
     <h3>Build Performance</h3>
     <div class="section">
-      <metrics-simple-view title="Premirror Cache" class="summary percent"
+      <metrics-simple-view name="Premirror Cache" class="summary percent"
         metricsValue="${it.premirrorCacheJson}" />
-      <metrics-simple-view title="Shared State Cache" class="summary percent"
+      <metrics-simple-view name="Shared State Cache" class="summary percent"
         metricsValue="${it.sharedStateCacheJson}" />
-      <metrics-simple-view title="Recipe Violations" class="summary"
+      <metrics-simple-view name="Recipe Violations" class="summary"
         metricsValue="${it.recipeViolationsJson}" />
     </div>
     <h3>Code Quality</h3>
     <div class="section">
-      <metrics-simple-view title="Comments" class="summary percent"
+      <metrics-simple-view name="Comments" class="summary percent"
         metricsValue="${it.commentsJson}" />
-      <metrics-simple-view title="Code Violations" class="summary"
+      <metrics-simple-view name="Code Violations" class="summary"
         metricsValue="${it.codeViolationsJson}" />
-      <metrics-simple-view title="Complexity" class="summary percent"
+      <metrics-simple-view name="Complexity" class="summary percent"
         metricsValue="${it.complexityJson}" />
-      <metrics-simple-view title="Duplications" class="summary percent"
+      <metrics-simple-view name="Duplications" class="summary percent"
         metricsValue="${it.duplicationsJson}" />
     </div>
     <div class="section">
-      <tested-simple-view title="Tested Recipes" class="summary"
+      <tested-simple-view name="Tested Recipes" class="summary"
         tested="${it.testedRecipes}"
         recipes="${it.metrics.codeSize.recipes}" />
-      <metrics-simple-view title="Unit Tests" class="summary percent"
+      <metrics-simple-view name="Unit Tests" class="summary percent"
         metricsValue="${it.testJson}" />
-      <metrics-simple-view title="Statement Coverage" class="summary percent"
+      <metrics-simple-view name="Statement Coverage" class="summary percent"
         metricsValue="${it.statementCoverageJson}" />
-      <metrics-simple-view title="Branch Coverage" class="summary percent"
+      <metrics-simple-view name="Branch Coverage" class="summary percent"
         metricsValue="${it.branchCoverageJson}" />
-      <metrics-simple-view title="Mutation Tests" class="summary percent"
+      <metrics-simple-view name="Mutation Tests" class="summary percent"
         metricsValue="${it.mutationTestJson}" />
     </div>
   </div>

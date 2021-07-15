@@ -25,15 +25,21 @@ suite('metrics-simple-view', () => {
       ratio: 0.3333333,
     };
 
+    const qualifiedRate = {
+      denominator: 10,
+      numerator: 1,
+      ratio: 0.444444,
+    };
+
     const el = (await fixture(html`
-        <metrics-simple-view title="test"
+        <metrics-simple-view name="test"
           metricsValue='${JSON.stringify(metricsValue)}'
           delta='0.22222'
-          qualifiedRate='0.444444'
+          qualifiedRate='${JSON.stringify(qualifiedRate)}'
         ></metrics-simple-view>`
     )) as MetricsSimpleView;
 
-    let elChild = el.querySelector('div.title');
+    let elChild = el.querySelector('div.metrics-name');
     assert.include(elChild.textContent, 'test',
         elChild.outerHTML);
 
@@ -53,16 +59,22 @@ suite('metrics-simple-view', () => {
       ratio: 0.3333333,
     };
 
+    const qualifiedRate = {
+      denominator: 10,
+      numerator: 1,
+      ratio: 0.444444,
+    };
+
     const el = (await fixture(html`
-        <metrics-simple-view title="test"
+        <metrics-simple-view name="test"
           class="percent"
           metricsValue='${JSON.stringify(metricsValue)}'
           delta='0.22222'
-          qualifiedRate='0.444444'
+          qualifiedRate='${JSON.stringify(qualifiedRate)}'
         ></metrics-simple-view>`
     )) as MetricsSimpleView;
 
-    let elChild = el.querySelector('div.title');
+    let elChild = el.querySelector('div.metrics-name');
     assert.include(elChild.textContent, 'test',
         elChild.outerHTML);
 

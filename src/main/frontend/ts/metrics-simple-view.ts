@@ -6,7 +6,7 @@ import {customElement, property} from 'lit/decorators.js';
  * metrics simple view.
  */
 export class MetricsSimpleView extends LitElement {
-  @property() title
+  @property() name
   @property() metricsValue
   @property() url
   @property() delta
@@ -55,9 +55,12 @@ export class MetricsSimpleView extends LitElement {
       html`(${diffThresholdPrefix}${Number(diffThreshold).toFixed(2)})`) :
       html`(N/A)`;
 
+    const qualifiedrecipes = this.qualifiedRate ?
+     JSON.parse(this.qualifiedRate) : undefined;
+
     return html`<div class="board">
-      <div class="title">
-        <b>${this.title}</b>
+      <div class="metrics-name">
+        <b>${this.name}</b>
         <div class="icon ${iconClass}"></div>
       </div>
       <div class="size-number ${textClass}">
@@ -93,11 +96,17 @@ export class MetricsSimpleView extends LitElement {
           </div>` :
         html``}
     </div>
-    ${this.qualifiedRate ?
+    ${qualifiedrecipes ?
       html`
         <div class="progress">
-          <div class="progress-bar" style="width:${this.qualifiedRate * 100}%">
+          <div class="progress-bar"
+            style="width:${qualifiedrecipes.ratio * 100}%">
           </div>
+          <span class="progress-tooltip">
+          Qualified Recipes: ${Math.floor(qualifiedrecipes.ratio * 100)}%<br>
+          (${qualifiedrecipes.numerator.toLocaleString()}/
+          ${qualifiedrecipes.denominator.toLocaleString()})
+          </span>
         </div>` :
       html``}
     `;

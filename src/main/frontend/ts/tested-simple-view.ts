@@ -8,7 +8,7 @@ import {customElement, property} from 'lit/decorators.js';
 export class TestedSimpleView extends LitElement {
   @property() tested
   @property() recipes
-  @property() title
+  @property() name
   // TODO: need to input delta with previous build
   @property() delta
 
@@ -34,8 +34,8 @@ export class TestedSimpleView extends LitElement {
       Math.floor(this.tested / this.recipes * 100) : 0;
 
     return html`<div class="board">
-      <div class="title">
-        <b>${this.title}</b>
+      <div class="metrics-name">
+        <b>${this.name}</b>
       </div>
       <div class="size-number">
        ${testRate}%
