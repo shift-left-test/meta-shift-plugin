@@ -9,7 +9,7 @@ xmlns:c="/charts">
       <st:bind var="proxy" value="${it}" />
       <div class="metashift">
       <div class="page">
-        <h1>${it.run.project.displayName} ${it.run.displayName}</h1>
+        <h1>${it.run.parent.displayName} ${it.run.displayName}</h1>
         <h3>Lines of Code</h3>
         <div class="section">
           <code-size
