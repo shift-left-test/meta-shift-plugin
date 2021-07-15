@@ -59,7 +59,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
 
   @Override
   public String getUrlName() {
-    return "metashift_dashboard";
+    return "meta-shift-dashboard";
   }
 
   @Override

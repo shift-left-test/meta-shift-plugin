@@ -126,7 +126,7 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
 
   @Override
   public String getUrlName() {
-    return "metashift_build";
+    return "meta-shift-report";
   }
 
   // need to render at side panel link
