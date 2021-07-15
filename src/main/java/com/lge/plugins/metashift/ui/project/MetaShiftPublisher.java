@@ -126,6 +126,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     @Override
     public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
       req.bindJSON(this.getConfiguration(), formData);
+      this.getConfiguration().sanitizeValues();
 
       save();
 

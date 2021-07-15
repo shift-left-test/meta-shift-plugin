@@ -228,6 +228,8 @@ public class Configuration implements Criteria, BuildStatus {
     this.statementCoverageAsUnstable = statementCoverageAsUnstable;
     this.branchCoverageAsUnstable = branchCoverageAsUnstable;
     this.mutationTestAsUnstable = mutationTestAsUnstable;
+
+    this.sanitizeValues();
   }
 
   @Override
@@ -458,5 +460,23 @@ public class Configuration implements Criteria, BuildStatus {
   @Override
   public void setTestAsUnstable(boolean allowed) {
     testAsUnstable = allowed;
+  }
+
+  /**
+   * Sanitizes the input values.
+   */
+  public void sanitizeValues() {
+    this.premirrorCacheThreshold = Math.max(0, Math.min(100, this.premirrorCacheThreshold));
+    this.sharedStateCacheThreshold = Math.max(0, Math.min(100, this.sharedStateCacheThreshold));
+    this.recipeViolationThreshold = Math.max(0.0, this.recipeViolationThreshold);
+    this.commentThreshold = Math.max(0, Math.min(100, this.commentThreshold));
+    this.codeViolationThreshold = Math.max(0.0, this.codeViolationThreshold);
+    this.complexityLevel = Math.max(0, this.complexityLevel);
+    this.complexityThreshold = Math.max(0, Math.min(100, this.complexityThreshold));
+    this.duplicationThreshold = Math.max(0, Math.min(100, this.duplicationThreshold));
+    this.testThreshold = Math.max(0, Math.min(100, this.testThreshold));
+    this.statementCoverageThreshold = Math.max(0, Math.min(100, this.statementCoverageThreshold));
+    this.branchCoverageThreshold = Math.max(0, Math.min(100, this.branchCoverageThreshold));
+    this.mutationTestThreshold = Math.max(0, Math.min(100, this.mutationTestThreshold));
   }
 }
