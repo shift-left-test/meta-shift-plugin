@@ -89,49 +89,49 @@ public class MetaShiftBuildActionTest {
     builder.toFile(report);
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
-    
+
     assertEquals("meta-shift report", buildAction.getDisplayName());
     assertEquals("meta-shift-report", buildAction.getUrlName());
     assertEquals(1, buildAction.getRecipes().size());
     assertNotNull(buildAction.getMetrics());
 
-    Map [] expectedSeries = {
-      new HashMap<String, Object>() {{
-        put("path", "");
-        put("link", "");
-        put("name", "");
-        put("target", "_self");
-        put("value", new int [] {0, 0});
-        put("qualifiedMap", new HashMap<String, Boolean>());
-      }},
-      new HashMap<String, Object>() {{
-        put("path", "");
-        put("link", "");
-        put("name", "");
-        put("target", "_self");
-        put("value", new int [] {0, 100});
-        put("qualifiedMap", new HashMap<String, Boolean>());
-      }},
-      new HashMap<String, Object>() {{
-        put("path", "");
-        put("link", fakeRecipe.getRecipe());
-        put("name", fakeRecipe.getRecipe());
-        put("target", "_self");
-        put("value", new int [] {10, 18});
-        put("qualifiedMap", new HashMap<String, Boolean>() {{
-          put("Recipe Violations", false);
-          put("Duplications", false);
-          put("Branch Coverage", true);
-          put("Premirror Cache", false);
-          put("Shared State Cache", false);
-          put("Comments", true);
-          put("Mutation Tests", false);
-          put("Unit Tests", false);
-          put("Statement Coverage", false);
-          put("Code Violations", false);
-          put("Complexity", false);
-        }});
-      }},
+    Map[] expectedSeries = {
+        new HashMap<String, Object>() {{
+          put("path", "");
+          put("link", "");
+          put("name", "");
+          put("target", "_self");
+          put("value", new int[]{0, 0});
+          put("qualifiedMap", new HashMap<String, Boolean>());
+        }},
+        new HashMap<String, Object>() {{
+          put("path", "");
+          put("link", "");
+          put("name", "");
+          put("target", "_self");
+          put("value", new int[]{0, 100});
+          put("qualifiedMap", new HashMap<String, Boolean>());
+        }},
+        new HashMap<String, Object>() {{
+          put("path", "");
+          put("link", fakeRecipe.getRecipe());
+          put("name", fakeRecipe.getRecipe());
+          put("target", "_self");
+          put("value", new int[]{10, 18});
+          put("qualifiedMap", new HashMap<String, Boolean>() {{
+            put("Recipe Violations", false);
+            put("Duplications", false);
+            put("Branch Coverage", true);
+            put("Premirror Cache", false);
+            put("Shared State Cache", false);
+            put("Comments", true);
+            put("Mutation Tests", false);
+            put("Unit Tests", false);
+            put("Statement Coverage", false);
+            put("Code Violations", false);
+            put("Complexity", false);
+          }});
+        }},
     };
     assertEquals(JSONArray.fromObject(expectedSeries),
         buildAction.getRecipesTreemapModel().getJSONArray("series"));
@@ -149,7 +149,7 @@ public class MetaShiftBuildActionTest {
     assertEquals(1, codeSizeJson.getInt("recipes"));
     assertEquals(0, codeSizeJson.getInt("functions"));
     assertEquals(0, codeSizeJson.getInt("classes"));
-    // TODO: available is false, is it right?
+
     assertEquals(false, codeSizeJson.getBoolean("available"));
     assertEquals(1, codeSizeJson.getInt("files"));
     assertEquals(0, codeSizeJson.getInt("threshold"));
@@ -266,7 +266,7 @@ public class MetaShiftBuildActionTest {
     builder.toFile(report);
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
-    
+
     assertNull(buildAction.getPreviousBuildAction());
 
     assertEquals(1.0, buildAction.getTestedRecipesDelta(), 0);

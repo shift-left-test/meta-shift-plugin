@@ -91,7 +91,7 @@ public class RecipeActionTest {
     builder.toFile(report);
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
-    
+
     List<RecipeAction> recipeActions = buildAction.getActions(RecipeAction.class);
 
     assertEquals(1, recipeActions.size());
@@ -110,7 +110,7 @@ public class RecipeActionTest {
     assertEquals(false, codeSizeJson.getBoolean("qualified"));
     assertEquals(0, codeSizeJson.getInt("functions"));
     assertEquals(0, codeSizeJson.getInt("classes"));
-    // TODO: available is false, is it right?
+
     assertEquals(false, codeSizeJson.getBoolean("available"));
     assertEquals(1, codeSizeJson.getInt("files"));
     assertEquals(0, codeSizeJson.getInt("threshold"));
