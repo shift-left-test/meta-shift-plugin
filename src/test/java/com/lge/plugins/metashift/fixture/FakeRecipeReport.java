@@ -68,7 +68,7 @@ public class FakeRecipeReport implements FakeReport {
     object.put("file", path.getAbsolutePath());
     object.put("line", random.nextInt(Long.valueOf(lines).intValue()));
     object.put("severity", severity);
-    object.put("rule", RandomStringUtils.randomAlphabetic(30));
+    object.put("rule", RandomStringUtils.randomAlphabetic(50));
     object.put("description", RandomStringUtils.randomAlphabetic(30));
     return object;
   }

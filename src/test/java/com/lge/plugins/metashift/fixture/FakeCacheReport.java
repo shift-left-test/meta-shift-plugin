@@ -58,8 +58,8 @@ public class FakeCacheReport implements FakeReport {
     List<String> signatures = new ArrayList<>();
     for (long i = 0; i < size; i++) {
       String signature = String.format("%s:%s",
-          RandomStringUtils.randomAlphabetic(20),
-          RandomStringUtils.randomAlphabetic(20));
+          RandomStringUtils.randomAlphabetic(30),
+          RandomStringUtils.randomAlphabetic(30));
       signatures.add(signature);
     }
     return signatures;

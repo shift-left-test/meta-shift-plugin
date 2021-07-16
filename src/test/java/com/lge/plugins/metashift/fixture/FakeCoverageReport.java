@@ -48,7 +48,7 @@ public class FakeCoverageReport implements FakeReport {
     List<String> lines = new ArrayList<>();
     lines.add("<methods>");
     lines.add(String.format("<method name=\"%s\" line-rate=\"1.0\" branch-rate=\"1.0\">",
-        RandomStringUtils.randomAlphabetic(5, 20)));
+        RandomStringUtils.randomAlphabetic(50)));
     lines.add("<lines>");
     lines.add("<line hits=\"1\" number=\"0\" branch=\"false\"/>");
     lines.add("</lines>");

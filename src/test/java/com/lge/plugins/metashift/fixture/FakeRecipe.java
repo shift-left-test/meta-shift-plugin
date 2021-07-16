@@ -48,7 +48,7 @@ public class FakeRecipe implements FakeReport {
 
   public FakeRecipe(File sourcePath) {
     recipe = String.format("%s-%s-%s",
-        RandomStringUtils.randomAlphanumeric(10),
+        RandomStringUtils.randomAlphanumeric(30),
         RandomStringUtils.randomNumeric(5),
         RandomStringUtils.randomNumeric(5));
     this.sourcePath = sourcePath;

@@ -50,9 +50,9 @@ public class FakeCodeReport implements FakeReport {
   private JSONObject createComplexityObject(FakeSource source, int level) {
     JSONObject object = new JSONObject();
     object.put("file", source.getFile().getAbsolutePath());
-    object.put("function", RandomStringUtils.randomAlphabetic(1, 20));
-    object.put("start", RandomStringUtils.randomNumeric(10));
-    object.put("end", RandomStringUtils.randomNumeric(10, 20));
+    object.put("function", RandomStringUtils.randomAlphabetic(50));
+    object.put("start", RandomStringUtils.randomNumeric(1));
+    object.put("end", RandomStringUtils.randomNumeric(2, 10));
     object.put("value", level);
     return object;
   }
@@ -93,8 +93,8 @@ public class FakeCodeReport implements FakeReport {
   private JSONObject createViolationObject(FakeSource source, String level) {
     JSONObject object = new JSONObject();
     object.put("file", source.getFile().getAbsolutePath());
-    object.put("tool", RandomStringUtils.randomAlphabetic(5));
-    object.put("rule", RandomStringUtils.randomAlphabetic(5));
+    object.put("tool", RandomStringUtils.randomAlphabetic(50));
+    object.put("rule", RandomStringUtils.randomAlphabetic(50));
     object.put("level", level);
     object.put("severity", RandomStringUtils.randomNumeric(1));
     object.put("message", RandomStringUtils.randomAlphabetic(30));

@@ -57,8 +57,8 @@ public class FakeMutationTestReport implements FakeReport {
     lines.add(String.format("<sourceFile>%s</sourceFile>", source.getFilename()));
     lines.add(String.format("<sourceFilePath>%s</sourceFilePath>",
         source.getFile().getAbsolutePath()));
-    lines.add(formatted("<mutatedClass>%s</mutatedClass>", 5, 10));
-    lines.add(formatted("<mutatedMethod>%s</mutatedMethod>", 5, 10));
+    lines.add(formatted("<mutatedClass>%s</mutatedClass>", 50, 50));
+    lines.add(formatted("<mutatedMethod>%s</mutatedMethod>", 50, 50));
     lines.add(String.format("<lineNumber>%s</lineNumber>",
         RandomStringUtils.randomNumeric(1, Long.valueOf(source.getTotalLines()).intValue())));
     lines.add(formatted("<mutator>%s</mutator>", 3, 3));
