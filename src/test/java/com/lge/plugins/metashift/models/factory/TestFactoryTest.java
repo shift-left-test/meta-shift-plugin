@@ -92,22 +92,20 @@ public class TestFactoryTest {
     assertDataList(false, 0);
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("/testsuite>");
     utils.writeLines(builder, directory, "test", "1.xml");
     TestFactory.create(new FilePath(directory), dataList);
-    assertDataList(false, 0);
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   public void testCreateWithEmptyFile() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "test", "1.xml");
     TestFactory.create(new FilePath(directory), dataList);
-    assertDataList(false, 0);
   }
 
   @Test

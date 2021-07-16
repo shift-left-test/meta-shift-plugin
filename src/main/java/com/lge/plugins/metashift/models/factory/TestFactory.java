@@ -65,12 +65,16 @@ public class TestFactory {
         return;
       }
       for (FilePath file : files) {
-        objects.addAll(parseFile(recipe, file));
+        try {
+          objects.addAll(parseFile(recipe, file));
+        } catch (ParserConfigurationException | SAXException e) {
+          throw new IllegalArgumentException("Failed to parse: " + file, e);
+        }
       }
       Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(TestData.class);
-    } catch (ParserConfigurationException | SAXException | IOException ignored) {
+    } catch (IOException ignored) {
       // ignored
     }
   }
