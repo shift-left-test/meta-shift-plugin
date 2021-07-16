@@ -40,7 +40,6 @@ import hudson.model.Result;
 import hudson.util.FormValidation;
 import java.io.File;
 import java.util.List;
-import org.apache.commons.io.FileUtils;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;

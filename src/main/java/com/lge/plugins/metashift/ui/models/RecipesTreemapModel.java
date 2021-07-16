@@ -46,7 +46,7 @@ public class RecipesTreemapModel {
     private final String name;
     private final String link;
     private final Map<String, Boolean> qualifiedMap;
-  
+
     /**
      * constructor.
      */
@@ -59,7 +59,7 @@ public class RecipesTreemapModel {
       if (metrics != null) {
         this.value = metrics.getCodeSize().getLines();
         this.quality = (long) (metrics.getRatio() * 100);
-        
+
         if (metrics.getPremirrorCache().isAvailable()) {
           this.qualifiedMap.put("Premirror Cache",
               metrics.getPremirrorCache().isQualified());
@@ -103,7 +103,7 @@ public class RecipesTreemapModel {
         if (metrics.getMutationTest().isAvailable()) {
           this.qualifiedMap.put("Mutation Tests",
               metrics.getMutationTest().isQualified());
-        }  
+        }
       } else {
         this.value = 0;
         this.quality = 0;
