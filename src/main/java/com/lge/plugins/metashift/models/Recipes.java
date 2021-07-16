@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.models;
 
+import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
 import hudson.FilePath;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -98,7 +99,7 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
     Collections.sort(this);
 
     logger.println("[meta-shift-plugin] Removing recipes with no source files...");
-    this.removeIf(recipe -> !recipe.isAvailable(CodeSizeData.class));
+    this.removeIf(recipe -> new CodeSizeEvaluator().parse(recipe).getLines() == 0);
     logger.printf("[meta-shift-plugin] -> %d recipes removed.%n", directories.size() - this.size());
 
     logger.println("[meta-shift-plugin] Successfully parsed.");

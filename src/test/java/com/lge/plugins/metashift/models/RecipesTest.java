@@ -226,10 +226,12 @@ public class RecipesTest {
 
   @Test
   public void testRemovesRecipesWithNoSourceFiles() throws IOException, InterruptedException {
+    File source = utils.createDirectory("source");
     File report = utils.createDirectory("report");
-    utils.createDirectory(report, "cmake-project-1.0.0-r0");
-    utils.createDirectory(report, "qmake5-project-1.0.0-r0");
-    utils.createDirectory(report, "autotools-project-1.0.0-r0");
+    builder.add(new FakeRecipe(source).add(new FakeSource(0, 0, 0, 0)));
+    builder.add(new FakeRecipe(source).add(new FakeSource(0, 0, 0, 0)));
+    builder.add(new FakeRecipe(source).add(new FakeSource(0, 0, 0, 0)));
+    builder.toFile(report);
     PrintStream logger = Mockito.mock(PrintStream.class);
     recipes = new Recipes(new FilePath(report), logger);
     Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe reports%n", 3);
