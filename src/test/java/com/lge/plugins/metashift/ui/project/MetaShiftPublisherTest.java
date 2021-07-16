@@ -34,14 +34,13 @@ import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeActionChild;
-import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.util.FormValidation;
 import java.io.File;
 import java.util.List;
-
+import org.apache.commons.io.FileUtils;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -64,12 +63,18 @@ public class MetaShiftPublisherTest {
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
 
-  private TemporaryFileUtils utils;
   private WebClient client;
+  private File workspace;
+  private File report;
+  private FakeReportBuilder builder;
+  private FakeRecipe fakeRecipe;
 
   @Before
   public void setUp() throws Exception {
-    utils = new TemporaryFileUtils(folder);
+    workspace = new File(folder.getRoot(), "workspace");
+    report = new File(workspace, "report");
+    builder = new FakeReportBuilder();
+    fakeRecipe = new FakeRecipe(new File(workspace, "source"));
 
     // HtmlUnit does not play well with JavaScript
     client = jenkins.createWebClient();
@@ -79,7 +84,6 @@ public class MetaShiftPublisherTest {
   @Test
   public void testConfigureRoundTripWithEmptyDirectory() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
-    File report = folder.newFolder("path", "to", "report");
     MetaShiftPublisher before = new MetaShiftPublisher(report.getAbsolutePath());
     project.getPublishersList().add(before);
 
@@ -93,14 +97,10 @@ public class MetaShiftPublisherTest {
   @Test
   public void testPerform() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
-    File workspace = utils.getPath("workspace");
-    File report = utils.getPath("workspace", "report");
     project.setCustomWorkspace(workspace.getAbsolutePath());
-    MetaShiftPublisher publisher = new MetaShiftPublisher("report");
+    MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
     project.getPublishersList().add(publisher);
 
-    FakeReportBuilder builder = new FakeReportBuilder();
-    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
     fakeRecipe
         .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
@@ -112,7 +112,7 @@ public class MetaShiftPublisherTest {
             .setMutationTests(1, 2, 3));
     builder.add(fakeRecipe);
     builder.toFile(report);
-    
+
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
     // verify MetaShiftBuildAction created.
@@ -136,15 +136,11 @@ public class MetaShiftPublisherTest {
   @Test
   public void testPerformWithCustomConfiguration() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
-    File workspace = utils.getPath("workspace");
-    File report = utils.getPath("workspace", "report");
     project.setCustomWorkspace(workspace.getAbsolutePath());
-    MetaShiftPublisher publisher = new MetaShiftPublisher("report");
+    MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
     publisher.setCustomConfiguration(new Configuration());
     project.getPublishersList().add(publisher);
 
-    FakeReportBuilder builder = new FakeReportBuilder();
-    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
     fakeRecipe
         .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
@@ -156,7 +152,7 @@ public class MetaShiftPublisherTest {
             .setMutationTests(1, 2, 3));
     builder.add(fakeRecipe);
     builder.toFile(report);
-    
+
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
     // verify MetaShiftBuildAction created.
@@ -178,12 +174,9 @@ public class MetaShiftPublisherTest {
   }
 
   @Test
-  public void pipelineJobTest() throws Exception {
+  public void testPipelineJobTest() throws Exception {
     WorkflowJob project = jenkins.createProject(WorkflowJob.class);
-    File workspace = utils.getPath("workspace");
-    File report = utils.getPath("workspace", "report");
-    FakeReportBuilder builder = new FakeReportBuilder();
-    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
+
     fakeRecipe
         .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
@@ -197,9 +190,9 @@ public class MetaShiftPublisherTest {
     builder.toFile(report);
 
     project.setDefinition(new CpsFlowDefinition("" +
-      "node {" +
-      String.format(" metashift reportRoot:'%s'", report.getAbsolutePath()) +
-      "}", true));
+        "node {" +
+        String.format(" metashift reportRoot:'%s'", report.getAbsolutePath()) +
+        "}", true));
     WorkflowRun run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
     // verify MetaShiftBuildAction created.
@@ -223,7 +216,6 @@ public class MetaShiftPublisherTest {
   @Test
   public void testPerformReportPathException() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
-    File workspace = utils.getPath("workspace");
     project.setCustomWorkspace(workspace.getAbsolutePath());
     MetaShiftPublisher publisher = new MetaShiftPublisher("reportDummy");
     project.getPublishersList().add(publisher);
@@ -235,7 +227,7 @@ public class MetaShiftPublisherTest {
   @Test
   public void testDoCheckThreshold() {
     MetaShiftPublisher.DescriptorImpl impl = new MetaShiftPublisher.DescriptorImpl();
-    
+
     assertEquals(FormValidation.ok(), impl.doCheckThreshold("0"));
     assertEquals(FormValidation.ok(), impl.doCheckThreshold("10"));
     assertEquals(FormValidation.ok(), impl.doCheckThreshold("100"));
@@ -253,7 +245,7 @@ public class MetaShiftPublisherTest {
   @Test
   public void testDoCheckPercentThreshold() {
     MetaShiftPublisher.DescriptorImpl impl = new MetaShiftPublisher.DescriptorImpl();
-    
+
     assertEquals(FormValidation.ok(), impl.doCheckPercentThreshold("0"));
     assertEquals(FormValidation.ok(), impl.doCheckPercentThreshold("10"));
     assertEquals(FormValidation.ok(), impl.doCheckPercentThreshold("100"));
@@ -271,7 +263,7 @@ public class MetaShiftPublisherTest {
   @Test
   public void testDoCheckLimit() {
     MetaShiftPublisher.DescriptorImpl impl = new MetaShiftPublisher.DescriptorImpl();
-    
+
     assertEquals(FormValidation.ok(), impl.doCheckLimit("0"));
     assertEquals(FormValidation.ok(), impl.doCheckLimit("10"));
     assertEquals(FormValidation.ok(), impl.doCheckLimit("100"));

@@ -32,7 +32,6 @@ import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
-import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -58,15 +57,25 @@ public class MetaShiftProjectActionTest {
   public TemporaryFolder folder = new TemporaryFolder();
 
   private FreeStyleProject project;
-  private TemporaryFileUtils utils;
+  private File report;
+  private FakeReportBuilder builder;
+  private FakeRecipe fakeRecipe;
 
   @Before
   public void setUp() throws Exception {
-    utils = new TemporaryFileUtils(folder);
+    File workspace = new File(folder.getRoot(), "workspace");
+    report = new File(workspace, "report");
+    builder = new FakeReportBuilder();
+    fakeRecipe = new FakeRecipe(new File(workspace, "source"));
 
     project = jenkins.createFreeStyleProject();
-    File workspace = utils.getPath("workspace");
     project.setCustomWorkspace(workspace.getAbsolutePath());
+  }
+
+  private void assertChartSize(JSONObject object, int legend, int series, int builds) {
+    assertEquals(legend, object.getJSONArray("legend").size());
+    assertEquals(series, object.getJSONArray("series").size());
+    assertEquals(builds, object.getJSONArray("builds").size());
   }
 
   @Test
@@ -80,10 +89,6 @@ public class MetaShiftProjectActionTest {
 
     verify(rsp).sendRedirect2("nodata");
 
-    File report = utils.getPath("workspace", "report");
-    report.delete();
-    FakeReportBuilder builder = new FakeReportBuilder();
-    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
     fakeRecipe
         .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
@@ -95,7 +100,8 @@ public class MetaShiftProjectActionTest {
             .setMutationTests(1, 2, 3));
     builder.add(fakeRecipe);
     builder.toFile(report);
-    MetaShiftPublisher publisher = new MetaShiftPublisher("report");
+
+    MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
     project.getPublishersList().add(publisher);
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
@@ -109,7 +115,7 @@ public class MetaShiftProjectActionTest {
   public void testGetTrendChartModel() throws Exception {
     // run without meta-shift publisher
     jenkins.buildAndAssertSuccess(project);
-    
+
     // run with invalid report path
     MetaShiftPublisher publisher = new MetaShiftPublisher("reportDummy");
     project.getPublishersList().add(publisher);
@@ -117,16 +123,7 @@ public class MetaShiftProjectActionTest {
     MetaShiftProjectAction projectAction = new MetaShiftProjectAction(project);
 
     assertEquals(project, projectAction.getProject());
-    
-    JSONObject chartModel = projectAction.getTrendChartModel();
-    assertEquals(11, chartModel.getJSONArray("legend").size());
-    assertEquals(11, chartModel.getJSONArray("series").size());
-    assertEquals(0, chartModel.getJSONArray("builds").size());
 
-    File report = utils.getPath("workspace", "report");
-    report.delete();
-    FakeReportBuilder builder = new FakeReportBuilder();
-    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
     fakeRecipe
         .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
@@ -139,17 +136,16 @@ public class MetaShiftProjectActionTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
 
+    assertChartSize(projectAction.getTrendChartModel(), 11, 11, 0);
+
     jenkins.buildAndAssertStatus(Result.FAILURE, project);
     project.getPublishersList().remove(publisher);
 
     // run with valid report path
-    publisher = new MetaShiftPublisher("report");
+    publisher = new MetaShiftPublisher(report.getName());
     project.getPublishersList().add(publisher);
     jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
-    JSONObject chartModel2 = projectAction.getTrendChartModel();
-    assertEquals(11, chartModel2.getJSONArray("legend").size());
-    assertEquals(11, chartModel2.getJSONArray("series").size());
-    assertEquals(1, chartModel2.getJSONArray("builds").size());
+    assertChartSize(projectAction.getTrendChartModel(), 11, 11, 1);
   }
 }

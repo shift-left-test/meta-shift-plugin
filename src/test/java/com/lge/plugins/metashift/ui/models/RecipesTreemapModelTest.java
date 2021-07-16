@@ -25,47 +25,43 @@
 package com.lge.plugins.metashift.ui.models;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.models.Configuration;
-
+import java.util.Arrays;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.junit.Test;
 
-import hudson.scheduler.Hash;
-
 public class RecipesTreemapModelTest {
+
+  @SafeVarargs
+  private final <T> JSONArray newJsonArray(T... values) {
+    JSONArray objects = new JSONArray();
+    objects.addAll(Arrays.asList(values));
+    return objects;
+  }
+
+  private JSONObject newJsonObject(JSONArray value) {
+    JSONObject object = new JSONObject();
+    object.put("path", "");
+    object.put("link", "");
+    object.put("name", "");
+    object.put("target", "_self");
+    object.put("value", value);
+    object.put("qualifiedMap", new JSONObject());
+    return object;
+  }
 
   @Test
   public void testInitData() {
     RecipesTreemapModel model = new RecipesTreemapModel();
 
-    Map [] expectedSeries = {
-      new HashMap<String, Object>() {{
-        put("path", "");
-        put("link", "");
-        put("name", "");
-        put("target", "_self");
-        put("value", new int [] {0, 0});
-        put("qualifiedMap", new HashMap<String, Boolean>());
-      }},
-      new HashMap<String, Object>() {{
-        put("path", "");
-        put("link", "");
-        put("name", "");
-        put("target", "_self");
-        put("value", new int [] {0, 100});
-        put("qualifiedMap", new HashMap<String, Boolean>());
-      }}
-    };
-
-    assertEquals(JSONArray.fromObject(expectedSeries),
-        JSONArray.fromObject(model.getSeries()));
+    JSONArray expected = new JSONArray();
+    expected.add(newJsonObject(newJsonArray(0, 0)));
+    expected.add(newJsonObject(newJsonArray(0, 100)));
+    assertEquals(expected, JSONArray.fromObject(model.getSeries()));
   }
 
   @Test
@@ -74,11 +70,10 @@ public class RecipesTreemapModelTest {
 
     Metrics metrics = new Metrics(new Configuration());
     model.add("test", metrics);
-    System.out.println(JSONArray.fromObject(model.getSeries()));
+
     long[] values = {0, 0};
 
-    assertNotNull(model.getSeries().stream().filter(o ->
-        "test".equals(o.getName()) && Arrays.equals(o.getValue(), values))
-        .findAny().orElse(null));
+    assertTrue(model.getSeries().stream()
+        .anyMatch(o -> "test".equals(o.getName()) && Arrays.equals(o.getValue(), values)));
   }
 }

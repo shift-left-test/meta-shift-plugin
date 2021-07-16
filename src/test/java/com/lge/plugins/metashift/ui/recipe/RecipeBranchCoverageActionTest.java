@@ -26,21 +26,18 @@ package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
-import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
-import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Before;
@@ -61,36 +58,42 @@ public class RecipeBranchCoverageActionTest {
   public TemporaryFolder folder = new TemporaryFolder();
 
   private FreeStyleProject project;
-  private TemporaryFileUtils utils;
+  private File report;
+  private FakeReportBuilder builder;
+  private FakeRecipe fakeRecipe;
 
   @Before
   public void setUp() throws Exception {
-    utils = new TemporaryFileUtils(folder);
+    File workspace = new File(folder.getRoot(), "workspace");
+    report = new File(workspace, "report");
+    builder = new FakeReportBuilder();
+    fakeRecipe = new FakeRecipe(new File(workspace, "source"));
 
     project = jenkins.createFreeStyleProject();
-    File workspace = utils.getPath("workspace");
     project.setCustomWorkspace(workspace.getAbsolutePath());
-    MetaShiftPublisher publisher = new MetaShiftPublisher("report");
+    MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
     project.getPublishersList().add(publisher);
+  }
+
+  private JSONObject newJsonObject(int count, int width, String label, String clazz) {
+    JSONObject object = new JSONObject();
+    object.put("count", count);
+    object.put("width", width);
+    object.put("label", label);
+    object.put("clazz", clazz);
+    return object;
   }
 
   @Test
   public void testCreate() throws Exception {
-    File report = utils.getPath("workspace", "report");
-    report.delete();
-    FakeReportBuilder builder = new FakeReportBuilder();
-    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
     fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
-        .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
+        .add(new FakeScript(20, 0, 0, 0))
+        .add(new FakeSource(10, 10, 0, 0)
             .setTests(1, 2, 3, 4)
-            .setStatementCoverage(1, 2)
-            .setBranchCoverage(3, 4)
-            .setMutationTests(1, 2, 3));
+            .setBranchCoverage(3, 4));
     builder.add(fakeRecipe);
     builder.toFile(report);
+
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
@@ -101,7 +104,7 @@ public class RecipeBranchCoverageActionTest {
     assertEquals("branch_coverage", action.getUrlName());
 
     assertEquals("42%", action.getScale());
- 
+
     JSONObject metricStatistics = action.getMetricStatisticsJson();
     assertEquals(0.42, metricStatistics.getDouble("average"), 0.01);
     assertEquals(0.42, metricStatistics.getDouble("min"), 0.01);
@@ -109,24 +112,13 @@ public class RecipeBranchCoverageActionTest {
     assertEquals(1, metricStatistics.getInt("count"));
     assertEquals(0.42, metricStatistics.getDouble("sum"), 0.01);
     assertEquals(0.42, metricStatistics.getDouble("scale"), 0.01);
-    assertEquals(true, metricStatistics.getBoolean("available"));
-    assertEquals(true, metricStatistics.getBoolean("percent"));
+    assertTrue(metricStatistics.getBoolean("available"));
+    assertTrue(metricStatistics.getBoolean("percent"));
 
-    Map [] expectedStatistics = {
-      new HashMap<String, Object>() {{
-        put("count", 3);
-        put("width", 42);
-        put("label", "Covered");
-        put("clazz", "valid-good");
-      }},
-      new HashMap<String, Object>() {{
-        put("count", 4);
-        put("width", 57);
-        put("label", "UnCovered");
-        put("clazz", "invalid");
-      }}
-    };
-    assertEquals(JSONArray.fromObject(expectedStatistics), action.getStatistics());
+    JSONArray expected = new JSONArray();
+    expected.add(newJsonObject(3, 42, "Covered", "valid-good"));
+    expected.add(newJsonObject(4, 57, "UnCovered", "invalid"));
+    assertEquals(expected, action.getStatistics());
 
     JSONArray recipeFiles = action.getTableModelJson();
     assertEquals(0.42, recipeFiles.getJSONObject(0).getDouble("coverage"), 0.01);
@@ -138,25 +130,18 @@ public class RecipeBranchCoverageActionTest {
   }
 
   @Test
-  public void testNotAvaliable() throws Exception {
-    File report = utils.getPath("workspace", "report");
-    report.delete();
-    FakeReportBuilder builder = new FakeReportBuilder();
-    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
+  public void testNotAvailable() throws Exception {
     fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
-        .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
-            .setTests(1, 2, 3, 4)
-            .setStatementCoverage(1, 2)
-            .setMutationTests(1, 2, 3));
+        .add(new FakeScript(20, 0, 0, 0))
+        .add(new FakeSource(10, 10, 0, 0)
+            .setTests(1, 2, 3, 4));
     builder.add(fakeRecipe);
     builder.toFile(report);
+
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
     RecipeBranchCoverageAction action = run.getAction(MetaShiftBuildAction.class)
-    .getAction(RecipeAction.class).getAction(RecipeBranchCoverageAction.class);
+        .getAction(RecipeAction.class).getAction(RecipeBranchCoverageAction.class);
 
     assertEquals("N/A", action.getScale());
   }

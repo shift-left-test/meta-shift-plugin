@@ -25,22 +25,20 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
-import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
-import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Before;
@@ -61,36 +59,40 @@ public class RecipeRecipeViolationsActionTest {
   public TemporaryFolder folder = new TemporaryFolder();
 
   private FreeStyleProject project;
-  private TemporaryFileUtils utils;
+  private File report;
+  private FakeReportBuilder builder;
+  private FakeRecipe fakeRecipe;
 
   @Before
   public void setUp() throws Exception {
-    utils = new TemporaryFileUtils(folder);
+    File workspace = new File(folder.getRoot(), "workspace");
+    report = new File(workspace, "report");
+    builder = new FakeReportBuilder();
+    fakeRecipe = new FakeRecipe(new File(workspace, "source"));
 
     project = jenkins.createFreeStyleProject();
-    File workspace = utils.getPath("workspace");
     project.setCustomWorkspace(workspace.getAbsolutePath());
-    MetaShiftPublisher publisher = new MetaShiftPublisher("report");
+    MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
     project.getPublishersList().add(publisher);
+  }
+
+  private JSONObject newJsonObject(int count, int width, String label, String clazz) {
+    JSONObject object = new JSONObject();
+    object.put("count", count);
+    object.put("width", width);
+    object.put("label", label);
+    object.put("clazz", clazz);
+    return object;
   }
 
   @Test
   public void testCreate() throws Exception {
-    File report = utils.getPath("workspace", "report");
-    report.delete();
-    FakeReportBuilder builder = new FakeReportBuilder();
-    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
     fakeRecipe
         .add(new FakeScript(10, 1, 2, 3))
-        .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
-            .setTests(1, 2, 3, 4)
-            .setStatementCoverage(1, 2)
-            .setBranchCoverage(3, 4)
-            .setMutationTests(1, 2, 3));
+        .add(new FakeSource(10, 10, 0, 0));
     builder.add(fakeRecipe);
     builder.toFile(report);
+
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
@@ -110,36 +112,20 @@ public class RecipeRecipeViolationsActionTest {
     assertEquals(1, metricStatistics.getInt("count"));
     assertEquals(0.6, metricStatistics.getDouble("sum"), 0.01);
     assertEquals(0.6, metricStatistics.getDouble("scale"), 0.01);
-    assertEquals(true, metricStatistics.getBoolean("available"));
-    assertEquals(false, metricStatistics.getBoolean("percent"));
+    assertTrue(metricStatistics.getBoolean("available"));
+    assertFalse(metricStatistics.getBoolean("percent"));
 
-    Map [] expectedStatistics = {
-      new HashMap<String, Object>() {{
-        put("count", 1);
-        put("width", 16);
-        put("label", "Major");
-        put("clazz", "major");
-      }},
-      new HashMap<String, Object>() {{
-        put("count", 2);
-        put("width", 33);
-        put("label", "Minor");
-        put("clazz", "minor");
-      }},
-      new HashMap<String, Object>() {{
-        put("count", 3);
-        put("width", 50);
-        put("label", "Info");
-        put("clazz", "informational");
-      }}
-    };
-    assertEquals(JSONArray.fromObject(expectedStatistics), action.getStatistics());
+    JSONArray expected = new JSONArray();
+    expected.add(newJsonObject(1, 16, "Major", "major"));
+    expected.add(newJsonObject(2, 33, "Minor", "minor"));
+    expected.add(newJsonObject(3, 50, "Info", "informational"));
+    assertEquals(expected, action.getStatistics());
 
     JSONArray recipeFiles = action.getTableModelJson();
     assertEquals(1, recipeFiles.getJSONObject(0).getInt("major"));
     assertEquals(2, recipeFiles.getJSONObject(0).getInt("minor"));
     assertEquals(3, recipeFiles.getJSONObject(0).getInt("info"));
-    
+
     String filePath = recipeFiles.getJSONObject(0).getString("file");
     JSONObject fileDetail = action.getFileViolationDetail(filePath);
     assertNotNull(fileDetail.getString("content"));
@@ -148,21 +134,12 @@ public class RecipeRecipeViolationsActionTest {
 
   @Test
   public void testStatisticsCountZero() throws Exception {
-    File report = utils.getPath("workspace", "report");
-    report.delete();
-    FakeReportBuilder builder = new FakeReportBuilder();
-    FakeRecipe fakeRecipe = new FakeRecipe(utils.getPath("path", "to", "source"));
     fakeRecipe
-        .add(new FakeScript(10, 0, 0, 0))
-        .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
-            .setTests(1, 2, 3, 4)
-            .setStatementCoverage(1, 2)
-            .setBranchCoverage(3, 4)
-            .setMutationTests(1, 2, 3));
+        .add(new FakeScript(20, 0, 0, 0))
+        .add(new FakeSource(10, 10, 0, 0));
     builder.add(fakeRecipe);
     builder.toFile(report);
+
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
 
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
@@ -171,26 +148,10 @@ public class RecipeRecipeViolationsActionTest {
     RecipeRecipeViolationsAction action = recipeAction
         .getAction(RecipeRecipeViolationsAction.class);
 
-    Map [] expectedStatistics = {
-      new HashMap<String, Object>() {{
-        put("count", 0);
-        put("width", 0);
-        put("label", "Major");
-        put("clazz", "major");
-      }},
-      new HashMap<String, Object>() {{
-        put("count", 0);
-        put("width", 0);
-        put("label", "Minor");
-        put("clazz", "minor");
-      }},
-      new HashMap<String, Object>() {{
-        put("count", 0);
-        put("width", 0);
-        put("label", "Info");
-        put("clazz", "informational");
-      }}
-    };
-    assertEquals(JSONArray.fromObject(expectedStatistics), action.getStatistics());
+    JSONArray expected = new JSONArray();
+    expected.add(newJsonObject(0, 0, "Major", "major"));
+    expected.add(newJsonObject(0, 0, "Minor", "minor"));
+    expected.add(newJsonObject(0, 0, "Info", "informational"));
+    assertEquals(expected, action.getStatistics());
   }
 }
