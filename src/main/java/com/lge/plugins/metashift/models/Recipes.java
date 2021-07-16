@@ -89,7 +89,7 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
     List<FilePath> directories = path.listDirectories().stream()
         .filter(directory -> !directory.getName().startsWith("."))
         .collect(Collectors.toList());
-    logger.printf("[meta-shift-plugin] -> Found %d recipe reports%n", directories.size());
+    logger.printf("[meta-shift-plugin] -> Found %d recipe data%n", directories.size());
 
     logger.println("[meta-shift-plugin] Parsing the meta-shift report...");
     for (FilePath directory : directories) {
@@ -98,9 +98,9 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
     }
     Collections.sort(this);
 
-    logger.println("[meta-shift-plugin] Removing recipes with no source files...");
+    logger.println("[meta-shift-plugin] Removing recipe data with no source files...");
     this.removeIf(recipe -> new CodeSizeEvaluator().parse(recipe).getLines() == 0);
-    logger.printf("[meta-shift-plugin] -> %d recipes removed.%n", directories.size() - this.size());
+    logger.printf("[meta-shift-plugin] -> %d recipe data removed.%n", directories.size() - this.size());
 
     logger.println("[meta-shift-plugin] Successfully parsed.");
   }

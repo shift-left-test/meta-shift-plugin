@@ -233,7 +233,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
     EnvVars env = run.getEnvironment(listener);
     FilePath reportPath = workspace.child(env.expand(this.reportRoot));
-    logger.printf("[meta-shift-plugin] Searching for all recipe reports in %s%n", reportPath);
+    logger.printf("[meta-shift-plugin] Searching for all report files in %s%n", reportPath);
 
     if (!reportPath.exists()) {
       throw new AbortException("No report directory found in " + reportPath);

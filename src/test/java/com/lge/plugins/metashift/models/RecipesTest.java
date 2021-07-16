@@ -234,8 +234,8 @@ public class RecipesTest {
     builder.toFile(report);
     PrintStream logger = Mockito.mock(PrintStream.class);
     recipes = new Recipes(new FilePath(report), logger);
-    Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe reports%n", 3);
-    Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipes removed.%n", 3);
+    Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe data%n", 3);
+    Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipe data removed.%n", 3);
   }
 
   @Test
@@ -245,7 +245,7 @@ public class RecipesTest {
     utils.createDirectory(report, "qmake5-project-1.0.0-r0");
     PrintStream logger = Mockito.mock(PrintStream.class);
     recipes = new Recipes(new FilePath(report), logger);
-    Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe reports%n", 1);
-    Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipes removed.%n", 1);
+    Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe data%n", 1);
+    Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipe data removed.%n", 1);
   }
 }
