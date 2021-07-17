@@ -38,13 +38,6 @@ import com.lge.plugins.metashift.models.factory.SharedStateCacheFactory;
 import com.lge.plugins.metashift.models.factory.TestFactory;
 import hudson.FilePath;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
 /**
@@ -60,36 +53,9 @@ public final class Recipe extends Data<Recipe> implements Streamable {
   private static final long serialVersionUID = -3212169684403928336L;
 
   /**
-   * Represents the functional interface of factory methods.
-   *
-   * @param <T> first input type
-   * @param <V> second input type
-   */
-  @FunctionalInterface
-  private interface FactoryFunction<T, V> {
-
-    void apply(T t, V v) throws IOException, InterruptedException;
-  }
-
-  /**
    * Represents the data list.
    */
   private final DataList dataList;
-
-  /**
-   * Creates new task to trigger a given factory method.
-   *
-   * @param functor to parse the file
-   * @param path    to the report directory
-   * @return task object
-   */
-  private Callable<Void> newTask(FactoryFunction<FilePath, DataList> functor, FilePath path,
-      DataList dataList) {
-    return () -> {
-      functor.apply(path, dataList);
-      return null;
-    };
-  }
 
   /**
    * Creates a Recipe object using the given recipe directory.
@@ -108,39 +74,18 @@ public final class Recipe extends Data<Recipe> implements Streamable {
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
-
-    List<Callable<Void>> callables = Arrays.asList(
-        newTask(CodeSizeFactory::create, path, dataList),
-        newTask(CodeViolationFactory::create, path, dataList),
-        newTask(CommentFactory::create, path, dataList),
-        newTask(ComplexityFactory::create, path, dataList),
-        newTask(CoverageFactory::create, path, dataList),
-        newTask(DuplicationFactory::create, path, dataList),
-        newTask(MutationTestFactory::create, path, dataList),
-        newTask(PremirrorCacheFactory::create, path, dataList),
-        newTask(RecipeSizeFactory::create, path, dataList),
-        newTask(RecipeViolationFactory::create, path, dataList),
-        newTask(SharedStateCacheFactory::create, path, dataList),
-        newTask(TestFactory::create, path, dataList)
-    );
-    try {
-      ExecutorService executor = Executors.newWorkStealingPool();
-      for (Future<Void> future : executor.invokeAll(callables)) {
-        future.get();
-      }
-    } catch (ExecutionException e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof IllegalArgumentException) {
-        throw (IllegalArgumentException) cause;
-      }
-      if (cause instanceof InterruptedException) {
-        throw (InterruptedException) cause;
-      }
-      if (cause instanceof IOException) {
-        throw (IOException) cause;
-      }
-      throw new RuntimeException("Unknown exception: " + cause.getMessage(), cause);
-    }
+    CodeSizeFactory.create(path, dataList);
+    CodeViolationFactory.create(path, dataList);
+    CommentFactory.create(path, dataList);
+    ComplexityFactory.create(path, dataList);
+    CoverageFactory.create(path, dataList);
+    DuplicationFactory.create(path, dataList);
+    MutationTestFactory.create(path, dataList);
+    PremirrorCacheFactory.create(path, dataList);
+    RecipeSizeFactory.create(path, dataList);
+    RecipeViolationFactory.create(path, dataList);
+    SharedStateCacheFactory.create(path, dataList);
+    TestFactory.create(path, dataList);
   }
 
   /**
