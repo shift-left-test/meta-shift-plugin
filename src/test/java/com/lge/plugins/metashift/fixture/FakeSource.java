@@ -29,9 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * FakeSource class.
@@ -40,7 +38,8 @@ import org.apache.commons.lang.RandomStringUtils;
  */
 public class FakeSource implements FakeFile {
 
-  private static final Random random = new Random();
+  private static final String SOURCE_LINE = "HELLO WORLD";
+
   private FakeRecipe recipe;
   private final String filename;
   private final long totalLines;
@@ -74,13 +73,13 @@ public class FakeSource implements FakeFile {
   public FakeSource(FakeRecipe recipe, long totalLines, long codeLines, long commentLines,
       long duplicatedLines) {
     this.recipe = recipe;
-    this.filename = RandomStringUtils.randomAlphabetic(20) + ".cpp";
+    this.filename = FakeRandom.nextString() + ".cpp";
     this.totalLines = totalLines;
     this.codeLines = codeLines;
     this.commentLines = commentLines;
     this.duplicatedLines = duplicatedLines;
-    this.classes = random.nextInt(10);
-    this.functions = random.nextInt(10);
+    this.classes = 0;
+    this.functions = 0;
     testPassed = 0;
     testFailed = 0;
     testError = 0;
@@ -251,7 +250,7 @@ public class FakeSource implements FakeFile {
   public void toFile() throws IOException {
     List<String> lines = new ArrayList<>();
     for (long i = 0; i < getTotalLines(); i++) {
-      lines.add(RandomStringUtils.random(50, true, true));
+      lines.add(SOURCE_LINE);
     }
     File file = getFile();
     FileUtils.forceMkdirParent(file);

@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * FakeMutationTest class.
@@ -44,25 +43,17 @@ public class FakeMutationTestReport implements FakeReport {
     this.recipe = recipe;
   }
 
-  private String formatted(String format, long min, long max) {
-    return String.format(format,
-        RandomStringUtils.randomAlphabetic(
-            Long.valueOf(min).intValue(),
-            Long.valueOf(max).intValue()));
-  }
-
   private List<String> createKilledMutationTest(FakeSource source) {
     List<String> lines = new ArrayList<>();
     lines.add("<mutation detected=\"true\">");
     lines.add(String.format("<sourceFile>%s</sourceFile>", source.getFilename()));
     lines.add(String.format("<sourceFilePath>%s</sourceFilePath>",
         source.getFile().getAbsolutePath()));
-    lines.add(formatted("<mutatedClass>%s</mutatedClass>", 50, 50));
-    lines.add(formatted("<mutatedMethod>%s</mutatedMethod>", 50, 50));
-    lines.add(String.format("<lineNumber>%s</lineNumber>",
-        RandomStringUtils.randomNumeric(1, Long.valueOf(source.getTotalLines()).intValue())));
-    lines.add(formatted("<mutator>%s</mutator>", 3, 3));
-    lines.add(formatted("<killingTest>%s</killingTest>", 10, 30));
+    lines.add(String.format("<mutatedClass>%s</mutatedClass>", FakeRandom.nextString()));
+    lines.add(String.format("<mutatedMethod>%s</mutatedMethod>", FakeRandom.nextString()));
+    lines.add(String.format("<lineNumber>%s</lineNumber>", FakeRandom.nextNumber()));
+    lines.add(String.format("<mutator>%s</mutator>", FakeRandom.nextString()));
+    lines.add(String.format("<killingTest>%s</killingTest>", FakeRandom.nextString()));
     lines.add("</mutation>");
     return lines;
   }
@@ -81,11 +72,10 @@ public class FakeMutationTestReport implements FakeReport {
     lines.add(String.format("<sourceFile>%s</sourceFile>", source.getFilename()));
     lines.add(String.format("<sourceFilePath>%s</sourceFilePath>",
         source.getFile().getAbsolutePath()));
-    lines.add(formatted("<mutatedClass>%s</mutatedClass>", 5, 10));
-    lines.add(formatted("<mutatedMethod>%s</mutatedMethod>", 5, 10));
-    lines.add(String.format("<lineNumber>%s</lineNumber>",
-        RandomStringUtils.randomNumeric(1, Long.valueOf(source.getTotalLines()).intValue())));
-    lines.add(formatted("<mutator>%s</mutator>", 3, 3));
+    lines.add(String.format("<mutatedClass>%s</mutatedClass>", FakeRandom.nextString()));
+    lines.add(String.format("<mutatedMethod>%s</mutatedMethod>", FakeRandom.nextString()));
+    lines.add(String.format("<lineNumber>%s</lineNumber>", FakeRandom.nextNumber()));
+    lines.add(String.format("<mutator>%s</mutator>", FakeRandom.nextString()));
     lines.add("<killingTest></killingTest>");
     lines.add("</mutation>");
     return lines;
@@ -105,11 +95,10 @@ public class FakeMutationTestReport implements FakeReport {
     lines.add(String.format("<sourceFile>%s</sourceFile>", source.getFilename()));
     lines.add(String.format("<sourceFilePath>%s</sourceFilePath>",
         source.getFile().getAbsolutePath()));
-    lines.add(formatted("<mutatedClass>%s</mutatedClass>", 5, 10));
-    lines.add(formatted("<mutatedMethod>%s</mutatedMethod>", 5, 10));
-    lines.add(String.format("<lineNumber>%s</lineNumber>",
-        RandomStringUtils.randomNumeric(1, Long.valueOf(source.getTotalLines()).intValue())));
-    lines.add(formatted("<mutator>%s</mutator>", 3, 3));
+    lines.add(String.format("<mutatedClass>%s</mutatedClass>", FakeRandom.nextString()));
+    lines.add(String.format("<mutatedMethod>%s</mutatedMethod>", FakeRandom.nextString()));
+    lines.add(String.format("<lineNumber>%s</lineNumber>", FakeRandom.nextNumber()));
+    lines.add(String.format("<mutator>%s</mutator>", FakeRandom.nextString()));
     lines.add("<killingTest></killingTest>");
     lines.add("</mutation>");
     return lines;

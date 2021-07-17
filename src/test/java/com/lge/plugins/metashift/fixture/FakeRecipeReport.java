@@ -29,10 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * FakeRecipeReport class.
@@ -41,7 +39,6 @@ import org.apache.commons.lang.RandomStringUtils;
  */
 public class FakeRecipeReport implements FakeReport {
 
-  private final Random random = new Random();
   private final FakeRecipe recipe;
 
   public FakeRecipeReport(FakeRecipe recipe) {
@@ -66,10 +63,10 @@ public class FakeRecipeReport implements FakeReport {
   private JSONObject createIssueObject(File path, String severity, long lines) {
     JSONObject object = new JSONObject();
     object.put("file", path.getAbsolutePath());
-    object.put("line", random.nextInt(Long.valueOf(lines).intValue()));
+    object.put("line", FakeRandom.nextNumber());
     object.put("severity", severity);
-    object.put("rule", RandomStringUtils.randomAlphabetic(50));
-    object.put("description", RandomStringUtils.randomAlphabetic(30));
+    object.put("rule", FakeRandom.nextString());
+    object.put("description", FakeRandom.nextString());
     return object;
   }
 

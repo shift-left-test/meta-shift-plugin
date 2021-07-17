@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * FakeCacheReport class.
@@ -57,10 +56,7 @@ public class FakeCacheReport implements FakeReport {
   private List<String> createCacheList(long size) {
     List<String> signatures = new ArrayList<>();
     for (long i = 0; i < size; i++) {
-      String signature = String.format("%s:%s",
-          RandomStringUtils.randomAlphabetic(30),
-          RandomStringUtils.randomAlphabetic(30));
-      signatures.add(signature);
+      signatures.add(FakeRandom.nextString());
     }
     return signatures;
   }

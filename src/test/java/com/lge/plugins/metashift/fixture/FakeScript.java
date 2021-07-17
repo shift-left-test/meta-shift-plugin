@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * FakeScript class.
@@ -38,6 +37,8 @@ import org.apache.commons.lang.RandomStringUtils;
  * @author Sung Gon Kim
  */
 public class FakeScript implements FakeFile {
+
+  private static final String SOURCE_LINE = "HELLO WORLD";
 
   private FakeRecipe recipe;
   private final String filename;
@@ -61,7 +62,7 @@ public class FakeScript implements FakeFile {
   public FakeScript(FakeRecipe recipe, long lines, long majorIssues, long minorIssues,
       long infoIssues) {
     this.recipe = recipe;
-    this.filename = RandomStringUtils.randomAlphabetic(20) + ".bb";
+    this.filename = FakeRandom.nextString() + ".bb";
     this.lines = lines;
     this.majorIssues = majorIssues;
     this.minorIssues = minorIssues;
@@ -109,7 +110,7 @@ public class FakeScript implements FakeFile {
   public void toFile() throws IOException {
     List<String> lines = new ArrayList<>();
     for (long i = 0; i < getLines(); i++) {
-      lines.add(RandomStringUtils.randomAlphanumeric(50));
+      lines.add(SOURCE_LINE);
     }
     File file = getFile();
     FileUtils.forceMkdirParent(file);

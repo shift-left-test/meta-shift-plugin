@@ -32,7 +32,6 @@ import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * FakeCodeReport class.
@@ -50,9 +49,9 @@ public class FakeCodeReport implements FakeReport {
   private JSONObject createComplexityObject(FakeSource source, int level) {
     JSONObject object = new JSONObject();
     object.put("file", source.getFile().getAbsolutePath());
-    object.put("function", RandomStringUtils.randomAlphabetic(50));
-    object.put("start", RandomStringUtils.randomNumeric(1));
-    object.put("end", RandomStringUtils.randomNumeric(2, 10));
+    object.put("function", FakeRandom.nextString());
+    object.put("start", FakeRandom.nextNumber());
+    object.put("end", FakeRandom.nextNumber());
     object.put("value", level);
     return object;
   }
@@ -93,14 +92,14 @@ public class FakeCodeReport implements FakeReport {
   private JSONObject createViolationObject(FakeSource source, String level) {
     JSONObject object = new JSONObject();
     object.put("file", source.getFile().getAbsolutePath());
-    object.put("tool", RandomStringUtils.randomAlphabetic(50));
-    object.put("rule", RandomStringUtils.randomAlphabetic(50));
+    object.put("tool", FakeRandom.nextString());
+    object.put("rule", FakeRandom.nextString());
     object.put("level", level);
-    object.put("severity", RandomStringUtils.randomNumeric(1));
-    object.put("message", RandomStringUtils.randomAlphabetic(30));
-    object.put("description", RandomStringUtils.randomAlphabetic(30));
-    object.put("line", RandomStringUtils.randomNumeric(30));
-    object.put("column", RandomStringUtils.randomNumeric(30));
+    object.put("severity", 1);
+    object.put("message", FakeRandom.nextString());
+    object.put("description", FakeRandom.nextString());
+    object.put("line", FakeRandom.nextNumber());
+    object.put("column", FakeRandom.nextNumber());
     return object;
   }
 

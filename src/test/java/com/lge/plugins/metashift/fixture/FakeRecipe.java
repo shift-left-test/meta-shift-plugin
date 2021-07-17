@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * FakeRecipe class.
@@ -47,10 +46,7 @@ public class FakeRecipe implements FakeReport {
   private final List<FakeScript> scripts;
 
   public FakeRecipe(File sourcePath) {
-    recipe = String.format("%s-%s-%s",
-        RandomStringUtils.randomAlphanumeric(30),
-        RandomStringUtils.randomNumeric(5),
-        RandomStringUtils.randomNumeric(5));
+    recipe = String.format("%s-1.0.0-r0", FakeRandom.nextString());
     this.sourcePath = sourcePath;
     premirrorFound = 0;
     premirrorMissed = 0;
