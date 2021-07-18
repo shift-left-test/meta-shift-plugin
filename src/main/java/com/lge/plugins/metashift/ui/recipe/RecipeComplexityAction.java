@@ -48,7 +48,7 @@ public class RecipeComplexityAction
 
   static final String STORE_KEY_COMPLEXITYLIST = "ComplexityList";
 
-  private final long complexityLevel;
+  private final long complexityTolerance;
 
   /**
    * constructor.
@@ -80,15 +80,15 @@ public class RecipeComplexityAction
     }
 
     JSONArray fileComplexityArray = new JSONArray();
-    complexityLevel =
-        this.getParentAction().getParentAction().getConfiguration().getComplexityLevel();
+    complexityTolerance =
+        this.getParentAction().getParentAction().getConfiguration().getComplexityTolerance();
 
     fileComplexityList.forEach((file, complexityList) -> {
       JSONObject fileComplexity = new JSONObject();
       fileComplexity.put("file", file);
       fileComplexity.put("functions", complexityList.size());
       fileComplexity.put("complexFunctions",
-          complexityList.stream().filter(o -> o.getValue() >= complexityLevel).count());
+          complexityList.stream().filter(o -> o.getValue() >= complexityTolerance).count());
       fileComplexityArray.add(fileComplexity);
 
       try {
@@ -145,7 +145,7 @@ public class RecipeComplexityAction
     List<ComplexityData> dataList = this.getDataSource().get(
         this.getParentAction().getName(), codePath, STORE_KEY_COMPLEXITYLIST);
 
-    result.put("complexityLevel", complexityLevel);
+    result.put("complexityTolerance", complexityTolerance);
     result.put("dataList", dataList);
     result.put("content", this.readFileContents(codePath));
 

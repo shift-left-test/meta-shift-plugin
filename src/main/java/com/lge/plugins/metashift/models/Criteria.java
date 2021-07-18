@@ -88,18 +88,18 @@ public interface Criteria {
   void setCommentThreshold(int threshold);
 
   /**
-   * Returns the complexity level.
+   * Returns the complexity tolerance.
    *
-   * @return complexity level
+   * @return complexity tolerance
    */
-  long getComplexityLevel();
+  long getComplexityTolerance();
 
   /**
-   * Sets the complexity level.
+   * Sets the complexity tolerance.
    *
-   * @param level fot the complexity
+   * @param tolerance fot the complexity
    */
-  void setComplexityLevel(long level);
+  void setComplexityTolerance(long tolerance);
 
   /**
    * Returns the complexity threshold.
@@ -142,6 +142,20 @@ public interface Criteria {
    * @param threshold for the branch coverage
    */
   void setBranchCoverageThreshold(int threshold);
+
+  /**
+   * Returns the minimum duplicate lines.
+   *
+   * @return minimum duplicate lines
+   */
+  long getDuplicationTolerance();
+
+  /**
+   * Sets the minimum duplicate lines.
+   *
+   * @param tolerance for duplications
+   */
+  void setDuplicationTolerance(long tolerance);
 
   /**
    * Returns the duplication threshold.

@@ -73,7 +73,7 @@ public class QualifiedRecipeCounterTest {
     configuration.setRecipeViolationThreshold(0.5);
     configuration.setCommentThreshold(50);
     configuration.setCodeViolationThreshold(0.5);
-    configuration.setComplexityLevel(5);
+    configuration.setComplexityTolerance(5);
     configuration.setComplexityThreshold(50);
     configuration.setDuplicationThreshold(50);
     configuration.setTestThreshold(50);
@@ -184,10 +184,10 @@ public class QualifiedRecipeCounterTest {
 
   @Test
   public void testGetDuplications() {
-    recipe1.add(new CodeSizeData("A-1.0.0-r0", "a.file", 5, 1, 1));
-    recipe1.add(new DuplicationData("A-1.0.0-r0", "a.file", 5, 5));
-    recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 5, 1, 1));
-    recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 5, 0));
+    recipe1.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
+    recipe1.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 10));
+    recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 10, 1, 1));
+    recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 10, 0));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     counter.parse(recipes);
     assertValues(counter.getDuplications(), 2, 1);

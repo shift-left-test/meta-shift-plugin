@@ -55,7 +55,7 @@ public class ComplexityEvaluatorTest {
   @Before
   public void setUp() {
     configuration = new Configuration();
-    configuration.setComplexityLevel(5);
+    configuration.setComplexityTolerance(5);
     configuration.setComplexityThreshold(50);
     evaluator = new ComplexityEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");

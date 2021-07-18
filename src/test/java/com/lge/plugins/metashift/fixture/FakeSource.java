@@ -59,7 +59,7 @@ public class FakeSource implements FakeFile {
   private long statementCoverageMissed;
   private long branchCoverageCovered;
   private long branchCoverageMissed;
-  private int complexityLevel;
+  private int complexityTolerance;
   private long complexityExceeded;
   private long complexityNormal;
   private long majorViolations;
@@ -91,7 +91,7 @@ public class FakeSource implements FakeFile {
     statementCoverageMissed = 0;
     branchCoverageCovered = 0;
     branchCoverageMissed = 0;
-    complexityLevel = 0;
+    complexityTolerance = 0;
     complexityExceeded = 0;
     complexityNormal = 0;
     majorViolations = 0;
@@ -176,8 +176,8 @@ public class FakeSource implements FakeFile {
     return branchCoverageMissed;
   }
 
-  public int getComplexityLevel() {
-    return complexityLevel;
+  public int getComplexityTolerance() {
+    return complexityTolerance;
   }
 
   public long getComplexityExceeded() {
@@ -232,8 +232,8 @@ public class FakeSource implements FakeFile {
     return this;
   }
 
-  public FakeSource setComplexity(int level, long exceeded, long normal) {
-    complexityLevel = level;
+  public FakeSource setComplexity(int tolerance, long exceeded, long normal) {
+    complexityTolerance = tolerance;
     complexityExceeded = exceeded;
     complexityNormal = normal;
     return this;

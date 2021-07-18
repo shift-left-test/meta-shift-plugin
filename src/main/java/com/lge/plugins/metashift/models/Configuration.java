@@ -54,9 +54,9 @@ public class Configuration implements Criteria, BuildStatus {
   private int commentThreshold;
 
   /**
-   * Represents the level of the complexity.
+   * Represents the tolerance of the complexity.
    */
-  private long complexityLevel;
+  private long complexityTolerance;
 
   /**
    * Represents the threshold for the complexity.
@@ -72,6 +72,11 @@ public class Configuration implements Criteria, BuildStatus {
    * Represents the threshold for the branch coverage.
    */
   private int branchCoverageThreshold;
+
+  /**
+   * Represents the duplication tolerance.
+   */
+  private long duplicationTolerance;
 
   /**
    * Represents the threshold for the duplications.
@@ -152,7 +157,7 @@ public class Configuration implements Criteria, BuildStatus {
    * Default constructor.
    */
   public Configuration() {
-    this(80, 80, 0.1, 30, 0.1, 4, 10, 10, 95, 80, 40, 85,
+    this(80, 80, 0.1, 30, 0.1, 4, 10, 5, 10, 95, 80, 40, 85,
         true, true, true, true, true, true, true, true, true, true, true);
   }
 
@@ -164,8 +169,9 @@ public class Configuration implements Criteria, BuildStatus {
    * @param recipeViolationThreshold   threshold
    * @param commentThreshold           threshold
    * @param codeViolationThreshold     threshold
-   * @param complexityLevel            complexity level
+   * @param complexityTolerance        complexity tolerance
    * @param complexityThreshold        threshold
+   * @param duplicationTolerance       duplication tolerance
    * @param duplicationThreshold       threshold
    * @param testThreshold              threshold
    * @param statementCoverageThreshold threshold
@@ -187,8 +193,9 @@ public class Configuration implements Criteria, BuildStatus {
       final double recipeViolationThreshold,
       final int commentThreshold,
       final double codeViolationThreshold,
-      final long complexityLevel,
+      final long complexityTolerance,
       final int complexityThreshold,
+      final long duplicationTolerance,
       final int duplicationThreshold,
       final int testThreshold,
       final int statementCoverageThreshold,
@@ -210,8 +217,9 @@ public class Configuration implements Criteria, BuildStatus {
     this.recipeViolationThreshold = recipeViolationThreshold;
     this.commentThreshold = commentThreshold;
     this.codeViolationThreshold = codeViolationThreshold;
-    this.complexityLevel = complexityLevel;
+    this.complexityTolerance = complexityTolerance;
     this.complexityThreshold = complexityThreshold;
+    this.duplicationTolerance = duplicationTolerance;
     this.duplicationThreshold = duplicationThreshold;
     this.testThreshold = testThreshold;
     this.statementCoverageThreshold = statementCoverageThreshold;
@@ -273,13 +281,13 @@ public class Configuration implements Criteria, BuildStatus {
   }
 
   @Override
-  public long getComplexityLevel() {
-    return complexityLevel;
+  public long getComplexityTolerance() {
+    return complexityTolerance;
   }
 
   @Override
-  public void setComplexityLevel(long level) {
-    complexityLevel = level;
+  public void setComplexityTolerance(long tolerance) {
+    complexityTolerance = tolerance;
   }
 
   @Override
@@ -310,6 +318,16 @@ public class Configuration implements Criteria, BuildStatus {
   @Override
   public void setBranchCoverageThreshold(int threshold) {
     branchCoverageThreshold = threshold;
+  }
+
+  @Override
+  public long getDuplicationTolerance() {
+    return duplicationTolerance;
+  }
+
+  @Override
+  public void setDuplicationTolerance(long tolerance) {
+    this.duplicationTolerance = tolerance;
   }
 
   @Override
@@ -466,17 +484,18 @@ public class Configuration implements Criteria, BuildStatus {
    * Sanitizes the input values.
    */
   public void sanitizeValues() {
-    this.premirrorCacheThreshold = Math.max(0, Math.min(100, this.premirrorCacheThreshold));
-    this.sharedStateCacheThreshold = Math.max(0, Math.min(100, this.sharedStateCacheThreshold));
-    this.recipeViolationThreshold = Math.max(0.0, this.recipeViolationThreshold);
-    this.commentThreshold = Math.max(0, Math.min(100, this.commentThreshold));
-    this.codeViolationThreshold = Math.max(0.0, this.codeViolationThreshold);
-    this.complexityLevel = Math.max(0, this.complexityLevel);
-    this.complexityThreshold = Math.max(0, Math.min(100, this.complexityThreshold));
-    this.duplicationThreshold = Math.max(0, Math.min(100, this.duplicationThreshold));
-    this.testThreshold = Math.max(0, Math.min(100, this.testThreshold));
-    this.statementCoverageThreshold = Math.max(0, Math.min(100, this.statementCoverageThreshold));
-    this.branchCoverageThreshold = Math.max(0, Math.min(100, this.branchCoverageThreshold));
-    this.mutationTestThreshold = Math.max(0, Math.min(100, this.mutationTestThreshold));
+    premirrorCacheThreshold = Math.max(0, Math.min(100, premirrorCacheThreshold));
+    sharedStateCacheThreshold = Math.max(0, Math.min(100, sharedStateCacheThreshold));
+    recipeViolationThreshold = Math.max(0.0, recipeViolationThreshold);
+    commentThreshold = Math.max(0, Math.min(100, commentThreshold));
+    codeViolationThreshold = Math.max(0.0, codeViolationThreshold);
+    complexityTolerance = Math.max(0, complexityTolerance);
+    complexityThreshold = Math.max(0, Math.min(100, complexityThreshold));
+    duplicationTolerance = Math.max(0, duplicationTolerance);
+    duplicationThreshold = Math.max(0, Math.min(100, duplicationThreshold));
+    testThreshold = Math.max(0, Math.min(100, testThreshold));
+    statementCoverageThreshold = Math.max(0, Math.min(100, statementCoverageThreshold));
+    branchCoverageThreshold = Math.max(0, Math.min(100, branchCoverageThreshold));
+    mutationTestThreshold = Math.max(0, Math.min(100, mutationTestThreshold));
   }
 }

@@ -42,12 +42,18 @@ public final class DuplicationEvaluator extends NegativeEvaluator<DuplicationEva
   private final boolean buildStatus;
 
   /**
+   * Represents the duplication tolerance.
+   */
+  private final long tolerance;
+
+  /**
    * Default constructor.
    *
    * @param configuration for evaluation
    */
   public DuplicationEvaluator(final Configuration configuration) {
     super((double) configuration.getDuplicationThreshold() / 100.0);
+    tolerance = configuration.getDuplicationTolerance();
     buildStatus = configuration.isDuplicationsAsUnstable();
   }
 
@@ -60,7 +66,8 @@ public final class DuplicationEvaluator extends NegativeEvaluator<DuplicationEva
   protected void parseImpl(final Streamable c) {
     setAvailable(c.isAvailable(CodeSizeData.class) && c.isAvailable(DuplicationData.class));
     setDenominator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum());
-    setNumerator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getDuplicatedLines)
-        .sum());
+    setNumerator(c.objects(DuplicationData.class)
+        .filter(o -> o.getDuplicatedLines() >= tolerance)
+        .mapToLong(DuplicationData::getDuplicatedLines).sum());
   }
 }

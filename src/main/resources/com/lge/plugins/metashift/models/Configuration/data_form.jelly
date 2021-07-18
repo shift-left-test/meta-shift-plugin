@@ -24,7 +24,7 @@
     }
     .limit {
     padding-left: 20px;
-    width: 150px;
+    width: 200px;
     display: inline-block;
     }
   </style>
@@ -136,11 +136,11 @@
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
         clazz="rate-input" min="0" max="100" />%
     </div>
-    <div class="limit">Complexity Level</div>
+    <div class="limit">Minimum Complexity</div>
     <div class="input">
-      <f:number field="complexityLevel"
-        value="${it.complexityLevel}"
-        default="${descriptor.configuration.complexityLevel}"
+      <f:number field="complexityTolerance"
+        value="${it.complexityTolerance}"
+        default="${descriptor.configuration.complexityTolerance}"
         checkUrl="'descriptorByName/${publisher_class}/checkLimit?value='+escape(this.value)"
         clazz="rate-input" min="0" />
     </div>
@@ -159,6 +159,14 @@
         default="${descriptor.configuration.duplicationThreshold}"
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
         clazz="rate-input" min="0" max="100" />%
+    </div>
+    <div class="limit">Minimum Duplicate Lines</div>
+    <div class="input">
+      <f:number field="duplicationTolerance"
+        value="${it.duplicationTolerance}"
+        default="${descriptor.configuration.duplicationTolerance}"
+        checkUrl="'descriptorByName/${publisher_class}/checkLimit?value='+escape(this.value)"
+        clazz="rate-input" min="0" />
     </div>
   </f:entry>
   <f:entry field="UnitTest">

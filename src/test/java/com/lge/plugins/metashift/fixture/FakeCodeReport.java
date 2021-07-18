@@ -60,7 +60,7 @@ public class FakeCodeReport implements FakeReport {
     JSONArray array = new JSONArray();
     for (FakeSource source : recipe.getSources()) {
       for (long i = 0; i < source.getComplexityExceeded(); i++) {
-        array.add(createComplexityObject(source, source.getComplexityLevel()));
+        array.add(createComplexityObject(source, source.getComplexityTolerance()));
       }
       for (long i = 0; i < source.getComplexityNormal(); i++) {
         array.add(createComplexityObject(source, 0));

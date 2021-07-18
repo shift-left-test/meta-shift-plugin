@@ -10,7 +10,7 @@ import {FileDetail} from '../common/file-detail';
  * complexity file view.
  */
 export class ComplexityFileView extends FileDetail {
-  private complexityLevel;
+  private complexityTolerance;
 
   /**
    * set source file override
@@ -18,7 +18,7 @@ export class ComplexityFileView extends FileDetail {
    */
   setSourceFile(response: unknown)
       :void {
-    this.complexityLevel = response['complexityLevel'];
+    this.complexityTolerance = response['complexityTolerance'];
     super.setSourceFile(response);
   }
   /**
@@ -93,11 +93,11 @@ export class ComplexityFileView extends FileDetail {
         const line = view.state.doc.lineAt(pos);
         if (this.dataList.some((data) =>
           data.start <= line.number && data.end >= line.number &&
-          data.value >= this.complexityLevel)) {
+          data.value >= this.complexityTolerance)) {
           builder.add(line.from, line.from, sourceComplexBlock);
         } else if (this.dataList.some((data) =>
           data.start <= line.number && data.end >= line.number &&
-          data.value < this.complexityLevel)) {
+          data.value < this.complexityTolerance)) {
           builder.add(line.from, line.from, sourceNotComplexBlock);
         }
         pos = line.to + 1;

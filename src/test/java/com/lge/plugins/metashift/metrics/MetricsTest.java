@@ -90,7 +90,7 @@ public class MetricsTest {
     configuration.setRecipeViolationThreshold(0.5);
     configuration.setCommentThreshold(50);
     configuration.setCodeViolationThreshold(0.5);
-    configuration.setComplexityLevel(5);
+    configuration.setComplexityTolerance(5);
     configuration.setComplexityThreshold(50);
     configuration.setDuplicationThreshold(50);
     configuration.setTestThreshold(50);

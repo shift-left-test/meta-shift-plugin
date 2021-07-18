@@ -45,9 +45,9 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
   private final boolean buildStatus;
 
   /**
-   * Represents the complexity level.
+   * Represents the complexity tolerance.
    */
-  private final long level;
+  private final long tolerance;
 
   /**
    * Default constructor.
@@ -56,7 +56,7 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
    */
   public ComplexityEvaluator(final Configuration configuration) {
     super((double) configuration.getComplexityThreshold() / 100.0);
-    level = configuration.getComplexityLevel();
+    tolerance = configuration.getComplexityTolerance();
     buildStatus = configuration.isComplexityAsUnstable();
   }
 
@@ -73,6 +73,6 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
 
     setAvailable(c.isAvailable(CodeSizeData.class) && c.isAvailable(ComplexityData.class));
     setDenominator(objects.stream().distinct().count());
-    setNumerator(objects.stream().distinct().filter(o -> o.getValue() >= level).count());
+    setNumerator(objects.stream().distinct().filter(o -> o.getValue() >= tolerance).count());
   }
 }
