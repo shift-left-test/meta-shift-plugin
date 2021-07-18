@@ -24,8 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.KilledMutationTestData;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.SkippedMutationTestData;
@@ -68,14 +67,20 @@ public final class MutationTestEvaluator extends PositiveEvaluator<MutationTestE
   private final Map<Type, Counter> collection;
 
   /**
+   * Represents the build status of the metric.
+   */
+  private final boolean buildStatus;
+
+  /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public MutationTestEvaluator(final Criteria criteria) {
-    super((double) criteria.getMutationTestThreshold() / 100.0);
+  public MutationTestEvaluator(final Configuration configuration) {
+    super((double) configuration.getMutationTestThreshold() / 100.0);
     collection = new EnumMap<>(Type.class);
     Stream.of(Type.values()).forEach(type -> collection.put(type, new Counter()));
+    buildStatus = configuration.isMutationTestAsUnstable();
   }
 
   /**
@@ -106,8 +111,8 @@ public final class MutationTestEvaluator extends PositiveEvaluator<MutationTestE
   }
 
   @Override
-  public boolean isStable(BuildStatus status) {
-    return !status.isMutationTestAsUnstable() || !isAvailable() || isQualified();
+  public boolean isStable() {
+    return !buildStatus || !isAvailable() || isQualified();
   }
 
   @Override

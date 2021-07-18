@@ -30,7 +30,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DuplicationData;
@@ -48,13 +47,14 @@ import org.junit.Test;
  */
 public class DuplicationEvaluatorTest {
 
+  private Configuration configuration;
   private DuplicationEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
 
   @Before
   public void setUp() {
-    Configuration configuration = new Configuration();
+    configuration = new Configuration();
     configuration.setDuplicationThreshold(50);
     evaluator = new DuplicationEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
@@ -161,38 +161,38 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testUnstableBuildStatusWithNoAvailableData() {
-    BuildStatus status = new Configuration();
-    status.setDuplicationsAsUnstable(true);
+    configuration.setDuplicationsAsUnstable(true);
+    evaluator = new DuplicationEvaluator(configuration);
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithQualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setDuplicationsAsUnstable(true);
+    configuration.setDuplicationsAsUnstable(true);
+    evaluator = new DuplicationEvaluator(configuration);
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0));
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setDuplicationsAsUnstable(true);
+    configuration.setDuplicationsAsUnstable(true);
+    evaluator = new DuplicationEvaluator(configuration);
     recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     evaluator.parse(recipe);
-    assertFalse(evaluator.isStable(status));
+    assertFalse(evaluator.isStable());
   }
 
   @Test
   public void testStableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setDuplicationsAsUnstable(false);
+    configuration.setDuplicationsAsUnstable(false);
+    evaluator = new DuplicationEvaluator(configuration);
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test

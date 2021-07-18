@@ -30,7 +30,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Configuration;
@@ -48,13 +47,14 @@ import org.junit.Test;
  */
 public class ComplexityEvaluatorTest {
 
+  private Configuration configuration;
   private ComplexityEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
 
   @Before
   public void setUp() {
-    Configuration configuration = new Configuration();
+    configuration = new Configuration();
     configuration.setComplexityLevel(5);
     configuration.setComplexityThreshold(50);
     evaluator = new ComplexityEvaluator(configuration);
@@ -174,38 +174,38 @@ public class ComplexityEvaluatorTest {
 
   @Test
   public void testUnstableBuildStatusWithNoAvailableData() {
-    BuildStatus status = new Configuration();
-    status.setComplexityAsUnstable(true);
+    configuration.setComplexityAsUnstable(true);
+    evaluator = new ComplexityEvaluator(configuration);
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithQualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setComplexityAsUnstable(true);
+    configuration.setComplexityAsUnstable(true);
+    evaluator = new ComplexityEvaluator(configuration);
     recipe.add(new ComplexityData("A-1.0.0-r0", "c.file", "f()", 5, 10, 0));
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setComplexityAsUnstable(true);
+    configuration.setComplexityAsUnstable(true);
+    evaluator = new ComplexityEvaluator(configuration);
     recipe.add(new CodeSizeData("A-1.0.0-r0", "c.file", 10, 1, 1));
     recipe.add(new ComplexityData("A-1.0.0-r0", "c.file", "f()", 5, 10, 100));
     evaluator.parse(recipe);
-    assertFalse(evaluator.isStable(status));
+    assertFalse(evaluator.isStable());
   }
 
   @Test
   public void testStableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setComplexityAsUnstable(false);
+    configuration.setComplexityAsUnstable(false);
+    evaluator = new ComplexityEvaluator(configuration);
     recipe.add(new ComplexityData("A-1.0.0-r0", "c.file", "f()", 5, 10, 100));
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test

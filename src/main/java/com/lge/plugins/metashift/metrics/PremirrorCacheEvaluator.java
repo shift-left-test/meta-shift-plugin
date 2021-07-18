@@ -24,8 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Streamable;
 
@@ -37,17 +36,23 @@ import com.lge.plugins.metashift.models.Streamable;
 public class PremirrorCacheEvaluator extends PositiveEvaluator<PremirrorCacheEvaluator> {
 
   /**
+   * Represents the build status of the metric.
+   */
+  private final boolean buildStatus;
+
+  /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public PremirrorCacheEvaluator(final Criteria criteria) {
-    super((double) criteria.getPremirrorCacheThreshold() / 100.0);
+  public PremirrorCacheEvaluator(final Configuration configuration) {
+    super((double) configuration.getPremirrorCacheThreshold() / 100.0);
+    buildStatus = configuration.isPremirrorCacheAsUnstable();
   }
 
   @Override
-  public boolean isStable(BuildStatus status) {
-    return !status.isPremirrorCacheAsUnstable() || !isAvailable() || isQualified();
+  public boolean isStable() {
+    return !buildStatus || !isAvailable() || isQualified();
   }
 
   @Override

@@ -260,7 +260,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       logger.printf("[meta-shift-plugin] Total time: %s%n",
           getFormattedTime(Duration.between(started, finished).toMillis()));
 
-      if (!buildAction.getMetrics().isStable(configuration)) {
+      if (!buildAction.getMetrics().isStable()) {
         logger.println("[meta-shift-plugin] NOTE: one of the metrics does not meet the goal.");
         if (runResult.isBetterThan(Result.UNSTABLE)) {
           run.setResult(Result.UNSTABLE);

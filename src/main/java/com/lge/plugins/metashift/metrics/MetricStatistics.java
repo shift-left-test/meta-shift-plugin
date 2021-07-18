@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SummaryStatistics;
 import java.util.List;
@@ -38,24 +38,24 @@ import java.util.stream.Collectors;
 public class MetricStatistics extends GroupParser<SummaryStatistics> {
 
   /**
-   * Represents the criteria object.
+   * Represents the configuration object.
    */
-  private final Criteria criteria;
+  private final Configuration configuration;
 
   /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public MetricStatistics(final Criteria criteria) {
+  public MetricStatistics(final Configuration configuration) {
     super(new SummaryStatistics());
-    this.criteria = criteria;
+    this.configuration = configuration;
   }
 
   @Override
   public void parse(final Recipes recipes) {
     List<Metrics> metrics = recipes.stream()
-        .map(recipe -> new Metrics(criteria).parse(recipe))
+        .map(recipe -> new Metrics(configuration).parse(recipe))
         .collect(Collectors.toList());
     parse(metrics);
   }

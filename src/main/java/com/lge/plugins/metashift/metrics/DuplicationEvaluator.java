@@ -24,9 +24,8 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CodeSizeData;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Streamable;
 
@@ -38,17 +37,23 @@ import com.lge.plugins.metashift.models.Streamable;
 public final class DuplicationEvaluator extends NegativeEvaluator<DuplicationEvaluator> {
 
   /**
+   * Represents the build status of the metric.
+   */
+  private final boolean buildStatus;
+
+  /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public DuplicationEvaluator(final Criteria criteria) {
-    super((double) criteria.getDuplicationThreshold() / 100.0);
+  public DuplicationEvaluator(final Configuration configuration) {
+    super((double) configuration.getDuplicationThreshold() / 100.0);
+    buildStatus = configuration.isDuplicationsAsUnstable();
   }
 
   @Override
-  public boolean isStable(BuildStatus status) {
-    return !status.isDuplicationsAsUnstable() || !isAvailable() || isQualified();
+  public boolean isStable() {
+    return !buildStatus || !isAvailable() || isQualified();
   }
 
   @Override

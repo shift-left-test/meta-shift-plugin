@@ -24,8 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.InfoRecipeViolationData;
 import com.lge.plugins.metashift.models.MajorRecipeViolationData;
 import com.lge.plugins.metashift.models.MinorRecipeViolationData;
@@ -41,17 +40,23 @@ import com.lge.plugins.metashift.models.Streamable;
 public final class RecipeViolationEvaluator extends ViolationEvaluator<RecipeViolationEvaluator> {
 
   /**
+   * Represents the build status of the metric.
+   */
+  private final boolean buildStatus;
+
+  /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public RecipeViolationEvaluator(final Criteria criteria) {
-    super(criteria.getRecipeViolationThreshold());
+  public RecipeViolationEvaluator(final Configuration configuration) {
+    super(configuration.getRecipeViolationThreshold());
+    buildStatus = configuration.isRecipeViolationsAsUnstable();
   }
 
   @Override
-  public boolean isStable(BuildStatus status) {
-    return !status.isRecipeViolationsAsUnstable() || !isAvailable() || isQualified();
+  public boolean isStable() {
+    return !buildStatus || !isAvailable() || isQualified();
   }
 
   @Override

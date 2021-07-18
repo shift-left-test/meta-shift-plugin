@@ -31,7 +31,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
-import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
@@ -52,7 +51,6 @@ public class CodeSizeEvaluatorTest {
 
   @Before
   public void setUp() {
-    Configuration configuration = new Configuration();
     evaluator = new CodeSizeEvaluator();
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();
@@ -134,9 +132,8 @@ public class CodeSizeEvaluatorTest {
 
   @Test
   public void testBuildStatusWithEmptyRecipe() {
-    Configuration configuration = new Configuration();
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(configuration));
+    assertTrue(evaluator.isStable());
   }
 
   @Test

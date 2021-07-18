@@ -24,7 +24,6 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Streamable;
 import net.sf.json.JSONObject;
 
@@ -93,10 +92,9 @@ public abstract class Evaluator<T> extends Counter {
   /**
    * Returns the build status based on the evaluation of the metrics.
    *
-   * @param status for evaluation
    * @return true if the build status is stable, false otherwise
    */
-  public abstract boolean isStable(final BuildStatus status);
+  public abstract boolean isStable();
 
   /**
    * Parse the given object to create metric data.

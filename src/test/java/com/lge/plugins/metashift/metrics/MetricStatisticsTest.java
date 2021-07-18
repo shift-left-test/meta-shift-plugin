@@ -31,7 +31,6 @@ import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.InfoCodeViolationData;
@@ -60,7 +59,7 @@ import org.junit.Test;
  */
 public class MetricStatisticsTest {
 
-  private Criteria criteria;
+  private Configuration configuration;
   private MetricStatistics stats;
   private Recipe recipe1;
   private Recipe recipe2;
@@ -69,18 +68,18 @@ public class MetricStatisticsTest {
 
   @Before
   public void setUp() {
-    criteria = new Configuration();
-    criteria.setPremirrorCacheThreshold(50);
-    criteria.setSharedStateCacheThreshold(50);
-    criteria.setRecipeViolationThreshold(0.5);
-    criteria.setCommentThreshold(50);
-    criteria.setCodeViolationThreshold(0.5);
-    criteria.setComplexityLevel(5);
-    criteria.setComplexityThreshold(50);
-    criteria.setDuplicationThreshold(50);
-    criteria.setTestThreshold(50);
-    criteria.setMutationTestThreshold(50);
-    stats = new MetricStatistics(criteria);
+    configuration = new Configuration();
+    configuration.setPremirrorCacheThreshold(50);
+    configuration.setSharedStateCacheThreshold(50);
+    configuration.setRecipeViolationThreshold(0.5);
+    configuration.setCommentThreshold(50);
+    configuration.setCodeViolationThreshold(0.5);
+    configuration.setComplexityLevel(5);
+    configuration.setComplexityThreshold(50);
+    configuration.setDuplicationThreshold(50);
+    configuration.setTestThreshold(50);
+    configuration.setMutationTestThreshold(50);
+    stats = new MetricStatistics(configuration);
     recipe1 = new Recipe("A-1.0.0-r0");
     recipe2 = new Recipe("B-1.0.0-r0");
     recipe3 = new Recipe("C-1.0.0-r0");
@@ -274,7 +273,7 @@ public class MetricStatisticsTest {
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
 
     List<Metrics> metrics = recipes.stream()
-        .map(recipe -> new Metrics(criteria).parse(recipe))
+        .map(recipe -> new Metrics(configuration).parse(recipe))
         .collect(Collectors.toList());
     stats.parse(metrics);
 

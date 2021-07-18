@@ -24,10 +24,9 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CommentData;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Streamable;
 
 /**
@@ -38,17 +37,23 @@ import com.lge.plugins.metashift.models.Streamable;
 public final class CommentEvaluator extends PositiveEvaluator<CommentEvaluator> {
 
   /**
+   * Represents the build status of the metric.
+   */
+  private final boolean buildStatus;
+
+  /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public CommentEvaluator(final Criteria criteria) {
-    super((double) criteria.getCommentThreshold() / 100.0);
+  public CommentEvaluator(final Configuration configuration) {
+    super((double) configuration.getCommentThreshold() / 100.0);
+    buildStatus = configuration.isCommentsAsUnstable();
   }
 
   @Override
-  public boolean isStable(BuildStatus status) {
-    return !status.isCommentsAsUnstable() || !isAvailable() || isQualified();
+  public boolean isStable() {
+    return !buildStatus || !isAvailable() || isQualified();
   }
 
   @Override

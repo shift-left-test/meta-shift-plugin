@@ -24,10 +24,9 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CodeViolationData;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.InfoCodeViolationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.MinorCodeViolationData;
@@ -41,17 +40,23 @@ import com.lge.plugins.metashift.models.Streamable;
 public final class CodeViolationEvaluator extends ViolationEvaluator<CodeViolationEvaluator> {
 
   /**
+   * Represents the build status of the metric.
+   */
+  private final boolean buildStatus;
+
+  /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public CodeViolationEvaluator(final Criteria criteria) {
-    super(criteria.getCodeViolationThreshold());
+  public CodeViolationEvaluator(final Configuration configuration) {
+    super(configuration.getCodeViolationThreshold());
+    buildStatus = configuration.isCodeViolationsAsUnstable();
   }
 
   @Override
-  public boolean isStable(BuildStatus status) {
-    return !status.isCodeViolationsAsUnstable() || !isAvailable() || isQualified();
+  public boolean isStable() {
+    return !buildStatus || !isAvailable() || isQualified();
   }
 
   @Override

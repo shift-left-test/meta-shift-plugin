@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipes;
 import java.util.List;
 
@@ -41,19 +41,19 @@ public final class QualifiedRecipeCounter extends GroupParser<Counter> {
   private Counter testedRecipes;
 
   /**
-   * Represents the criteria object.
+   * Represents the configuration object.
    */
-  private final Criteria criteria;
+  private final Configuration configuration;
 
   /**
    * Default constructor.
    *
-   * @param criteria for collection
+   * @param configuration for collection
    */
-  public QualifiedRecipeCounter(final Criteria criteria) {
+  public QualifiedRecipeCounter(final Configuration configuration) {
     super(new Counter());
     testedRecipes = new Counter();
-    this.criteria = criteria;
+    this.configuration = configuration;
   }
 
   /**
@@ -83,17 +83,17 @@ public final class QualifiedRecipeCounter extends GroupParser<Counter> {
 
   @Override
   public void parse(final Recipes recipes) {
-    setPremirrorCache(countBy(recipes, new PremirrorCacheEvaluator(criteria)));
-    setSharedStateCache(countBy(recipes, new SharedStateCacheEvaluator(criteria)));
-    setCodeViolations(countBy(recipes, new CodeViolationEvaluator(criteria)));
-    setComments(countBy(recipes, new CommentEvaluator(criteria)));
-    setComplexity(countBy(recipes, new ComplexityEvaluator(criteria)));
-    setStatementCoverage(countBy(recipes, new StatementCoverageEvaluator(criteria)));
-    setBranchCoverage(countBy(recipes, new BranchCoverageEvaluator(criteria)));
-    setDuplications(countBy(recipes, new DuplicationEvaluator(criteria)));
-    setMutationTest(countBy(recipes, new MutationTestEvaluator(criteria)));
-    setRecipeViolations(countBy(recipes, new RecipeViolationEvaluator(criteria)));
-    setTest(countBy(recipes, new TestEvaluator(criteria)));
+    setPremirrorCache(countBy(recipes, new PremirrorCacheEvaluator(configuration)));
+    setSharedStateCache(countBy(recipes, new SharedStateCacheEvaluator(configuration)));
+    setCodeViolations(countBy(recipes, new CodeViolationEvaluator(configuration)));
+    setComments(countBy(recipes, new CommentEvaluator(configuration)));
+    setComplexity(countBy(recipes, new ComplexityEvaluator(configuration)));
+    setStatementCoverage(countBy(recipes, new StatementCoverageEvaluator(configuration)));
+    setBranchCoverage(countBy(recipes, new BranchCoverageEvaluator(configuration)));
+    setDuplications(countBy(recipes, new DuplicationEvaluator(configuration)));
+    setMutationTest(countBy(recipes, new MutationTestEvaluator(configuration)));
+    setRecipeViolations(countBy(recipes, new RecipeViolationEvaluator(configuration)));
+    setTest(countBy(recipes, new TestEvaluator(configuration)));
     testedRecipes = new Counter(recipes.size(), getTest().getDenominator());
   }
 

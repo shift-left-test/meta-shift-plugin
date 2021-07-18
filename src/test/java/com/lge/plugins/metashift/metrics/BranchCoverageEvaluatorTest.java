@@ -31,7 +31,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.PassedTestData;
@@ -48,13 +47,14 @@ import org.junit.Test;
  */
 public class BranchCoverageEvaluatorTest {
 
+  private Configuration configuration;
   private BranchCoverageEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
 
   @Before
   public void setUp() {
-    Configuration configuration = new Configuration();
+    configuration = new Configuration();
     configuration.setBranchCoverageThreshold(50);
     evaluator = new BranchCoverageEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
@@ -178,40 +178,40 @@ public class BranchCoverageEvaluatorTest {
 
   @Test
   public void testUnstableBuildStatusWithNoAvailableData() {
-    BuildStatus status = new Configuration();
-    status.setBranchCoverageAsUnstable(true);
+    configuration.setBranchCoverageAsUnstable(true);
+    evaluator = new BranchCoverageEvaluator(configuration);
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithQualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setBranchCoverageAsUnstable(true);
+    configuration.setBranchCoverageAsUnstable(true);
+    evaluator = new BranchCoverageEvaluator(configuration);
     recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, true));
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setBranchCoverageAsUnstable(true);
+    configuration.setBranchCoverageAsUnstable(true);
+    evaluator = new BranchCoverageEvaluator(configuration);
     recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, false));
     evaluator.parse(recipe);
-    assertFalse(evaluator.isStable(status));
+    assertFalse(evaluator.isStable());
   }
 
   @Test
   public void testStableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setBranchCoverageAsUnstable(false);
+    configuration.setBranchCoverageAsUnstable(false);
+    evaluator = new BranchCoverageEvaluator(configuration);
     recipe.add(new PassedTestData("A-B-C", "test", "test", ""));
     recipe.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, false));
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test

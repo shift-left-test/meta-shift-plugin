@@ -25,9 +25,8 @@
 package com.lge.plugins.metashift.metrics;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
-import com.lge.plugins.metashift.models.BuildStatus;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.CoverageData;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.Streamable;
 import com.lge.plugins.metashift.models.TestData;
 
@@ -39,17 +38,23 @@ import com.lge.plugins.metashift.models.TestData;
 public class BranchCoverageEvaluator extends PositiveEvaluator<BranchCoverageEvaluator> {
 
   /**
+   * Represents the build status of the metric.
+   */
+  private final boolean buildStatus;
+
+  /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public BranchCoverageEvaluator(final Criteria criteria) {
-    super((double) criteria.getBranchCoverageThreshold() / 100.0);
+  public BranchCoverageEvaluator(final Configuration configuration) {
+    super((double) configuration.getBranchCoverageThreshold() / 100.0);
+    buildStatus = configuration.isBranchCoverageAsUnstable();
   }
 
   @Override
-  public boolean isStable(BuildStatus status) {
-    return !status.isBranchCoverageAsUnstable() || !isAvailable() || isQualified();
+  public boolean isStable() {
+    return !buildStatus || !isAvailable() || isQualified();
   }
 
   @Override

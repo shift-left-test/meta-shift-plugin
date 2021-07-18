@@ -30,7 +30,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Recipe;
@@ -47,13 +46,14 @@ import org.junit.Test;
  */
 public class SharedStateCacheEvaluatorTest {
 
+  private Configuration configuration;
   private SharedStateCacheEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
 
   @Before
   public void setUp() {
-    Configuration configuration = new Configuration();
+    configuration = new Configuration();
     configuration.setSharedStateCacheThreshold(50);
     evaluator = new SharedStateCacheEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
@@ -173,37 +173,37 @@ public class SharedStateCacheEvaluatorTest {
 
   @Test
   public void testUnstableBuildStatusWithNoAvailableData() {
-    BuildStatus status = new Configuration();
-    status.setSharedStateCacheAsUnstable(true);
+    configuration.setSharedStateCacheAsUnstable(true);
+    evaluator = new SharedStateCacheEvaluator(configuration);
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithQualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setSharedStateCacheAsUnstable(true);
+    configuration.setSharedStateCacheAsUnstable(true);
+    evaluator = new SharedStateCacheEvaluator(configuration);
     recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", true));
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setSharedStateCacheAsUnstable(true);
+    configuration.setSharedStateCacheAsUnstable(true);
+    evaluator = new SharedStateCacheEvaluator(configuration);
     recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", false));
     evaluator.parse(recipe);
-    assertFalse(evaluator.isStable(status));
+    assertFalse(evaluator.isStable());
   }
 
   @Test
   public void testStableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setSharedStateCacheAsUnstable(false);
+    configuration.setSharedStateCacheAsUnstable(false);
+    evaluator = new SharedStateCacheEvaluator(configuration);
     recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", false));
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test

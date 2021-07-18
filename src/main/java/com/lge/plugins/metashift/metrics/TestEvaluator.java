@@ -24,8 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
@@ -74,14 +73,20 @@ public final class TestEvaluator extends PositiveEvaluator<TestEvaluator> {
   private final Map<Type, Counter> collection;
 
   /**
+   * Represents the build status of the metric.
+   */
+  private final boolean buildStatus;
+
+  /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public TestEvaluator(final Criteria criteria) {
-    super((double) criteria.getTestThreshold() / 100.0);
+  public TestEvaluator(final Configuration configuration) {
+    super((double) configuration.getTestThreshold() / 100.0);
     collection = new EnumMap<>(Type.class);
     Stream.of(Type.values()).forEach(type -> collection.put(type, new Counter()));
+    buildStatus = configuration.isTestAsUnstable();
   }
 
   /**
@@ -121,8 +126,8 @@ public final class TestEvaluator extends PositiveEvaluator<TestEvaluator> {
   }
 
   @Override
-  public boolean isStable(BuildStatus status) {
-    return !status.isTestAsUnstable() || !isAvailable() || isQualified();
+  public boolean isStable() {
+    return !buildStatus || !isAvailable() || isQualified();
   }
 
   @Override

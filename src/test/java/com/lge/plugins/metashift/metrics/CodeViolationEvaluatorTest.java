@@ -31,7 +31,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.InfoCodeViolationData;
@@ -51,13 +50,14 @@ import org.junit.Test;
  */
 public class CodeViolationEvaluatorTest {
 
+  private Configuration configuration;
   private CodeViolationEvaluator evaluator;
   private Recipe recipe;
   private Recipes recipes;
 
   @Before
   public void setUp() {
-    Configuration configuration = new Configuration();
+    configuration = new Configuration();
     configuration.setCodeViolationThreshold(0.5);
     evaluator = new CodeViolationEvaluator(configuration);
     recipe = new Recipe("A-1.0.0-r0");
@@ -229,40 +229,40 @@ public class CodeViolationEvaluatorTest {
 
   @Test
   public void testUnstableBuildStatusWithNoAvailableData() {
-    BuildStatus status = new Configuration();
-    status.setCodeViolationsAsUnstable(true);
+    configuration.setCodeViolationsAsUnstable(true);
+    evaluator = new CodeViolationEvaluator(configuration);
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithQualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setCodeViolationsAsUnstable(true);
+    configuration.setCodeViolationsAsUnstable(true);
+    evaluator = new CodeViolationEvaluator(configuration);
     recipe.add(new CodeSizeData("A-B-C", "a.file", 10, 1, 1));
     recipe.add(new MajorCodeViolationData("A-B-C", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setCodeViolationsAsUnstable(true);
+    configuration.setCodeViolationsAsUnstable(true);
+    evaluator = new CodeViolationEvaluator(configuration);
     recipe.add(new CodeSizeData("A-B-C", "a.file", 1, 1, 1));
     recipe.add(new MajorCodeViolationData("A-B-C", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
-    assertFalse(evaluator.isStable(status));
+    assertFalse(evaluator.isStable());
   }
 
   @Test
   public void testStableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setCodeViolationsAsUnstable(false);
+    configuration.setCodeViolationsAsUnstable(false);
+    evaluator = new CodeViolationEvaluator(configuration);
     recipe.add(new CodeSizeData("A-B-C", "a.file", 1, 1, 1));
     recipe.add(new MajorCodeViolationData("A-B-C", "a.file", 1, 2, "rule", "m", "d", "E", "t"));
     evaluator.parse(recipe);
-    assertTrue(evaluator.isStable(status));
+    assertTrue(evaluator.isStable());
   }
 
   @Test

@@ -24,8 +24,7 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Streamable;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,29 +44,29 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
   /**
    * Represents the criteria for evaluation.
    */
-  private final Criteria criteria;
+  private final Configuration configuration;
 
   /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public Metrics(final Criteria criteria) {
+  public Metrics(final Configuration configuration) {
     super();
     collection = new HashMap<>();
-    collection.put(PremirrorCacheEvaluator.class, new PremirrorCacheEvaluator(criteria));
-    collection.put(SharedStateCacheEvaluator.class, new SharedStateCacheEvaluator(criteria));
+    collection.put(PremirrorCacheEvaluator.class, new PremirrorCacheEvaluator(configuration));
+    collection.put(SharedStateCacheEvaluator.class, new SharedStateCacheEvaluator(configuration));
     collection.put(CodeSizeEvaluator.class, new CodeSizeEvaluator());
-    collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(criteria));
-    collection.put(CommentEvaluator.class, new CommentEvaluator(criteria));
-    collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(criteria));
-    collection.put(StatementCoverageEvaluator.class, new StatementCoverageEvaluator(criteria));
-    collection.put(BranchCoverageEvaluator.class, new BranchCoverageEvaluator(criteria));
-    collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(criteria));
-    collection.put(MutationTestEvaluator.class, new MutationTestEvaluator(criteria));
-    collection.put(RecipeViolationEvaluator.class, new RecipeViolationEvaluator(criteria));
-    collection.put(TestEvaluator.class, new TestEvaluator(criteria));
-    this.criteria = criteria;
+    collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(configuration));
+    collection.put(CommentEvaluator.class, new CommentEvaluator(configuration));
+    collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(configuration));
+    collection.put(StatementCoverageEvaluator.class, new StatementCoverageEvaluator(configuration));
+    collection.put(BranchCoverageEvaluator.class, new BranchCoverageEvaluator(configuration));
+    collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(configuration));
+    collection.put(MutationTestEvaluator.class, new MutationTestEvaluator(configuration));
+    collection.put(RecipeViolationEvaluator.class, new RecipeViolationEvaluator(configuration));
+    collection.put(TestEvaluator.class, new TestEvaluator(configuration));
+    this.configuration = configuration;
   }
 
   @Override
@@ -135,27 +134,30 @@ public final class Metrics extends NullEvaluator<Metrics> implements Queryable<E
   }
 
   @Override
-  public boolean isStable(final BuildStatus status) {
-    return collection.values().stream().allMatch(evaluator -> evaluator.isStable(status));
+  public boolean isStable() {
+    return collection.values().stream().allMatch(Evaluator::isStable);
   }
 
   @Override
   protected void parseImpl(final Streamable c) {
-    collection.put(PremirrorCacheEvaluator.class, new PremirrorCacheEvaluator(criteria).parse(c));
+    collection
+        .put(PremirrorCacheEvaluator.class, new PremirrorCacheEvaluator(configuration).parse(c));
     collection.put(SharedStateCacheEvaluator.class,
-        new SharedStateCacheEvaluator(criteria).parse(c));
+        new SharedStateCacheEvaluator(configuration).parse(c));
     collection.put(CodeSizeEvaluator.class, new CodeSizeEvaluator().parse(c));
-    collection.put(CodeViolationEvaluator.class, new CodeViolationEvaluator(criteria).parse(c));
-    collection.put(CommentEvaluator.class, new CommentEvaluator(criteria).parse(c));
-    collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(criteria).parse(c));
+    collection
+        .put(CodeViolationEvaluator.class, new CodeViolationEvaluator(configuration).parse(c));
+    collection.put(CommentEvaluator.class, new CommentEvaluator(configuration).parse(c));
+    collection.put(ComplexityEvaluator.class, new ComplexityEvaluator(configuration).parse(c));
     collection.put(StatementCoverageEvaluator.class,
-        new StatementCoverageEvaluator(criteria).parse(c));
-    collection.put(BranchCoverageEvaluator.class, new BranchCoverageEvaluator(criteria).parse(c));
-    collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(criteria).parse(c));
-    collection.put(MutationTestEvaluator.class, new MutationTestEvaluator(criteria).parse(c));
+        new StatementCoverageEvaluator(configuration).parse(c));
+    collection
+        .put(BranchCoverageEvaluator.class, new BranchCoverageEvaluator(configuration).parse(c));
+    collection.put(DuplicationEvaluator.class, new DuplicationEvaluator(configuration).parse(c));
+    collection.put(MutationTestEvaluator.class, new MutationTestEvaluator(configuration).parse(c));
     collection.put(RecipeViolationEvaluator.class,
-        new RecipeViolationEvaluator(criteria).parse(c));
-    collection.put(TestEvaluator.class, new TestEvaluator(criteria).parse(c));
+        new RecipeViolationEvaluator(configuration).parse(c));
+    collection.put(TestEvaluator.class, new TestEvaluator(configuration).parse(c));
 
     setDenominator(collection.values().stream().filter(Evaluator::isAvailable).count());
     setNumerator(collection.values().stream().filter(Evaluator::isQualified).count());

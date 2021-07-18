@@ -24,10 +24,9 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.ComplexityData;
-import com.lge.plugins.metashift.models.Criteria;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Streamable;
 import java.util.Comparator;
 import java.util.List;
@@ -41,6 +40,11 @@ import java.util.stream.Collectors;
 public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvaluator> {
 
   /**
+   * Represents the build status of the metric.
+   */
+  private final boolean buildStatus;
+
+  /**
    * Represents the complexity level.
    */
   private final long level;
@@ -48,16 +52,17 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
   /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public ComplexityEvaluator(final Criteria criteria) {
-    super((double) criteria.getComplexityThreshold() / 100.0);
-    level = criteria.getComplexityLevel();
+  public ComplexityEvaluator(final Configuration configuration) {
+    super((double) configuration.getComplexityThreshold() / 100.0);
+    level = configuration.getComplexityLevel();
+    buildStatus = configuration.isComplexityAsUnstable();
   }
 
   @Override
-  public boolean isStable(BuildStatus status) {
-    return !status.isComplexityAsUnstable() || !isAvailable() || isQualified();
+  public boolean isStable() {
+    return !buildStatus || !isAvailable() || isQualified();
   }
 
   @Override

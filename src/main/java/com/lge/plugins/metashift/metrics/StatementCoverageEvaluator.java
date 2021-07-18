@@ -24,9 +24,8 @@
 
 package com.lge.plugins.metashift.metrics;
 
-import com.lge.plugins.metashift.models.BuildStatus;
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.CoverageData;
-import com.lge.plugins.metashift.models.Criteria;
 import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.Streamable;
 import com.lge.plugins.metashift.models.TestData;
@@ -39,17 +38,23 @@ import com.lge.plugins.metashift.models.TestData;
 public class StatementCoverageEvaluator extends PositiveEvaluator<StatementCoverageEvaluator> {
 
   /**
+   * Represents the build status of the metric.
+   */
+  private final boolean buildStatus;
+
+  /**
    * Default constructor.
    *
-   * @param criteria for evaluation
+   * @param configuration for evaluation
    */
-  public StatementCoverageEvaluator(final Criteria criteria) {
-    super((double) criteria.getStatementCoverageThreshold() / 100.0);
+  public StatementCoverageEvaluator(final Configuration configuration) {
+    super((double) configuration.getStatementCoverageThreshold() / 100.0);
+    buildStatus = configuration.isStatementCoverageAsUnstable();
   }
 
   @Override
-  public boolean isStable(BuildStatus status) {
-    return !status.isStatementCoverageAsUnstable() || !isAvailable() || isQualified();
+  public boolean isStable() {
+    return !buildStatus || !isAvailable() || isQualified();
   }
 
   @Override

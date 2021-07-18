@@ -31,7 +31,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
-import com.lge.plugins.metashift.models.BuildStatus;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.ComplexityData;
@@ -76,6 +75,7 @@ public class MetricsTest {
   public final TemporaryFolder folder = new TemporaryFolder();
   private TemporaryFileUtils utils;
   private StringBuilder builder;
+  private Configuration configuration;
   private Metrics metrics;
   private Recipe recipe;
   private Recipes recipes;
@@ -84,7 +84,7 @@ public class MetricsTest {
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    Configuration configuration = new Configuration();
+    configuration = new Configuration();
     configuration.setPremirrorCacheThreshold(50);
     configuration.setSharedStateCacheThreshold(50);
     configuration.setRecipeViolationThreshold(0.5);
@@ -531,37 +531,37 @@ public class MetricsTest {
 
   @Test
   public void testUnstableBuildStatusWithQualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setCommentsAsUnstable(true);
-    status.setDuplicationsAsUnstable(true);
+    configuration.setCommentsAsUnstable(true);
+    configuration.setDuplicationsAsUnstable(true);
+    metrics = new Metrics(configuration);
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0));
     metrics.parse(recipe);
-    assertTrue(metrics.isStable(status));
+    assertTrue(metrics.isStable());
   }
 
   @Test
   public void testUnstableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setCommentsAsUnstable(true);
-    status.setDuplicationsAsUnstable(true);
+    configuration.setCommentsAsUnstable(true);
+    configuration.setDuplicationsAsUnstable(true);
+    metrics = new Metrics(configuration);
     recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     metrics.parse(recipe);
-    assertFalse(metrics.isStable(status));
+    assertFalse(metrics.isStable());
   }
 
   @Test
   public void testStableBuildStatusWithUnqualifiedData() {
-    BuildStatus status = new Configuration();
-    status.setCommentsAsUnstable(false);
-    status.setDuplicationsAsUnstable(false);
+    configuration.setCommentsAsUnstable(false);
+    configuration.setDuplicationsAsUnstable(false);
+    metrics = new Metrics(configuration);
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
     recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
     metrics.parse(recipe);
-    assertTrue(metrics.isStable(status));
+    assertTrue(metrics.isStable());
   }
 
   @Test
