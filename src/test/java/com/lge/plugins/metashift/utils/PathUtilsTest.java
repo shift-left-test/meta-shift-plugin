@@ -65,4 +65,23 @@ public class PathUtilsTest {
     assertTrue(PathUtils.isHidden("path/.to/abc.file"));
     assertTrue(PathUtils.isHidden("path/to/.abc.file"));
   }
+
+  @Test
+  public void testRelativePaths() {
+    assertFalse(PathUtils.isHidden("../path/to/a.file"));
+    assertFalse(PathUtils.isHidden("path/to/../a.file"));
+  }
+
+  @Test
+  public void testDotPaths() {
+    assertFalse(PathUtils.isHidden("./path/to/a.file"));
+    assertFalse(PathUtils.isHidden("path/to/./a.file"));
+  }
+
+  @Test
+  public void testDoubleDotHiddenPaths() {
+    assertTrue(PathUtils.isHidden("..path/to/a.file"));
+    assertTrue(PathUtils.isHidden("path/..to/a.file"));
+    assertTrue(PathUtils.isHidden("path/to/..a.file"));
+  }
 }

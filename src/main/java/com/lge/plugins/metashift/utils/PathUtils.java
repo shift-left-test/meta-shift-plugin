@@ -42,10 +42,12 @@ public class PathUtils {
   public static boolean isHidden(String path) {
     File file = new File(path);
     do {
-      if (file.getName().startsWith(".")) {
+      String filename = file.getName();
+      if (filename.equals(".") || filename.equals("..") || !filename.startsWith(".")) {
+        file = file.getParentFile();
+      } else {
         return true;
       }
-      file = file.getParentFile();
     } while (file != null);
     return false;
   }
