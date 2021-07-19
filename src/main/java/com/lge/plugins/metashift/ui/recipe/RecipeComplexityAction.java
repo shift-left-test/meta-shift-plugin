@@ -84,20 +84,23 @@ public class RecipeComplexityAction
         this.getParentAction().getParentAction().getConfiguration().getComplexityTolerance();
 
     fileComplexityList.forEach((file, complexityList) -> {
-      JSONObject fileComplexity = new JSONObject();
-      fileComplexity.put("file", file);
-      fileComplexity.put("functions", complexityList.size());
-      fileComplexity.put("complexFunctions",
-          complexityList.stream().filter(o -> o.getValue() >= complexityTolerance).count());
-      fileComplexityArray.add(fileComplexity);
+      List<ComplexityData> abnormalList = complexityList.stream()
+          .filter(o -> o.getValue() >= complexityTolerance).collect(Collectors.toList());
+      if (abnormalList.size() > 0) {
+        JSONObject fileComplexity = new JSONObject();
+        fileComplexity.put("file", file);
+        fileComplexity.put("functions", complexityList.size());
+        fileComplexity.put("complexFunctions", abnormalList.size());
+        fileComplexityArray.add(fileComplexity);
 
-      try {
-        this.saveFileContents(file);
-        this.getDataSource().put(complexityList,
-            this.getParentAction().getName(), file, STORE_KEY_COMPLEXITYLIST);
-      } catch (IOException | InterruptedException e) {
-        listener.getLogger().println(e.getMessage());
-        e.printStackTrace(listener.getLogger());
+        try {
+          this.saveFileContents(file);
+          this.getDataSource().put(abnormalList,
+              this.getParentAction().getName(), file, STORE_KEY_COMPLEXITYLIST);
+        } catch (IOException | InterruptedException e) {
+          listener.getLogger().println(e.getMessage());
+          e.printStackTrace(listener.getLogger());
+        }
       }
     });
 

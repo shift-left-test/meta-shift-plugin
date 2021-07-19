@@ -84,9 +84,6 @@ export class ComplexityFileView extends FileDetail {
     const sourceComplexBlock = Decoration.line({
       attributes: {class: 'sourceComplex'},
     });
-    const sourceNotComplexBlock = Decoration.line({
-      attributes: {class: 'sourceNotComplex'},
-    });
     const builder = new RangeSetBuilder<Decoration>();
     for (const {from, to} of view.visibleRanges) {
       for (let pos = from; pos <= to;) {
@@ -95,10 +92,6 @@ export class ComplexityFileView extends FileDetail {
           data.start <= line.number && data.end >= line.number &&
           data.value >= this.complexityTolerance)) {
           builder.add(line.from, line.from, sourceComplexBlock);
-        } else if (this.dataList.some((data) =>
-          data.start <= line.number && data.end >= line.number &&
-          data.value < this.complexityTolerance)) {
-          builder.add(line.from, line.from, sourceNotComplexBlock);
         }
         pos = line.to + 1;
       }

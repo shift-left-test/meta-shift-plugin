@@ -55,9 +55,11 @@ public class RecipeDuplicationsAction
       TaskListener listener, Recipe recipe) {
     super(parent, channel, metadata, name, url, percentScale);
 
+    long duplicationTolerance = this.getParentAction().getParentAction().getConfiguration()
+        .getDuplicationTolerance();
     JSONArray duplicationList = JSONArray.fromObject(
-        recipe.objects(DuplicationData.class).toArray());
-
+        recipe.objects(DuplicationData.class)
+        .filter(o -> o.getDuplicatedLines() >= duplicationTolerance).toArray());
     try {
       this.setTableModelJson(duplicationList);
     } catch (IOException e) {

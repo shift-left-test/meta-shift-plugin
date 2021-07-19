@@ -89,7 +89,9 @@ public class RecipeComplexityActionTest {
     fakeRecipe
         .add(new FakeScript(20, 0, 0, 0))
         .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6));
+            .setComplexity(10, 5, 6))
+        .add(new FakeSource(30, 15, 15, 10)
+            .setComplexity(5, 0, 10));
     builder.add(fakeRecipe);
     builder.toFile(report);
 
@@ -102,30 +104,31 @@ public class RecipeComplexityActionTest {
 
     assertEquals("complexity", action.getUrlName());
 
-    assertEquals("45%", action.getScale());
+    assertEquals("23%", action.getScale());
 
     JSONObject metricStatistics = action.getMetricStatisticsJson();
-    assertEquals(0.45, metricStatistics.getDouble("average"), 0.01);
-    assertEquals(0.45, metricStatistics.getDouble("min"), 0.01);
-    assertEquals(0.45, metricStatistics.getDouble("max"), 0.01);
+    assertEquals(0.23, metricStatistics.getDouble("average"), 0.01);
+    assertEquals(0.23, metricStatistics.getDouble("min"), 0.01);
+    assertEquals(0.23, metricStatistics.getDouble("max"), 0.01);
     assertEquals(1, metricStatistics.getInt("count"));
-    assertEquals(0.45, metricStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.45, metricStatistics.getDouble("scale"), 0.01);
+    assertEquals(0.23, metricStatistics.getDouble("sum"), 0.01);
+    assertEquals(0.23, metricStatistics.getDouble("scale"), 0.01);
     assertTrue(metricStatistics.getBoolean("available"));
     assertTrue(metricStatistics.getBoolean("percent"));
 
     JSONArray expected = new JSONArray();
-    expected.add(newJsonObject(5, 45, "Abnormal", "valid-bad"));
-    expected.add(newJsonObject(6, 54, "Normal", "invalid"));
+    expected.add(newJsonObject(5, 23, "Abnormal", "valid-bad"));
+    expected.add(newJsonObject(16, 76, "Normal", "invalid"));
     assertEquals(expected, action.getStatistics());
 
     JSONArray recipeFiles = action.getTableModelJson();
+    assertEquals(1, recipeFiles.size());
     assertEquals(5, recipeFiles.getJSONObject(0).getInt("complexFunctions"));
     assertEquals(11, recipeFiles.getJSONObject(0).getInt("functions"));
 
     String filePath = recipeFiles.getJSONObject(0).getString("file");
     JSONObject fileDetail = action.getFileComplexityDetail(filePath);
     assertNotNull(fileDetail.getString("content"));
-    assertEquals(11, fileDetail.getJSONArray("dataList").size());
+    assertEquals(5, fileDetail.getJSONArray("dataList").size());
   }
 }

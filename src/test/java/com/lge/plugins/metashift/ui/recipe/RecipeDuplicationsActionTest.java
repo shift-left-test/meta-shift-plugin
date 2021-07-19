@@ -88,7 +88,8 @@ public class RecipeDuplicationsActionTest {
   public void testCreate() throws Exception {
     fakeRecipe
         .add(new FakeScript(20, 0, 0, 0))
-        .add(new FakeSource(10, 4, 5, 6));
+        .add(new FakeSource(10, 4, 5, 6))
+        .add(new FakeSource(30, 30, 10, 4));
     builder.add(fakeRecipe);
     builder.toFile(report);
 
@@ -101,24 +102,25 @@ public class RecipeDuplicationsActionTest {
 
     assertEquals("duplications", action.getUrlName());
 
-    assertEquals("60%", action.getScale());
+    assertEquals("15%", action.getScale());
 
     JSONObject metricStatistics = action.getMetricStatisticsJson();
-    assertEquals(0.6, metricStatistics.getDouble("average"), 0.01);
-    assertEquals(0.6, metricStatistics.getDouble("min"), 0.01);
-    assertEquals(0.6, metricStatistics.getDouble("max"), 0.01);
+    assertEquals(0.15, metricStatistics.getDouble("average"), 0.01);
+    assertEquals(0.15, metricStatistics.getDouble("min"), 0.01);
+    assertEquals(0.15, metricStatistics.getDouble("max"), 0.01);
     assertEquals(1, metricStatistics.getInt("count"));
-    assertEquals(0.6, metricStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.6, metricStatistics.getDouble("scale"), 0.01);
+    assertEquals(0.15, metricStatistics.getDouble("sum"), 0.01);
+    assertEquals(0.15, metricStatistics.getDouble("scale"), 0.01);
     assertTrue(metricStatistics.getBoolean("available"));
     assertTrue(metricStatistics.getBoolean("percent"));
 
     JSONArray expected = new JSONArray();
-    expected.add(newJsonObject(6, 60, "Duplicated", "valid-bad"));
-    expected.add(newJsonObject(4, 40, "Unique", "invalid"));
+    expected.add(newJsonObject(6, 15, "Duplicated", "valid-bad"));
+    expected.add(newJsonObject(34, 85, "Unique", "invalid"));
     assertEquals(expected, action.getStatistics());
 
     JSONArray recipeFiles = action.getTableModelJson();
+    assertEquals(1, recipeFiles.size());
     assertEquals(6, recipeFiles.getJSONObject(0).getInt("duplicatedLines"));
     assertEquals(10, recipeFiles.getJSONObject(0).getInt("lines"));
   }
