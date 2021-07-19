@@ -12,6 +12,7 @@ export class MetricsSimpleView extends LitElement {
   @property() delta
   @property() qualifiedRate
   @property() threshold
+  @property() tolerance
 
   /**
    * constructor
@@ -92,7 +93,8 @@ export class MetricsSimpleView extends LitElement {
         html`
           <div class="description ${textClass}">
             Threshold: ${this.threshold}${isPercent ? html`%` : html``}
-            ${diffThresholdHtml}
+            ${diffThresholdHtml}${this.tolerance ? html`, ${this.tolerance}` :
+                html``}
           </div>` :
         html``}
     </div>

@@ -53,12 +53,14 @@ xmlns:c="/charts">
             metricsValue="${it.complexityJson}"
             delta="${it.complexityDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.complexity.toJsonObject()}"
-            threshold="${it.configuration.complexityThreshold}" />
+            threshold="${it.configuration.complexityThreshold}"
+            tolerance="${it.configuration.complexityTolerance}" />
           <metrics-simple-view name="Duplications" class="percent"
             metricsValue="${it.duplicationsJson}"
             delta="${it.duplicationsDelta}"
             qualifiedRate="${it.qualifiedRecipeCounter.duplications.toJsonObject()}"
-            threshold="${it.configuration.duplicationThreshold}" />
+            threshold="${it.configuration.duplicationThreshold}"
+            tolerance="${it.configuration.duplicationTolerance}" />
         </div>
         <h3>Dynamic Testing</h3>
         <div class="section">
