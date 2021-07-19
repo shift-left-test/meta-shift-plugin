@@ -7,16 +7,21 @@
     width: 80px;
     text-align: right;
     }
-    .evaluate {
-    width: 100px;
+    .evaluate-header {
+    width: 70px;
     display: inline-block;
     }
+    .evaluate {
+    width: 70px;
+    display: inline-block;
+    text-align: center;
+    }
     .title {
-    width: 200px;
+    width: 160px;
     display: inline-block;
     }
     .description {
-    width: 200px;
+    width: 190px;
     display: inline-block;
     }
     .input {
@@ -29,7 +34,7 @@
     }
   </style>
   <f:entry title="Configuration" field="configuration">
-    <div class="evaluate"><b>Unstable</b>
+    <div class="evaluate-header"><b>Unstable</b>
     </div>
     <div class="title">
       <b>Metric</b>
@@ -45,7 +50,7 @@
     <div class="evaluate">
       <f:checkbox field="premirrorCacheAsUnstable"
         checked="${it.premirrorCacheAsUnstable}"
-        default="${descriptor.configuration.premirrorCacheAllowedAsUnstable}"/>
+        default="${descriptor.configuration.premirrorCacheAsUnstable}"/>
     </div>
     <div class="title">Premirror Cache</div>
     <div class="description">is less than or equal to</div>
@@ -61,7 +66,7 @@
     <div class="evaluate">
       <f:checkbox field="sharedStateCacheAsUnstable"
         checked="${it.sharedStateCacheAsUnstable}"
-        default="${descriptor.configuration.sharedStateCacheAllowedAsUnstable}"/>
+        default="${descriptor.configuration.sharedStateCacheAsUnstable}"/>
     </div>
     <div class="title">Shared State Cache</div>
     <div class="description">is less than or equal to</div>
@@ -77,7 +82,7 @@
     <div class="evaluate">
       <f:checkbox field="recipeViolationsAsUnstable"
         checked="${it.recipeViolationsAsUnstable}"
-        default="${descriptor.configuration.recipeViolationsAllowedAsUnstable}"/>
+        default="${descriptor.configuration.recipeViolationsAsUnstable}"/>
     </div>
     <div class="title">Recipe Violations</div>
     <div class="description">is greater than or equal to</div>
@@ -93,7 +98,7 @@
     <div class="evaluate">
       <f:checkbox field="commentsAsUnstable"
         checked="${it.commentsAsUnstable}"
-        default="${descriptor.configuration.commentsAllowedAsUnstable}"/>
+        default="${descriptor.configuration.commentsAsUnstable}"/>
     </div>
     <div class="title">Comments</div>
     <div class="description">is less than or equal to</div>
@@ -109,7 +114,7 @@
     <div class="evaluate">
       <f:checkbox field="codeViolationsAsUnstable"
         checked="${it.codeViolationsAsUnstable}"
-        default="${descriptor.configuration.codeViolationsAllowedAsUnstable}"/>
+        default="${descriptor.configuration.codeViolationsAsUnstable}"/>
     </div>
     <div class="title">Code Violations</div>
     <div class="description">is greater than or equal to</div>
@@ -125,7 +130,7 @@
     <div class="evaluate">
       <f:checkbox field="complexityAsUnstable"
         checked="${it.complexityAsUnstable}"
-        default="${descriptor.configuration.complexityAllowedAsUnstable}"/>
+        default="${descriptor.configuration.complexityAsUnstable}"/>
     </div>
     <div class="title">Complexity</div>
     <div class="description">is greater than or equal to</div>
@@ -149,7 +154,7 @@
     <div class="evaluate">
       <f:checkbox field="duplicationsAsUnstable"
         checked="${it.duplicationsAsUnstable}"
-        default="${descriptor.configuration.duplicationsAllowedAsUnstable}"/>
+        default="${descriptor.configuration.duplicationsAsUnstable}"/>
     </div>
     <div class="title">Duplications</div>
     <div class="description">is greater than or equal to</div>
@@ -173,7 +178,7 @@
     <div class="evaluate">
       <f:checkbox field="testAsUnstable"
         checked="${it.testAsUnstable}"
-        default="${descriptor.configuration.testAllowedAsUnstable}"/>
+        default="${descriptor.configuration.testAsUnstable}"/>
     </div>
     <div class="title">Unit Tests</div>
     <div class="description">is less than or equal to</div>
@@ -189,7 +194,7 @@
     <div class="evaluate">
       <f:checkbox field="statementCoverageAsUnstable"
         checked="${it.statementCoverageAsUnstable}"
-        default="${descriptor.configuration.statementCoverageAllowedAsUnstable}"/>
+        default="${descriptor.configuration.statementCoverageAsUnstable}"/>
     </div>
     <div class="title">Statement Coverage</div>
     <div class="description">is less than or equal to</div>
@@ -205,7 +210,7 @@
     <div class="evaluate">
       <f:checkbox field="branchCoverageAsUnstable"
         checked="${it.branchCoverageAsUnstable}"
-        default="${descriptor.configuration.branchCoverageAllowedAsUnstable}"/>
+        default="${descriptor.configuration.branchCoverageAsUnstable}"/>
     </div>
     <div class="title">Branch Coverage</div>
     <div class="description">is less than or equal to</div>
@@ -221,7 +226,7 @@
     <div class="evaluate">
       <f:checkbox field="mutationTestAsUnstable"
         checked="${it.mutationTestAsUnstable}"
-        default="${descriptor.configuration.mutationTestAllowedAsUnstable}"/>
+        default="${descriptor.configuration.mutationTestAsUnstable}"/>
     </div>
     <div class="title">Mutation Tests</div>
     <div class="description">is less than or equal to</div>
