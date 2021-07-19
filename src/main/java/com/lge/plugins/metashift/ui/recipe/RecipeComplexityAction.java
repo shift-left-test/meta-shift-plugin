@@ -125,7 +125,7 @@ public class RecipeComplexityAction
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getComplexity();
 
     StatisticsItemList stats = new StatisticsItemList();
-    stats.addItem("Complex", "valid-bad",
+    stats.addItem("Abnormal", "valid-bad",
         (int) (evaluator.getRatio() * 100),
         (int) evaluator.getNumerator());
     stats.addItem("Normal", "invalid",

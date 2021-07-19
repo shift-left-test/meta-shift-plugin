@@ -85,7 +85,7 @@ public class RecipeDuplicationsAction
     stats.addItem("Duplicated", "valid-bad",
         (int) (evaluator.getRatio() * 100),
         (int) evaluator.getNumerator());
-    stats.addItem("Code", "invalid",
+    stats.addItem("Unique", "invalid",
         (int) ((1 - evaluator.getRatio()) * 100),
         (int) (evaluator.getDenominator() - evaluator.getNumerator()));
 

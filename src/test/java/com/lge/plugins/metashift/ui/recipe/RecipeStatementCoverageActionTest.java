@@ -118,7 +118,7 @@ public class RecipeStatementCoverageActionTest {
 
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(1, 33, "Covered", "valid-good"));
-    expected.add(newJsonObject(2, 66, "UnCovered", "invalid"));
+    expected.add(newJsonObject(2, 66, "Uncovered", "invalid"));
     assertEquals(expected, action.getStatistics());
 
     JSONArray recipeFiles = action.getTableModelJson();

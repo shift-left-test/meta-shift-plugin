@@ -108,7 +108,7 @@ public abstract class RecipeCoverageActionBase<T extends CoverageData>
     stats.addItem("Covered", "valid-good",
         (int) (evaluator.getRatio() * 100),
         (int) evaluator.getNumerator());
-    stats.addItem("UnCovered", "invalid",
+    stats.addItem("Uncovered", "invalid",
         (int) ((1 - evaluator.getRatio()) * 100),
         (int) (evaluator.getDenominator() - evaluator.getNumerator()));
 

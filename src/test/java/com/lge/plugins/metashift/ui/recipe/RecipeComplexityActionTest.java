@@ -115,7 +115,7 @@ public class RecipeComplexityActionTest {
     assertTrue(metricStatistics.getBoolean("percent"));
 
     JSONArray expected = new JSONArray();
-    expected.add(newJsonObject(5, 45, "Complex", "valid-bad"));
+    expected.add(newJsonObject(5, 45, "Abnormal", "valid-bad"));
     expected.add(newJsonObject(6, 54, "Normal", "invalid"));
     assertEquals(expected, action.getStatistics());
 
