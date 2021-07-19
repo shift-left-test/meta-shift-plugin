@@ -78,7 +78,7 @@ export class BuildTrendChart extends LitElement {
           },
           {
             type: 'value',
-            name: 'float',
+            name: 'density',
           }],
         series: series,
       };
