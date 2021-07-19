@@ -153,6 +153,30 @@ public class CodeViolationFactoryTest {
   }
 
   @Test
+  public void testCreateWithHiddenFile() throws IOException, InterruptedException {
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
+    builder
+        .append("{")
+        .append("  'violations': [")
+        .append("    {")
+        .append("      'file': '.hidden.file',")
+        .append("      'line': 1,")
+        .append("      'column': 100,")
+        .append("      'rule': 'NPE',")
+        .append("      'message': 'NPE_message',")
+        .append("      'description': 'NPE_desc',")
+        .append("      'severity': 'error',")
+        .append("      'level': 'major',")
+        .append("      'tool': 'cppcheck'")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    CodeViolationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
+  }
+
+  @Test
   public void testCreateWithSingleData() throws Exception {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder

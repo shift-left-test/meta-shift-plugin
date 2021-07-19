@@ -122,6 +122,26 @@ public class ComplexityFactoryTest {
   }
 
   @Test
+  public void testCreateWithHiddenFile() throws IOException, InterruptedException {
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
+    builder
+        .append("{")
+        .append("  'complexity': [")
+        .append("    {")
+        .append("      'file': '.hidden.file',")
+        .append("      'function': 'func1()',")
+        .append("      'start': 5,")
+        .append("      'end': 10,")
+        .append("      'value': 1")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    ComplexityFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
+  }
+
+  @Test
   public void testCreateWithSingleData() throws Exception {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder

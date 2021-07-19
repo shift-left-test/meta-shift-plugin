@@ -31,6 +31,7 @@ import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.models.xml.Tag;
 import com.lge.plugins.metashift.models.xml.TagList;
+import com.lge.plugins.metashift.utils.PathUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -63,6 +64,9 @@ public class CoverageFactory {
       SimpleXmlParser parser = new SimpleXmlParser(report);
       for (Tag tag : parser.getChildNodes("class")) {
         String filename = tag.getAttribute("filename");
+        if (PathUtils.isHidden(filename)) {
+          continue;
+        }
         for (Tag line : tag.getChildNodes("lines").last().getChildNodes("line")) {
           objects.addAll(createInstances(recipe, filename, line));
         }

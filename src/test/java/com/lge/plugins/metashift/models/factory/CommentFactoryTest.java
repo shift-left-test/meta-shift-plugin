@@ -123,6 +123,28 @@ public class CommentFactoryTest {
   }
 
   @Test
+  public void testCreateWithHiddenFile() throws IOException, InterruptedException {
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
+    builder
+        .append("{")
+        .append("  'size': [")
+        .append("    {")
+        .append("      'file': '.hidden.file',")
+        .append("      'total_lines': 20,")
+        .append("      'code_lines': 1,")
+        .append("      'comment_lines': 5,")
+        .append("      'duplicated_lines': 2,")
+        .append("      'functions': 15,")
+        .append("      'classes': 6")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    CommentFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
+  }
+
+  @Test
   public void testCreateWithSingleData() throws Exception {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder

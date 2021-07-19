@@ -118,6 +118,23 @@ public class RecipeSizeFactoryTest {
   }
 
   @Test
+  public void testCreateWithHiddenFile() throws IOException, InterruptedException {
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
+    builder
+        .append("{")
+        .append("  'lines_of_code': [")
+        .append("    {")
+        .append("      'file': '.hidden.bb',")
+        .append("      'code_lines': 12")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkrecipe", "files.json");
+    RecipeSizeFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
+  }
+
+  @Test
   public void testCreateWithSingleData() throws Exception {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder

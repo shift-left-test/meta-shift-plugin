@@ -136,6 +136,26 @@ public class MutationTestFactoryTest {
   }
 
   @Test
+  public void testCreateWitHiddenFile() throws IOException, InterruptedException {
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
+    builder
+        .append("<mutations>")
+        .append("  <mutation detected='true'>")
+        .append("    <sourceFile>.hidden.file</sourceFile>")
+        .append("    <sourceFilePath>path/to/.hidden.file</sourceFilePath>")
+        .append("    <mutatedClass>A</mutatedClass>")
+        .append("    <mutatedMethod>func1</mutatedMethod>")
+        .append("    <lineNumber>1</lineNumber>")
+        .append("    <mutator>AOR</mutator>")
+        .append("    <killingTest>test1</killingTest>")
+        .append("  </mutation>")
+        .append("</mutations>");
+    utils.writeLines(builder, directory, "checktest", "mutations.xml");
+    MutationTestFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
+  }
+
+  @Test
   public void testCreateWithSingleData() throws Exception {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder

@@ -120,6 +120,24 @@ public class DuplicationFactoryTest {
   }
 
   @Test
+  public void testCreateWithHiddenFile() throws IOException, InterruptedException {
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
+    builder
+        .append("{")
+        .append("  'size': [")
+        .append("    {")
+        .append("      'file': '.hidden.file',")
+        .append("      'total_lines': 20,")
+        .append("      'duplicated_lines': 2")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    DuplicationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
+  }
+
+  @Test
   public void testCreateWithSingleData() throws Exception {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder

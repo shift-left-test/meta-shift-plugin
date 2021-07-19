@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.models.factory;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.JsonUtils;
+import com.lge.plugins.metashift.utils.PathUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -58,6 +59,10 @@ public class ComplexityFactory {
     try {
       JSONObject json = JsonUtils.createObject(report);
       for (Object o : json.getJSONArray("complexity")) {
+        String file = ((JSONObject) o).getString("file");
+        if (PathUtils.isHidden(file)) {
+          continue;
+        }
         objects.add(new ComplexityData(recipe,
             ((JSONObject) o).getString("file"),
             ((JSONObject) o).getString("function"),

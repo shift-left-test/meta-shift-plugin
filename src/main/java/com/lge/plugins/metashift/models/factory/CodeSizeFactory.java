@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.models.factory;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.JsonUtils;
+import com.lge.plugins.metashift.utils.PathUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -59,8 +60,12 @@ public class CodeSizeFactory {
     try {
       JSONObject json = JsonUtils.createObject(report);
       for (Object o : json.getJSONArray("size")) {
+        String file = ((JSONObject) o).getString("file");
+        if (PathUtils.isHidden(file)) {
+          continue;
+        }
         objects.add(new CodeSizeData(recipe,
-            ((JSONObject) o).getString("file"),
+            file,
             ((JSONObject) o).getLong("total_lines"),
             ((JSONObject) o).getLong("functions"),
             ((JSONObject) o).getLong("classes")

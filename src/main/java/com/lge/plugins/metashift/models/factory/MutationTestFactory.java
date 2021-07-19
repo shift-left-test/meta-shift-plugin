@@ -31,6 +31,7 @@ import com.lge.plugins.metashift.models.SkippedMutationTestData;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
 import com.lge.plugins.metashift.models.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.models.xml.Tag;
+import com.lge.plugins.metashift.utils.PathUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -62,6 +63,10 @@ public class MutationTestFactory {
     try {
       SimpleXmlParser parser = new SimpleXmlParser(report);
       for (Tag tag : parser.getChildNodes("mutation")) {
+        String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
+        if (PathUtils.isHidden(file)) {
+          continue;
+        }
         objects.add(createInstance(recipe, tag));
       }
       Collections.sort(objects);

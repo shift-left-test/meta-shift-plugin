@@ -145,6 +145,29 @@ public class CoverageFactoryTest {
   }
 
   @Test
+  public void testCreateWithHiddenFile() throws IOException, InterruptedException {
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
+    builder
+        .append("<classes>")
+        .append("  <class filename='.hidden.cpp'>")
+        .append("    <methods>")
+        .append("      <method name='func1()'>")
+        .append("        <lines>")
+        .append("          <line number='1'/>")
+        .append("        </lines>")
+        .append("      </method>")
+        .append("    </methods>")
+        .append("    <lines>")
+        .append("      <line branch='false' hits='1' number='2'/>")
+        .append("    </lines>")
+        .append("  </class>")
+        .append("</classes>");
+    utils.writeLines(builder, directory, "coverage", "coverage.xml");
+    CoverageFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
+  }
+
+  @Test
   public void testCreateWithSingleData() throws Exception {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder

@@ -30,6 +30,7 @@ import com.lge.plugins.metashift.models.InfoCodeViolationData;
 import com.lge.plugins.metashift.models.MajorCodeViolationData;
 import com.lge.plugins.metashift.models.MinorCodeViolationData;
 import com.lge.plugins.metashift.utils.JsonUtils;
+import com.lge.plugins.metashift.utils.PathUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -62,6 +63,10 @@ public class CodeViolationFactory {
     try {
       JSONObject json = JsonUtils.createObject(report);
       for (Object o : json.getJSONArray("violations")) {
+        String file = ((JSONObject) o).getString("file");
+        if (PathUtils.isHidden(file)) {
+          continue;
+        }
         objects.add(createInstance(recipe, (JSONObject) o));
       }
       Collections.sort(objects);
