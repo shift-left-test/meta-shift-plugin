@@ -40,7 +40,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  */
 public class MetaShiftProjectAction implements ProminentProjectAction {
 
-  static final int MAX_TREND_CHART_AXIS = 10;
+  static final int MAX_TREND_CHART_SERIES = 20;
 
   private final AbstractProject<?, ?> project;
 
@@ -103,7 +103,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
    */
   @JavaScriptMethod
   public JSONObject getTrendChartModel() {
-    BuildTrendModel model = new BuildTrendModel(MAX_TREND_CHART_AXIS);
+    BuildTrendModel model = new BuildTrendModel(MAX_TREND_CHART_SERIES);
 
     for (AbstractBuild<?, ?> b = project.getLastSuccessfulBuild();
         b != null; b = b.getPreviousNotFailedBuild()) {
