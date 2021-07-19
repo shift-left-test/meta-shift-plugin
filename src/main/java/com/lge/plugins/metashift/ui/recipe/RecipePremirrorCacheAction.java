@@ -28,18 +28,15 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.SummaryStatistics;
-import com.lge.plugins.metashift.ui.models.StatisticsItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
-import java.io.IOException;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
  * Premirror cache availability detail view action class.
  */
 public class RecipePremirrorCacheAction
-    extends RecipeActionChild {
+    extends RecipeCacheActionBase<PremirrorCacheData> {
 
   /**
    * constructor.
@@ -53,17 +50,8 @@ public class RecipePremirrorCacheAction
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
       String name, String url, boolean percentScale,
       TaskListener listener, Recipe recipe) {
-    super(parent, channel, metadata, name, url, percentScale);
-
-    JSONArray cacheArray = JSONArray.fromObject(
-        recipe.objects(PremirrorCacheData.class).toArray());
-
-    try {
-      this.setTableModelJson(cacheArray);
-    } catch (IOException e) {
-      listener.getLogger().println(e.getMessage());
-      e.printStackTrace(listener.getLogger());
-    }
+    super(parent, channel, metadata, name, url, percentScale, listener, recipe,
+        PremirrorCacheData.class);
   }
 
   @Override
@@ -75,18 +63,5 @@ public class RecipePremirrorCacheAction
   @Override
   public Evaluator<?> getEvaluator() {
     return this.getParentAction().getMetrics().getPremirrorCache();
-  }
-
-  @Override
-  public JSONArray getStatistics() {
-    Evaluator<?> evaluator = this.getParentAction().getMetrics().getPremirrorCache();
-    StatisticsItemList stats = new StatisticsItemList();
-    stats.addItem("Hits", "valid-good",
-        (int) (evaluator.getRatio() * 100),
-        (int) evaluator.getNumerator());
-    stats.addItem("Misses", "invalid",
-        (int) ((1 - evaluator.getRatio()) * 100),
-        (int) (evaluator.getDenominator() - evaluator.getNumerator()));
-    return stats.toJsonArray();
   }
 }

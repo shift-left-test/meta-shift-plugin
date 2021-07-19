@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.SummaryStatistics;
-import com.lge.plugins.metashift.ui.models.StatisticsItemList;
+import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -78,10 +78,10 @@ public class RecipeCommentsAction
   }
 
   @Override
-  public JSONArray getStatistics() {
+  public JSONArray getDistributionJson() {
     Evaluator<?> evaluator = this.getParentAction().getMetrics().getComments();
 
-    StatisticsItemList stats = new StatisticsItemList();
+    DistributionItemList stats = new DistributionItemList();
     stats.addItem("Comments", "valid-good",
         (int) (evaluator.getRatio() * 100),
         (int) evaluator.getNumerator());

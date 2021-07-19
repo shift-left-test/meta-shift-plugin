@@ -105,7 +105,7 @@ public abstract class RecipeActionChild implements Action {
 
   public abstract Evaluator<?> getEvaluator();
 
-  public abstract JSONArray getStatistics();
+  public abstract JSONArray getDistributionJson();
 
   /**
    * save code path content to DataSource.

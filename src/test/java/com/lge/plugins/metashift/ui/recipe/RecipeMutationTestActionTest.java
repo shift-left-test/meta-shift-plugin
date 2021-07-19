@@ -118,7 +118,7 @@ public class RecipeMutationTestActionTest {
     expected.add(newJsonObject(1, 16, "Killed", "valid-good"));
     expected.add(newJsonObject(2, 33, "Survived", "valid-bad"));
     expected.add(newJsonObject(3, 50, "Skipped", "invalid"));
-    assertEquals(expected, action.getStatistics());
+    assertEquals(expected, action.getDistributionJson());
 
     JSONArray recipeFiles = action.getTableModelJson();
     assertEquals(2, recipeFiles.getJSONObject(0).getInt("survived"));
@@ -152,6 +152,6 @@ public class RecipeMutationTestActionTest {
     expected.add(newJsonObject(0, 0, "Killed", "valid-good"));
     expected.add(newJsonObject(0, 0, "Survived", "valid-bad"));
     expected.add(newJsonObject(0, 0, "Skipped", "invalid"));
-    assertEquals(expected, action.getStatistics());
+    assertEquals(expected, action.getDistributionJson());
   }
 }

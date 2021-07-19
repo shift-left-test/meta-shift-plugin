@@ -24,25 +24,57 @@
 
 package com.lge.plugins.metashift.ui.models;
 
-import static org.junit.Assert.assertEquals;
-
+import java.util.ArrayList;
 import net.sf.json.JSONArray;
-import org.junit.Test;
 
-public class StatisticsItemListTest {
+/**
+ * recipe metric statistics item list class.
+ */
+public class DistributionItemList
+    extends ArrayList<DistributionItemList.Item> {
 
-  @Test
-  public void testInitData() {
-    StatisticsItemList stats = new StatisticsItemList();
-    stats.addItem("test", "good", 10, 20);
+  public void addItem(String label, String clazz, long width, long count) {
+    this.add(new Item(label, clazz, width, count));
+  }
 
-    JSONArray datalist = stats.toJsonArray();
+  public JSONArray toJsonArray() {
+    return JSONArray.fromObject(this);
+  }
 
-    assertEquals(1, datalist.size());
+  /**
+   * recipe statistics info.
+   */
+  public static class Item {
 
-    assertEquals("test", datalist.getJSONObject(0).getString("label"));
-    assertEquals(10, datalist.getJSONObject(0).getLong("width"));
-    assertEquals(20, datalist.getJSONObject(0).getLong("count"));
-    assertEquals("good", datalist.getJSONObject(0).getString("clazz"));
+    private final String label;
+    private final long width;
+    private final long count;
+    private final String clazz;
+
+    /**
+     * constructor.
+     */
+    public Item(String label, String clazz, long width, long count) {
+      this.label = label;
+      this.width = width;
+      this.count = count;
+      this.clazz = clazz;
+    }
+
+    public String getLabel() {
+      return label;
+    }
+
+    public long getWidth() {
+      return width;
+    }
+
+    public long getCount() {
+      return count;
+    }
+
+    public String getClazz() {
+      return clazz;
+    }
   }
 }

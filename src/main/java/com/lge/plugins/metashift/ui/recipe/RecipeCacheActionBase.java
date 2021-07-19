@@ -25,28 +25,20 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import com.lge.plugins.metashift.metrics.Evaluator;
-import com.lge.plugins.metashift.models.CoverageData;
+import com.lge.plugins.metashift.models.CacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
- * coverage detail view action class base.
+ * cache detail view action class base.
  */
-public abstract class RecipeCoverageActionBase<T extends CoverageData>
+public abstract class RecipeCacheActionBase<T extends CacheData>
     extends RecipeActionChild {
-
-  static final String STORE_KEY_FILECOVERAGELIST = "FileCoverageList";
-
   /**
    * constructor.
    *
@@ -55,81 +47,33 @@ public abstract class RecipeCoverageActionBase<T extends CoverageData>
    * @param recipe   recipe
    * @param metadata metadata
    */
-  public RecipeCoverageActionBase(
+  public RecipeCacheActionBase(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
       String name, String url, boolean percentScale,
       TaskListener listener, Recipe recipe, Class<T> type) {
     super(parent, channel, metadata, name, url, percentScale);
-    List<T> coverageDataList =
-        recipe.objects(type).collect(Collectors.toList());
 
-    HashMap<String, List<T>> fileCoverageList = new HashMap<>();
-
-    for (T coverageData : coverageDataList) {
-      String file = coverageData.getFile();
-
-      if (!fileCoverageList.containsKey(file)) {
-        fileCoverageList.put(file, new ArrayList<>());
-      }
-      fileCoverageList.get(file).add(coverageData);
-    }
-
-    JSONArray fileCoverageArray = new JSONArray();
-
-    fileCoverageList.forEach((file, coverageList) -> {
-      fileCoverageArray.add(this.generateFileCoverage(file, coverageList));
-
-      try {
-        this.saveFileContents(file);
-        this.getDataSource().put(coverageList,
-            this.getParentAction().getName(), this.getDisplayName(),
-            file, STORE_KEY_FILECOVERAGELIST);
-      } catch (IOException | InterruptedException e) {
-        listener.getLogger().println(e.getMessage());
-        e.printStackTrace(listener.getLogger());
-      }
-    });
-
+    JSONArray cacheList = JSONArray.fromObject(
+        recipe.objects(type).toArray());
+  
     try {
-      this.setTableModelJson(fileCoverageArray);
+      this.setTableModelJson(cacheList);
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
     }
   }
 
-  protected abstract JSONObject generateFileCoverage(String file, List<T> coverageList);
-
   @Override
   public JSONArray getDistributionJson() {
     Evaluator<?> evaluator = this.getEvaluator();
-
     DistributionItemList stats = new DistributionItemList();
-    stats.addItem("Covered", "valid-good",
+    stats.addItem("Hits", "valid-good",
         (int) (evaluator.getRatio() * 100),
         (int) evaluator.getNumerator());
-    stats.addItem("Uncovered", "invalid",
+    stats.addItem("Misses", "invalid",
         (int) ((1 - evaluator.getRatio()) * 100),
         (int) (evaluator.getDenominator() - evaluator.getNumerator()));
-
     return stats.toJsonArray();
-  }
-
-
-  /**
-   * return file coverage info.
-   */
-  @JavaScriptMethod
-  public JSONObject getFileCoverageDetail(String codePath) {
-    JSONObject result = new JSONObject();
-
-    List<T> dataList = this.getDataSource().get(
-        this.getParentAction().getName(), this.getDisplayName(),
-        codePath, STORE_KEY_FILECOVERAGELIST);
-
-    result.put("dataList", dataList);
-    result.put("content", this.readFileContents(codePath));
-
-    return result;
   }
 }

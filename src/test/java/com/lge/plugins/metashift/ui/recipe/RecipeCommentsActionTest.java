@@ -116,7 +116,7 @@ public class RecipeCommentsActionTest {
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(5, 50, "Comments", "valid-good"));
     expected.add(newJsonObject(5, 50, "Code", "invalid"));
-    assertEquals(expected, action.getStatistics());
+    assertEquals(expected, action.getDistributionJson());
 
     JSONArray recipeFiles = action.getTableModelJson();
 

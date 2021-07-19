@@ -117,7 +117,7 @@ public class RecipeDuplicationsActionTest {
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(6, 15, "Duplicated", "valid-bad"));
     expected.add(newJsonObject(34, 85, "Unique", "invalid"));
-    assertEquals(expected, action.getStatistics());
+    assertEquals(expected, action.getDistributionJson());
 
     JSONArray recipeFiles = action.getTableModelJson();
     assertEquals(1, recipeFiles.size());

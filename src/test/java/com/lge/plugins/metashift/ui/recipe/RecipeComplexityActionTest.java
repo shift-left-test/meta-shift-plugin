@@ -119,7 +119,7 @@ public class RecipeComplexityActionTest {
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(5, 23, "Abnormal", "valid-bad"));
     expected.add(newJsonObject(16, 76, "Normal", "invalid"));
-    assertEquals(expected, action.getStatistics());
+    assertEquals(expected, action.getDistributionJson());
 
     JSONArray recipeFiles = action.getTableModelJson();
     assertEquals(1, recipeFiles.size());

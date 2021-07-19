@@ -26,7 +26,7 @@ package com.lge.plugins.metashift.ui.recipe;
 
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.ViolationData;
-import com.lge.plugins.metashift.ui.models.StatisticsItemList;
+import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -120,10 +120,10 @@ public abstract class RecipeViolationActionBase<T extends ViolationData<?>>
   }
 
   @Override
-  public JSONArray getStatistics() {
+  public JSONArray getDistributionJson() {
     long allCount = majorCount + minorCount + infoCount;
 
-    StatisticsItemList stats = new StatisticsItemList();
+    DistributionItemList stats = new DistributionItemList();
     stats.addItem("Major", "major",
         allCount > 0 ? majorCount * 100 / allCount : 0,
         majorCount);

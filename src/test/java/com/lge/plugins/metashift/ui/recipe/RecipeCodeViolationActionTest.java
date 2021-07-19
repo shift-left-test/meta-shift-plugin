@@ -118,7 +118,7 @@ public class RecipeCodeViolationActionTest {
     expected.add(newJsonObject(1, 16, "Major", "major"));
     expected.add(newJsonObject(2, 33, "Minor", "minor"));
     expected.add(newJsonObject(3, 50, "Info", "informational"));
-    assertEquals(expected, action.getStatistics());
+    assertEquals(expected, action.getDistributionJson());
 
     JSONArray recipeFiles = action.getTableModelJson();
     assertEquals(1, recipeFiles.getJSONObject(0).getInt("major"));
@@ -151,6 +151,6 @@ public class RecipeCodeViolationActionTest {
     expected.add(newJsonObject(0, 0, "Major", "major"));
     expected.add(newJsonObject(0, 0, "Minor", "minor"));
     expected.add(newJsonObject(0, 0, "Info", "informational"));
-    assertEquals(expected, action.getStatistics());
+    assertEquals(expected, action.getDistributionJson());
   }
 }

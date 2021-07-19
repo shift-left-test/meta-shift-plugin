@@ -116,7 +116,7 @@ public class RecipePremirrorCacheActionTest {
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(0, 0, "Hits", "valid-good"));
     expected.add(newJsonObject(0, 100, "Misses", "invalid"));
-    assertEquals(expected, action.getStatistics());
+    assertEquals(expected, action.getDistributionJson());
 
     JSONArray recipeCaches = action.getTableModelJson();
     assertEquals(0, recipeCaches.size());

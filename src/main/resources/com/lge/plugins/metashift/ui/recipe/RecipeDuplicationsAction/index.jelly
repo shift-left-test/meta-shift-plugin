@@ -11,8 +11,8 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <h1>Overview</h1>
         <h2>Scale <span class="metrics-scale">${it.scale}</span></h2>
         <scale-bar class="section" statistics='${it.metricStatisticsJson}'></scale-bar>
-        <h2>Statistics</h2>
-        <statistics-bar class="section" items='${it.statistics}'/>
+        <h2>Distribution</h2>
+        <statistics-bar class="section" items='${it.distributionJson}'/>
         <h1>Details</h1>
         <duplication-files class="section"
           page='${it.getUrlParameter("page")}'

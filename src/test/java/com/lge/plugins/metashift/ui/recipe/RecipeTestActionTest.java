@@ -119,7 +119,7 @@ public class RecipeTestActionTest {
     expected.add(newJsonObject(2, 20, "Failed", "valid-bad"));
     expected.add(newJsonObject(3, 30, "Error", "valid-error"));
     expected.add(newJsonObject(4, 40, "Skipped", "invalid"));
-    assertEquals(expected, action.getStatistics());
+    assertEquals(expected, action.getDistributionJson());
 
     JSONArray recipeTests = action.getTableModelJson();
     assertNotNull(recipeTests.getJSONObject(0).getString("suite"));
@@ -148,6 +148,6 @@ public class RecipeTestActionTest {
     expected.add(newJsonObject(0, 0, "Failed", "valid-bad"));
     expected.add(newJsonObject(0, 0, "Error", "valid-error"));
     expected.add(newJsonObject(0, 0, "Skipped", "invalid"));
-    assertEquals(expected, action.getStatistics());
+    assertEquals(expected, action.getDistributionJson());
   }
 }

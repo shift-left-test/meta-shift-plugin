@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.SummaryStatistics;
 import com.lge.plugins.metashift.models.TestData;
-import com.lge.plugins.metashift.ui.models.StatisticsItemList;
+import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -95,10 +95,10 @@ public class RecipeTestAction extends RecipeActionChild {
   }
 
   @Override
-  public JSONArray getStatistics() {
+  public JSONArray getDistributionJson() {
     long allCount = passedCount + failedCount + errorCount + skippedCount;
 
-    StatisticsItemList stats = new StatisticsItemList();
+    DistributionItemList stats = new DistributionItemList();
     stats.addItem("Passed", "valid-good",
         allCount > 0 ? passedCount * 100 / allCount : 0,
         passedCount);

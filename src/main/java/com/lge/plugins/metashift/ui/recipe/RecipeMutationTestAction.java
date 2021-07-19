@@ -28,7 +28,7 @@ import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.SummaryStatistics;
-import com.lge.plugins.metashift.ui.models.StatisticsItemList;
+import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
@@ -132,10 +132,10 @@ public class RecipeMutationTestAction extends RecipeActionChild {
   }
 
   @Override
-  public JSONArray getStatistics() {
+  public JSONArray getDistributionJson() {
     long allCount = killedCount + survivedCount + skippedCount;
 
-    StatisticsItemList stats = new StatisticsItemList();
+    DistributionItemList stats = new DistributionItemList();
     stats.addItem("Killed", "valid-good",
         allCount > 0 ? killedCount * 100 / allCount : 0,
         killedCount);
