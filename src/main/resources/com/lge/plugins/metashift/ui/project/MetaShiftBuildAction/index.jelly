@@ -9,8 +9,8 @@ xmlns:c="/charts">
       <st:bind var="proxy" value="${it}" />
       <div class="metashift">
       <div class="page">
-        <h1>${it.run.parent.displayName} ${it.run.displayName}</h1>
-        <h3>Lines of Code</h3>
+        <h1>Overview</h1>
+        <h2>Lines of Code</h2>
         <div class="section">
           <code-size
             codeSize="${it.codeSizeJson}"
@@ -18,7 +18,7 @@ xmlns:c="/charts">
           />
         </div>
 
-        <h3>Build Performance</h3>
+        <h2>Build Performance</h2>
         <div class="section">
           <metrics-simple-view name="Premirror Cache" class="percent"
             metricsValue="${it.premirrorCacheJson}"
@@ -36,8 +36,8 @@ xmlns:c="/charts">
             qualifiedRate="${it.qualifiedRecipeCounter.recipeViolations.toJsonObject()}"
             threshold="${it.configuration.recipeViolationThreshold}" />
         </div>
-        <h3>Code Quality</h3>
-        <h4>Static Analysis</h4>
+        <h2>Code Quality</h2>
+        <h3>Static Analysis</h3>
         <div class="section">
           <metrics-simple-view name="Comments" class="percent"
             metricsValue="${it.commentsJson}"
@@ -60,7 +60,7 @@ xmlns:c="/charts">
             qualifiedRate="${it.qualifiedRecipeCounter.duplications.toJsonObject()}"
             threshold="${it.configuration.duplicationThreshold}" />
         </div>
-        <h4>Dynamic Testing</h4>
+        <h3>Dynamic Testing</h3>
         <div class="section">
           <tested-simple-view name="Tested Recipes"
             tested="${it.testedRecipes}"
@@ -87,7 +87,7 @@ xmlns:c="/charts">
             qualifiedRate="${it.qualifiedRecipeCounter.mutationTest.toJsonObject()}"
             threshold="${it.configuration.mutationTestThreshold}" />
         </div>
-        <h3>Recipes</h3>
+        <h1>Recipes</h1>
         <div>
           <recipe-treemap />
         </div>
