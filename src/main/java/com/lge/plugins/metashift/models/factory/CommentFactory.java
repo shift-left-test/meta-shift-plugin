@@ -34,6 +34,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
@@ -53,18 +54,20 @@ public class CommentFactory {
    */
   public static void create(final FilePath path, final DataList dataList)
       throws IOException, InterruptedException {
-    List<CommentData> objects = new ArrayList<>();
-    String recipe = path.getName();
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       JSONObject json = JsonUtils.createObject(report);
-      for (Object o : json.getJSONArray("size")) {
+      JSONArray array = json.getJSONArray("size");
+      List<CommentData> objects = new ArrayList<>(array.size());
+
+      for (Object o : array) {
         String file = ((JSONObject) o).getString("file");
         if (PathUtils.isHidden(file)) {
           continue;
         }
-        objects.add(new CommentData(recipe,
-            ((JSONObject) o).getString("file"),
+        objects.add(new CommentData(
+            path.getName(),
+            file,
             ((JSONObject) o).getLong("total_lines"),
             ((JSONObject) o).getLong("comment_lines")));
       }

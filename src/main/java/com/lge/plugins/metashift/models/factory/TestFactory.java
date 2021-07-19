@@ -58,7 +58,6 @@ public class TestFactory {
   public static void create(final FilePath path, final DataList dataList)
       throws IOException, InterruptedException {
     List<TestData> objects = new ArrayList<>();
-    String recipe = path.getName();
     try {
       FilePath[] files = path.list("test/**/*.xml");
       if (files.length == 0) {
@@ -66,7 +65,7 @@ public class TestFactory {
       }
       for (FilePath file : files) {
         try {
-          objects.addAll(parseFile(recipe, file));
+          objects.addAll(parseFile(path.getName(), file));
         } catch (ParserConfigurationException | SAXException e) {
           throw new IllegalArgumentException("Failed to parse: " + file, e);
         }

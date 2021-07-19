@@ -37,6 +37,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
@@ -55,19 +56,21 @@ public class CodeViolationFactory {
    * @throws IOException          if failed to locate report files
    * @throws InterruptedException if an interruption occurs
    */
+  @SuppressWarnings("Duplicates")
   public static void create(final FilePath path, final DataList dataList)
       throws IOException, InterruptedException {
-    List<CodeViolationData> objects = new ArrayList<>();
-    String recipe = path.getName();
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       JSONObject json = JsonUtils.createObject(report);
-      for (Object o : json.getJSONArray("violations")) {
+      JSONArray array = json.getJSONArray("violations");
+      List<CodeViolationData> objects = new ArrayList<>(array.size());
+
+      for (Object o : array) {
         String file = ((JSONObject) o).getString("file");
         if (PathUtils.isHidden(file)) {
           continue;
         }
-        objects.add(createInstance(recipe, (JSONObject) o));
+        objects.add(createInstance(path.getName(), (JSONObject) o));
       }
       Collections.sort(objects);
       dataList.addAll(objects);

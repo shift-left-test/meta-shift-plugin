@@ -92,11 +92,12 @@ public class DataList implements Streamable, Serializable {
   /**
    * Adds the given objects to the list.
    *
-   * @param objects to add
-   * @param <T>     object type
+   * @param collection to add
+   * @param <T>        object type
    */
-  public <T> void addAll(final Collection<? extends T> objects) {
-    objects.forEach(this::add);
+  public <T> void addAll(final Collection<? extends T> collection) {
+    objects.addAll(collection);
+    collection.stream().map(Object::getClass).distinct().forEach(types::add);
   }
 
   @Override

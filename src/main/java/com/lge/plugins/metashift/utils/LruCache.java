@@ -42,7 +42,7 @@ public class LruCache<K, V> extends LinkedHashMap<K, V> {
   /**
    * Represents the default capacity.
    */
-  private static final int DEFAULT_CAPACITY = 15;
+  private static final int DEFAULT_CAPACITY = 10;
 
   /**
    * Represents the capacity of the cache.

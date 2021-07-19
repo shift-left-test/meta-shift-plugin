@@ -57,17 +57,17 @@ public class MutationTestFactory {
    */
   public static void create(final FilePath path, final DataList dataList)
       throws IOException, InterruptedException {
-    List<MutationTestData> objects = new ArrayList<>();
-    String recipe = path.getName();
     FilePath report = path.child("checktest").child("mutations.xml");
     try {
       SimpleXmlParser parser = new SimpleXmlParser(report);
+      List<MutationTestData> objects = new ArrayList<>();
+
       for (Tag tag : parser.getChildNodes("mutation")) {
         String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
         if (PathUtils.isHidden(file)) {
           continue;
         }
-        objects.add(createInstance(recipe, tag));
+        objects.add(createInstance(path.getName(), tag));
       }
       Collections.sort(objects);
       dataList.addAll(objects);

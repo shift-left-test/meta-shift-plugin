@@ -33,6 +33,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
@@ -52,16 +53,18 @@ public class SharedStateCacheFactory {
    */
   public static void create(final FilePath path, final DataList dataList)
       throws IOException, InterruptedException {
-    List<SharedStateCacheData> objects = new ArrayList<>();
-    String recipe = path.getName();
     FilePath report = path.child("checkcache").child("caches.json");
     try {
       JSONObject json = JsonUtils.createObject(report);
-      for (Object o : json.getJSONObject("Shared State").getJSONArray("Found")) {
-        objects.add(new SharedStateCacheData(recipe, (String) o, true));
+      JSONArray found = json.getJSONObject("Shared State").getJSONArray("Found");
+      JSONArray missed = json.getJSONObject("Shared State").getJSONArray("Missed");
+      List<SharedStateCacheData> objects = new ArrayList<>(found.size() + missed.size());
+
+      for (Object o : found) {
+        objects.add(new SharedStateCacheData(path.getName(), (String) o, true));
       }
-      for (Object o : json.getJSONObject("Shared State").getJSONArray("Missed")) {
-        objects.add(new SharedStateCacheData(recipe, (String) o, false));
+      for (Object o : missed) {
+        objects.add(new SharedStateCacheData(path.getName(), (String) o, false));
       }
       Collections.sort(objects);
       dataList.addAll(objects);

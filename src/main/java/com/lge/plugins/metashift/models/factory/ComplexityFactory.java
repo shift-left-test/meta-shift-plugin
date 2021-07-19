@@ -34,6 +34,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
@@ -53,18 +54,20 @@ public class ComplexityFactory {
    */
   public static void create(final FilePath path, final DataList dataList)
       throws IOException, InterruptedException {
-    List<ComplexityData> objects = new ArrayList<>();
-    String recipe = path.getName();
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       JSONObject json = JsonUtils.createObject(report);
-      for (Object o : json.getJSONArray("complexity")) {
+      JSONArray array = json.getJSONArray("complexity");
+      List<ComplexityData> objects = new ArrayList<>(array.size());
+
+      for (Object o : array) {
         String file = ((JSONObject) o).getString("file");
         if (PathUtils.isHidden(file)) {
           continue;
         }
-        objects.add(new ComplexityData(recipe,
-            ((JSONObject) o).getString("file"),
+        objects.add(new ComplexityData(
+            path.getName(),
+            file,
             ((JSONObject) o).getString("function"),
             ((JSONObject) o).getLong("start"),
             ((JSONObject) o).getLong("end"),

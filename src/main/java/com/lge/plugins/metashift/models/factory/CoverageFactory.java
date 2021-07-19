@@ -57,18 +57,18 @@ public class CoverageFactory {
    */
   public static void create(final FilePath path, final DataList dataList)
       throws IOException, InterruptedException {
-    List<CoverageData> objects = new ArrayList<>();
-    String recipe = path.getName();
     FilePath report = path.child("coverage").child("coverage.xml");
     try {
       SimpleXmlParser parser = new SimpleXmlParser(report);
+      List<CoverageData> objects = new ArrayList<>();
+
       for (Tag tag : parser.getChildNodes("class")) {
         String filename = tag.getAttribute("filename");
         if (PathUtils.isHidden(filename)) {
           continue;
         }
         for (Tag line : tag.getChildNodes("lines").last().getChildNodes("line")) {
-          objects.addAll(createInstances(recipe, filename, line));
+          objects.addAll(createInstances(path.getName(), filename, line));
         }
       }
       Collections.sort(objects);
