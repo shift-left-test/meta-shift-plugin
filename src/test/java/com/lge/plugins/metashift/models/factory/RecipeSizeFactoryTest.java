@@ -100,14 +100,6 @@ public class RecipeSizeFactoryTest {
     RecipeSizeFactory.create(new FilePath(directory), dataList);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testCreateWithMalformedFile() throws Exception {
-    File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder.append("{ 'lines_of_code' : [ { 'file': 'a.bb' } ] }");
-    utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    RecipeSizeFactory.create(new FilePath(directory), dataList);
-  }
-
   @Test
   public void testCreateWithEmptyData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
@@ -115,6 +107,15 @@ public class RecipeSizeFactoryTest {
     utils.writeLines(builder, directory, "checkrecipe", "files.json");
     RecipeSizeFactory.create(new FilePath(directory), dataList);
     assertDataList(true, 0);
+  }
+
+  @Test
+  public void testCreateWithMalformedFile() throws Exception {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    builder.append("{ 'lines_of_code' : [ { 'file': 'a.bb' } ] }");
+    utils.writeLines(builder, directory, "checkrecipe", "files.json");
+    RecipeSizeFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 1);
   }
 
   @Test

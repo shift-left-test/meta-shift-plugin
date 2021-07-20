@@ -95,20 +95,20 @@ public class CoverageFactoryTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
+  public void testCreateWithEmptyFile() throws Exception {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    builder.append(" ");
+    utils.writeLines(builder, directory, "coverage", "coverage.xml");
+    CoverageFactory.create(new FilePath(directory), dataList);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
   public void testCreateWithMalformedFile() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
         .append("<class filename='a.cpp'>")
         .append("  <methods>")
         .append("    <method name='func1()'>");
-    utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory), dataList);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testCreateWithEmptyFile() throws Exception {
-    File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder.append(" ");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     CoverageFactory.create(new FilePath(directory), dataList);
   }

@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.models.factory;
 
+import com.jsoniter.any.Any;
+import com.jsoniter.spi.JsonException;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.utils.JsonUtils;
@@ -33,9 +35,6 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 
 /**
  * A factory class for PremirrorCacheData objects.
@@ -55,21 +54,21 @@ public class PremirrorCacheFactory {
       throws IOException, InterruptedException {
     FilePath report = path.child("checkcache").child("caches.json");
     try {
-      JSONObject json = JsonUtils.createObject(report);
-      JSONArray found = json.getJSONObject("Premirror").getJSONArray("Found");
-      JSONArray missed = json.getJSONObject("Premirror").getJSONArray("Missed");
+      Any json = JsonUtils.createObject2(report);
+      List<Any> found = json.get("Premirror", "Found").asList();
+      List<Any> missed = json.get("Premirror", "Missed").asList();
       List<PremirrorCacheData> objects = new ArrayList<>(found.size() + missed.size());
 
-      for (Object o : found) {
-        objects.add(new PremirrorCacheData(path.getName(), (String) o, true));
+      for (Any o : found) {
+        objects.add(new PremirrorCacheData(path.getName(), o.toString(), true));
       }
-      for (Object o : missed) {
-        objects.add(new PremirrorCacheData(path.getName(), (String) o, false));
+      for (Any o : missed) {
+        objects.add(new PremirrorCacheData(path.getName(), o.toString(), false));
       }
       Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(PremirrorCacheData.class);
-    } catch (JSONException e) {
+    } catch (JsonException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {
       // ignored

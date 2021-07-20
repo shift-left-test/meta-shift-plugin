@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.models.factory;
 
+import com.jsoniter.any.Any;
+import com.jsoniter.spi.JsonException;
 import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.InfoCodeViolationData;
@@ -37,9 +39,6 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 
 /**
  * A factory class for the CodeViolationData objects.
@@ -61,21 +60,21 @@ public class CodeViolationFactory {
       throws IOException, InterruptedException {
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
-      JSONObject json = JsonUtils.createObject(report);
-      JSONArray array = json.getJSONArray("violations");
+      Any json = JsonUtils.createObject2(report);
+      List<Any> array = json.get("violations").asList();
       List<CodeViolationData> objects = new ArrayList<>(array.size());
 
-      for (Object o : array) {
-        String file = ((JSONObject) o).getString("file");
+      for (Any o : array) {
+        String file = o.toString("file");
         if (PathUtils.isHidden(file)) {
           continue;
         }
-        objects.add(createInstance(path.getName(), (JSONObject) o));
+        objects.add(createInstance(path.getName(), o));
       }
       Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(CodeViolationData.class);
-    } catch (JSONException e) {
+    } catch (JsonException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {
       // ignored
@@ -89,16 +88,16 @@ public class CodeViolationFactory {
    * @param object data to parse
    * @return a CodeViolationData object
    */
-  private static CodeViolationData createInstance(final String recipe, final JSONObject object) {
-    String file = object.getString("file");
-    long line = object.getLong("line");
-    long column = object.getLong("column");
-    String rule = object.getString("rule");
-    String message = object.getString("message");
-    String description = object.getString("description");
-    String severity = object.getString("severity");
-    String level = object.getString("level");
-    String tool = object.getString("tool");
+  private static CodeViolationData createInstance(final String recipe, final Any object) {
+    String file = object.toString("file");
+    long line = object.toLong("line");
+    long column = object.toLong("column");
+    String rule = object.toString("rule");
+    String message = object.toString("message");
+    String description = object.toString("description");
+    String severity = object.toString("severity");
+    String level = object.toString("level");
+    String tool = object.toString("tool");
     switch (level.toLowerCase()) {
       case "major":
         return new MajorCodeViolationData(recipe, file, line, column, rule, message, description,
@@ -110,7 +109,7 @@ public class CodeViolationFactory {
         return new InfoCodeViolationData(recipe, file, line, column, rule, message, description,
             severity, tool);
       default:
-        throw new JSONException("Unknown level value: " + level);
+        throw new JsonException("Unknown level value: " + level);
     }
   }
 }

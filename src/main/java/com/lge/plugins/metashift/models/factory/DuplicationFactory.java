@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.models.factory;
 
+import com.jsoniter.any.Any;
+import com.jsoniter.spi.JsonException;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.utils.JsonUtils;
@@ -34,9 +36,6 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 
 /**
  * A factory class for the DuplicationData objects.
@@ -56,25 +55,25 @@ public class DuplicationFactory {
       throws IOException, InterruptedException {
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
-      JSONObject json = JsonUtils.createObject(report);
-      JSONArray array = json.getJSONArray("size");
+      Any json = JsonUtils.createObject2(report);
+      List<Any> array = json.get("size").asList();
       List<DuplicationData> objects = new ArrayList<>(array.size());
 
-      for (Object o : array) {
-        String file = ((JSONObject) o).getString("file");
+      for (Any o : array) {
+        String file = o.toString("file");
         if (PathUtils.isHidden(file)) {
           continue;
         }
         objects.add(new DuplicationData(
             path.getName(),
             file,
-            ((JSONObject) o).getLong("total_lines"),
-            ((JSONObject) o).getLong("duplicated_lines")));
+            o.toLong("total_lines"),
+            o.toLong("duplicated_lines")));
       }
       Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(DuplicationData.class);
-    } catch (JSONException e) {
+    } catch (JsonException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {
       // ignored

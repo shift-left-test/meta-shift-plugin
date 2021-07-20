@@ -24,10 +24,13 @@
 
 package com.lge.plugins.metashift.utils;
 
+import com.jsoniter.JsonIterator;
+import com.jsoniter.any.Any;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 
@@ -44,9 +47,19 @@ public class JsonUtils {
   public static final JSONObject EMPTY = new JSONObject();
 
   /**
-   * Represents the singleton cache object.
+   * Represents the null json object.
+   */
+  public static final Any EMPTY2 = JsonIterator.deserialize("{}");
+
+  /**
+   * Represents the cache object.
    */
   private static final LruCache<String, JSONObject> objects = new LruCache<>();
+
+  /**
+   * Represents the cache object.
+   */
+  private static final LruCache<String, Any> objects2 = new LruCache<>();
 
   /**
    * Create a JSONObject using the given file.
@@ -64,6 +77,22 @@ public class JsonUtils {
       objects.put(checksum, getObject(file));
     }
     return objects.get(checksum);
+  }
+
+  public static synchronized Any createObject2(final FilePath file)
+      throws IOException, InterruptedException {
+    if (file == null) {
+      return JsonUtils.EMPTY2;
+    }
+    String checksum = file.digest();
+    if (!objects2.containsKey(checksum)) {
+      try {
+        objects2.put(checksum, JsonIterator.deserialize(file.readToString()));
+      } catch (IOException e) {
+        throw new JSONException(e);
+      }
+    }
+    return objects2.get(checksum);
   }
 
   /**

@@ -104,12 +104,22 @@ public class RecipeViolationFactoryTest {
     RecipeViolationFactory.create(new FilePath(directory), dataList);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testCreateWithMalformedFile() throws Exception {
+  @Test
+  public void testCreateWithEmptyData() throws Exception {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("{ 'issues': [ ] }");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    RecipeViolationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
+  }
+
+  @Test
+  public void testCreateWithInsufficientData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'issues': [ { 'file': 'a.bb', 'line': 1, 'severity': 'info' } ] }");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     RecipeViolationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 1);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -129,15 +139,6 @@ public class RecipeViolationFactoryTest {
         .append("}");
     utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     RecipeViolationFactory.create(new FilePath(directory), dataList);
-  }
-
-  @Test
-  public void testCreateWithEmptyData() throws Exception {
-    File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'issues': [ ] }");
-    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    RecipeViolationFactory.create(new FilePath(directory), dataList);
-    assertDataList(true, 0);
   }
 
   @Test

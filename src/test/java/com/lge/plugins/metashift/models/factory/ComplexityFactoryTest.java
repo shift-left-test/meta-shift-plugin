@@ -104,14 +104,6 @@ public class ComplexityFactoryTest {
     ComplexityFactory.create(new FilePath(directory), dataList);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testCreateWithInsufficientData() throws Exception {
-    File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder.append("{ 'complexity': [ { 'file': 'a.file' } ] }");
-    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(new FilePath(directory), dataList);
-  }
-
   @Test
   public void testCreateWithEmptyData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
@@ -119,6 +111,15 @@ public class ComplexityFactoryTest {
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     ComplexityFactory.create(new FilePath(directory), dataList);
     assertDataList(true, 0);
+  }
+
+  @Test
+  public void testCreateWithInsufficientData() throws Exception {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    builder.append("{ 'complexity': [ { 'file': 'a.file' } ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    ComplexityFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 1);
   }
 
   @Test

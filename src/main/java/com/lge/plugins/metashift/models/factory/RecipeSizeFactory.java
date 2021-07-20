@@ -24,6 +24,8 @@
 
 package com.lge.plugins.metashift.models.factory;
 
+import com.jsoniter.any.Any;
+import com.jsoniter.spi.JsonException;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.utils.JsonUtils;
@@ -34,9 +36,6 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 
 /**
  * A factory class for RecipeSizeData objects.
@@ -56,25 +55,25 @@ public class RecipeSizeFactory {
       throws IOException, InterruptedException {
     FilePath report = path.child("checkrecipe").child("files.json");
     try {
-      JSONObject json = JsonUtils.createObject(report);
-      JSONArray array = json.getJSONArray("lines_of_code");
+      Any json = JsonUtils.createObject2(report);
+      List<Any> array = json.get("lines_of_code").asList();
       List<RecipeSizeData> objects = new ArrayList<>(array.size());
 
-      for (Object o : array) {
-        String file = ((JSONObject) o).getString("file");
+      for (Any o : array) {
+        String file = o.toString("file");
         if (PathUtils.isHidden(file)) {
           continue;
         }
         objects.add(new RecipeSizeData(
             path.getName(),
             file,
-            ((JSONObject) o).getLong("code_lines")
+            o.toLong("code_lines")
         ));
       }
       Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(RecipeSizeData.class);
-    } catch (JSONException e) {
+    } catch (JsonException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {
       // ignored

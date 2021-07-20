@@ -107,6 +107,15 @@ public class CodeViolationFactoryTest {
     CodeViolationFactory.create(new FilePath(directory), dataList);
   }
 
+  @Test
+  public void testCreateWithEmptyData() throws Exception {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("{ 'violations': [ ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    CodeViolationFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void testCreateWithInsufficientData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
@@ -141,15 +150,6 @@ public class CodeViolationFactoryTest {
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     CodeViolationFactory.create(new FilePath(directory), dataList);
-  }
-
-  @Test
-  public void testCreateWithEmptyData() throws Exception {
-    File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'violations': [ ] }");
-    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    CodeViolationFactory.create(new FilePath(directory), dataList);
-    assertDataList(true, 0);
   }
 
   @Test

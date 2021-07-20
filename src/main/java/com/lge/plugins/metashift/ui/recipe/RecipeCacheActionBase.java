@@ -39,6 +39,7 @@ import net.sf.json.JSONObject;
  */
 public abstract class RecipeCacheActionBase<T extends CacheData>
     extends RecipeActionChild {
+
   /**
    * constructor.
    *
@@ -55,7 +56,7 @@ public abstract class RecipeCacheActionBase<T extends CacheData>
 
     JSONArray cacheList = JSONArray.fromObject(
         recipe.objects(type).toArray());
-  
+
     try {
       this.setTableModelJson(cacheList);
     } catch (IOException e) {

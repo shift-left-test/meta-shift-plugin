@@ -100,7 +100,16 @@ public class CommentFactoryTest {
     CommentFactory.create(new FilePath(directory), dataList);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
+  public void testCreateWithEmptyData() throws Exception {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("{ 'size': [ ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    CommentFactory.create(new FilePath(directory), dataList);
+    assertDataList(true, 0);
+  }
+
+  @Test
   public void testCreateWithInsufficientData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
@@ -111,15 +120,7 @@ public class CommentFactoryTest {
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     CommentFactory.create(new FilePath(directory), dataList);
-  }
-
-  @Test
-  public void testCreateWithEmptyData() throws Exception {
-    File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'size': [ ] }");
-    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    CommentFactory.create(new FilePath(directory), dataList);
-    assertDataList(true, 0);
+    assertDataList(true, 1);
   }
 
   @Test
