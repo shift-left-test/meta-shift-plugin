@@ -79,6 +79,14 @@ public class JsonUtils {
     return objects.get(checksum);
   }
 
+  /**
+   * Creates a Json object using the given file.
+   *
+   * @param file to a json file
+   * @return a Json object
+   * @throws IOException          if a file IO fails
+   * @throws InterruptedException if an interruption occurs
+   */
   public static synchronized Any createObject2(final FilePath file)
       throws IOException, InterruptedException {
     if (file == null) {
