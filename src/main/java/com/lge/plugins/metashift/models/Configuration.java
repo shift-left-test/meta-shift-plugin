@@ -27,7 +27,7 @@ package com.lge.plugins.metashift.models;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * Represents the Jenkins configuration.
+ * Jenkins configuration for the plugin.
  *
  * @author Sung Gon Kim
  */
@@ -157,8 +157,8 @@ public class Configuration implements Criteria, BuildStatus {
    * Default constructor.
    */
   public Configuration() {
-    this(80, 80, 0.1, 30, 0.1, 4, 10, 5, 10, 95, 80, 40, 85,
-        true, true, true, true, true, true, true, true, true, true, true);
+    this(80, 80, 0.1, 20, 0.1, 10, 10, 10, 10, 95, 80, 40, 85,
+        false, false, false, false, false, false, false, false, false, false, false);
   }
 
   /**

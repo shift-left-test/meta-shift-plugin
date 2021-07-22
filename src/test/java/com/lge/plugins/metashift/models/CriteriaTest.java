@@ -73,7 +73,7 @@ public class CriteriaTest {
 
   @Test
   public void testInitData() {
-    assertValues(80, 80, 0.1, 30, 0.1, 4, 10, 5, 10, 95, 80, 40, 85);
+    assertValues(80, 80, 0.1, 20, 0.1, 10, 10, 10, 10, 95, 80, 40, 85);
   }
 
   @Test
@@ -92,5 +92,19 @@ public class CriteriaTest {
     criteria.setBranchCoverageThreshold(100);
     criteria.setMutationTestThreshold(100);
     assertValues(10, 20, 30, 40, 50, 6, 60, 7, 70, 80, 90, 100, 100);
+  }
+
+  @Test
+  public void testSetValuesBelowLimits() {
+    criteria = new Configuration(-10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10,
+        false, false, false, false, false, false, false, false, false, false, false);
+    assertValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  }
+
+  @Test
+  public void testSetValuesOverLimits() {
+    criteria = new Configuration(200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
+        false, false, false, false, false, false, false, false, false, false, false);
+    assertValues(100, 100, 200, 100, 200, 200, 100, 200, 100, 100, 100, 100, 100);
   }
 }

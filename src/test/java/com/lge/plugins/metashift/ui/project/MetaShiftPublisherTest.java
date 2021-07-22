@@ -112,7 +112,7 @@ public class MetaShiftPublisherTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
 
-    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
     // verify MetaShiftBuildAction created.
     assertEquals(1, run.getActions(MetaShiftBuildAction.class).size());
@@ -152,7 +152,7 @@ public class MetaShiftPublisherTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
 
-    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
     // verify MetaShiftBuildAction created.
     assertEquals(1, run.getActions(MetaShiftBuildAction.class).size());
@@ -192,7 +192,7 @@ public class MetaShiftPublisherTest {
         "node {" +
         String.format(" metashift reportRoot:'%s'", report.getAbsolutePath()) +
         "}", true));
-    WorkflowRun run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    WorkflowRun run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
     // verify MetaShiftBuildAction created.
     assertEquals(1, run.getActions(MetaShiftBuildAction.class).size());

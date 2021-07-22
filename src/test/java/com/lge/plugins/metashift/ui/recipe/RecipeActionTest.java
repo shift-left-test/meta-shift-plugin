@@ -107,7 +107,7 @@ public class RecipeActionTest {
             .setMutationTests(1, 2, 3));
     builder.add(fakeRecipe);
     builder.toFile(report);
-    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
 
     List<RecipeAction> recipeActions = buildAction.getActions(RecipeAction.class);
@@ -136,11 +136,11 @@ public class RecipeActionTest {
     assertValues(recipeAction.getPremirrorCacheJson(), false, true, 0.8, 0, 0, 0);
     assertValues(recipeAction.getSharedStateCacheJson(), false, true, 0.8, 0, 0, 0);
     assertValues(recipeAction.getCodeViolationsJson(), false, true, 0.1, 10, 6, 0.6);
-    assertValues(recipeAction.getCommentsJson(), true, true, 0.3, 10, 5, 0.5);
+    assertValues(recipeAction.getCommentsJson(), true, true, 0.2, 10, 5, 0.5);
     assertValues(recipeAction.getComplexityJson(), false, true, 0.1, 11, 5, 0.45);
     assertValues(recipeAction.getStatementCoverageJson(), false, true, 0.8, 3, 1, 0.33);
     assertValues(recipeAction.getBranchCoverageJson(), true, true, 0.4, 7, 3, 0.42);
-    assertValues(recipeAction.getDuplicationsJson(), false, true, 0.1, 10, 6, 0.6);
+    assertValues(recipeAction.getDuplicationsJson(), true, true, 0.1, 10, 0, 0.0);
     assertValues(recipeAction.getMutationTestJson(), false, true, 0.85, 6, 1, 0.16);
     assertValues(recipeAction.getRecipeViolationsJson(), false, true, 0.1, 10, 6, 0.6);
     assertValues(recipeAction.getTestJson(), false, true, 0.95, 10, 1, 0.1);
@@ -160,9 +160,9 @@ public class RecipeActionTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
 
-    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
     assertNotNull(run);
-    FreeStyleBuild run2 = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run2 = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
     MetaShiftBuildAction buildAction = run2.getAction(MetaShiftBuildAction.class);
     RecipeAction recipeAction = buildAction.getAction(RecipeAction.class);

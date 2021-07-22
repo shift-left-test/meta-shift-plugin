@@ -61,12 +61,12 @@ public class BuildStatusTest {
   }
 
   @Test
-  public void testInitData() {
-    assertValues(true, true, true, true, true, true, true, true, true, true, true);
+  public void testDefaultStatus() {
+    assertValues(false, false, false, false, false, false, false, false, false, false, false);
   }
 
   @Test
-  public void setTestData() {
+  public void setBuildStatusAsFalse() {
     status.setPremirrorCacheAsUnstable(false);
     status.setSharedStateCacheAsUnstable(false);
     status.setCodeViolationsAsUnstable(false);
@@ -79,5 +79,21 @@ public class BuildStatusTest {
     status.setRecipeViolationsAsUnstable(false);
     status.setTestAsUnstable(false);
     assertValues(false, false, false, false, false, false, false, false, false, false, false);
+  }
+
+  @Test
+  public void setBuildStatusAsTrue() {
+    status.setPremirrorCacheAsUnstable(true);
+    status.setSharedStateCacheAsUnstable(true);
+    status.setCodeViolationsAsUnstable(true);
+    status.setCommentsAsUnstable(true);
+    status.setComplexityAsUnstable(true);
+    status.setStatementCoverageAsUnstable(true);
+    status.setBranchCoverageAsUnstable(true);
+    status.setDuplicationsAsUnstable(true);
+    status.setMutationTestAsUnstable(true);
+    status.setRecipeViolationsAsUnstable(true);
+    status.setTestAsUnstable(true);
+    assertValues(true, true, true, true, true, true, true, true, true, true, true);
   }
 }

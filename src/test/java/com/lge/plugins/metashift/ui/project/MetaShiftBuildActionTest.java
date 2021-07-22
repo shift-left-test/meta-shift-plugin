@@ -95,7 +95,7 @@ public class MetaShiftBuildActionTest {
   private JSONObject newQualifiedMapJsonObject() {
     JSONObject object = new JSONObject();
     object.put("Recipe Violations", false);
-    object.put("Duplications", false);
+    object.put("Duplications", true);
     object.put("Branch Coverage", true);
     object.put("Premirror Cache", false);
     object.put("Shared State Cache", false);
@@ -159,7 +159,7 @@ public class MetaShiftBuildActionTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
 
-    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
 
     assertEquals("meta-shift report", buildAction.getDisplayName());
@@ -170,7 +170,7 @@ public class MetaShiftBuildActionTest {
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(newJsonArray(0, 0), "", "", new JSONObject()));
     expected.add(newJsonObject(newJsonArray(0, 100), "", "", new JSONObject()));
-    expected.add(newJsonObject(newJsonArray(10, 18), fakeRecipe.getRecipe(), fakeRecipe.getRecipe(),
+    expected.add(newJsonObject(newJsonArray(10, 27), fakeRecipe.getRecipe(), fakeRecipe.getRecipe(),
         newQualifiedMapJsonObject()));
     assertEquals(expected, buildAction.getRecipesTreemapModel().getJSONArray("series"));
 
@@ -200,11 +200,11 @@ public class MetaShiftBuildActionTest {
     assertValues(buildAction.getPremirrorCacheJson(), false, true, 0.8, 0, 0, 0);
     assertValues(buildAction.getSharedStateCacheJson(), false, true, 0.8, 0, 0, 0);
     assertValues(buildAction.getCodeViolationsJson(), false, true, 0.1, 10, 6, 0.6);
-    assertValues(buildAction.getCommentsJson(), true, true, 0.3, 10, 5, 0.5);
+    assertValues(buildAction.getCommentsJson(), true, true, 0.2, 10, 5, 0.5);
     assertValues(buildAction.getComplexityJson(), false, true, 0.1, 11, 5, 0.45);
     assertValues(buildAction.getStatementCoverageJson(), false, true, 0.8, 3, 1, 0.33);
     assertValues(buildAction.getBranchCoverageJson(), true, true, 0.4, 7, 3, 0.42);
-    assertValues(buildAction.getDuplicationsJson(), false, true, 0.1, 10, 6, 0.6);
+    assertValues(buildAction.getDuplicationsJson(), true, true, 0.1, 10, 0, 0.0);
     assertValues(buildAction.getMutationTestJson(), false, true, 0.85, 6, 1, 0.16);
     assertValues(buildAction.getRecipeViolationsJson(), false, true, 0.1, 10, 6, 0.6);
     assertValues(buildAction.getTestJson(), false, true, 0.95, 10, 1, 0.1);
@@ -224,16 +224,16 @@ public class MetaShiftBuildActionTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
 
-    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
 
     assertNull(buildAction.getPreviousBuildAction());
     assertEquals(1.0, buildAction.getTestedRecipesDelta(), 0);
     assertCodeSizeDelta(buildAction, 1, 0, 0, 1, 10);
-    assertMetricDelta(buildAction, 0.0, 0.0, 0.6, 0.5, 0.45, 0.33, 0.42, 0.6, 0.16, 0.6, 0.1);
+    assertMetricDelta(buildAction, 0.0, 0.0, 0.6, 0.5, 0.45, 0.33, 0.42, 0.0, 0.16, 0.6, 0.1);
 
     // second build and check diff.
-    FreeStyleBuild run2 = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run2 = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
     MetaShiftBuildAction buildAction2 = run2.getAction(MetaShiftBuildAction.class);
 
     assertNotNull(buildAction2.getPreviousBuildAction());

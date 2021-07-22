@@ -103,7 +103,7 @@ public class MetaShiftProjectActionTest {
 
     MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
     project.getPublishersList().add(publisher);
-    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
 
     projectAction.doIndex(req, rsp);
@@ -144,7 +144,7 @@ public class MetaShiftProjectActionTest {
     // run with valid report path
     publisher = new MetaShiftPublisher(report.getName());
     project.getPublishersList().add(publisher);
-    jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
     assertChartSize(projectAction.getTrendChartModel(), 11, 11, 1);
   }

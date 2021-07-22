@@ -93,7 +93,7 @@ public class RecipeMutationTestActionTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
 
-    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
     RecipeAction recipeAction = buildAction.getAction(RecipeAction.class);
@@ -141,7 +141,7 @@ public class RecipeMutationTestActionTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
 
-    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
     MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
     RecipeAction recipeAction = buildAction.getAction(RecipeAction.class);
