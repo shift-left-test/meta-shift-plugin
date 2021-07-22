@@ -32,9 +32,11 @@ import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -62,8 +64,8 @@ public class RecipeMutationTestAction extends RecipeActionChild {
    */
   public RecipeMutationTestAction(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
-      String name, String url, boolean percentScale,
-      TaskListener listener, Recipe recipe) {
+      String name, String url, boolean percentScale, TaskListener listener, Recipe recipe)
+      throws InterruptedException, ClosedByInterruptException {
     super(parent, channel, metadata, name, url, percentScale);
 
     List<MutationTestData> mutationTestList =
@@ -91,7 +93,9 @@ public class RecipeMutationTestAction extends RecipeActionChild {
 
     JSONArray fileMutationTestArray = new JSONArray();
 
-    fileMutationTestList.forEach((file, testList) -> {
+    for (Map.Entry<String, List<MutationTestData>> entry : fileMutationTestList.entrySet()) {
+      String file = entry.getKey();
+      List<MutationTestData> testList = entry.getValue();
       JSONObject fileMutationTest = new JSONObject();
       fileMutationTest.put("file", file);
       fileMutationTest.put("killed",
@@ -106,14 +110,18 @@ public class RecipeMutationTestAction extends RecipeActionChild {
         this.saveFileContents(file);
         this.getDataSource().put(testList,
             this.getParentAction().getName(), file, STORE_KEY_MUTATIONTESTLIST);
-      } catch (IOException | InterruptedException e) {
+      } catch (ClosedByInterruptException e) {
+        throw e;
+      } catch (IOException e) {
         listener.getLogger().println(e.getMessage());
         e.printStackTrace(listener.getLogger());
       }
-    });
+    }
 
     try {
       this.setTableModelJson(fileMutationTestArray);
+    } catch (ClosedByInterruptException e) {
+      throw e;
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -153,7 +161,7 @@ public class RecipeMutationTestAction extends RecipeActionChild {
    * return file mutation test detail.
    */
   @JavaScriptMethod
-  public JSONObject getFileMutationTestDetail(String codePath) {
+  public JSONObject getFileMutationTestDetail(String codePath) throws InterruptedException {
     JSONObject result = new JSONObject();
 
     List<MutationTestData> dataList = this.getDataSource().get(

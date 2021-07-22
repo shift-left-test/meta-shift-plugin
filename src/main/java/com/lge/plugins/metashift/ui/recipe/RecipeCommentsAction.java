@@ -32,6 +32,7 @@ import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -51,8 +52,8 @@ public class RecipeCommentsAction
    */
   public RecipeCommentsAction(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
-      String name, String url, boolean percentScale,
-      TaskListener listener, Recipe recipe) {
+      String name, String url, boolean percentScale, TaskListener listener, Recipe recipe)
+      throws InterruptedException, ClosedByInterruptException {
     super(parent, channel, metadata, name, url, percentScale);
 
     JSONArray commentArray = JSONArray.fromObject(
@@ -60,6 +61,8 @@ public class RecipeCommentsAction
 
     try {
       this.setTableModelJson(commentArray);
+    } catch (ClosedByInterruptException e) {
+      throw e;
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());

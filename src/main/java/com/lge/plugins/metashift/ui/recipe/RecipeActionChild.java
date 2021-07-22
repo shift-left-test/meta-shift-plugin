@@ -129,7 +129,7 @@ public abstract class RecipeActionChild implements Action {
     this.getDataSource().put(contents, this.parent.getName(), "FILE", codePath);
   }
 
-  public String readFileContents(String codePath) {
+  public String readFileContents(String codePath) throws InterruptedException {
     return this.getDataSource().get(this.parent.getName(), "FILE", codePath);
   }
 
@@ -168,13 +168,13 @@ public abstract class RecipeActionChild implements Action {
     return result;
   }
 
-  protected void setTableModelJson(JSONArray model) throws IOException {
+  protected void setTableModelJson(JSONArray model) throws IOException, InterruptedException {
     this.getDataSource().put(model,
         this.getParentAction().getName(), this.name, STORE_KEY_TABLE_MODEL);
   }
 
   @JavaScriptMethod
-  public JSONArray getTableModelJson() {
+  public JSONArray getTableModelJson() throws InterruptedException {
     return this.getDataSource().get(
         this.getParentAction().getName(), this.name, STORE_KEY_TABLE_MODEL);
   }

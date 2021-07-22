@@ -207,7 +207,7 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
    * @return recipe qualifier list.
    */
   @JavaScriptMethod
-  public JSONArray getRecipesTableModel() {
+  public JSONArray getRecipesTableModel() throws InterruptedException {
     return this.getDataSource().get(STORE_KEY_RECIPEMETRICSLIST);
   }
 

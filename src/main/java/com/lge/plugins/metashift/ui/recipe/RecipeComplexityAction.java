@@ -32,9 +32,11 @@ import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -60,8 +62,8 @@ public class RecipeComplexityAction
    */
   public RecipeComplexityAction(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
-      String name, String url, boolean percentScale,
-      TaskListener listener, Recipe recipe) {
+      String name, String url, boolean percentScale, TaskListener listener, Recipe recipe)
+      throws InterruptedException, ClosedByInterruptException {
     super(parent, channel, metadata, name, url, percentScale);
 
     List<ComplexityData> complexityDataList =
@@ -83,7 +85,10 @@ public class RecipeComplexityAction
     complexityTolerance =
         this.getParentAction().getParentAction().getConfiguration().getComplexityTolerance();
 
-    fileComplexityList.forEach((file, complexityList) -> {
+    for (Map.Entry<String, List<ComplexityData>> entry : fileComplexityList.entrySet()) {
+      String file = entry.getKey();
+      List<ComplexityData> complexityList = entry.getValue();
+
       List<ComplexityData> abnormalList = complexityList.stream()
           .filter(o -> o.getValue() >= complexityTolerance).collect(Collectors.toList());
       if (abnormalList.size() > 0) {
@@ -97,15 +102,19 @@ public class RecipeComplexityAction
           this.saveFileContents(file);
           this.getDataSource().put(abnormalList,
               this.getParentAction().getName(), file, STORE_KEY_COMPLEXITYLIST);
-        } catch (IOException | InterruptedException e) {
+        } catch (ClosedByInterruptException e) {
+          throw e;
+        } catch (IOException e) {
           listener.getLogger().println(e.getMessage());
           e.printStackTrace(listener.getLogger());
         }
       }
-    });
+    }
 
     try {
       this.setTableModelJson(fileComplexityArray);
+    } catch (ClosedByInterruptException e) {
+      throw e;
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -142,7 +151,7 @@ public class RecipeComplexityAction
    * return file complexity detail.
    */
   @JavaScriptMethod
-  public JSONObject getFileComplexityDetail(String codePath) {
+  public JSONObject getFileComplexityDetail(String codePath) throws InterruptedException {
     JSONObject result = new JSONObject();
 
     List<ComplexityData> dataList = this.getDataSource().get(

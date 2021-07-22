@@ -30,9 +30,11 @@ import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -61,8 +63,8 @@ public abstract class RecipeViolationActionBase<T extends ViolationData<?>>
    */
   public RecipeViolationActionBase(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
-      String name, String url, boolean percentScale,
-      TaskListener listener, Recipe recipe, Class<T> type) {
+      String name, String url, boolean percentScale, TaskListener listener, Recipe recipe,
+      Class<T> type) throws InterruptedException, ClosedByInterruptException {
     super(parent, channel, metadata, name, url, percentScale);
     List<T> violationDataList =
         recipe.objects(type).collect(Collectors.toList());
@@ -89,7 +91,10 @@ public abstract class RecipeViolationActionBase<T extends ViolationData<?>>
 
     JSONArray fileViolationArray = new JSONArray();
 
-    fileViolationList.forEach((file, violationList) -> {
+    for (Map.Entry<String, List<T>> entry : fileViolationList.entrySet()) {
+      String file = entry.getKey();
+      List<T> violationList = entry.getValue();
+
       JSONObject fileViolation = new JSONObject();
       fileViolation.put("file", file);
       fileViolation.put("major",
@@ -105,11 +110,13 @@ public abstract class RecipeViolationActionBase<T extends ViolationData<?>>
         this.getDataSource().put(violationList,
             this.getParentAction().getName(), this.getDisplayName(),
             file, STORE_KEY_FILEVIOLATIONLIST);
-      } catch (IOException | InterruptedException e) {
+      } catch (ClosedByInterruptException e) {
+        throw e;
+      } catch (IOException e) {
         listener.getLogger().println(e.getMessage());
         e.printStackTrace(listener.getLogger());
       }
-    });
+    }
 
     try {
       this.setTableModelJson(fileViolationArray);
@@ -144,7 +151,7 @@ public abstract class RecipeViolationActionBase<T extends ViolationData<?>>
    * @return json object
    */
   @JavaScriptMethod
-  public JSONObject getFileViolationDetail(String file) {
+  public JSONObject getFileViolationDetail(String file) throws InterruptedException {
     JSONObject result = new JSONObject();
 
     List<T> violationDataList = this.getDataSource().get(

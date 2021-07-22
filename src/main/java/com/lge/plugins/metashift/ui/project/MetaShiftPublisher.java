@@ -46,6 +46,12 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.time.DurationFormatUtils;
@@ -220,11 +226,32 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     return DurationFormatUtils.formatDuration(millis, "HH:mm:ss.S");
   }
 
+  private Callable<Void> publishReport(Run<?, ?> run, FilePath reportPath, TaskListener listener,
+      Configuration configuration, Recipes recipes) {
+    return () -> {
+      FilePath buildPath = new FilePath(run.getRootDir());
+      DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
+
+      MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
+          run, listener, configuration, reportPath, dataSource, recipes);
+      run.addAction(buildAction);
+
+      if (!buildAction.getMetrics().isStable()) {
+        listener.getLogger().println(
+            "[meta-shift-plugin] NOTE: one of the metrics does not meet the goal.");
+        Result runResult = run.getResult() == null ? Result.SUCCESS : run.getResult();
+
+        if (runResult.isBetterThan(Result.UNSTABLE)) {
+          run.setResult(Result.UNSTABLE);
+        }
+      }
+      return null;
+    };
+  }
+
   @Override
   public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
       throws InterruptedException, IOException {
-    Result runResult = run.getResult() == null ? Result.SUCCESS : run.getResult();
-
     PrintStream logger = listener.getLogger();
     logger.println("[meta-shift-plugin] Scanning for the meta-shift report...");
 
@@ -245,32 +272,36 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     }
 
     try {
-      FilePath buildPath = new FilePath(run.getRootDir());
-      DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
-
       Recipes recipes = new Recipes(reportPath, listener.getLogger());
 
-      MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
-          run, listener, configuration, reportPath, dataSource, recipes);
-      run.addAction(buildAction);
-
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      for (Future<Void> future : executor.invokeAll(Arrays.asList(
+          publishReport(run, reportPath, listener, configuration, recipes)))) {
+        future.get();
+      }
       Instant finished = Instant.now();
       logger.printf("[meta-shift-plugin] Finished at %s%n", finished.toString());
 
       logger.printf("[meta-shift-plugin] Total time: %s%n",
           getFormattedTime(Duration.between(started, finished).toMillis()));
 
-      if (!buildAction.getMetrics().isStable()) {
-        logger.println("[meta-shift-plugin] NOTE: one of the metrics does not meet the goal.");
-        if (runResult.isBetterThan(Result.UNSTABLE)) {
-          run.setResult(Result.UNSTABLE);
-        }
-      }
       logger.println("[meta-shift-plugin] Done.");
     } catch (IllegalArgumentException | IOException e) {
       throw new AbortException(e.getMessage());
     } catch (InterruptedException ignored) {
       run.setResult(Result.ABORTED);
+    } catch (ExecutionException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof IllegalArgumentException) {
+        throw (IllegalArgumentException) cause;
+      }
+      if (cause instanceof InterruptedException) {
+        throw (InterruptedException) cause;
+      }
+      if (cause instanceof IOException) {
+        throw (IOException) cause;
+      }
+      throw new RuntimeException("Unknown exception: " + cause.getMessage(), cause);
     }
   }
 

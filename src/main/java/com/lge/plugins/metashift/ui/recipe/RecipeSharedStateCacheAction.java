@@ -30,6 +30,7 @@ import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.models.SummaryStatistics;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
+import java.nio.channels.ClosedByInterruptException;
 import net.sf.json.JSONObject;
 
 /**
@@ -48,8 +49,8 @@ public class RecipeSharedStateCacheAction
    */
   public RecipeSharedStateCacheAction(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
-      String name, String url, boolean percentScale,
-      TaskListener listener, Recipe recipe) {
+      String name, String url, boolean percentScale, TaskListener listener, Recipe recipe)
+      throws InterruptedException, ClosedByInterruptException {
     super(parent, channel, metadata, name, url, percentScale, listener, recipe,
         SharedStateCacheData.class);
   }

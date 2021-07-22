@@ -31,6 +31,7 @@ import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -50,8 +51,8 @@ public abstract class RecipeCacheActionBase<T extends CacheData>
    */
   public RecipeCacheActionBase(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
-      String name, String url, boolean percentScale,
-      TaskListener listener, Recipe recipe, Class<T> type) {
+      String name, String url, boolean percentScale, TaskListener listener, Recipe recipe,
+      Class<T> type) throws InterruptedException, ClosedByInterruptException {
     super(parent, channel, metadata, name, url, percentScale);
 
     JSONArray cacheList = JSONArray.fromObject(
@@ -59,6 +60,8 @@ public abstract class RecipeCacheActionBase<T extends CacheData>
 
     try {
       this.setTableModelJson(cacheList);
+    } catch (ClosedByInterruptException e) {
+      throw e;
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());

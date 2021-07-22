@@ -31,9 +31,11 @@ import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -57,8 +59,8 @@ public abstract class RecipeCoverageActionBase<T extends CoverageData>
    */
   public RecipeCoverageActionBase(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
-      String name, String url, boolean percentScale,
-      TaskListener listener, Recipe recipe, Class<T> type) {
+      String name, String url, boolean percentScale, TaskListener listener, Recipe recipe, 
+      Class<T> type) throws InterruptedException, ClosedByInterruptException {
     super(parent, channel, metadata, name, url, percentScale);
     List<T> coverageDataList =
         recipe.objects(type).collect(Collectors.toList());
@@ -76,7 +78,9 @@ public abstract class RecipeCoverageActionBase<T extends CoverageData>
 
     JSONArray fileCoverageArray = new JSONArray();
 
-    fileCoverageList.forEach((file, coverageList) -> {
+    for (Map.Entry<String, List<T>> entry : fileCoverageList.entrySet()) {
+      String file = entry.getKey();
+      List<T> coverageList = entry.getValue();
       fileCoverageArray.add(this.generateFileCoverage(file, coverageList));
 
       try {
@@ -84,14 +88,18 @@ public abstract class RecipeCoverageActionBase<T extends CoverageData>
         this.getDataSource().put(coverageList,
             this.getParentAction().getName(), this.getDisplayName(),
             file, STORE_KEY_FILECOVERAGELIST);
-      } catch (IOException | InterruptedException e) {
+      } catch (ClosedByInterruptException e) {
+        throw e;
+      } catch (IOException e) {
         listener.getLogger().println(e.getMessage());
         e.printStackTrace(listener.getLogger());
       }
-    });
+    }
 
     try {
       this.setTableModelJson(fileCoverageArray);
+    } catch (ClosedByInterruptException e) {
+      throw e;
     } catch (IOException e) {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
@@ -120,7 +128,7 @@ public abstract class RecipeCoverageActionBase<T extends CoverageData>
    * return file coverage info.
    */
   @JavaScriptMethod
-  public JSONObject getFileCoverageDetail(String codePath) {
+  public JSONObject getFileCoverageDetail(String codePath) throws InterruptedException {
     JSONObject result = new JSONObject();
 
     List<T> dataList = this.getDataSource().get(
