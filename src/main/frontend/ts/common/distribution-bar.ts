@@ -11,11 +11,11 @@ class StatisticsItem {
   clazz: string;
 }
 
-@customElement('statistics-bar')
+@customElement('distribution-bar')
 /**
- * statistics bar.
+ * distribution bar.
  */
-export class StatisticsBar extends LitElement {
+export class DistributionBar extends LitElement {
   @property() items;
 
   /**

@@ -49,6 +49,8 @@ export class ScaleBar extends LitElement {
     const scalePosition = stats.percent ? Math.floor(stats.scale * 100) :
       stats.scale * 100 / stats.max;
 
+    const isSimple = this.classList.contains('simple');
+
     return html`<div class="metrics-stats">
       <div class="range" style="width:${rangewidth}%; left: ${rangeOffset}%">
       </div>
@@ -59,6 +61,8 @@ export class ScaleBar extends LitElement {
         <div class="pointer-text">▲</div>
       </div>` : html``}
     </div>
+    ${isSimple ? html`` :
+    html`
     <div class="legend">
       <div class="label">
       Low: ${low}
@@ -71,6 +75,6 @@ export class ScaleBar extends LitElement {
       <div class="label">
       High: ${high}
       </div>
-    </div>`;
+    </div>`}`;
   }
 }

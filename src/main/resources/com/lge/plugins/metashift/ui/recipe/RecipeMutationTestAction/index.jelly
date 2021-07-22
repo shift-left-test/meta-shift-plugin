@@ -10,9 +10,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       <div class="page">
         <h1>Overview</h1>
         <h2>Scale <span class="metrics-scale">${it.scale}</span></h2>
-        <scale-bar class="section" statistics='${it.metricStatisticsJson}'></scale-bar>
+        <scale-bar class="section" statistics='${it.parentAction.mutationTestStatisticsJson}' />
         <h2>Distribution</h2>
-        <statistics-bar class="section" items='${it.distributionJson}'/>
+        <distribution-bar class="section" items='${it.distributionJson}'/>
         <h1>Details</h1>
         <mutation-test-list class="section row-click"
           page='${it.getUrlParameter("page")}'

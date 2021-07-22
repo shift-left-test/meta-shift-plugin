@@ -25,7 +25,6 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import com.lge.plugins.metashift.metrics.Evaluator;
-import com.lge.plugins.metashift.models.SummaryStatistics;
 import com.lge.plugins.metashift.persistence.DataSource;
 import hudson.FilePath;
 import hudson.model.Action;
@@ -101,8 +100,6 @@ public abstract class RecipeActionChild implements Action {
     return Stapler.getCurrentRequest().getParameter(paramName);
   }
 
-  public abstract SummaryStatistics getMetricStatistics();
-
   public abstract Evaluator<?> getEvaluator();
 
   public abstract JSONArray getDistributionJson();
@@ -149,23 +146,6 @@ public abstract class RecipeActionChild implements Action {
     } else {
       return "N/A";
     }
-  }
-
-  /**
-   * return metricStatics rendering model.
-   *
-   * @return json object
-   */
-  public JSONObject getMetricStatisticsJson() {
-    JSONObject result = this.getMetricStatistics().toJsonObject();
-
-    Evaluator<?> evaluator = this.getEvaluator();
-
-    result.put("scale", evaluator.getRatio());
-    result.put("available", evaluator.isAvailable());
-    result.put("percent", this.percentScale);
-
-    return result;
   }
 
   protected void setTableModelJson(JSONArray model) throws IOException, InterruptedException {

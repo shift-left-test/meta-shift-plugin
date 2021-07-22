@@ -104,16 +104,6 @@ public class RecipeMutationTestActionTest {
 
     assertEquals("16%", action.getScale());
 
-    JSONObject metricStatistics = action.getMetricStatisticsJson();
-    assertEquals(0.16, metricStatistics.getDouble("average"), 0.01);
-    assertEquals(0.16, metricStatistics.getDouble("min"), 0.01);
-    assertEquals(0.16, metricStatistics.getDouble("max"), 0.01);
-    assertEquals(1, metricStatistics.getInt("count"));
-    assertEquals(0.16, metricStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.16, metricStatistics.getDouble("scale"), 0.01);
-    assertTrue(metricStatistics.getBoolean("available"));
-    assertTrue(metricStatistics.getBoolean("percent"));
-
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(1, 16, "Killed", "valid-good"));
     expected.add(newJsonObject(2, 33, "Survived", "valid-bad"));

@@ -106,16 +106,6 @@ public class RecipeComplexityActionTest {
 
     assertEquals("23%", action.getScale());
 
-    JSONObject metricStatistics = action.getMetricStatisticsJson();
-    assertEquals(0.23, metricStatistics.getDouble("average"), 0.01);
-    assertEquals(0.23, metricStatistics.getDouble("min"), 0.01);
-    assertEquals(0.23, metricStatistics.getDouble("max"), 0.01);
-    assertEquals(1, metricStatistics.getInt("count"));
-    assertEquals(0.23, metricStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.23, metricStatistics.getDouble("scale"), 0.01);
-    assertTrue(metricStatistics.getBoolean("available"));
-    assertTrue(metricStatistics.getBoolean("percent"));
-
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(5, 23, "Abnormal", "valid-bad"));
     expected.add(newJsonObject(16, 76, "Normal", "invalid"));

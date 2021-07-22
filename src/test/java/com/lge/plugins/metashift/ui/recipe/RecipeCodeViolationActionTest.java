@@ -104,16 +104,6 @@ public class RecipeCodeViolationActionTest {
 
     assertEquals("0.60", action.getScale());
 
-    JSONObject metricStatistics = action.getMetricStatisticsJson();
-    assertEquals(0.6, metricStatistics.getDouble("average"), 0.01);
-    assertEquals(0.6, metricStatistics.getDouble("min"), 0.01);
-    assertEquals(0.6, metricStatistics.getDouble("max"), 0.01);
-    assertEquals(1, metricStatistics.getInt("count"));
-    assertEquals(0.6, metricStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.6, metricStatistics.getDouble("scale"), 0.01);
-    assertTrue(metricStatistics.getBoolean("available"));
-    assertFalse(metricStatistics.getBoolean("percent"));
-
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(1, 16, "Major", "major"));
     expected.add(newJsonObject(2, 33, "Minor", "minor"));

@@ -20,14 +20,17 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
           <metrics-simple-view name="Premirror Cache" class="percent"
             url="premirror_cache"
             metricsValue="${it.premirrorCacheJson}"
+            statistics="${it.premirrorCacheStatisticsJson}"
             threshold="${it.parentAction.configuration.premirrorCacheThreshold}" />
           <metrics-simple-view name="Shared State Cache" class="percent"
             url="sharedstate_cache"
             metricsValue="${it.sharedStateCacheJson}"
+            statistics="${it.sharedStateCacheStatisticsJson}"
             threshold="${it.parentAction.configuration.sharedStateCacheThreshold}" />
           <metrics-simple-view name="Recipe Violations"
             url="recipe_violations"
             metricsValue="${it.recipeViolationsJson}"
+            statistics="${it.recipeViolationsStatisticsJson}"
             threshold="${it.parentAction.configuration.recipeViolationThreshold}" />
         </div>
 
@@ -37,19 +40,23 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
           <metrics-simple-view name="Comments" class="percent"
             url="comments"
             metricsValue="${it.commentsJson}"
+            statistics="${it.commentsStatisticsJson}"
             threshold="${it.parentAction.configuration.commentThreshold}" />
           <metrics-simple-view name="Code Violations"
             url="code_violations"
             metricsValue="${it.codeViolationsJson}"
+            statistics="${it.codeViolationsStatisticsJson}"
             threshold="${it.parentAction.configuration.codeViolationThreshold}" />
           <metrics-simple-view name="Complexity" class="percent"
             url="complexity"
             metricsValue="${it.complexityJson}"
+            statistics="${it.complexityStatisticsJson}"
             threshold="${it.parentAction.configuration.complexityThreshold}"
             tolerance="${it.parentAction.configuration.complexityTolerance}" />
           <metrics-simple-view name="Duplications" class="percent"
             url="duplications"
             metricsValue="${it.duplicationsJson}"
+            statistics="${it.duplicationsStatisticsJson}"
             threshold="${it.parentAction.configuration.duplicationThreshold}"
             tolerance="${it.parentAction.configuration.duplicationTolerance}" />
         </div>
@@ -58,18 +65,22 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
           <metrics-simple-view name="Unit Tests" class="percent"
             url="test"
             metricsValue="${it.testJson}"
+            statistics="${it.testStatisticsJson}"
             threshold="${it.parentAction.configuration.testThreshold}" />
           <metrics-simple-view name="Statement Coverage" class="percent"
             url="statement_coverage"
             metricsValue="${it.statementCoverageJson}"
+            statistics="${it.statementCoverageStatisticsJson}"
             threshold="${it.parentAction.configuration.statementCoverageThreshold}" />
           <metrics-simple-view name="Branch Coverage" class="percent"
             url="branch_coverage"
             metricsValue="${it.branchCoverageJson}"
+            statistics="${it.branchCoverageStatisticsJson}"
             threshold="${it.parentAction.configuration.branchCoverageThreshold}" />
           <metrics-simple-view name="Mutation Tests" class="percent"
             url="mutation_test"
             metricsValue="${it.mutationTestJson}"
+            statistics="${it.mutationTestStatisticsJson}"
             threshold="${it.parentAction.configuration.mutationTestThreshold}" />
         </div>
       </div>

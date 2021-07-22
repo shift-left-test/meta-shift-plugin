@@ -27,7 +27,6 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.models.SummaryStatistics;
 import com.lge.plugins.metashift.ui.models.DistributionItemList;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -126,12 +125,6 @@ public class RecipeMutationTestAction extends RecipeActionChild {
       listener.getLogger().println(e.getMessage());
       e.printStackTrace(listener.getLogger());
     }
-  }
-
-  @Override
-  public SummaryStatistics getMetricStatistics() {
-    return this.getParentAction().getMetricStatistics()
-        .getMutationTest();
   }
 
   @Override

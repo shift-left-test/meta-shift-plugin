@@ -27,7 +27,6 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeViolationData;
-import com.lge.plugins.metashift.models.SummaryStatistics;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.nio.channels.ClosedByInterruptException;
@@ -53,12 +52,6 @@ public class RecipeRecipeViolationsAction
       throws InterruptedException, ClosedByInterruptException {
     super(parent, channel, metadata, name, url, percentScale,
         listener, recipe, RecipeViolationData.class);
-  }
-
-  @Override
-  public SummaryStatistics getMetricStatistics() {
-    return this.getParentAction().getMetricStatistics()
-        .getRecipeViolations();
   }
 
   @Override

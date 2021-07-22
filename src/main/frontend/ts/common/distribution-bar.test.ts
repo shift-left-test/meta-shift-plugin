@@ -1,18 +1,18 @@
 import {fixture, html} from '@open-wc/testing';
-import {StatisticsBar} from './statistics-bar';
+import {DistributionBar} from './distribution-bar';
 
 import {assert} from 'chai';
 
-suite('statistics-bar', () => {
+suite('distribution-bar', () => {
   test('is defined', () => {
-    const el = document.createElement('statistics-bar');
-    assert.instanceOf(el, StatisticsBar);
+    const el = document.createElement('distribution-bar');
+    assert.instanceOf(el, DistributionBar);
   });
 
   test('create', async () => {
     const el = (await fixture(html`
-      <statistics-bar></statistics-bar>
-    `)) as StatisticsBar;
+      <distribution-bar></distribution-bar>
+    `)) as DistributionBar;
 
     assert.isNotNull(el.querySelector('.test-stats'),
         el.outerHTML);
@@ -25,8 +25,8 @@ suite('statistics-bar', () => {
     ];
 
     const el = (await fixture(html`
-      <statistics-bar items="${JSON.stringify(items)}"><statistics-bar>
-    `)) as StatisticsBar;
+      <distribution-bar items="${JSON.stringify(items)}"><distribution-bar>
+    `)) as DistributionBar;
 
     let elChild = el.querySelector('div.label.valid-good');
     assert.include(elChild.textContent, 'test 30% (100)',

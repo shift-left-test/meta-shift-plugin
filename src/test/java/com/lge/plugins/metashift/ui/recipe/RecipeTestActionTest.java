@@ -104,16 +104,6 @@ public class RecipeTestActionTest {
 
     assertEquals("10%", action.getScale());
 
-    JSONObject metricStatistics = action.getMetricStatisticsJson();
-    assertEquals(0.1, metricStatistics.getDouble("average"), 0.01);
-    assertEquals(0.1, metricStatistics.getDouble("min"), 0.01);
-    assertEquals(0.1, metricStatistics.getDouble("max"), 0.01);
-    assertEquals(1, metricStatistics.getInt("count"));
-    assertEquals(0.1, metricStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.1, metricStatistics.getDouble("scale"), 0.01);
-    assertTrue(metricStatistics.getBoolean("available"));
-    assertTrue(metricStatistics.getBoolean("percent"));
-
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(1, 10, "Passed", "valid-good"));
     expected.add(newJsonObject(2, 20, "Failed", "valid-bad"));

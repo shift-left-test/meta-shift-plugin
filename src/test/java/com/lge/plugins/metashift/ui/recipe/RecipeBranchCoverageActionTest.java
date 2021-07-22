@@ -105,16 +105,6 @@ public class RecipeBranchCoverageActionTest {
 
     assertEquals("42%", action.getScale());
 
-    JSONObject metricStatistics = action.getMetricStatisticsJson();
-    assertEquals(0.42, metricStatistics.getDouble("average"), 0.01);
-    assertEquals(0.42, metricStatistics.getDouble("min"), 0.01);
-    assertEquals(0.42, metricStatistics.getDouble("max"), 0.01);
-    assertEquals(1, metricStatistics.getInt("count"));
-    assertEquals(0.42, metricStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.42, metricStatistics.getDouble("scale"), 0.01);
-    assertTrue(metricStatistics.getBoolean("available"));
-    assertTrue(metricStatistics.getBoolean("percent"));
-
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(3, 42, "Covered", "valid-good"));
     expected.add(newJsonObject(4, 57, "Uncovered", "invalid"));

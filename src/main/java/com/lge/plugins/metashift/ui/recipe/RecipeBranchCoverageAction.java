@@ -27,7 +27,6 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.models.SummaryStatistics;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import java.nio.channels.ClosedByInterruptException;
@@ -98,12 +97,6 @@ public class RecipeBranchCoverageAction
         indexes.size() > 0 ? (double) coveredIndexes.size() / (double) indexes.size() : 0);
 
     return fileCoverage;
-  }
-
-  @Override
-  public SummaryStatistics getMetricStatistics() {
-    return this.getParentAction().getMetricStatistics()
-        .getBranchCoverage();
   }
 
   @Override

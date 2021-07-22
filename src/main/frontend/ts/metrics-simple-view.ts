@@ -10,10 +10,10 @@ export class MetricsSimpleView extends LitElement {
   @property() metricsValue
   @property() url
   @property() delta
-  @property() qualifiedRate
   @property() threshold
   @property() tolerance
-
+  @property() qualifiedRate
+  @property() statistics
   /**
    * constructor
    */
@@ -56,9 +56,6 @@ export class MetricsSimpleView extends LitElement {
       html`(${diffThresholdPrefix}${Number(diffThreshold).toFixed(2)})`) :
       html`(N/A)`;
 
-    const qualifiedrecipes = this.qualifiedRate ?
-     JSON.parse(this.qualifiedRate) : undefined;
-
     return html`<div class="board">
       <div class="metrics-name">
         <b>${this.name}</b>
@@ -98,20 +95,59 @@ export class MetricsSimpleView extends LitElement {
           </div>` :
         html``}
     </div>
-    ${qualifiedrecipes ?
-      html`
+    ${this.renderQualifiedRate()}
+    ${this.renderStatistics()}`;
+  }
+
+  /**
+   * render qualified recipe rate.
+   * @return {unknown}
+   */
+  renderQualifiedRate() {
+    if (this.qualifiedRate) {
+      const qualifiedrecipes = JSON.parse(this.qualifiedRate);
+
+      return html`
+      <div class="progress">
+        <div class="progress-bar"
+          style="width:${qualifiedrecipes.ratio * 100}%">
+        </div>
+        <span class="progress-tooltip">
+        Qualified Recipes: ${Math.floor(qualifiedrecipes.ratio * 100)}%<br>
+        (${qualifiedrecipes.numerator.toLocaleString()}/
+        ${qualifiedrecipes.denominator.toLocaleString()})
+        </span>
+      </div>`;
+    } else {
+      return html``;
+    }
+  }
+  /**
+   * render statistics.
+   * @return {unknown}
+   */
+  renderStatistics() {
+    if (this.statistics) {
+      const stats = JSON.parse(this.statistics);
+      const low = stats.percent ? Math.floor(stats.min * 100) + '%' :
+        Number(stats.min).toFixed(2);
+      const avg = stats.percent ? Math.floor(stats.average * 100) + '%' :
+        Number(stats.average).toFixed(2);
+      const high = stats.percent ? Math.floor(stats.max * 100) + '%' :
+        Number(stats.max).toFixed(2);
+
+      return html`
         <div class="progress">
-          <div class="progress-bar"
-            style="width:${qualifiedrecipes.ratio * 100}%">
-          </div>
+          <scale-bar class='simple' statistics='${this.statistics}'>
+          </scale-bar>
           <span class="progress-tooltip">
-          Qualified Recipes: ${Math.floor(qualifiedrecipes.ratio * 100)}%<br>
-          (${qualifiedrecipes.numerator.toLocaleString()}/
-          ${qualifiedrecipes.denominator.toLocaleString()})
+            ${low} / ${avg} / ${high}<br>
+            ( min / avg / max )
           </span>
-        </div>` :
-      html``}
-    `;
+        </div>`;
+    } else {
+      return html``;
+    }
   }
 
   /**

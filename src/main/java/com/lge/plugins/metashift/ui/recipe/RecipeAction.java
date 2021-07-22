@@ -26,10 +26,12 @@ package com.lge.plugins.metashift.ui.recipe;
 
 import com.lge.plugins.metashift.metrics.CodeSizeDelta;
 import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
+import com.lge.plugins.metashift.metrics.Evaluator;
 import com.lge.plugins.metashift.metrics.MetricStatistics;
 import com.lge.plugins.metashift.metrics.Metrics;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipe;
+import com.lge.plugins.metashift.models.SummaryStatistics;
 import com.lge.plugins.metashift.ui.MetricsActionBase;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import com.lge.plugins.metashift.utils.JsonUtils;
@@ -115,6 +117,148 @@ public class RecipeAction extends MetricsActionBase implements Action {
 
   public MetricStatistics getMetricStatistics() {
     return this.parent.getMetricStatistics();
+  }
+
+  private JSONObject getMetricStatisticsJson(SummaryStatistics statistics,
+      Evaluator<?> evaluator, boolean isPercent) {
+    JSONObject result = statistics.toJsonObject();
+    result.put("scale", evaluator.getRatio());
+    result.put("available", evaluator.isAvailable());
+    result.put("percent", isPercent);
+
+    return result;
+  }
+
+  /**
+   * premirrorcache statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getPremirrorCacheStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getPremirrorCache(),
+        this.getMetrics().getPremirrorCache(),
+        true);
+  }
+
+  /**
+   * sharedstatecache statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getSharedStateCacheStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getSharedStateCache(),
+        this.getMetrics().getSharedStateCache(),
+        true);
+  }
+
+  /**
+   * recipeviolation statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getRecipeViolationsStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getRecipeViolations(),
+        this.getMetrics().getRecipeViolations(),
+        false);
+  }
+
+  /**
+   * comments statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getCommentsStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getComments(),
+        this.getMetrics().getComments(),
+        true);
+  }
+
+  /**
+   * codeviolations statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getCodeViolationsStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getCodeViolations(),
+        this.getMetrics().getCodeViolations(),
+        false);
+  }
+
+  /**
+   * complexity statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getComplexityStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getComplexity(),
+        this.getMetrics().getComplexity(),
+        true);
+  }
+
+  /**
+   * duplications statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getDuplicationsStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getDuplications(),
+        this.getMetrics().getDuplications(),
+        true);
+  }
+
+  /**
+   * test statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getTestStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getTest(),
+        this.getMetrics().getTest(),
+        true);
+  }
+
+  /**
+   * statementcoverage statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getStatementCoverageStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getStatementCoverage(),
+        this.getMetrics().getStatementCoverage(),
+        true);
+  }
+
+  /**
+   * branchcoverage statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getBranchCoverageStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getBranchCoverage(),
+        this.getMetrics().getBranchCoverage(),
+        true);
+  }
+
+  /**
+   * mutationtest statistics json.
+   *
+   * @return json string
+   */
+  public JSONObject getMutationTestStatisticsJson() {
+    return this.getMetricStatisticsJson(
+        this.parent.getMetricStatistics().getMutationTest(),
+        this.getMetrics().getMutationTest(),
+        true);
   }
 
   public String getName() {

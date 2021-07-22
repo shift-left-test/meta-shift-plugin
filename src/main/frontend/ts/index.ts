@@ -5,7 +5,7 @@ import {RecipeTreemap} from './build/recipe-treemap';
 import {RecipeList} from './build/recipe-list';
 import {BuildTrendChart} from './build/build-trend-chart';
 import {ScaleBar} from './common/scale-bar';
-import {StatisticsBar} from './common/statistics-bar';
+import {DistributionBar} from './common/distribution-bar';
 import {PremirrorCacheList} from './premirror-cache/premirror-cache-list';
 import {SharedStateCacheList}
   from './shared-state-cache/shared-state-cache-list';
@@ -50,7 +50,7 @@ export {
   RecipeList,
   BuildTrendChart,
   ScaleBar,
-  StatisticsBar,
+  DistributionBar,
   TestList,
   StatementCoverageFiles,
   StatementCoverageFileView,
