@@ -54,12 +54,16 @@ export class ScaleBar extends LitElement {
     return html`<div class="metrics-stats">
       <div class="range" style="width:${rangewidth}%; left: ${rangeOffset}%">
       </div>
-      <div class="pointer avg" style="left: ${avgPosition}%">
-        <div class="pointer-text">▲</div>
-      </div>${stats.available ? html`
-      <div class="pointer scale" style="left: ${scalePosition}%">
-        <div class="pointer-text">▲</div>
-      </div>` : html``}
+      ${isSimple ? html`` :
+        html`
+        <div class="pointer avg" style="left: ${avgPosition}%">
+          <div class="pointer-text">▲</div>
+        </div>
+        ${stats.available ? html`
+          <div class="pointer scale" style="left: ${scalePosition}%">
+            <div class="pointer-text">▲</div>
+          </div>` : html``}
+      `}
     </div>
     ${isSimple ? html`` :
     html`

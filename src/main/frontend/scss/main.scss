@@ -294,6 +294,8 @@ metrics-simple-view {
   margin: 2px;
   text-align: center;
   width: 200px;
+  border: white solid;
+  border-width: 1px;
 
   .board{
     border: 1px solid;
@@ -354,7 +356,7 @@ metrics-simple-view {
  
       position: absolute;
       left: 20px;
-      top: -3px;
+      top: 10px;
       z-index: 1;
     }
   }
@@ -366,8 +368,13 @@ metrics-simple-view {
   }
 }
 
+metrics-simple-view.link {
+  cursor: pointer;
+}
+
 metrics-simple-view.summary {
   width: 190px;
+
   .ico {
     padding: 0px 20px 5px 10px;
   }
@@ -376,9 +383,12 @@ metrics-simple-view.summary {
   }
 }
 
+/*
 metrics-simple-view.has-url:hover {
-  transform: scale(1.1);
+  border: black solid;
+  border-width: 1px;
 }
+*/
 
 tested-simple-view {
   @extend metrics-simple-view;
