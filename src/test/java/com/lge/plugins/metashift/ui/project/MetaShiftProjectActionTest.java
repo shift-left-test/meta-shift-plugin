@@ -108,7 +108,7 @@ public class MetaShiftProjectActionTest {
 
     projectAction.doIndex(req, rsp);
 
-    verify(rsp).sendRedirect2("../../../" + buildAction.getUrl());
+    verify(rsp).sendRedirect2("../../../" + buildAction.getRun().getUrl() + buildAction.getUrlName() + "/");
   }
 
   @Test

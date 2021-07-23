@@ -36,6 +36,7 @@ import com.lge.plugins.metashift.ui.MetricsActionBase;
 import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
+import hudson.Functions;
 import hudson.model.Action;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -43,6 +44,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -97,13 +101,13 @@ public class RecipeAction extends MetricsActionBase implements Action {
         this, reportRoot.getChannel(), metadata, "Duplications", "duplications", true,
         listener, recipe));
     this.addAction(new RecipeMutationTestAction(
-        this, reportRoot.getChannel(), metadata, "Mutation Test", "mutation_test", true,
+        this, reportRoot.getChannel(), metadata, "Mutation Tests", "mutation_test", true,
         listener, recipe));
     this.addAction(new RecipeRecipeViolationsAction(
         this, reportRoot.getChannel(), metadata, "Recipe Violations", "recipe_violations", false,
         listener, recipe));
     this.addAction(new RecipeTestAction(
-        this, reportRoot.getChannel(), metadata, "Test", "test", true,
+        this, reportRoot.getChannel(), metadata, "Unit Tests", "test", true,
         listener, recipe));
   }
 
@@ -283,6 +287,45 @@ public class RecipeAction extends MetricsActionBase implements Action {
   @Override
   public String getSearchUrl() {
     return getUrlName();
+  }
+
+  private void addActionToMenu(ContextMenu menu, RecipeActionChild action) {
+    if (action != null) {
+      String base = Functions.getIconFilePath(action);
+      String icon = Stapler.getCurrentRequest().getContextPath()
+          + (base.startsWith("images/") ? Functions.getResourcePath() : "")
+          + '/' + base;
+
+      menu.add(action.getUrlName(), icon, action.getDisplayName());
+    }
+  }
+
+  /**
+   * constext menu provider for recipe action.
+   */
+  public ContextMenu doContextMenu(StaplerRequest request, StaplerResponse response)
+      throws Exception {
+    ContextMenu menu = new ContextMenu();
+
+    final MenuItem headerBuildPerformance = new MenuItem().withDisplayName("Build Performance");
+    headerBuildPerformance.header = true;
+    menu.add(headerBuildPerformance);
+    this.addActionToMenu(menu, this.getAction(RecipePremirrorCacheAction.class));
+    this.addActionToMenu(menu, this.getAction(RecipeSharedStateCacheAction.class));
+    this.addActionToMenu(menu, this.getAction(RecipeRecipeViolationsAction.class));
+    final MenuItem headerCodeQuality = new MenuItem().withDisplayName("Code Quality");
+    headerCodeQuality.header = true;
+    menu.add(headerCodeQuality);
+    this.addActionToMenu(menu, this.getAction(RecipeCommentsAction.class));
+    this.addActionToMenu(menu, this.getAction(RecipeCodeViolationsAction.class));
+    this.addActionToMenu(menu, this.getAction(RecipeComplexityAction.class));
+    this.addActionToMenu(menu, this.getAction(RecipeDuplicationsAction.class));
+    this.addActionToMenu(menu, this.getAction(RecipeTestAction.class));
+    this.addActionToMenu(menu, this.getAction(RecipeStatementCoverageAction.class));
+    this.addActionToMenu(menu, this.getAction(RecipeBranchCoverageAction.class));
+    this.addActionToMenu(menu, this.getAction(RecipeMutationTestAction.class));
+
+    return menu;
   }
 
   private Metrics getPreviousMetrics() {

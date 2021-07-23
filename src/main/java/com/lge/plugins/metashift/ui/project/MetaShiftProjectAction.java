@@ -92,7 +92,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
     if (action == null) {
       rsp.sendRedirect2("nodata");
     } else {
-      rsp.sendRedirect2("../../../" + action.getUrl());
+      rsp.sendRedirect2("../../../" + action.getRun().getUrl() + action.getUrlName() + "/");
     }
   }
 

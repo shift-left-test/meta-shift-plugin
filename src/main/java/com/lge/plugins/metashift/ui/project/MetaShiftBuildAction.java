@@ -38,17 +38,24 @@ import com.lge.plugins.metashift.ui.MetricsActionBase;
 import com.lge.plugins.metashift.ui.models.RecipesTreemapModel;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import hudson.FilePath;
+import hudson.Functions;
+import hudson.model.Action;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import jenkins.model.RunAction2;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -129,11 +136,6 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
     return "meta-shift-report";
   }
 
-  // need to render at side panel link
-  public String getUrl() {
-    return getRun().getUrl() + getUrlName() + "/";
-  }
-
   // implements RunAction2 API
   @Override
   public void onAttached(Run<?, ?> run) {
@@ -148,6 +150,28 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
   @Override
   public String getSearchUrl() {
     return getUrlName();
+  }
+
+  /**
+   * constext menu provider.
+   */
+  public ContextMenu doContextMenu(StaplerRequest request, StaplerResponse response)
+      throws Exception {
+    ContextMenu menu = new ContextMenu();
+
+    List<RecipeAction> actions = this.getActions(RecipeAction.class).stream()
+        .sorted(Comparator.comparing(RecipeAction::getDisplayName)).collect(Collectors.toList());
+
+    for (Action a : actions) {
+      String base = Functions.getIconFilePath(a);
+      String icon = Stapler.getCurrentRequest().getContextPath()
+          + (base.startsWith("images/") ? Functions.getResourcePath() : "")
+          + '/' + base;
+
+      menu.add(a.getUrlName(), icon, a.getDisplayName());
+    }
+
+    return menu;
   }
 
   public Configuration getConfiguration() {
