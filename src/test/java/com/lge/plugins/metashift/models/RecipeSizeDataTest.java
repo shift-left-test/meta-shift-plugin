@@ -27,9 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -42,6 +39,14 @@ public class RecipeSizeDataTest {
 
   private final RecipeSizeData origin = new RecipeSizeData("A-1.0.0-r0", "a.bb", 10);
   private final RecipeSizeData same = new RecipeSizeData("A-1.0.0-r0", "a.bb", 5);
+
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
+  }
 
   @Test
   public void testInitData() {
@@ -62,25 +67,9 @@ public class RecipeSizeDataTest {
 
   @Test
   public void testHashCode() {
-    assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new RecipeSizeData("A-1.0.0-r0", "b.bb", 10).hashCode());
-    assertNotEquals(origin.hashCode(), new RecipeSizeData("B-1.0.0-r0", "b.bb", 10).hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<RecipeSizeData> expected = new ArrayList<>();
-    expected.add(new RecipeSizeData("A-1.0.0-r0", "a.bb", 10));
-    expected.add(new RecipeSizeData("A-1.0.0-r0", "b.bb", 10));
-    expected.add(new RecipeSizeData("B-1.0.0-r0", "a.bb", 10));
-
-    List<RecipeSizeData> actual = new ArrayList<>();
-    actual.add(new RecipeSizeData("B-1.0.0-r0", "a.bb", 10));
-    actual.add(new RecipeSizeData("A-1.0.0-r0", "b.bb", 10));
-    actual.add(new RecipeSizeData("A-1.0.0-r0", "a.bb", 10));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin, new RecipeSizeData("A-1.0.0-r0", "b.bb", 10));
+    assertHashNotEquals(origin, new RecipeSizeData("B-1.0.0-r0", "b.bb", 10));
   }
 
   @Test

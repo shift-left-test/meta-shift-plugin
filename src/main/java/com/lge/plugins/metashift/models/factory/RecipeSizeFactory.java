@@ -34,7 +34,6 @@ import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -70,7 +69,6 @@ public class RecipeSizeFactory {
             o.toLong("code_lines")
         ));
       }
-      Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(RecipeSizeData.class);
     } catch (JsonException e) {

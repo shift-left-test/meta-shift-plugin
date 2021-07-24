@@ -34,7 +34,6 @@ import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -72,7 +71,6 @@ public class ComplexityFactory {
             o.toLong("end"),
             o.toLong("value")));
       }
-      Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(ComplexityData.class);
     } catch (JsonException e) {

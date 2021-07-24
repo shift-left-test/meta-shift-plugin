@@ -29,7 +29,6 @@ import hudson.FilePath;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -96,7 +95,6 @@ public final class Recipes extends ArrayList<Recipe> implements Streamable {
       logger.printf("[meta-shift-plugin] -> %s%n", directory.getName());
       this.add(new Recipe(directory));
     }
-    Collections.sort(this);
 
     logger.println("[meta-shift-plugin] Removing recipe data with no source files...");
     this.removeIf(recipe -> new CodeSizeEvaluator().parse(recipe).getLines() == 0);

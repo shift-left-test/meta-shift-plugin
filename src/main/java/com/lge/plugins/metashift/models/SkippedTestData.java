@@ -46,6 +46,6 @@ public final class SkippedTestData extends TestData {
    */
   public SkippedTestData(final String recipe, final String suite, final String name,
       final String message) {
-    super(recipe, suite, name, message, "SKIPPED");
+    super(recipe, suite, name, message, Status.SKIPPED);
   }
 }

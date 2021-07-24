@@ -27,9 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -44,6 +41,14 @@ public class RecipeViolationDataTest {
       1, "error_rule", "error_info", "error");
   private final RecipeViolationData same = new MajorRecipeViolationData("A-X-X", "a.file",
       1, "error_rule", "error_info2", "error2");
+
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
+  }
 
   @Test
   public void testInitData() {
@@ -82,51 +87,23 @@ public class RecipeViolationDataTest {
 
   @Test
   public void testHashCode() {
-    assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MinorRecipeViolationData("A-X-X", "a.file", 1, "error_rule", "error_info", "error")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new InfoRecipeViolationData("A-X-X", "a.file", 1, "error_rule", "error_info", "error")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MajorRecipeViolationData("B-X-X", "a.file", 1, "error_rule", "error_info", "error")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MajorRecipeViolationData("A-X-X", "b.file", 1, "error_rule", "error_info", "error")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MajorRecipeViolationData("A-X-X", "a.file", 2, "error_rule", "error_info", "error")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MajorRecipeViolationData("A-X-X", "a.file", 1, "warn_rule", "error_info", "error")
-            .hashCode());
-    assertEquals(origin.hashCode(),
-        new MajorRecipeViolationData("A-X-X", "a.file", 1, "error_rule", "warn_info", "error")
-            .hashCode());
-    assertEquals(origin.hashCode(),
-        new MajorRecipeViolationData("A-X-X", "a.file", 1, "error_rule", "error_info", "warn")
-            .hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<RecipeViolationData> expected = new ArrayList<>();
-    expected.add(new MajorRecipeViolationData("A-X-X", "a.file", 1, "rule1", "info", "error"));
-    expected.add(new MajorRecipeViolationData("A-X-X", "a.file", 1, "rule2", "info", "error"));
-    expected.add(new MajorRecipeViolationData("A-X-X", "a.file", 2, "rule2", "info", "error"));
-    expected.add(new MajorRecipeViolationData("A-X-X", "b.file", 2, "rule2", "info", "error"));
-    expected.add(new MajorRecipeViolationData("B-X-X", "b.file", 2, "rule2", "info", "error"));
-
-    List<RecipeViolationData> actual = new ArrayList<>();
-    actual.add(new MajorRecipeViolationData("B-X-X", "b.file", 2, "rule2", "info", "error"));
-    actual.add(new MajorRecipeViolationData("A-X-X", "b.file", 2, "rule2", "info", "error"));
-    actual.add(new MajorRecipeViolationData("A-X-X", "a.file", 2, "rule2", "info", "error"));
-    actual.add(new MajorRecipeViolationData("A-X-X", "a.file", 1, "rule2", "info", "error"));
-    actual.add(new MajorRecipeViolationData("A-X-X", "a.file", 1, "rule1", "info", "error"));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin,
+        new MinorRecipeViolationData("A-X-X", "a.file", 1, "error_rule", "error_info", "error"));
+    assertHashNotEquals(origin,
+        new InfoRecipeViolationData("A-X-X", "a.file", 1, "error_rule", "error_info", "error"));
+    assertHashNotEquals(origin,
+        new MajorRecipeViolationData("B-X-X", "a.file", 1, "error_rule", "error_info", "error"));
+    assertHashNotEquals(origin,
+        new MajorRecipeViolationData("A-X-X", "b.file", 1, "error_rule", "error_info", "error"));
+    assertHashNotEquals(origin,
+        new MajorRecipeViolationData("A-X-X", "a.file", 2, "error_rule", "error_info", "error"));
+    assertHashNotEquals(origin,
+        new MajorRecipeViolationData("A-X-X", "a.file", 1, "warn_rule", "error_info", "error"));
+    assertHashEquals(origin,
+        new MajorRecipeViolationData("A-X-X", "a.file", 1, "error_rule", "warn_info", "error"));
+    assertHashEquals(origin,
+        new MajorRecipeViolationData("A-X-X", "a.file", 1, "error_rule", "error_info", "warn"));
   }
 
   @Test

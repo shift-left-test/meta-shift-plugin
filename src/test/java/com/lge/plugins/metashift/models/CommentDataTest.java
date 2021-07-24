@@ -27,9 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -42,6 +39,14 @@ public class CommentDataTest {
 
   private final CommentData origin = new CommentData("A-1.0.0-r0", "a.file", 10, 5);
   private final CommentData same = new CommentData("A-1.0.0-r0", "a.file", 10, 5);
+
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
+  }
 
   @Test
   public void testInitData() {
@@ -65,29 +70,11 @@ public class CommentDataTest {
 
   @Test
   public void testHashCode() {
-    assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(), new CommentData("B-1.0.0-r0", "a.file", 10, 5).hashCode());
-    assertNotEquals(origin.hashCode(), new CommentData("A-1.0.0-r0", "b.file", 10, 5).hashCode());
-    assertEquals(origin.hashCode(), new CommentData("A-1.0.0-r0", "a.file", 10000, 5).hashCode());
-    assertEquals(origin.hashCode(), new CommentData("A-1.0.0-r0", "a.file", 10, 1000).hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<CommentData> expected = new ArrayList<>();
-    expected.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
-    expected.add(new CommentData("A-1.0.0-r0", "b.file", 10, 5));
-    expected.add(new CommentData("B-1.0.0-r0", "a.file", 10, 5));
-    expected.add(new CommentData("B-1.0.0-r0", "b.file", 10, 5));
-
-    List<CommentData> actual = new ArrayList<>();
-    actual.add(new CommentData("B-1.0.0-r0", "b.file", 10, 5));
-    actual.add(new CommentData("B-1.0.0-r0", "a.file", 10, 5));
-    actual.add(new CommentData("A-1.0.0-r0", "b.file", 10, 5));
-    actual.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin, new CommentData("B-1.0.0-r0", "a.file", 10, 5));
+    assertHashNotEquals(origin, new CommentData("A-1.0.0-r0", "b.file", 10, 5));
+    assertHashEquals(origin, new CommentData("A-1.0.0-r0", "a.file", 10000, 5));
+    assertHashEquals(origin, new CommentData("A-1.0.0-r0", "a.file", 10, 1000));
   }
 
   @Test

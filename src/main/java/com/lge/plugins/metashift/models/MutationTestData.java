@@ -24,12 +24,24 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the mutation test data.
  *
  * @author Sung Gon Kim
  */
-public abstract class MutationTestData extends Data<MutationTestData> {
+public abstract class MutationTestData extends Data {
+
+  /**
+   * Represents the mutation test status.
+   */
+  protected enum Status {
+    KILLED,
+    SURVIVED,
+    SKIPPED,
+  }
 
   /**
    * Represents the UUID of the class.
@@ -69,7 +81,7 @@ public abstract class MutationTestData extends Data<MutationTestData> {
   /**
    * Represents the status of the mutation test.
    */
-  private final String status;
+  private final Status status;
 
   /**
    * Default constructor.
@@ -85,7 +97,7 @@ public abstract class MutationTestData extends Data<MutationTestData> {
    */
   public MutationTestData(final String recipe, final String file, final String mutatedClass,
       final String mutatedMethod, final long line, final String mutator,
-      final String killingTest, final String status) {
+      final String killingTest, final Status status) {
     super(recipe);
     this.file = file;
     this.mutatedClass = mutatedClass;
@@ -94,19 +106,6 @@ public abstract class MutationTestData extends Data<MutationTestData> {
     this.mutator = mutator;
     this.killingTest = killingTest;
     this.status = status;
-  }
-
-  @Override
-  public final int compareTo(final MutationTestData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        file.compareTo(other.file),
-        mutatedClass.compareTo(other.mutatedClass),
-        mutatedMethod.compareTo(other.mutatedMethod),
-        Long.compare(line, other.line),
-        mutator.compareTo(other.mutator),
-        killingTest.compareTo(other.killingTest)
-    );
   }
 
   @Override
@@ -120,13 +119,30 @@ public abstract class MutationTestData extends Data<MutationTestData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((MutationTestData) object) == 0;
+    MutationTestData other = (MutationTestData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getFile(), other.getFile())
+        .append(getMutatedClass(), other.getMutatedClass())
+        .append(getMutatedMethod(), other.getMutatedMethod())
+        .append(getLine(), other.getLine())
+        .append(getMutator(), other.getMutator())
+        .append(getKillingTest(), other.getKillingTest())
+        .isEquals();
   }
 
   @Override
   public final int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file, mutatedClass, mutatedMethod, line,
-        mutator, killingTest);
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getFile())
+        .append(getMutatedClass())
+        .append(getMutatedMethod())
+        .append(getLine())
+        .append(getMutator())
+        .append(getKillingTest())
+        .toHashCode();
   }
 
   /**
@@ -189,6 +205,6 @@ public abstract class MutationTestData extends Data<MutationTestData> {
    * @return status of the mutation test
    */
   public final String getStatus() {
-    return status;
+    return status.name();
   }
 }

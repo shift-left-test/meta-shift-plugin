@@ -55,6 +55,6 @@ public final class MajorCodeViolationData extends CodeViolationData {
       final String description,
       final String severity, final String tool) {
     super(recipe, file, line, column, rule,
-        message, description, severity, tool, "MAJOR");
+        message, description, severity, tool, Level.MAJOR);
   }
 }

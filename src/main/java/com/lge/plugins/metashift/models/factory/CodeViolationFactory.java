@@ -37,7 +37,6 @@ import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -71,7 +70,6 @@ public class CodeViolationFactory {
         }
         objects.add(createInstance(path.getName(), o));
       }
-      Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(CodeViolationData.class);
     } catch (JsonException e) {

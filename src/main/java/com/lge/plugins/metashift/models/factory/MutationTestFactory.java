@@ -36,7 +36,6 @@ import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
@@ -69,7 +68,6 @@ public class MutationTestFactory {
         }
         objects.add(createInstance(path.getName(), tag));
       }
-      Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(MutationTestData.class);
     } catch (ParserConfigurationException | SAXException e) {

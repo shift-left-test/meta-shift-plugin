@@ -27,9 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -44,6 +41,14 @@ public class MutationTestDataTest {
       new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "TC");
   private final MutationTestData same =
       new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "TC");
+
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
+  }
 
   @Test
   public void testInitData() {
@@ -85,49 +90,23 @@ public class MutationTestDataTest {
 
   @Test
   public void testHashCode() {
-    assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(),
-        new SurvivedMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "TC").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new KilledMutationTestData("B-X-X", "a.file", "C", "f()", 1, "AOR", "TC").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new KilledMutationTestData("A-X-X", "b.file", "C", "f()", 1, "AOR", "TC").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new KilledMutationTestData("A-X-X", "a.file", "D", "f()", 1, "AOR", "TC").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new KilledMutationTestData("A-X-X", "a.file", "C", "g()", 1, "AOR", "TC").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 2, "AOR", "TC").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "BOR", "TC").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "TC2").hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<MutationTestData> expected = new ArrayList<>();
-    expected.add(new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "TC"));
-    expected.add(new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "XX"));
-    expected.add(new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "XXX", "XX"));
-    expected.add(new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 2, "XXX", "XX"));
-    expected.add(new KilledMutationTestData("A-X-X", "a.file", "C", "x()", 2, "XXX", "XX"));
-    expected.add(new KilledMutationTestData("A-X-X", "a.file", "X", "x()", 2, "XXX", "XX"));
-    expected.add(new KilledMutationTestData("A-X-X", "x.file", "X", "x()", 2, "XXX", "XX"));
-    expected.add(new KilledMutationTestData("X-X-X", "x.file", "X", "x()", 2, "XXX", "XX"));
-
-    List<MutationTestData> actual = new ArrayList<>();
-    actual.add(new KilledMutationTestData("X-X-X", "x.file", "X", "x()", 2, "XXX", "XX"));
-    actual.add(new KilledMutationTestData("A-X-X", "x.file", "X", "x()", 2, "XXX", "XX"));
-    actual.add(new KilledMutationTestData("A-X-X", "a.file", "X", "x()", 2, "XXX", "XX"));
-    actual.add(new KilledMutationTestData("A-X-X", "a.file", "C", "x()", 2, "XXX", "XX"));
-    actual.add(new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 2, "XXX", "XX"));
-    actual.add(new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "XXX", "XX"));
-    actual.add(new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "XX"));
-    actual.add(new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "TC"));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin,
+        new SurvivedMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "TC"));
+    assertHashNotEquals(origin,
+        new KilledMutationTestData("B-X-X", "a.file", "C", "f()", 1, "AOR", "TC"));
+    assertHashNotEquals(origin,
+        new KilledMutationTestData("A-X-X", "b.file", "C", "f()", 1, "AOR", "TC"));
+    assertHashNotEquals(origin,
+        new KilledMutationTestData("A-X-X", "a.file", "D", "f()", 1, "AOR", "TC"));
+    assertHashNotEquals(origin,
+        new KilledMutationTestData("A-X-X", "a.file", "C", "g()", 1, "AOR", "TC"));
+    assertHashNotEquals(origin,
+        new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 2, "AOR", "TC"));
+    assertHashNotEquals(origin,
+        new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "BOR", "TC"));
+    assertHashNotEquals(origin,
+        new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "TC2"));
   }
 
   @Test

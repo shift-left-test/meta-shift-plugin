@@ -28,9 +28,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -46,6 +43,14 @@ public class CoverageDataTest {
   private final CoverageData same =
       new StatementCoverageData("A-B-C", "a.file", 1, false);
 
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
+  }
+
   @Test
   public void testInitData() {
     assertEquals("A-B-C", origin.getRecipe());
@@ -53,7 +58,7 @@ public class CoverageDataTest {
     assertEquals(1, origin.getLine());
     assertEquals(0, origin.getIndex());
     assertTrue(origin.isCovered());
-    assertEquals("Statement", origin.getType());
+    assertEquals("STATEMENT", origin.getType());
   }
 
   @Test
@@ -71,37 +76,12 @@ public class CoverageDataTest {
 
   @Test
   public void testHashCode() {
-    assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(),
-        new BranchCoverageData("A-B-C", "a.file", 1, 0, true).hashCode());
-    assertNotEquals(origin.hashCode(),
-        new StatementCoverageData("B-B-C", "a.file", 1, true).hashCode());
-    assertNotEquals(origin.hashCode(),
-        new StatementCoverageData("A-B-C", "b.file", 1, true).hashCode());
-    assertNotEquals(origin.hashCode(),
-        new StatementCoverageData("A-B-C", "a.file", 2, true).hashCode());
-    assertEquals(origin.hashCode(),
-        new StatementCoverageData("A-B-C", "a.file", 1, false).hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<CoverageData> expected = new ArrayList<>();
-    expected.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, true));
-    expected.add(new BranchCoverageData("B-B-C", "a.file", 1, 1, true));
-    expected.add(new BranchCoverageData("B-B-C", "b.file", 1, 1, true));
-    expected.add(new BranchCoverageData("B-B-C", "b.file", 2, 1, true));
-    expected.add(new BranchCoverageData("B-B-C", "b.file", 2, 2, true));
-
-    List<CoverageData> actual = new ArrayList<>();
-    actual.add(new BranchCoverageData("B-B-C", "b.file", 2, 2, true));
-    actual.add(new BranchCoverageData("B-B-C", "b.file", 2, 1, true));
-    actual.add(new BranchCoverageData("B-B-C", "b.file", 1, 1, true));
-    actual.add(new BranchCoverageData("B-B-C", "a.file", 1, 1, true));
-    actual.add(new BranchCoverageData("A-B-C", "a.file", 1, 1, true));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin, new BranchCoverageData("A-B-C", "a.file", 1, 0, true));
+    assertHashNotEquals(origin, new StatementCoverageData("B-B-C", "a.file", 1, true));
+    assertHashNotEquals(origin, new StatementCoverageData("A-B-C", "b.file", 1, true));
+    assertHashNotEquals(origin, new StatementCoverageData("A-B-C", "a.file", 2, true));
+    assertHashEquals(origin, new StatementCoverageData("A-B-C", "a.file", 1, false));
   }
 
   @Test
@@ -111,6 +91,6 @@ public class CoverageDataTest {
     assertEquals("a.file", object.getString("file"));
     assertEquals(1, object.getLong("line"));
     assertTrue(object.getBoolean("covered"));
-    assertEquals("Statement", object.getString("type"));
+    assertEquals("STATEMENT", object.getString("type"));
   }
 }

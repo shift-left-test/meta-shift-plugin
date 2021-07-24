@@ -24,12 +24,25 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the test data.
  *
  * @author Sung Gon Kim
  */
-public abstract class TestData extends Data<TestData> {
+public abstract class TestData extends Data {
+
+  /**
+   * Represents the test data status.
+   */
+  protected enum Status {
+    PASSED,
+    FAILED,
+    ERROR,
+    SKIPPED,
+  }
 
   /**
    * Represents the UUID of the class.
@@ -54,7 +67,7 @@ public abstract class TestData extends Data<TestData> {
   /**
    * Represents the status of the test.
    */
-  private final String status;
+  private final Status status;
 
   /**
    * Default constructor.
@@ -66,21 +79,12 @@ public abstract class TestData extends Data<TestData> {
    * @param status  of the test
    */
   public TestData(final String recipe, final String suite, final String name,
-      final String message, final String status) {
+      final String message, final Status status) {
     super(recipe);
     this.suite = suite;
     this.name = name;
     this.message = message;
     this.status = status;
-  }
-
-  @Override
-  public final int compareTo(final TestData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        suite.compareTo(other.suite),
-        name.compareTo(other.name)
-    );
   }
 
   @Override
@@ -94,12 +98,22 @@ public abstract class TestData extends Data<TestData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((TestData) object) == 0;
+    TestData other = (TestData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getSuite(), other.getSuite())
+        .append(getName(), other.getName())
+        .isEquals();
   }
 
   @Override
   public final int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), suite, name);
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getSuite())
+        .append(getName())
+        .toHashCode();
   }
 
   /**
@@ -135,6 +149,6 @@ public abstract class TestData extends Data<TestData> {
    * @return status of the test
    */
   public final String getStatus() {
-    return status;
+    return status.name();
   }
 }

@@ -27,9 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -44,6 +41,14 @@ public class ComplexityDataTest {
       new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 1);
   private final ComplexityData same =
       new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 1);
+
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
+  }
 
   @Test
   public void testInitData() {
@@ -67,34 +72,12 @@ public class ComplexityDataTest {
 
   @Test
   public void testHashCode() {
-    assertEquals(origin.hashCode(), origin.hashCode());
-    assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(),
-        new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 1).hashCode());
-    assertNotEquals(origin.hashCode(),
-        new ComplexityData("A-1.0.0-r0", "b.file", "f()", 5, 10, 1).hashCode());
-    assertNotEquals(origin.hashCode(),
-        new ComplexityData("A-1.0.0-r0", "a.file", "x()", 5, 10, 1).hashCode());
-    assertEquals(origin.hashCode(),
-        new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 2).hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<ComplexityData> expected = new ArrayList<>();
-    expected.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 1));
-    expected.add(new ComplexityData("A-1.0.0-r0", "a.file", "g()", 5, 10, 1));
-    expected.add(new ComplexityData("A-1.0.0-r0", "b.file", "g()", 5, 10, 1));
-    expected.add(new ComplexityData("B-1.0.0-r0", "b.file", "g()", 5, 10, 1));
-
-    List<ComplexityData> actual = new ArrayList<>();
-    actual.add(new ComplexityData("B-1.0.0-r0", "b.file", "g()", 5, 10, 1));
-    actual.add(new ComplexityData("A-1.0.0-r0", "b.file", "g()", 5, 10, 1));
-    actual.add(new ComplexityData("A-1.0.0-r0", "a.file", "g()", 5, 10, 1));
-    actual.add(new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 1));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
+    assertHashEquals(origin, origin);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin, new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 1));
+    assertHashNotEquals(origin, new ComplexityData("A-1.0.0-r0", "b.file", "f()", 5, 10, 1));
+    assertHashNotEquals(origin, new ComplexityData("A-1.0.0-r0", "a.file", "x()", 5, 10, 1));
+    assertHashEquals(origin, new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 2));
   }
 
   @Test

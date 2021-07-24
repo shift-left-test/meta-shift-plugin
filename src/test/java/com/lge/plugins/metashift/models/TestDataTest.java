@@ -27,9 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -42,6 +39,14 @@ public class TestDataTest {
 
   private final TestData origin = new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg");
   private final TestData same = new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg");
+
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
+  }
 
   @Test
   public void testInitData() {
@@ -69,39 +74,14 @@ public class TestDataTest {
 
   @Test
   public void testHashCode() {
-    assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(),
-        new FailedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new ErrorTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new SkippedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new PassedTestData("B-1.0.0-r0", "a.suite", "a.tc", "msg").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new PassedTestData("A-1.0.0-r0", "b.suite", "a.tc", "msg").hashCode());
-    assertNotEquals(origin.hashCode(),
-        new PassedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg").hashCode());
-    assertEquals(origin.hashCode(),
-        new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "X").hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<TestData> expected = new ArrayList<>();
-    expected.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
-    expected.add(new PassedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
-    expected.add(new PassedTestData("A-1.0.0-r0", "b.suite", "b.tc", "msg"));
-    expected.add(new PassedTestData("B-1.0.0-r0", "b.suite", "b.tc", "msg"));
-
-    List<TestData> actual = new ArrayList<>();
-    actual.add(new PassedTestData("B-1.0.0-r0", "b.suite", "b.tc", "msg"));
-    actual.add(new PassedTestData("A-1.0.0-r0", "b.suite", "b.tc", "msg"));
-    actual.add(new PassedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
-    actual.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin, new FailedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    assertHashNotEquals(origin, new ErrorTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    assertHashNotEquals(origin, new SkippedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    assertHashNotEquals(origin, new PassedTestData("B-1.0.0-r0", "a.suite", "a.tc", "msg"));
+    assertHashNotEquals(origin, new PassedTestData("A-1.0.0-r0", "b.suite", "a.tc", "msg"));
+    assertHashNotEquals(origin, new PassedTestData("A-1.0.0-r0", "a.suite", "b.tc", "msg"));
+    assertHashEquals(origin, new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "X"));
   }
 
   @Test

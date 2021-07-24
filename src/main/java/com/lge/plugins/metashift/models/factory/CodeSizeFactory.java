@@ -34,7 +34,6 @@ import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -72,7 +71,6 @@ public class CodeSizeFactory {
             o.toLong("functions"),
             o.toLong("classes")));
       }
-      Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(CodeSizeData.class);
     } catch (JsonException e) {

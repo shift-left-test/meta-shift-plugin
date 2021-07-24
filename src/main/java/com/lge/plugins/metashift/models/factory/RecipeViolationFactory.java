@@ -37,7 +37,6 @@ import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -70,7 +69,6 @@ public class RecipeViolationFactory {
         }
         objects.add(createInstance(path.getName(), o));
       }
-      Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(RecipeViolationData.class);
     } catch (JsonException e) {

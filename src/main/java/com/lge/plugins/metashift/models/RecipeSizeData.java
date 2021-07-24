@@ -24,12 +24,15 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the lines of code of recipes.
  *
  * @author Sung Gon Kim
  */
-public class RecipeSizeData extends Data<RecipeSizeData> {
+public class RecipeSizeData extends Data {
 
   /**
    * Represents the UUID of the class.
@@ -70,20 +73,20 @@ public class RecipeSizeData extends Data<RecipeSizeData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((RecipeSizeData) object) == 0;
+    RecipeSizeData other = (RecipeSizeData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getFile(), other.getFile())
+        .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file);
-  }
-
-  @Override
-  public int compareTo(final RecipeSizeData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        file.compareTo(other.file)
-    );
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getFile())
+        .toHashCode();
   }
 
   /**

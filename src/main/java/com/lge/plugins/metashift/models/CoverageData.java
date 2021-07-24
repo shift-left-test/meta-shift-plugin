@@ -24,12 +24,23 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the coverage data.
  *
  * @author Sung Gon Kim
  */
-public abstract class CoverageData extends Data<CoverageData> {
+public abstract class CoverageData extends Data {
+
+  /**
+   * Represents the coverage type.
+   */
+  protected enum Type {
+    STATEMENT,
+    BRANCH,
+  }
 
   /**
    * Represents the UUID of the class.
@@ -59,7 +70,7 @@ public abstract class CoverageData extends Data<CoverageData> {
   /**
    * Represents the coverage type.
    */
-  private final String type;
+  private final Type type;
 
   /**
    * Default constructor.
@@ -72,7 +83,7 @@ public abstract class CoverageData extends Data<CoverageData> {
    * @param type    coverage type
    */
   public CoverageData(final String recipe, final String file, final long line, final long index,
-      final boolean covered, final String type) {
+      final boolean covered, final Type type) {
     super(recipe);
     this.file = file;
     this.line = line;
@@ -92,22 +103,24 @@ public abstract class CoverageData extends Data<CoverageData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((CoverageData) object) == 0;
+    CoverageData other = (CoverageData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getFile(), other.getFile())
+        .append(getLine(), other.getLine())
+        .append(getIndex(), other.getIndex())
+        .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file, line, index);
-  }
-
-  @Override
-  public int compareTo(final CoverageData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        file.compareTo(other.file),
-        Long.compare(line, other.line),
-        Long.compare(index, other.index)
-    );
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getFile())
+        .append(getLine())
+        .append(getIndex())
+        .toHashCode();
   }
 
   /**
@@ -152,6 +165,6 @@ public abstract class CoverageData extends Data<CoverageData> {
    * @return coverage type
    */
   public String getType() {
-    return type;
+    return type.name();
   }
 }

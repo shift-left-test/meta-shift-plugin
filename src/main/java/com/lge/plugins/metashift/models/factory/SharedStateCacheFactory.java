@@ -33,7 +33,6 @@ import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -65,7 +64,6 @@ public class SharedStateCacheFactory {
       for (Any o : missed) {
         objects.add(new SharedStateCacheData(path.getName(), o.toString(), false));
       }
-      Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(SharedStateCacheData.class);
     } catch (JsonException e) {

@@ -27,9 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -42,6 +39,14 @@ public class DuplicationDataTest {
 
   private final DuplicationData origin = new DuplicationData("A-1.0.0-r0", "a.file", 10, 5);
   private final DuplicationData same = new DuplicationData("A-1.0.0-r0", "a.file", 10, 5);
+
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
+  }
 
   @Test
   public void testInitData() {
@@ -65,31 +70,11 @@ public class DuplicationDataTest {
 
   @Test
   public void testHashCode() {
-    assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(),
-        new DuplicationData("B-1.0.0-r0", "a.file", 10, 5).hashCode());
-    assertNotEquals(origin.hashCode(),
-        new DuplicationData("A-1.0.0-r0", "b.file", 10, 5).hashCode());
-    assertEquals(origin.hashCode(),
-        new DuplicationData("A-1.0.0-r0", "a.file", 10000, 5).hashCode());
-    assertEquals(origin.hashCode(),
-        new DuplicationData("A-1.0.0-r0", "a.file", 10, 5000).hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<DuplicationData> expected = new ArrayList<>();
-    expected.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 5));
-    expected.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 5));
-    expected.add(new DuplicationData("B-1.0.0-r0", "b.file", 10, 5));
-
-    List<DuplicationData> actual = new ArrayList<>();
-    actual.add(new DuplicationData("B-1.0.0-r0", "b.file", 10, 5));
-    actual.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 5));
-    actual.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 5));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin, new DuplicationData("B-1.0.0-r0", "a.file", 10, 5));
+    assertHashNotEquals(origin, new DuplicationData("A-1.0.0-r0", "b.file", 10, 5));
+    assertHashEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 10000, 5));
+    assertHashEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 10, 5000));
   }
 
   @Test

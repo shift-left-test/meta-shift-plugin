@@ -24,12 +24,15 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the comment data.
  *
  * @author Sung Gon Kim
  */
-public final class CommentData extends Data<CommentData> {
+public final class CommentData extends Data {
 
   /**
    * Represents the UUID of the class.
@@ -68,14 +71,6 @@ public final class CommentData extends Data<CommentData> {
   }
 
   @Override
-  public int compareTo(final CommentData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        file.compareTo(other.file)
-    );
-  }
-
-  @Override
   public boolean equals(final Object object) {
     if (object == null) {
       return false;
@@ -86,12 +81,20 @@ public final class CommentData extends Data<CommentData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((CommentData) object) == 0;
+    CommentData other = (CommentData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getFile(), other.getFile())
+        .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file);
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getFile())
+        .toHashCode();
   }
 
   /**

@@ -24,12 +24,15 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the code violation data.
  *
  * @author Sung Gon Kim
  */
-public abstract class CodeViolationData extends ViolationData<CodeViolationData> {
+public abstract class CodeViolationData extends ViolationData {
 
   /**
    * Represents the UUID of the class.
@@ -69,23 +72,11 @@ public abstract class CodeViolationData extends ViolationData<CodeViolationData>
       final long line, final long column,
       final String rule, final String message,
       final String description,
-      final String severity, final String tool, final String level) {
+      final String severity, final String tool, final Level level) {
     super(recipe, file, line, rule, description, severity, level);
     this.column = column;
     this.message = message;
     this.tool = tool;
-  }
-
-  @Override
-  public final int compareTo(final CodeViolationData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        getFile().compareTo(other.getFile()),
-        Long.compare(getLine(), other.getLine()),
-        Long.compare(column, other.column),
-        getRule().compareTo(other.getRule()),
-        tool.compareTo(other.tool)
-    );
   }
 
   @Override
@@ -99,12 +90,28 @@ public abstract class CodeViolationData extends ViolationData<CodeViolationData>
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((CodeViolationData) object) == 0;
+    CodeViolationData other = (CodeViolationData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getFile(), other.getFile())
+        .append(getLine(), other.getLine())
+        .append(getColumn(), other.getColumn())
+        .append(getRule(), other.getRule())
+        .append(getTool(), other.getTool())
+        .isEquals();
   }
 
   @Override
   public final int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), getFile(), getLine(), column, getRule(), tool);
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getFile())
+        .append(getLine())
+        .append(getColumn())
+        .append(getRule())
+        .append(getTool())
+        .toHashCode();
   }
 
   /**

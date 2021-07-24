@@ -89,7 +89,7 @@ public class DataListTest {
 
   @Test
   public void testAddAllMultipleObjects() {
-    List<Data<?>> objects = Arrays.asList(
+    List<Data> objects = Arrays.asList(
         new MajorCodeViolationData("A-B-C", "a.file", 1, 1, "r", "m", "d", "e", "t"),
         new InfoCodeViolationData("A-B-C", "b.file", 1, 1, "r", "m", "d", "i", "t"),
         new MajorRecipeViolationData("A-B-C", "a.file", 1, "r", "d", "e"),

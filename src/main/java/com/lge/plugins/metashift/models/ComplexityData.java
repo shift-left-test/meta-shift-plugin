@@ -24,12 +24,15 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the complexity data.
  *
  * @author Sung Gon Kim
  */
-public final class ComplexityData extends Data<ComplexityData> {
+public final class ComplexityData extends Data {
 
   /**
    * Represents the UUID of the class.
@@ -82,15 +85,6 @@ public final class ComplexityData extends Data<ComplexityData> {
   }
 
   @Override
-  public int compareTo(final ComplexityData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        file.compareTo(other.file),
-        function.compareTo(other.function)
-    );
-  }
-
-  @Override
   public boolean equals(final Object object) {
     if (object == null) {
       return false;
@@ -101,12 +95,22 @@ public final class ComplexityData extends Data<ComplexityData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((ComplexityData) object) == 0;
+    ComplexityData other = (ComplexityData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getFile(), other.getFile())
+        .append(getFunction(), other.getFunction())
+        .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file, function);
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getFile())
+        .append(getFunction())
+        .toHashCode();
   }
 
   /**

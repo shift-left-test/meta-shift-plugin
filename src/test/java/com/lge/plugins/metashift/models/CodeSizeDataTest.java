@@ -27,9 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -42,6 +39,14 @@ public class CodeSizeDataTest {
 
   private final CodeSizeData origin = new CodeSizeData("A-1.0.0-r0", "a.file", 100, 50, 10);
   private final CodeSizeData same = new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1);
+
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
+  }
 
   @Test
   public void testInitData() {
@@ -65,33 +70,12 @@ public class CodeSizeDataTest {
 
   @Test
   public void testHashCode() {
-    assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(),
-        new CodeSizeData("B-1.0.0-r0", "a.file", 100, 50, 10).hashCode());
-    assertNotEquals(origin.hashCode(),
-        new CodeSizeData("A-1.0.0-r0", "b.file", 100, 50, 10).hashCode());
-    assertEquals(origin.hashCode(),
-        new CodeSizeData("A-1.0.0-r0", "a.file", 0, 50, 10).hashCode());
-    assertEquals(origin.hashCode(),
-        new CodeSizeData("A-1.0.0-r0", "a.file", 100, 0, 10).hashCode());
-    assertEquals(origin.hashCode(),
-        new CodeSizeData("A-1.0.0-r0", "a.file", 100, 50, 0).hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<CodeSizeData> expected = new ArrayList<>();
-    expected.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1));
-    expected.add(new CodeSizeData("A-1.0.0-r0", "b.file", 3, 2, 1));
-    expected.add(new CodeSizeData("B-1.0.0-r0", "a.file", 3, 2, 1));
-
-    List<CodeSizeData> actual = new ArrayList<>();
-    actual.add(new CodeSizeData("B-1.0.0-r0", "a.file", 3, 2, 1));
-    actual.add(new CodeSizeData("A-1.0.0-r0", "b.file", 3, 2, 1));
-    actual.add(new CodeSizeData("A-1.0.0-r0", "a.file", 3, 2, 1));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin, new CodeSizeData("B-1.0.0-r0", "a.file", 100, 50, 10));
+    assertHashNotEquals(origin, new CodeSizeData("A-1.0.0-r0", "b.file", 100, 50, 10));
+    assertHashEquals(origin, new CodeSizeData("A-1.0.0-r0", "a.file", 0, 50, 10));
+    assertHashEquals(origin, new CodeSizeData("A-1.0.0-r0", "a.file", 100, 0, 10));
+    assertHashEquals(origin, new CodeSizeData("A-1.0.0-r0", "a.file", 100, 50, 0));
   }
 
   @Test

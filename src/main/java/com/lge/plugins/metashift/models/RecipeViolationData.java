@@ -24,12 +24,15 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the recipe violation data.
  *
  * @author Sung Gon Kim
  */
-public abstract class RecipeViolationData extends ViolationData<RecipeViolationData> {
+public abstract class RecipeViolationData extends ViolationData {
 
   /**
    * Represents the UUID of the class.
@@ -49,18 +52,8 @@ public abstract class RecipeViolationData extends ViolationData<RecipeViolationD
    */
   public RecipeViolationData(final String recipe, final String file,
       final long line, final String rule, final String description,
-      final String severity, final String level) {
+      final String severity, final Level level) {
     super(recipe, file, line, rule, description, severity, level);
-  }
-
-  @Override
-  public final int compareTo(final RecipeViolationData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        getFile().compareTo(other.getFile()),
-        Long.compare(getLine(), other.getLine()),
-        getRule().compareTo(other.getRule())
-    );
   }
 
   @Override
@@ -74,11 +67,23 @@ public abstract class RecipeViolationData extends ViolationData<RecipeViolationD
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((RecipeViolationData) object) == 0;
+    RecipeViolationData other = (RecipeViolationData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getFile(), other.getFile())
+        .append(getLine(), other.getLine())
+        .append(getRule(), other.getRule())
+        .isEquals();
   }
 
   @Override
   public final int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), getFile(), getLine(), getRule());
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getFile())
+        .append(getLine())
+        .append(getRule())
+        .toHashCode();
   }
 }

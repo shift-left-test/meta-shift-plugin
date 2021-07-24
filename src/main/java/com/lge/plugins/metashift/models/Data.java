@@ -32,10 +32,9 @@ import net.sf.json.JSONObject;
 /**
  * Represents a data object for all metrics.
  *
- * @param <T> the class type
  * @author Sung Gon Kim
  */
-public abstract class Data<T> implements Comparable<T>, Serializable {
+public abstract class Data implements Serializable {
 
   /**
    * Represents the UUID of the class.
@@ -69,7 +68,16 @@ public abstract class Data<T> implements Comparable<T>, Serializable {
    * @param object the reference object with which to compare
    * @return true if this is the same as the other, false otherwise
    */
+  @Override
   public abstract boolean equals(Object object);
+
+  /**
+   * Returns a hash code value for the object.
+   *
+   * @return a hash code value for this object
+   */
+  @Override
+  public abstract int hashCode();
 
   /**
    * Returns the name of the recipe.
@@ -78,45 +86,6 @@ public abstract class Data<T> implements Comparable<T>, Serializable {
    */
   public String getRecipe() {
     return recipe;
-  }
-
-  /**
-   * Returns a hash code value for the object.
-   *
-   * @return a hash code value for this object
-   */
-  public abstract int hashCode();
-
-  /**
-   * Computes the hash code of the given inputs.
-   *
-   * @param objects to compute
-   * @param <T>     class type
-   * @return the computed hash code
-   */
-  @SafeVarargs
-  public static <T> int computeHashCode(final T... objects) {
-    final int prime = 31;
-    int hashCode = 1;
-    for (Object object : objects) {
-      hashCode = prime * hashCode + object.hashCode();
-    }
-    return hashCode;
-  }
-
-  /**
-   * Returns first none zero value from the arguments. (useful for compareTo method)
-   *
-   * @param args to compare
-   * @return first non zero value, or zero otherwise.
-   */
-  public static int compareEach(final int... args) {
-    for (int arg : args) {
-      if (arg != 0) {
-        return arg;
-      }
-    }
-    return 0;
   }
 
   /**

@@ -29,7 +29,21 @@ package com.lge.plugins.metashift.models;
  *
  * @author Sung Gon Kim
  */
-public abstract class ViolationData<T> extends Data<T> {
+public abstract class ViolationData extends Data {
+
+  /**
+   * Represents the violation level.
+   */
+  protected enum Level {
+    MAJOR,
+    MINOR,
+    INFO,
+  }
+
+  /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = -5756966538790449784L;
 
   /**
    * Represents the file.
@@ -59,7 +73,7 @@ public abstract class ViolationData<T> extends Data<T> {
   /**
    * Represents the level of the violation.
    */
-  private final String level;
+  private final Level level;
 
   /**
    * Default constructor.
@@ -72,7 +86,7 @@ public abstract class ViolationData<T> extends Data<T> {
    * @param level       of the violation
    */
   public ViolationData(final String recipe, final String file, final long line, final String rule,
-      final String description, final String severity, final String level) {
+      final String description, final String severity, final Level level) {
     super(recipe);
     this.file = file;
     this.line = line;
@@ -133,6 +147,6 @@ public abstract class ViolationData<T> extends Data<T> {
    * @return level of the violation
    */
   public final String getLevel() {
-    return level;
+    return level.name();
   }
 }

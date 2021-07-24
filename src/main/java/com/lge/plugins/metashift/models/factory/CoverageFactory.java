@@ -36,7 +36,6 @@ import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
@@ -71,7 +70,6 @@ public class CoverageFactory {
           objects.addAll(createInstances(path.getName(), filename, line));
         }
       }
-      Collections.sort(objects);
       dataList.addAll(objects);
       dataList.add(CoverageData.class);
     } catch (ParserConfigurationException | SAXException e) {

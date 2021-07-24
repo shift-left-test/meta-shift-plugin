@@ -59,7 +59,7 @@ public abstract class RecipeCoverageActionBase<T extends CoverageData>
    */
   public RecipeCoverageActionBase(
       RecipeAction parent, VirtualChannel channel, JSONObject metadata,
-      String name, String url, boolean percentScale, TaskListener listener, Recipe recipe, 
+      String name, String url, boolean percentScale, TaskListener listener, Recipe recipe,
       Class<T> type) throws InterruptedException, ClosedByInterruptException {
     super(parent, channel, metadata, name, url, percentScale);
     List<T> coverageDataList =

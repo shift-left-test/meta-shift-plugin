@@ -45,6 +45,6 @@ public final class SharedStateCacheData extends CacheData {
    */
   public SharedStateCacheData(final String recipe, final String signature,
       final boolean available) {
-    super(recipe, signature, available, "SharedState");
+    super(recipe, signature, available, Type.SHARED_STATE);
   }
 }

@@ -46,6 +46,6 @@ public final class BranchCoverageData extends CoverageData {
    * @param covered coverage status
    */
   public BranchCoverageData(String recipe, String file, long line, long index, boolean covered) {
-    super(recipe, file, line, index, covered, "Branch");
+    super(recipe, file, line, index, covered, Type.BRANCH);
   }
 }

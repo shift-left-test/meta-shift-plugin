@@ -38,10 +38,7 @@ import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -111,22 +108,6 @@ public class RecipeTest {
     assertEquals(origin.hashCode(), origin.hashCode());
     assertEquals(origin.hashCode(), same.hashCode());
     assertNotEquals(origin.hashCode(), different.hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<Recipe> expected = new ArrayList<>();
-    expected.add(new Recipe("A-2.0.0-r3"));
-    expected.add(new Recipe("A-3.0.0-r2"));
-    expected.add(new Recipe("B-1.0.0-r1"));
-
-    List<Recipe> actual = new ArrayList<>();
-    actual.add(new Recipe("B-1.0.0-r1"));
-    actual.add(new Recipe("A-3.0.0-r2"));
-    actual.add(new Recipe("A-2.0.0-r3"));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
   }
 
   @Test

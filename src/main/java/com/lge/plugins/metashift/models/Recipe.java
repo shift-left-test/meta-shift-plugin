@@ -46,13 +46,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Represents a recipe containing various data objects for metrics.
  *
  * @author Sung Gon Kim
  */
-public final class Recipe extends Data<Recipe> implements Streamable {
+public final class Recipe extends Data implements Streamable {
 
   /**
    * Represents the UUID of the class.
@@ -174,11 +176,6 @@ public final class Recipe extends Data<Recipe> implements Streamable {
   }
 
   @Override
-  public int compareTo(final Recipe other) {
-    return compareEach(getRecipe().compareTo(other.getRecipe()));
-  }
-
-  @Override
   public boolean equals(final Object object) {
     if (object == null) {
       return false;
@@ -189,11 +186,17 @@ public final class Recipe extends Data<Recipe> implements Streamable {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((Recipe) object) == 0;
+    Recipe other = (Recipe) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return computeHashCode(getClass(), getRecipe());
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .toHashCode();
   }
 }

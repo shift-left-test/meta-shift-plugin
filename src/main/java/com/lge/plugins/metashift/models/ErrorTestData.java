@@ -46,6 +46,6 @@ public final class ErrorTestData extends TestData {
    */
   public ErrorTestData(final String recipe, final String suite, final String name,
       final String message) {
-    super(recipe, suite, name, message, "ERROR");
+    super(recipe, suite, name, message, Status.ERROR);
   }
 }

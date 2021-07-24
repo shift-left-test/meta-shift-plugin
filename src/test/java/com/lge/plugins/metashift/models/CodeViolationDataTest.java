@@ -27,9 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -44,6 +41,14 @@ public class CodeViolationDataTest {
       1, 2, "rule", "msg", "desc", "E", "tool");
   private final CodeViolationData same = new MajorCodeViolationData("A-X-X", "a.file",
       1, 2, "rule", "msg", "desc", "E", "tool");
+
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
+  }
 
   @Test
   public void testInitData() {
@@ -91,62 +96,29 @@ public class CodeViolationDataTest {
 
   @Test
   public void testHashCode() {
-    assertEquals(origin.hashCode(), same.hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MinorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new InfoCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MajorCodeViolationData("B-X-X", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MajorCodeViolationData("A-X-X", "b.file", 1, 2, "rule", "msg", "desc", "E", "tool")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MajorCodeViolationData("A-X-X", "a.file", 9, 2, "rule", "msg", "desc", "E", "tool")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MajorCodeViolationData("A-X-X", "a.file", 1, 9, "rule", "msg", "desc", "E", "tool")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "X", "msg", "desc", "E", "tool")
-            .hashCode());
-    assertEquals(origin.hashCode(),
-        new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "X", "desc", "E", "tool")
-            .hashCode());
-    assertEquals(origin.hashCode(),
-        new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "X", "E", "tool")
-            .hashCode());
-    assertEquals(origin.hashCode(),
-        new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "desc", "X", "tool")
-            .hashCode());
-    assertNotEquals(origin.hashCode(),
-        new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "desc", "E", "X")
-            .hashCode());
-  }
-
-  @Test
-  public void testComparable() {
-    List<CodeViolationData> expected = new ArrayList<>();
-    expected.add(new MajorCodeViolationData("A-X-X", "a.file", 1, 1, "A", "", "", "", ""));
-    expected.add(new MajorCodeViolationData("A-X-X", "b.file", 1, 1, "A", "", "", "", ""));
-    expected.add(new MajorCodeViolationData("A-X-X", "b.file", 2, 1, "A", "", "", "", ""));
-    expected.add(new MajorCodeViolationData("A-X-X", "b.file", 2, 2, "A", "", "", "", ""));
-    expected.add(new MajorCodeViolationData("A-X-X", "b.file", 2, 2, "B", "", "", "", ""));
-    expected.add(new MajorCodeViolationData("B-X-X", "b.file", 2, 2, "B", "", "", "", ""));
-
-    List<CodeViolationData> actual = new ArrayList<>();
-    actual.add(new MajorCodeViolationData("B-X-X", "b.file", 2, 2, "B", "", "", "", ""));
-    actual.add(new MajorCodeViolationData("A-X-X", "b.file", 2, 2, "B", "", "", "", ""));
-    actual.add(new MajorCodeViolationData("A-X-X", "b.file", 2, 2, "A", "", "", "", ""));
-    actual.add(new MajorCodeViolationData("A-X-X", "b.file", 2, 1, "A", "", "", "", ""));
-    actual.add(new MajorCodeViolationData("A-X-X", "b.file", 1, 1, "A", "", "", "", ""));
-    actual.add(new MajorCodeViolationData("A-X-X", "a.file", 1, 1, "A", "", "", "", ""));
-
-    Collections.sort(actual);
-    assertEquals(expected, actual);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin,
+        new MinorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool"));
+    assertHashNotEquals(origin,
+        new InfoCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool"));
+    assertHashNotEquals(origin,
+        new MajorCodeViolationData("B-X-X", "a.file", 1, 2, "rule", "msg", "desc", "E", "tool"));
+    assertHashNotEquals(origin,
+        new MajorCodeViolationData("A-X-X", "b.file", 1, 2, "rule", "msg", "desc", "E", "tool"));
+    assertHashNotEquals(origin,
+        new MajorCodeViolationData("A-X-X", "a.file", 9, 2, "rule", "msg", "desc", "E", "tool"));
+    assertHashNotEquals(origin,
+        new MajorCodeViolationData("A-X-X", "a.file", 1, 9, "rule", "msg", "desc", "E", "tool"));
+    assertHashNotEquals(origin,
+        new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "X", "msg", "desc", "E", "tool"));
+    assertHashEquals(origin,
+        new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "X", "desc", "E", "tool"));
+    assertHashEquals(origin,
+        new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "X", "E", "tool"));
+    assertHashEquals(origin,
+        new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "desc", "X", "tool"));
+    assertHashNotEquals(origin,
+        new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "desc", "E", "X"));
   }
 
   @Test

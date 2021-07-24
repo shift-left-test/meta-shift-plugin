@@ -36,6 +36,11 @@ import net.sf.json.JSONObject;
 public class SummaryStatistics implements Serializable {
 
   /**
+   * Represents the UUID of the class.
+   */
+  private static final long serialVersionUID = 7310657096997182332L;
+
+  /**
    * Represents the count of data.
    */
   private final long count;

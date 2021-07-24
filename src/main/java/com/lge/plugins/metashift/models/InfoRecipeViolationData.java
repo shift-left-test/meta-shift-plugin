@@ -50,6 +50,6 @@ public final class InfoRecipeViolationData extends RecipeViolationData {
       final long line, final String rule,
       final String description,
       final String severity) {
-    super(recipe, file, line, rule, description, severity, "INFO");
+    super(recipe, file, line, rule, description, severity, Level.INFO);
   }
 }

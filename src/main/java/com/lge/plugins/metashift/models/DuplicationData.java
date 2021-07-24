@@ -24,12 +24,15 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the duplication data.
  *
  * @author Sung Gon Kim
  */
-public final class DuplicationData extends Data<DuplicationData> {
+public final class DuplicationData extends Data {
 
   /**
    * Represents the UUID of the class.
@@ -68,14 +71,6 @@ public final class DuplicationData extends Data<DuplicationData> {
   }
 
   @Override
-  public int compareTo(final DuplicationData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        file.compareTo(other.file)
-    );
-  }
-
-  @Override
   public boolean equals(final Object object) {
     if (object == null) {
       return false;
@@ -86,12 +81,20 @@ public final class DuplicationData extends Data<DuplicationData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((DuplicationData) object) == 0;
+    DuplicationData other = (DuplicationData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getFile(), other.getFile())
+        .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file);
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getFile())
+        .toHashCode();
   }
 
   /**

@@ -24,12 +24,23 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the cache data.
  *
  * @author Sung Gon Kim
  */
-public abstract class CacheData extends Data<CacheData> {
+public abstract class CacheData extends Data {
+
+  /**
+   * Represents the cache data type.
+   */
+  protected enum Type {
+    PREMIRROR,
+    SHARED_STATE,
+  }
 
   /**
    * Represents the UUID of the class.
@@ -49,7 +60,7 @@ public abstract class CacheData extends Data<CacheData> {
   /**
    * Represents the type of the cache.
    */
-  private final String type;
+  private final Type type;
 
   /**
    * Default constructor.
@@ -60,19 +71,11 @@ public abstract class CacheData extends Data<CacheData> {
    * @param type      of the cache
    */
   public CacheData(final String recipe, final String signature, final boolean available,
-      final String type) {
+      final Type type) {
     super(recipe);
     this.signature = signature;
     this.available = available;
     this.type = type;
-  }
-
-  @Override
-  public final int compareTo(final CacheData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        signature.compareTo(other.signature)
-    );
   }
 
   @Override
@@ -86,12 +89,20 @@ public abstract class CacheData extends Data<CacheData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((CacheData) object) == 0;
+    CacheData other = (CacheData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getSignature(), other.getSignature())
+        .isEquals();
   }
 
   @Override
   public final int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), signature);
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getSignature())
+        .toHashCode();
   }
 
   /**
@@ -118,6 +129,6 @@ public abstract class CacheData extends Data<CacheData> {
    * @return cache type
    */
   public final String getType() {
-    return type;
+    return type.name();
   }
 }

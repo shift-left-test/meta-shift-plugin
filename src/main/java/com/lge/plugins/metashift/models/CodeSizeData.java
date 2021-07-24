@@ -24,12 +24,15 @@
 
 package com.lge.plugins.metashift.models;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Represents the code size data.
  *
  * @author Sung Gon Kim
  */
-public final class CodeSizeData extends Data<CodeSizeData> {
+public final class CodeSizeData extends Data {
 
   /**
    * Represents the UUID of the class.
@@ -75,14 +78,6 @@ public final class CodeSizeData extends Data<CodeSizeData> {
   }
 
   @Override
-  public int compareTo(final CodeSizeData other) {
-    return compareEach(
-        getRecipe().compareTo(other.getRecipe()),
-        file.compareTo(other.file)
-    );
-  }
-
-  @Override
   public boolean equals(final Object object) {
     if (object == null) {
       return false;
@@ -93,12 +88,20 @@ public final class CodeSizeData extends Data<CodeSizeData> {
     if (getClass() != object.getClass()) {
       return false;
     }
-    return compareTo((CodeSizeData) object) == 0;
+    CodeSizeData other = (CodeSizeData) object;
+    return new EqualsBuilder()
+        .append(getRecipe(), other.getRecipe())
+        .append(getFile(), other.getFile())
+        .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return computeHashCode(getClass(), getRecipe(), file);
+    return new HashCodeBuilder()
+        .append(getClass())
+        .append(getRecipe())
+        .append(getFile())
+        .toHashCode();
   }
 
   /**
