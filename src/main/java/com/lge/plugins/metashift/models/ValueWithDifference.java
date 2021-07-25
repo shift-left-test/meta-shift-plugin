@@ -34,6 +34,7 @@ import java.io.Serializable;
 public class ValueWithDifference<T extends Number> implements Serializable {
 
   private static final long serialVersionUID = 5696129323489009062L;
+
   private final T value;
   private final T difference;
 
@@ -46,6 +47,16 @@ public class ValueWithDifference<T extends Number> implements Serializable {
   public ValueWithDifference(T value, T difference) {
     this.value = value;
     this.difference = difference;
+  }
+
+  /**
+   * Copy constructor.
+   *
+   * @param other object
+   */
+  public ValueWithDifference(ValueWithDifference<T> other) {
+    this.value = other.value;
+    this.difference = other.difference;
   }
 
   /**

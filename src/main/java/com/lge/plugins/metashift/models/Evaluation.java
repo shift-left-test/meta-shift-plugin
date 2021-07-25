@@ -34,6 +34,7 @@ import java.io.Serializable;
 public abstract class Evaluation implements Serializable {
 
   private static final long serialVersionUID = 6414517999564046375L;
+
   private final boolean available;
   private final long denominator;
   private final long numerator;
@@ -55,6 +56,19 @@ public abstract class Evaluation implements Serializable {
     double ratio = (double) denominator > 0.0 ? (double) numerator / (double) denominator : 0.0;
     this.ratio = new ValueWithDifference<>(ratio, 0.0);
     this.threshold = new ValueWithDifference<>(threshold, ratio - threshold);
+  }
+
+  /**
+   * Copy constructor.
+   *
+   * @param other object
+   */
+  public Evaluation(Evaluation other) {
+    this.available = other.available;
+    this.denominator = other.denominator;
+    this.numerator = other.numerator;
+    this.ratio = new ValueWithDifference<>(other.getRatio());
+    this.threshold = new ValueWithDifference<>(other.getThreshold());
   }
 
   /**

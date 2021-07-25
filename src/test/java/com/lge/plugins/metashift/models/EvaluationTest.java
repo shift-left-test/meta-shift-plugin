@@ -69,6 +69,14 @@ public class EvaluationTest {
   }
 
   @Test
+  public void testCopyConstructor() {
+    Evaluation object = new PositiveEvaluation(positiveQualified);
+    assertStatus(object, true, true);
+    assertValues(object.getRatio(), 0.66, 0.00);
+    assertValues(object.getThreshold(), 0.50, 0.16);
+  }
+
+  @Test
   public void testDisabledPositiveQualified() {
     positiveQualified = new PositiveEvaluation(false, 3, 2, 0.50);
     assertStatus(positiveQualified, false, false);

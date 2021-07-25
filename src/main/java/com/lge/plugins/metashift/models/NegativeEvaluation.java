@@ -45,6 +45,15 @@ public class NegativeEvaluation extends Evaluation {
     super(available, denominator, numerator, threshold);
   }
 
+  /**
+   * Copy constructor.
+   *
+   * @param other object
+   */
+  public NegativeEvaluation(Evaluation other) {
+    super(other);
+  }
+
   @Override
   public boolean isQualified() {
     if (!isAvailable()) {

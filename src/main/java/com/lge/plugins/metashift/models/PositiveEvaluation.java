@@ -36,13 +36,22 @@ public class PositiveEvaluation extends Evaluation {
   /**
    * Default constructor.
    *
-   * @param available status
+   * @param available   status
    * @param denominator value
-   * @param numerator value
-   * @param threshold value
+   * @param numerator   value
+   * @param threshold   value
    */
   public PositiveEvaluation(boolean available, long denominator, long numerator, double threshold) {
     super(available, denominator, numerator, threshold);
+  }
+
+  /**
+   * Copy constructor.
+   *
+   * @param other object
+   */
+  public PositiveEvaluation(Evaluation other) {
+    super(other);
   }
 
   @Override
