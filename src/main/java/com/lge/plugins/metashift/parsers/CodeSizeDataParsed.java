@@ -22,60 +22,24 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.xml;
-
-import java.util.ArrayList;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+package com.lge.plugins.metashift.parsers;
 
 /**
- * Represents the list of tags.
+ * This class indicates that the code size parsing has been completed and the data are available.
  *
  * @author Sung Gon Kim
  */
-public class TagList extends ArrayList<Tag> {
+public class CodeSizeDataParsed extends DataParsed {
 
-  /**
-   * Represents the UUID of the class.
-   */
-  private static final long serialVersionUID = 8964488735187383673L;
+  private static final long serialVersionUID = -7658660451527680834L;
 
   /**
    * Default constructor.
-   */
-  public TagList() {
-    super();
-  }
-
-  /**
-   * Constructs the list with nodes.
    *
-   * @param nodes to add
+   * @param recipe name
+   * @throws IllegalArgumentException if the recipe name is malformed
    */
-  public TagList(final NodeList nodes) {
-    for (int i = 0; i < nodes.getLength(); i++) {
-      Node node = nodes.item(i);
-      if (node.getNodeType() == Node.ELEMENT_NODE) {
-        super.add(new Tag(node));
-      }
-    }
-  }
-
-  /**
-   * Returns the first tag object of the list.
-   *
-   * @return first tag object
-   */
-  public Tag first() {
-    return super.isEmpty() ? new Tag() : super.get(0);
-  }
-
-  /**
-   * Returns the last tag object of the list.
-   *
-   * @return last tag object
-   */
-  public Tag last() {
-    return super.isEmpty() ? new Tag() : super.get(size() - 1);
+  public CodeSizeDataParsed(String recipe) {
+    super(recipe);
   }
 }

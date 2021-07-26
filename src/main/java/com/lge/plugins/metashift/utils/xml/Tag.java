@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.xml;
+package com.lge.plugins.metashift.utils.xml;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

@@ -45,8 +45,8 @@ public class FakeRecipe implements FakeReport {
   private final List<FakeSource> sources;
   private final List<FakeScript> scripts;
 
-  public FakeRecipe(File sourcePath) {
-    recipe = String.format("%s-1.0.0-r0", FakeRandom.nextString());
+  public FakeRecipe(File sourcePath, String prefix) {
+    recipe = String.format("%s-1.0.0-r0", prefix + FakeRandom.nextString());
     this.sourcePath = sourcePath;
     premirrorFound = 0;
     premirrorMissed = 0;
@@ -54,6 +54,10 @@ public class FakeRecipe implements FakeReport {
     sharedStateMissed = 0;
     sources = new ArrayList<>();
     scripts = new ArrayList<>();
+  }
+
+  public FakeRecipe(File sourcePath) {
+    this(sourcePath, "");
   }
 
   public String getRecipe() {

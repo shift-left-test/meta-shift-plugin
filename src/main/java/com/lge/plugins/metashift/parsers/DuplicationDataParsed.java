@@ -22,25 +22,24 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.xml;
-
-import static net.sf.ezmorph.test.ArrayAssertions.assertEquals;
-
-import org.junit.Test;
+package com.lge.plugins.metashift.parsers;
 
 /**
- * Unit tests for the TagList class.
+ * This class indicates that the duplication parsing has been completed and the data are available.
  *
  * @author Sung Gon Kim
  */
-public class TagListTest {
+public class DuplicationDataParsed extends DataParsed {
 
-  private final TagList tagList = new TagList();
+  private static final long serialVersionUID = -4453392146973049596L;
 
-  @Test
-  public void testEmptyTagList() {
-    assertEquals(0, tagList.size());
-    assertEquals("", tagList.first().getTagName());
-    assertEquals("", tagList.last().getTagName());
+  /**
+   * Default constructor.
+   *
+   * @param recipe name
+   * @throws IllegalArgumentException if the recipe name is malformed
+   */
+  public DuplicationDataParsed(String recipe) {
+    super(recipe);
   }
 }

@@ -22,8 +22,25 @@
  * THE SOFTWARE.
  */
 
-/**
- * Provides the xml parser classes.
- */
-package com.lge.plugins.metashift.models.xml;
+package com.lge.plugins.metashift.parsers;
 
+/**
+ * This class indicates that the premirror cache parsing has been completed and the data are
+ * available.
+ *
+ * @author Sung Gon Kim
+ */
+public class PremirrorCacheDataParsed extends DataParsed {
+
+  private static final long serialVersionUID = 4480127898917227941L;
+
+  /**
+   * Default constructor.
+   *
+   * @param recipe name
+   * @throws IllegalArgumentException if the recipe name is malformed
+   */
+  public PremirrorCacheDataParsed(String recipe) {
+    super(recipe);
+  }
+}

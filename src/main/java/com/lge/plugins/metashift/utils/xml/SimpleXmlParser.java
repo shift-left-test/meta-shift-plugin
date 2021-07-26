@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.xml;
+package com.lge.plugins.metashift.utils.xml;
 
 import com.lge.plugins.metashift.utils.LruCache;
 import hudson.FilePath;

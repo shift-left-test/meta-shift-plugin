@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.parsers;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.CoverageData;
-import com.lge.plugins.metashift.models.DataList;
+import com.lge.plugins.metashift.models.Data;
 import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.utils.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.utils.xml.Tag;
@@ -41,22 +41,30 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 /**
- * A factory class for the CoverageData objects.
+ * CoverageDataParser class.
  *
  * @author Sung Gon Kim
  */
-public class CoverageFactory {
+public class CoverageDataParser extends DataParser {
+
+  private final FilePath path;
+  private final List<Data> dataList;
 
   /**
-   * Creates a set of objects by parsing a report file from the given path.
+   * Default constructor.
    *
-   * @param path to the report directory
-   * @throws IOException          if failed to locate report files
-   * @throws InterruptedException if an interruption occurs
+   * @param path     to parse
+   * @param dataList to store
    */
-  public static void create(final FilePath path, final DataList dataList)
-      throws IOException, InterruptedException {
+  public CoverageDataParser(FilePath path, List<Data> dataList) {
+    this.path = path;
+    this.dataList = dataList;
+  }
+
+  @Override
+  public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("coverage").child("coverage.xml");
+    String recipe = path.getName();
     try {
       SimpleXmlParser parser = new SimpleXmlParser(report);
       List<CoverageData> objects = new ArrayList<>();
@@ -67,11 +75,12 @@ public class CoverageFactory {
           continue;
         }
         for (Tag line : tag.getChildNodes("lines").last().getChildNodes("line")) {
-          objects.addAll(createInstances(path.getName(), filename, line));
+          objects.addAll(createInstances(recipe, filename, line));
         }
       }
       dataList.addAll(objects);
-      dataList.add(CoverageData.class);
+      dataList.add(new StatementCoverageDataParsed(recipe));
+      dataList.add(new BranchCoverageDataParsed(recipe));
     } catch (ParserConfigurationException | SAXException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {
@@ -87,7 +96,7 @@ public class CoverageFactory {
    * @param line     number
    * @return a list of coverage objects
    */
-  private static List<CoverageData> createInstances(String recipe, String filename, Tag line) {
+  private List<CoverageData> createInstances(String recipe, String filename, Tag line) {
     List<CoverageData> list = new ArrayList<>();
     try {
       long lineNumber = Long.parseLong(line.getAttribute("number", "0"));

@@ -22,31 +22,25 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.xml;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import org.junit.Test;
+package com.lge.plugins.metashift.parsers;
 
 /**
- * Unit tests for the Tag class.
+ * This class indicates that the code violation parsing has been completed and the data are
+ * available.
  *
  * @author Sung Gon Kim
  */
-public class TagTest {
+public class CodeViolationDataParsed extends DataParsed {
 
-  private final Tag tag = new Tag();
+  private static final long serialVersionUID = 964734631870349162L;
 
-  @Test
-  public void testEmptyTag() {
-    assertEquals(0, tag.getChildNodes("X").size());
-    assertEquals(0, tag.getChildNodes().size());
-    assertEquals("", tag.getAttribute("X"));
-    assertEquals("O", tag.getAttribute("X", "O"));
-    assertFalse(tag.hasAttribute("X"));
-    assertFalse(tag.hasChildNodes());
-    assertEquals("", tag.getTagName());
-    assertEquals("", tag.getTextContent());
+  /**
+   * Default constructor.
+   *
+   * @param recipe name
+   * @throws IllegalArgumentException if the recipe name is malformed
+   */
+  public CodeViolationDataParsed(String recipe) {
+    super(recipe);
   }
 }

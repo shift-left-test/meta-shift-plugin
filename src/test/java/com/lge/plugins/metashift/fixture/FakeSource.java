@@ -66,14 +66,24 @@ public class FakeSource implements FakeFile {
   private long minorViolations;
   private long infoViolations;
 
+  public FakeSource(String prefix, long totalLines, long codeLines, long commentLines,
+      long duplicatedLines) {
+    this(null, prefix, totalLines, codeLines, commentLines, duplicatedLines);
+  }
+
   public FakeSource(long totalLines, long codeLines, long commentLines, long duplicatedLines) {
-    this(null, totalLines, codeLines, commentLines, duplicatedLines);
+    this(null, "", totalLines, codeLines, commentLines, duplicatedLines);
   }
 
   public FakeSource(FakeRecipe recipe, long totalLines, long codeLines, long commentLines,
       long duplicatedLines) {
+    this(recipe, "", totalLines, codeLines, commentLines, duplicatedLines);
+  }
+
+  public FakeSource(FakeRecipe recipe, String prefix, long totalLines, long codeLines,
+      long commentLines, long duplicatedLines) {
     this.recipe = recipe;
-    this.filename = FakeRandom.nextString() + ".cpp";
+    this.filename = prefix + FakeRandom.nextString() + ".cpp";
     this.totalLines = totalLines;
     this.codeLines = codeLines;
     this.commentLines = commentLines;

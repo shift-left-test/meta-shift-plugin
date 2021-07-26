@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.parsers;
 
-import com.lge.plugins.metashift.models.DataList;
+import com.lge.plugins.metashift.models.Data;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
@@ -41,21 +41,29 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 /**
- * A factory class for the TestData objects.
+ * TestDataParser class.
  *
  * @author Sung Gon Kim
  */
-public class TestFactory {
+public class TestDataParser extends DataParser {
+
+  private final FilePath path;
+  private final List<Data> dataList;
 
   /**
-   * Creates a set of objects by parsing a report file from the given path.
+   * Default constructor.
    *
-   * @param path to the report directory
-   * @throws IOException          if failed to locate report files
-   * @throws InterruptedException if an interruption occurs
+   * @param path     to parse
+   * @param dataList to store
    */
-  public static void create(final FilePath path, final DataList dataList)
-      throws IOException, InterruptedException {
+  public TestDataParser(FilePath path, List<Data> dataList) {
+    this.path = path;
+    this.dataList = dataList;
+  }
+
+  @Override
+  public void parse() throws IOException, InterruptedException {
+    String recipe = path.getName();
     List<TestData> objects = new ArrayList<>();
     try {
       FilePath[] files = path.list("test/**/*.xml");
@@ -64,13 +72,13 @@ public class TestFactory {
       }
       for (FilePath file : files) {
         try {
-          objects.addAll(parseFile(path.getName(), file));
+          objects.addAll(parseFile(recipe, file));
         } catch (ParserConfigurationException | SAXException e) {
           throw new IllegalArgumentException("Failed to parse: " + file, e);
         }
       }
       dataList.addAll(objects);
-      dataList.add(TestData.class);
+      dataList.add(new TestDataParsed(recipe));
     } catch (IOException ignored) {
       // ignored
     }
@@ -87,17 +95,17 @@ public class TestFactory {
    * @throws SAXException                 if failed to parse the xml files
    * @throws InterruptedException         if an interruption occurs
    */
-  private static Collection<? extends TestData> parseFile(final String recipe, final FilePath file)
+  private Collection<? extends TestData> parseFile(final String recipe, final FilePath file)
       throws ParserConfigurationException, IOException, SAXException, InterruptedException {
-    List<TestData> list = new ArrayList<>();
+    List<TestData> objects = new ArrayList<>();
     SimpleXmlParser parser = new SimpleXmlParser(file);
     for (Tag testsuite : parser.getChildNodes("testsuite")) {
       String suite = testsuite.getAttribute("name");
       for (Tag testcase : testsuite.getChildNodes("testcase")) {
-        list.add(createInstance(recipe, suite, testcase));
+        objects.add(createInstance(recipe, suite, testcase));
       }
     }
-    return list;
+    return objects;
   }
 
   /**
@@ -107,9 +115,10 @@ public class TestFactory {
    * @param suite    name
    * @param testcase object
    * @return a test data object
+   * @throws SAXException if failed to parse the file
    */
-  private static TestData createInstance(final String recipe, final String suite,
-      final Tag testcase) {
+  private TestData createInstance(final String recipe, final String suite, final Tag testcase)
+      throws SAXException {
     String name = testcase.getAttribute("name");
     for (Tag tag : testcase.getChildNodes()) {
       String message = tag.getAttribute("message");
@@ -122,8 +131,7 @@ public class TestFactory {
         case "skipped":
           return new SkippedTestData(recipe, suite, name, message);
         default:
-          throw new IllegalArgumentException(
-              String.format("Failed to parse: %s.%s.%s", recipe, suite, name));
+          throw new SAXException(String.format("Failed to parse: %s.%s.%s", recipe, suite, name));
       }
     }
     return new PassedTestData(recipe, suite, name, "");
