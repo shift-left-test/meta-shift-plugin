@@ -85,7 +85,7 @@ public class DataList implements Streamable, Serializable {
    *
    * @param type to add
    */
-  public void add(final Class<?> type) {
+  public <T> void add(final Class<T> type) {
     types.add(type);
   }
 
