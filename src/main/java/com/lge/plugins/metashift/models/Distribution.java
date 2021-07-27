@@ -44,58 +44,39 @@ public class Distribution implements Serializable {
   /**
    * Default constructor.
    *
-   * @param firstDenominator  value
-   * @param firstNumerator    value
-   * @param secondDenominator value
-   * @param secondNumerator   value
-   * @param thirdDenominator  value
-   * @param thirdNumerator    value
-   * @param fourthDenominator value
-   * @param fourthNumerator   value
+   * @param firstNumerator  value
+   * @param secondNumerator value
+   * @param thirdNumerator  value
+   * @param fourthNumerator value
    */
-  public Distribution(long firstDenominator, long firstNumerator,
-      long secondDenominator, long secondNumerator,
-      long thirdDenominator, long thirdNumerator,
-      long fourthDenominator, long fourthNumerator) {
-    first = new Counter(firstDenominator, firstNumerator);
-    second = new Counter(secondDenominator, secondNumerator);
-    third = new Counter(thirdDenominator, thirdNumerator);
-    fourth = new Counter(fourthDenominator, fourthNumerator);
-    total = firstDenominator + secondDenominator + thirdDenominator + fourthDenominator;
+  public Distribution(long firstNumerator, long secondNumerator, long thirdNumerator,
+      long fourthNumerator) {
+    total = firstNumerator + secondNumerator + thirdNumerator + fourthNumerator;
+    first = new Counter(total, firstNumerator);
+    second = new Counter(total, secondNumerator);
+    third = new Counter(total, thirdNumerator);
+    fourth = new Counter(total, fourthNumerator);
   }
 
   /**
    * Default constructor.
    *
-   * @param firstDenominator  value
-   * @param firstNumerator    value
-   * @param secondDenominator value
-   * @param secondNumerator   value
-   * @param thirdDenominator  value
-   * @param thirdNumerator    value
+   * @param firstNumerator  value
+   * @param secondNumerator value
+   * @param thirdNumerator  value
    */
-  public Distribution(long firstDenominator, long firstNumerator,
-      long secondDenominator, long secondNumerator,
-      long thirdDenominator, long thirdNumerator) {
-    this(firstDenominator, firstNumerator,
-        secondDenominator, secondNumerator,
-        thirdDenominator, thirdNumerator,
-        0, 0);
+  public Distribution(long firstNumerator, long secondNumerator, long thirdNumerator) {
+    this(firstNumerator, secondNumerator, thirdNumerator, 0);
   }
 
   /**
    * Default constructor.
    *
-   * @param firstDenominator  value
-   * @param firstNumerator    value
-   * @param secondDenominator value
-   * @param secondNumerator   value
+   * @param firstNumerator  value
+   * @param secondNumerator value
    */
-  public Distribution(long firstDenominator, long firstNumerator,
-      long secondDenominator, long secondNumerator) {
-    this(firstDenominator, firstNumerator,
-        secondDenominator, secondNumerator,
-        0, 0);
+  public Distribution(long firstNumerator, long secondNumerator) {
+    this(firstNumerator, secondNumerator, 0);
   }
 
   /**

@@ -42,9 +42,9 @@ public class DistributionTest {
 
   @Before
   public void setUp() {
-    pair = new Distribution(3, 2, 1, 0);
-    triplet = new Distribution(5, 4, 3, 2, 1, 0);
-    quartet = new Distribution(7, 6, 5, 4, 3, 2, 1, 0);
+    pair = new Distribution(1, 0);
+    triplet = new Distribution(2, 1, 0);
+    quartet = new Distribution(3, 2, 1, 0);
   }
 
   private void assertValues(Counter o, long numerator, double ratio) {
@@ -54,59 +54,58 @@ public class DistributionTest {
 
   @Test
   public void testCreatePairObject() {
-    assertValues(pair.getFirst(), 2, 0.66);
+    assertValues(pair.getFirst(), 1, 1.0);
     assertValues(pair.getSecond(), 0, 0.0);
     assertValues(pair.getThird(), 0, 0.0);
     assertValues(pair.getFourth(), 0, 0.0);
-    assertEquals(4, pair.getTotal());
+    assertEquals(1, pair.getTotal());
   }
 
   @Test
   public void testCopyPairObject() {
     Distribution copied = new Distribution(pair);
-    assertValues(copied.getFirst(), 2, 0.66);
+    assertValues(copied.getFirst(), 1, 1.0);
     assertValues(copied.getSecond(), 0, 0.0);
     assertValues(copied.getThird(), 0, 0.0);
     assertValues(copied.getFourth(), 0, 0.0);
-    assertEquals(4, copied.getTotal());
+    assertEquals(1, copied.getTotal());
   }
 
   @Test
   public void testCreateTripletObject() {
-    assertValues(triplet.getFirst(), 4, 0.8);
-    assertValues(triplet.getSecond(), 2, 0.66);
+    assertValues(triplet.getFirst(), 2, 0.66);
+    assertValues(triplet.getSecond(), 1, 0.33);
     assertValues(triplet.getThird(), 0, 0.0);
     assertValues(triplet.getFourth(), 0, 0.0);
-    assertEquals(9, triplet.getTotal());
+    assertEquals(3, triplet.getTotal());
   }
 
   @Test
   public void testCopyTripletObject() {
     Distribution copied = new Distribution(triplet);
-    assertValues(copied.getFirst(), 4, 0.8);
-    assertValues(copied.getSecond(), 2, 0.66);
-    assertValues(copied.getThird(), 0, 0.0);
-    assertValues(copied.getFourth(), 0, 0.0);
-    assertEquals(9, copied.getTotal());
+    assertValues(triplet.getFirst(), 2, 0.66);
+    assertValues(triplet.getSecond(), 1, 0.33);
+    assertValues(triplet.getThird(), 0, 0.0);
+    assertValues(triplet.getFourth(), 0, 0.0);
+    assertEquals(3, triplet.getTotal());
   }
 
   @Test
   public void testCreateQuartetObject() {
-    quartet = new Distribution(7, 6, 5, 4, 3, 2, 1, 0);
-    assertValues(quartet.getFirst(), 6, 0.85);
-    assertValues(quartet.getSecond(), 4, 0.8);
-    assertValues(quartet.getThird(), 2, 0.66);
+    assertValues(quartet.getFirst(), 3, 0.5);
+    assertValues(quartet.getSecond(), 2, 0.33);
+    assertValues(quartet.getThird(), 1, 0.16);
     assertValues(quartet.getFourth(), 0, 0.0);
-    assertEquals(16, quartet.getTotal());
+    assertEquals(6, quartet.getTotal());
   }
 
   @Test
   public void testCopyQuartetObject() {
     Distribution copied = new Distribution(quartet);
-    assertValues(copied.getFirst(), 6, 0.85);
-    assertValues(copied.getSecond(), 4, 0.8);
-    assertValues(copied.getThird(), 2, 0.66);
-    assertValues(copied.getFourth(), 0, 0.0);
-    assertEquals(16, copied.getTotal());
+    assertValues(quartet.getFirst(), 3, 0.5);
+    assertValues(quartet.getSecond(), 2, 0.33);
+    assertValues(quartet.getThird(), 1, 0.16);
+    assertValues(quartet.getFourth(), 0, 0.0);
+    assertEquals(6, quartet.getTotal());
   }
 }
