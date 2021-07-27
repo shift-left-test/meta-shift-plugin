@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.ErrorTestData;
@@ -41,21 +41,28 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 /**
- * A factory class for the TestData objects.
+ * A parsers class for the TestData objects.
  *
  * @author Sung Gon Kim
  */
-public class TestFactory {
+public class TestParser extends FileParser {
+
+  private final FilePath path;
+  private final DataList dataList;
 
   /**
-   * Creates a set of objects by parsing a report file from the given path.
+   * Default constructor.
    *
-   * @param path to the report directory
-   * @throws IOException          if failed to locate report files
-   * @throws InterruptedException if an interruption occurs
+   * @param path     to the report directory
+   * @param dataList to store objects
    */
-  public static void create(final FilePath path, final DataList dataList)
-      throws IOException, InterruptedException {
+  public TestParser(FilePath path, DataList dataList) {
+    this.path = path;
+    this.dataList = dataList;
+  }
+
+  @Override
+  public void parse() throws IOException, InterruptedException {
     List<TestData> objects = new ArrayList<>();
     try {
       FilePath[] files = path.list("test/**/*.xml");
@@ -109,7 +116,7 @@ public class TestFactory {
    * @return a test data object
    */
   private static TestData createInstance(final String recipe, final String suite,
-      final Tag testcase) {
+      final Tag testcase) throws SAXException {
     String name = testcase.getAttribute("name");
     for (Tag tag : testcase.getChildNodes()) {
       String message = tag.getAttribute("message");
@@ -122,8 +129,7 @@ public class TestFactory {
         case "skipped":
           return new SkippedTestData(recipe, suite, name, message);
         default:
-          throw new IllegalArgumentException(
-              String.format("Failed to parse: %s.%s.%s", recipe, suite, name));
+          throw new SAXException("Unknown status tag: " + status);
       }
     }
     return new PassedTestData(recipe, suite, name, "");

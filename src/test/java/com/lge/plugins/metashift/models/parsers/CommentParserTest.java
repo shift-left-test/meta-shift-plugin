@@ -22,12 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.DataList;
-import com.lge.plugins.metashift.models.RecipeSizeData;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
@@ -40,11 +41,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the RecipeSizeFactory class.
+ * Unit tests for the CommentParser class.
  *
  * @author Sung Gon Kim
  */
-public class RecipeSizeFactoryTest {
+public class CommentParserTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -59,36 +60,40 @@ public class RecipeSizeFactoryTest {
     dataList = new DataList();
   }
 
+  private void parse(File path) throws IOException, InterruptedException {
+    ExecutorServiceUtils.invokeAll(new CommentParser(new FilePath(path), dataList));
+  }
+
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(RecipeSizeData.class));
+    assertEquals(isAvailable, dataList.isAvailable(CommentData.class));
     assertEquals(size, dataList.size());
   }
 
-  private void assertValues(int index, String recipe, String file, long lines) {
-    List<RecipeSizeData> objects = dataList.objects(RecipeSizeData.class)
-        .collect(Collectors.toList());
+  private void assertValues(int index, String recipe, String file, long lines, long commentLines) {
+    List<CommentData> objects = dataList.objects(CommentData.class).collect(Collectors.toList());
     assertEquals(recipe, objects.get(index).getRecipe());
     assertEquals(file, objects.get(index).getFile());
     assertEquals(lines, objects.get(index).getLines());
+    assertEquals(commentLines, objects.get(index).getCommentLines());
   }
 
   @Test
-  public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    RecipeSizeFactory.create(new FilePath(utils.getPath("unknown-path")), dataList);
+  public void testCreateSetWithUnknownPath() throws IOException, InterruptedException {
+    parse(utils.getPath("path-to-unknown"));
     assertDataList(false, 0);
   }
 
   @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    RecipeSizeFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(false, 0);
   }
 
   @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
-    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkrecipe").getParentFile();
-    RecipeSizeFactory.create(new FilePath(directory), dataList);
+    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
+    parse(directory);
     assertDataList(false, 0);
   }
 
@@ -96,25 +101,30 @@ public class RecipeSizeFactoryTest {
   public void testCreateWithMalformedData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
-    utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    RecipeSizeFactory.create(new FilePath(directory), dataList);
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    parse(directory);
   }
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'lines_of_code': [] }");
-    utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    RecipeSizeFactory.create(new FilePath(directory), dataList);
+    builder.append("{ 'size': [ ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    parse(directory);
     assertDataList(true, 0);
   }
 
   @Test
-  public void testCreateWithMalformedFile() throws Exception {
+  public void testCreateWithInsufficientData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder.append("{ 'lines_of_code' : [ { 'file': 'a.bb' } ] }");
-    utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    RecipeSizeFactory.create(new FilePath(directory), dataList);
+    builder
+        .append("{")
+        .append("  'size': [")
+        .append("    { 'file': 'a.file' }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    parse(directory);
     assertDataList(true, 1);
   }
 
@@ -123,15 +133,20 @@ public class RecipeSizeFactoryTest {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
-        .append("  'lines_of_code': [")
+        .append("  'size': [")
         .append("    {")
-        .append("      'file': '.hidden.bb',")
-        .append("      'code_lines': 12")
+        .append("      'file': '.hidden.file',")
+        .append("      'total_lines': 20,")
+        .append("      'code_lines': 1,")
+        .append("      'comment_lines': 5,")
+        .append("      'duplicated_lines': 2,")
+        .append("      'functions': 15,")
+        .append("      'classes': 6")
         .append("    }")
         .append("  ]")
         .append("}");
-    utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    RecipeSizeFactory.create(new FilePath(directory), dataList);
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    parse(directory);
     assertDataList(true, 0);
   }
 
@@ -140,17 +155,21 @@ public class RecipeSizeFactoryTest {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
-        .append("  'lines_of_code': [")
+        .append("  'size': [")
         .append("    {")
-        .append("      'file': 'a.bb',")
-        .append("      'code_lines': 12")
+        .append("      'file': 'a.file',")
+        .append("      'total_lines': 20,")
+        .append("      'code_lines': 1,")
+        .append("      'comment_lines': 5,")
+        .append("      'duplicated_lines': 2,")
+        .append("      'functions': 15,")
+        .append("      'classes': 6")
         .append("    }")
         .append("  ]")
         .append("}");
-    utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    RecipeSizeFactory.create(new FilePath(directory), dataList);
-    assertDataList(true, 1);
-    assertValues(0, "C-1.0.0-r0", "a.bb", 12);
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    parse(directory);
+    assertValues(0, "C-1.0.0-r0", "a.file", 20, 5);
   }
 
   @Test
@@ -158,21 +177,22 @@ public class RecipeSizeFactoryTest {
     File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("{")
-        .append("  'lines_of_code': [")
+        .append("  'size': [")
         .append("    {")
-        .append("      'file': 'a.bb',")
-        .append("      'code_lines': 12")
+        .append("      'file': 'a.file',")
+        .append("      'total_lines': 10,")
+        .append("      'comment_lines': 5")
         .append("    },")
         .append("    {")
-        .append("      'file': 'b.bb',")
-        .append("      'code_lines': 34")
+        .append("      'file': 'b.file',")
+        .append("      'total_lines': 20,")
+        .append("      'comment_lines': 3")
         .append("    }")
         .append("  ]")
         .append("}");
-    utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    RecipeSizeFactory.create(new FilePath(directory), dataList);
-    assertDataList(true, 2);
-    assertValues(0, "D-1.0.0-r0", "a.bb", 12);
-    assertValues(1, "D-1.0.0-r0", "b.bb", 34);
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    parse(directory);
+    assertValues(0, "D-1.0.0-r0", "a.file", 10, 5);
+    assertValues(1, "D-1.0.0-r0", "b.file", 20, 3);
   }
 }

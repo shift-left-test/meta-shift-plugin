@@ -23,6 +23,6 @@
  */
 
 /**
- * Provides factory methods for the model classes.
+ * Provides parsers for the model classes.
  */
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;

@@ -22,14 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.KilledMutationTestData;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.SkippedMutationTestData;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
-import com.lge.plugins.metashift.utils.PathUtils;
 import com.lge.plugins.metashift.utils.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.utils.xml.Tag;
 import hudson.FilePath;
@@ -41,21 +40,28 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 /**
- * A factory class for the MutationTestData objects.
+ * A parsers class for the MutationTestData objects.
  *
  * @author Sung Gon Kim
  */
-public class MutationTestFactory {
+public class MutationTestParser extends FileParser {
+
+  private final FilePath path;
+  private final DataList dataList;
 
   /**
-   * Creates a set of objects by parsing a report file from the given path.
+   * Default constructor.
    *
-   * @param path to the report directory
-   * @throws IOException          if failed to locate report files
-   * @throws InterruptedException if an interruption occurs
+   * @param path     to the report directory
+   * @param dataList to store objects
    */
-  public static void create(final FilePath path, final DataList dataList)
-      throws IOException, InterruptedException {
+  public MutationTestParser(FilePath path, DataList dataList) {
+    this.path = path;
+    this.dataList = dataList;
+  }
+
+  @Override
+  public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("checktest").child("mutations.xml");
     try {
       SimpleXmlParser parser = new SimpleXmlParser(report);
@@ -63,7 +69,7 @@ public class MutationTestFactory {
 
       for (Tag tag : parser.getChildNodes("mutation")) {
         String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
-        if (PathUtils.isHidden(file)) {
+        if (isHidden(file)) {
           continue;
         }
         objects.add(createInstance(path.getName(), tag));
@@ -83,8 +89,10 @@ public class MutationTestFactory {
    * @param recipe name
    * @param tag    to parse
    * @return an object
+   * @throws SAXException if failed to parse the file
    */
-  private static MutationTestData createInstance(final String recipe, final Tag tag) {
+  private static MutationTestData createInstance(final String recipe, final Tag tag)
+      throws SAXException {
     String detected = tag.getAttribute("detected");
     String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
     String mutatedClass = tag.getChildNodes("mutatedClass").first().getTextContent();
@@ -99,9 +107,11 @@ public class MutationTestFactory {
       case "false":
         return new SurvivedMutationTestData(recipe, file, mutatedClass, mutatedMethod, line,
             mutator, killingTest);
-      default:
+      case "skip":
         return new SkippedMutationTestData(recipe, file, mutatedClass, mutatedMethod, line, mutator,
             killingTest);
+      default:
+        throw new SAXException("Unknown detected tag: " + detected);
     }
   }
 }

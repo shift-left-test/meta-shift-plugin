@@ -22,16 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.utils;
+package com.lge.plugins.metashift.models.parsers;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.Callable;
 
 /**
- * PathUtils class.
+ * FileParser class.
  *
  * @author Sung Gon Kim
  */
-public class PathUtils {
+public abstract class FileParser implements Callable<Void> {
 
   /**
    * Test if the path of the file is hidden.
@@ -39,7 +41,7 @@ public class PathUtils {
    * @param path to a file
    * @return true if the path is hidden, false otherwise
    */
-  public static boolean isHidden(String path) {
+  protected boolean isHidden(String path) {
     File file = new File(path);
     do {
       String filename = file.getName();
@@ -50,5 +52,19 @@ public class PathUtils {
       }
     } while (file != null);
     return false;
+  }
+
+  /**
+   * Parses the report files.
+   *
+   * @throws IOException          if failed to operate with the files
+   * @throws InterruptedException if an interruption occurs
+   */
+  public abstract void parse() throws IOException, InterruptedException;
+
+  @Override
+  public Void call() throws Exception {
+    parse();
+    return null;
   }
 }

@@ -22,13 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.StatementCoverageData;
-import com.lge.plugins.metashift.utils.PathUtils;
 import com.lge.plugins.metashift.utils.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.utils.xml.Tag;
 import com.lge.plugins.metashift.utils.xml.TagList;
@@ -41,21 +40,28 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 /**
- * A factory class for the CoverageData objects.
+ * A parsers class for the CoverageData objects.
  *
  * @author Sung Gon Kim
  */
-public class CoverageFactory {
+public class CoverageParser extends FileParser {
+
+  private final FilePath path;
+  private final DataList dataList;
 
   /**
-   * Creates a set of objects by parsing a report file from the given path.
+   * Default constructor.
    *
-   * @param path to the report directory
-   * @throws IOException          if failed to locate report files
-   * @throws InterruptedException if an interruption occurs
+   * @param path     to the report directory
+   * @param dataList to store objects
    */
-  public static void create(final FilePath path, final DataList dataList)
-      throws IOException, InterruptedException {
+  public CoverageParser(FilePath path, DataList dataList) {
+    this.path = path;
+    this.dataList = dataList;
+  }
+
+  @Override
+  public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("coverage").child("coverage.xml");
     try {
       SimpleXmlParser parser = new SimpleXmlParser(report);
@@ -63,7 +69,7 @@ public class CoverageFactory {
 
       for (Tag tag : parser.getChildNodes("class")) {
         String filename = tag.getAttribute("filename");
-        if (PathUtils.isHidden(filename)) {
+        if (isHidden(filename)) {
           continue;
         }
         for (Tag line : tag.getChildNodes("lines").last().getChildNodes("line")) {

@@ -22,14 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import com.jsoniter.any.Any;
 import com.jsoniter.spi.JsonException;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.utils.JsonUtils;
-import com.lge.plugins.metashift.utils.PathUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -37,21 +36,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A factory class for RecipeSizeData objects.
+ * A parsers class for RecipeSizeData objects.
  *
  * @author Sung Gon Kim
  */
-public class RecipeSizeFactory {
+public class RecipeSizeParser extends FileParser {
+
+  private final FilePath path;
+  private final DataList dataList;
 
   /**
-   * Creates a set of objects by parsing a report file from the given path.
+   * Default constructor.
    *
-   * @param path to the report directory
-   * @throws IOException          if failed to locate report files
-   * @throws InterruptedException if an interruption occurs
+   * @param path     to the report directory
+   * @param dataList to store objects
    */
-  public static void create(final FilePath path, final DataList dataList)
-      throws IOException, InterruptedException {
+  public RecipeSizeParser(FilePath path, DataList dataList) {
+    this.path = path;
+    this.dataList = dataList;
+  }
+
+  @Override
+  public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("checkrecipe").child("files.json");
     try {
       Any json = JsonUtils.createObject2(report);
@@ -60,7 +66,7 @@ public class RecipeSizeFactory {
 
       for (Any o : array) {
         String file = o.toString("file");
-        if (PathUtils.isHidden(file)) {
+        if (isHidden(file)) {
           continue;
         }
         objects.add(new RecipeSizeData(

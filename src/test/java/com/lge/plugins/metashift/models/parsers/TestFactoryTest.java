@@ -22,12 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.TestData;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
@@ -40,7 +41,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the TestFactory class.
+ * Unit tests for the TestParser class.
  *
  * @author Sung Gon Kim
  */
@@ -59,6 +60,10 @@ public class TestFactoryTest {
     dataList = new DataList();
   }
 
+  private void parse(File path) throws IOException, InterruptedException {
+    ExecutorServiceUtils.invokeAll(new TestParser(new FilePath(path), dataList));
+  }
+
   private void assertDataList(boolean isAvailable, int size) {
     assertEquals(isAvailable, dataList.isAvailable(TestData.class));
     assertEquals(size, dataList.size());
@@ -74,21 +79,21 @@ public class TestFactoryTest {
 
   @Test
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    TestFactory.create(new FilePath(utils.getPath("path-to-unknown")), dataList);
+    parse(utils.getPath("path-to-unknown"));
     assertDataList(false, 0);
   }
 
   @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    TestFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(false, 0);
   }
 
   @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "test").getParentFile();
-    TestFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(false, 0);
   }
 
@@ -97,7 +102,7 @@ public class TestFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("/testsuite>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(new FilePath(directory), dataList);
+    parse(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -105,7 +110,7 @@ public class TestFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(new FilePath(directory), dataList);
+    parse(directory);
   }
 
   @Test
@@ -113,7 +118,7 @@ public class TestFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<testsuites> </testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 0);
   }
 
@@ -129,7 +134,7 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(new FilePath(directory), dataList);
+    parse(directory);
   }
 
   @Test
@@ -142,7 +147,7 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 1);
     assertValues(0, "C-1.0.0-r0", "A", "test1", "");
   }
@@ -172,7 +177,7 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    TestFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 4);
     assertValues(0, "D-1.0.0-r0", "A", "test1", "");
     assertValues(1, "D-1.0.0-r0", "B", "test2", "failure");
@@ -221,7 +226,7 @@ public class TestFactoryTest {
         .append("  </testsuite>")
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "D", "4.xml");
-    TestFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 4);
     assertValues(0, "E-1.0.0-r0", "A", "test1", "");
     assertValues(1, "E-1.0.0-r0", "B", "test2", "failure");

@@ -22,14 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import com.jsoniter.any.Any;
 import com.jsoniter.spi.JsonException;
-import com.lge.plugins.metashift.models.CommentData;
+import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.JsonUtils;
-import com.lge.plugins.metashift.utils.PathUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -37,40 +36,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A factory class for the CommentData objects.
+ * A parsers class for the ComplexityData objects.
  *
  * @author Sung Gon Kim
  */
-public class CommentFactory {
+public class ComplexityParser extends FileParser {
+
+  private final FilePath path;
+  private final DataList dataList;
 
   /**
-   * Creates a set of objects by parsing a report file from the given path.
+   * Default constructor.
    *
-   * @param path to the report directory
-   * @throws IOException          if failed to locate report files
-   * @throws InterruptedException if an interruption occurs
+   * @param path     to the report directory
+   * @param dataList to store objects
    */
-  public static void create(final FilePath path, final DataList dataList)
-      throws IOException, InterruptedException {
+  public ComplexityParser(FilePath path, DataList dataList) {
+    this.path = path;
+    this.dataList = dataList;
+  }
+
+  @Override
+  public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       Any json = JsonUtils.createObject2(report);
-      List<Any> array = json.get("size").asList();
-      List<CommentData> objects = new ArrayList<>(array.size());
+      List<Any> array = json.get("complexity").asList();
+      List<ComplexityData> objects = new ArrayList<>(array.size());
 
       for (Any o : array) {
         String file = o.toString("file");
-        if (PathUtils.isHidden(file)) {
+        if (isHidden(file)) {
           continue;
         }
-        objects.add(new CommentData(
+        objects.add(new ComplexityData(
             path.getName(),
             file,
-            o.toLong("total_lines"),
-            o.toLong("comment_lines")));
+            o.toString("function"),
+            o.toLong("start"),
+            o.toLong("end"),
+            o.toLong("value")));
       }
       dataList.addAll(objects);
-      dataList.add(CommentData.class);
+      dataList.add(ComplexityData.class);
     } catch (JsonException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {

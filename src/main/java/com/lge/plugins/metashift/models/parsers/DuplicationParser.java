@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import com.jsoniter.any.Any;
 import com.jsoniter.spi.JsonException;
 import com.lge.plugins.metashift.models.DataList;
-import com.lge.plugins.metashift.models.PremirrorCacheData;
+import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.IOException;
@@ -36,36 +36,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A factory class for PremirrorCacheData objects.
+ * A parsers class for the DuplicationData objects.
  *
  * @author Sung Gon Kim
  */
-public class PremirrorCacheFactory {
+public class DuplicationParser extends FileParser {
+
+  private final FilePath path;
+  private final DataList dataList;
 
   /**
-   * Creates a set of objects by parsing a report file from the given path.
+   * Default constructor.
    *
-   * @param path to the report directory
-   * @throws IOException          if failed to locate report files
-   * @throws InterruptedException if an interruption occurs
+   * @param path     to the report directory
+   * @param dataList to store objects
    */
-  public static void create(final FilePath path, final DataList dataList)
-      throws IOException, InterruptedException {
-    FilePath report = path.child("checkcache").child("caches.json");
+  public DuplicationParser(FilePath path, DataList dataList) {
+    this.path = path;
+    this.dataList = dataList;
+  }
+
+  @Override
+  public void parse() throws IOException, InterruptedException {
+    FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       Any json = JsonUtils.createObject2(report);
-      List<Any> found = json.get("Premirror", "Found").asList();
-      List<Any> missed = json.get("Premirror", "Missed").asList();
-      List<PremirrorCacheData> objects = new ArrayList<>(found.size() + missed.size());
+      List<Any> array = json.get("size").asList();
+      List<DuplicationData> objects = new ArrayList<>(array.size());
 
-      for (Any o : found) {
-        objects.add(new PremirrorCacheData(path.getName(), o.toString(), true));
-      }
-      for (Any o : missed) {
-        objects.add(new PremirrorCacheData(path.getName(), o.toString(), false));
+      for (Any o : array) {
+        String file = o.toString("file");
+        if (isHidden(file)) {
+          continue;
+        }
+        objects.add(new DuplicationData(
+            path.getName(),
+            file,
+            o.toLong("total_lines"),
+            o.toLong("duplicated_lines")));
       }
       dataList.addAll(objects);
-      dataList.add(PremirrorCacheData.class);
+      dataList.add(DuplicationData.class);
     } catch (JsonException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {

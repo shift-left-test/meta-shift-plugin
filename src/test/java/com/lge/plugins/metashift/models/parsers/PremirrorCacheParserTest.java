@@ -22,12 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
@@ -38,11 +39,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the PremirrorCacheFactory class.
+ * Unit tests for the PremirrorCacheParser class.
  *
  * @author Sung Gon Kim
  */
-public class PremirrorCacheFactoryTest {
+public class PremirrorCacheParserTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -57,6 +58,10 @@ public class PremirrorCacheFactoryTest {
     dataList = new DataList();
   }
 
+  private void parse(File path) throws IOException, InterruptedException {
+    ExecutorServiceUtils.invokeAll(new PremirrorCacheParser(new FilePath(path), dataList));
+  }
+
   private void assertDataList(boolean isAvailable, int size) {
     assertEquals(isAvailable, dataList.isAvailable(PremirrorCacheData.class));
     assertEquals(size, dataList.size());
@@ -64,21 +69,21 @@ public class PremirrorCacheFactoryTest {
 
   @Test
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    PremirrorCacheFactory.create(new FilePath(utils.getPath("path-to-unknown")), dataList);
+    parse(utils.getPath("path-to-unknown"));
     assertDataList(false, 0);
   }
 
   @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    PremirrorCacheFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(false, 0);
   }
 
   @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcache").getParentFile();
-    PremirrorCacheFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(false, 0);
   }
 
@@ -87,7 +92,7 @@ public class PremirrorCacheFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    PremirrorCacheFactory.create(new FilePath(directory), dataList);
+    parse(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -99,7 +104,7 @@ public class PremirrorCacheFactoryTest {
         .append("  'Shared State': { }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    PremirrorCacheFactory.create(new FilePath(directory), dataList);
+    parse(directory);
   }
 
   @Test
@@ -111,7 +116,7 @@ public class PremirrorCacheFactoryTest {
         .append("  'Shared State': { 'Found': [], 'Missed': [] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    PremirrorCacheFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 0);
   }
 
@@ -124,7 +129,7 @@ public class PremirrorCacheFactoryTest {
         .append("  'Shared State': { 'Found': [], 'Missed': [] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    PremirrorCacheFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 4);
   }
 
@@ -137,7 +142,7 @@ public class PremirrorCacheFactoryTest {
         .append("  'Shared State': { 'Found': ['D:do_X'], 'Missed': ['E:do_X'] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    PremirrorCacheFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 0);
   }
 
@@ -150,7 +155,7 @@ public class PremirrorCacheFactoryTest {
         .append("  'Shared State': { 'Found': ['D:do_X'], 'Missed': ['E:do_X'] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    PremirrorCacheFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 4);
   }
 }

@@ -22,12 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.DataList;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
@@ -40,11 +41,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the CoverageFactory class.
+ * Unit tests for the CoverageParser class.
  *
  * @author Sung Gon Kim
  */
-public class CoverageFactoryTest {
+public class CoverageParserTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -57,6 +58,10 @@ public class CoverageFactoryTest {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     dataList = new DataList();
+  }
+
+  private void parse(File path) throws IOException, InterruptedException {
+    ExecutorServiceUtils.invokeAll(new CoverageParser(new FilePath(path), dataList));
   }
 
   private void assertDataList(boolean isAvailable, int size) {
@@ -76,21 +81,21 @@ public class CoverageFactoryTest {
 
   @Test
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    CoverageFactory.create(new FilePath(utils.getPath("path-to-unknown")), dataList);
+    parse(utils.getPath("path-to-unknown"));
     assertDataList(false, 0);
   }
 
   @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    CoverageFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(false, 0);
   }
 
   @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "coverage").getParentFile();
-    CoverageFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(false, 0);
   }
 
@@ -99,7 +104,7 @@ public class CoverageFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory), dataList);
+    parse(directory);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -110,7 +115,7 @@ public class CoverageFactoryTest {
         .append("  <methods>")
         .append("    <method name='func1()'>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory), dataList);
+    parse(directory);
   }
 
   @Test
@@ -118,7 +123,7 @@ public class CoverageFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<classes> </classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 0);
   }
 
@@ -140,7 +145,7 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 0);
   }
 
@@ -163,7 +168,7 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 0);
   }
 
@@ -186,7 +191,7 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 1);
     assertValues(0, "C-1.0.0-r0", "a.cpp", 2, 0, true);
   }
@@ -222,7 +227,7 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 4);
     assertValues(0, "D-1.0.0-r0", "a.cpp", 1, 0, true);
     assertValues(1, "D-1.0.0-r0", "a.cpp", 10, 0, false);
@@ -277,7 +282,7 @@ public class CoverageFactoryTest {
         .append("  </class>")
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
-    CoverageFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 4);
     assertValues(0, "E-1.0.0-r0", "a.cpp", 1, 0, true);
     assertValues(1, "E-1.0.0-r0", "a.cpp", 10, 0, false);

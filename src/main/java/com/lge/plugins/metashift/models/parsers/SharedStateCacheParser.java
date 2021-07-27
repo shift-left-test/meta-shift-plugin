@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import com.jsoniter.any.Any;
 import com.jsoniter.spi.JsonException;
@@ -36,21 +36,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A factory class for SharedStateCacheData objects.
+ * A parsers class for SharedStateCacheData objects.
  *
  * @author Sung Gon Kim
  */
-public class SharedStateCacheFactory {
+public class SharedStateCacheParser extends FileParser {
+
+  private final FilePath path;
+  private final DataList dataList;
 
   /**
-   * Creates a set of objects by parsing a report file from the given path.
+   * Default constructor.
    *
-   * @param path to the report directory
-   * @throws IOException          if failed to locate report files
-   * @throws InterruptedException if an interruption occurs
+   * @param path     to the report directory
+   * @param dataList to store objects
    */
-  public static void create(final FilePath path, final DataList dataList)
-      throws IOException, InterruptedException {
+  public SharedStateCacheParser(FilePath path, DataList dataList) {
+    this.path = path;
+    this.dataList = dataList;
+  }
+
+  @Override
+  public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("checkcache").child("caches.json");
     try {
       Any json = JsonUtils.createObject2(report);

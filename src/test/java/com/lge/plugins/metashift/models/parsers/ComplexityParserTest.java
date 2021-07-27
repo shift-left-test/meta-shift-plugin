@@ -22,12 +22,13 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.factory;
+package com.lge.plugins.metashift.models.parsers;
 
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.DataList;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
@@ -40,11 +41,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the ComplexityFactory class.
+ * Unit tests for the ComplexityParser class.
  *
  * @author Sung Gon Kim
  */
-public class ComplexityFactoryTest {
+public class ComplexityParserTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -57,6 +58,10 @@ public class ComplexityFactoryTest {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
     dataList = new DataList();
+  }
+
+  private void parse(File path) throws IOException, InterruptedException {
+    ExecutorServiceUtils.invokeAll(new ComplexityParser(new FilePath(path), dataList));
   }
 
   private void assertDataList(boolean isAvailable, int size) {
@@ -78,21 +83,21 @@ public class ComplexityFactoryTest {
 
   @Test
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    ComplexityFactory.create(new FilePath(utils.getPath("path-to-unknown")), dataList);
+    parse(utils.getPath("path-to-unknown"));
     assertDataList(false, 0);
   }
 
   @Test
   public void testCreateWithNoTaskDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    ComplexityFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(false, 0);
   }
 
   @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
-    ComplexityFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(false, 0);
   }
 
@@ -101,7 +106,7 @@ public class ComplexityFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(new FilePath(directory), dataList);
+    parse(directory);
   }
 
   @Test
@@ -109,7 +114,7 @@ public class ComplexityFactoryTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'complexity': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 0);
   }
 
@@ -118,7 +123,7 @@ public class ComplexityFactoryTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ 'complexity': [ { 'file': 'a.file' } ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 1);
   }
 
@@ -138,7 +143,7 @@ public class ComplexityFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 0);
   }
 
@@ -158,7 +163,7 @@ public class ComplexityFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 1);
     assertValues(0, "C-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
   }
@@ -193,7 +198,7 @@ public class ComplexityFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 3);
     assertValues(0, "D-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
     assertValues(1, "D-1.0.0-r0", "a.file", "func1()", 15, 20, 3);
@@ -230,7 +235,7 @@ public class ComplexityFactoryTest {
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    ComplexityFactory.create(new FilePath(directory), dataList);
+    parse(directory);
     assertDataList(true, 3);
     assertValues(0, "E-1.0.0-r0", "a.file", "func1()", 5, 10, 1);
     assertValues(1, "E-1.0.0-r0", "b.file", "func2()", 15, 20, 3);

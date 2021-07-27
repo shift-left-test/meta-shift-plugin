@@ -24,22 +24,21 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.factory.CodeSizeFactory;
-import com.lge.plugins.metashift.models.factory.CodeViolationFactory;
-import com.lge.plugins.metashift.models.factory.CommentFactory;
-import com.lge.plugins.metashift.models.factory.ComplexityFactory;
-import com.lge.plugins.metashift.models.factory.CoverageFactory;
-import com.lge.plugins.metashift.models.factory.DuplicationFactory;
-import com.lge.plugins.metashift.models.factory.MutationTestFactory;
-import com.lge.plugins.metashift.models.factory.PremirrorCacheFactory;
-import com.lge.plugins.metashift.models.factory.RecipeSizeFactory;
-import com.lge.plugins.metashift.models.factory.RecipeViolationFactory;
-import com.lge.plugins.metashift.models.factory.SharedStateCacheFactory;
-import com.lge.plugins.metashift.models.factory.TestFactory;
+import com.lge.plugins.metashift.models.parsers.CodeSizeParser;
+import com.lge.plugins.metashift.models.parsers.CodeViolationParser;
+import com.lge.plugins.metashift.models.parsers.CommentParser;
+import com.lge.plugins.metashift.models.parsers.ComplexityParser;
+import com.lge.plugins.metashift.models.parsers.CoverageParser;
+import com.lge.plugins.metashift.models.parsers.DuplicationParser;
+import com.lge.plugins.metashift.models.parsers.MutationTestParser;
+import com.lge.plugins.metashift.models.parsers.PremirrorCacheParser;
+import com.lge.plugins.metashift.models.parsers.RecipeSizeParser;
+import com.lge.plugins.metashift.models.parsers.RecipeViolationParser;
+import com.lge.plugins.metashift.models.parsers.SharedStateCacheParser;
+import com.lge.plugins.metashift.models.parsers.TestParser;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import hudson.FilePath;
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -62,42 +61,15 @@ public final class Recipe extends Data implements Streamable {
   private final DataList dataList;
 
   /**
-   * Represents the functional interface of factory methods.
-   *
-   * @param <T> first input type
-   * @param <V> second input type
-   */
-  @FunctionalInterface
-  private interface FactoryFunction<T, V> {
-
-    void apply(T t, V v) throws IOException, InterruptedException;
-  }
-
-  /**
-   * Creates new task to trigger a given factory method.
-   *
-   * @param functor to parse the file
-   * @param path    to the report directory
-   * @return task object
-   */
-  private Callable<Void> newTask(FactoryFunction<FilePath, DataList> functor, FilePath path,
-      DataList dataList) {
-    return () -> {
-      functor.apply(path, dataList);
-      return null;
-    };
-  }
-
-  /**
    * Creates a Recipe object using the given recipe directory.
    *
    * @param path to the recipe directory
    * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
-   * @throws InterruptedException     if an interruption occurs
    * @throws IOException              if a file IO fails
+   * @throws InterruptedException     if an interruption occurs
    */
   public Recipe(final FilePath path)
-      throws IllegalArgumentException, InterruptedException, IOException {
+      throws IllegalArgumentException, IOException, InterruptedException {
     this(path.getName());
     if (!path.exists()) {
       throw new IllegalArgumentException("Directory not found: " + path);
@@ -106,18 +78,19 @@ public final class Recipe extends Data implements Streamable {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
     ExecutorServiceUtils.invokeAll(
-        newTask(CodeSizeFactory::create, path, dataList),
-        newTask(CodeViolationFactory::create, path, dataList),
-        newTask(CommentFactory::create, path, dataList),
-        newTask(ComplexityFactory::create, path, dataList),
-        newTask(CoverageFactory::create, path, dataList),
-        newTask(DuplicationFactory::create, path, dataList),
-        newTask(MutationTestFactory::create, path, dataList),
-        newTask(PremirrorCacheFactory::create, path, dataList),
-        newTask(RecipeSizeFactory::create, path, dataList),
-        newTask(RecipeViolationFactory::create, path, dataList),
-        newTask(SharedStateCacheFactory::create, path, dataList),
-        newTask(TestFactory::create, path, dataList));
+        new CodeSizeParser(path, dataList),
+        new CodeViolationParser(path, dataList),
+        new CommentParser(path, dataList),
+        new ComplexityParser(path, dataList),
+        new CoverageParser(path, dataList),
+        new DuplicationParser(path, dataList),
+        new MutationTestParser(path, dataList),
+        new PremirrorCacheParser(path, dataList),
+        new RecipeSizeParser(path, dataList),
+        new RecipeViolationParser(path, dataList),
+        new SharedStateCacheParser(path, dataList),
+        new TestParser(path, dataList)
+    );
   }
 
   /**
