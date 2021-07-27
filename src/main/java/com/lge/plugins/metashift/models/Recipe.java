@@ -36,15 +36,10 @@ import com.lge.plugins.metashift.models.factory.RecipeSizeFactory;
 import com.lge.plugins.metashift.models.factory.RecipeViolationFactory;
 import com.lge.plugins.metashift.models.factory.SharedStateCacheFactory;
 import com.lge.plugins.metashift.models.factory.TestFactory;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import hudson.FilePath;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -110,7 +105,7 @@ public final class Recipe extends Data implements Streamable {
     if (!path.isDirectory()) {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
-    List<Callable<Void>> callables = Arrays.asList(
+    ExecutorServiceUtils.invokeAll(
         newTask(CodeSizeFactory::create, path, dataList),
         newTask(CodeViolationFactory::create, path, dataList),
         newTask(CommentFactory::create, path, dataList),
@@ -122,26 +117,7 @@ public final class Recipe extends Data implements Streamable {
         newTask(RecipeSizeFactory::create, path, dataList),
         newTask(RecipeViolationFactory::create, path, dataList),
         newTask(SharedStateCacheFactory::create, path, dataList),
-        newTask(TestFactory::create, path, dataList)
-    );
-    try {
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      for (Future<Void> future : executor.invokeAll(callables)) {
-        future.get();
-      }
-    } catch (ExecutionException e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof IllegalArgumentException) {
-        throw (IllegalArgumentException) cause;
-      }
-      if (cause instanceof InterruptedException) {
-        throw (InterruptedException) cause;
-      }
-      if (cause instanceof IOException) {
-        throw (IOException) cause;
-      }
-      throw new RuntimeException("Unknown exception: " + cause.getMessage(), cause);
-    }
+        newTask(TestFactory::create, path, dataList));
   }
 
   /**

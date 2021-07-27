@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.ui.project;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -46,12 +47,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.time.DurationFormatUtils;
@@ -274,11 +270,9 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     try {
       Recipes recipes = new Recipes(reportPath, listener.getLogger());
 
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      for (Future<Void> future : executor.invokeAll(Arrays.asList(
-          publishReport(run, reportPath, listener, configuration, recipes)))) {
-        future.get();
-      }
+      ExecutorServiceUtils
+          .invokeAll(publishReport(run, reportPath, listener, configuration, recipes));
+
       Instant finished = Instant.now();
       logger.printf("[meta-shift-plugin] Finished at %s%n", finished.toString());
 
@@ -290,18 +284,6 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       throw new AbortException(e.getMessage());
     } catch (InterruptedException ignored) {
       run.setResult(Result.ABORTED);
-    } catch (ExecutionException e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof IllegalArgumentException) {
-        throw (IllegalArgumentException) cause;
-      }
-      if (cause instanceof InterruptedException) {
-        throw (InterruptedException) cause;
-      }
-      if (cause instanceof IOException) {
-        throw (IOException) cause;
-      }
-      throw new RuntimeException("Unknown exception: " + cause.getMessage(), cause);
     }
   }
 
