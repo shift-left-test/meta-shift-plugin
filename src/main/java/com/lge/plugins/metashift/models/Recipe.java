@@ -24,18 +24,18 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.models.parsers.CodeSizeParser;
-import com.lge.plugins.metashift.models.parsers.CodeViolationParser;
-import com.lge.plugins.metashift.models.parsers.CommentParser;
-import com.lge.plugins.metashift.models.parsers.ComplexityParser;
-import com.lge.plugins.metashift.models.parsers.CoverageParser;
-import com.lge.plugins.metashift.models.parsers.DuplicationParser;
-import com.lge.plugins.metashift.models.parsers.MutationTestParser;
-import com.lge.plugins.metashift.models.parsers.PremirrorCacheParser;
-import com.lge.plugins.metashift.models.parsers.RecipeSizeParser;
-import com.lge.plugins.metashift.models.parsers.RecipeViolationParser;
-import com.lge.plugins.metashift.models.parsers.SharedStateCacheParser;
-import com.lge.plugins.metashift.models.parsers.TestParser;
+import com.lge.plugins.metashift.parsers.CodeSizeParser;
+import com.lge.plugins.metashift.parsers.CodeViolationParser;
+import com.lge.plugins.metashift.parsers.CommentParser;
+import com.lge.plugins.metashift.parsers.ComplexityParser;
+import com.lge.plugins.metashift.parsers.CoverageParser;
+import com.lge.plugins.metashift.parsers.DuplicationParser;
+import com.lge.plugins.metashift.parsers.MutationTestParser;
+import com.lge.plugins.metashift.parsers.PremirrorCacheParser;
+import com.lge.plugins.metashift.parsers.RecipeSizeParser;
+import com.lge.plugins.metashift.parsers.RecipeViolationParser;
+import com.lge.plugins.metashift.parsers.SharedStateCacheParser;
+import com.lge.plugins.metashift.parsers.TestParser;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import hudson.FilePath;
 import java.io.IOException;

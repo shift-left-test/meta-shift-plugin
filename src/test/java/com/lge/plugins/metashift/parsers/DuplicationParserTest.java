@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.parsers;
+package com.lge.plugins.metashift.parsers;
 
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.DataList;
-import com.lge.plugins.metashift.models.RecipeViolationData;
+import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
@@ -41,11 +41,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the RecipeViolationParser class.
+ * Unit tests for the DuplicationParser class.
  *
  * @author Sung Gon Kim
  */
-public class RecipeViolationParserTest {
+public class DuplicationParserTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -61,29 +61,27 @@ public class RecipeViolationParserTest {
   }
 
   private void parse(File path) throws IOException, InterruptedException {
-    ExecutorServiceUtils.invokeAll(new RecipeViolationParser(new FilePath(path), dataList));
+    ExecutorServiceUtils.invokeAll(new DuplicationParser(new FilePath(path), dataList));
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(RecipeViolationData.class));
+    assertEquals(isAvailable, dataList.isAvailable(DuplicationData.class));
     assertEquals(size, dataList.size());
   }
 
-  private void assertValues(int index, String recipe, String file, long line, String rule,
-      String severity, String description) {
-    List<RecipeViolationData> objects = dataList.objects(RecipeViolationData.class)
+  private void assertValues(int index, String recipe, String file, long lines,
+      long duplicatedLines) {
+    List<DuplicationData> objects = dataList.objects(DuplicationData.class)
         .collect(Collectors.toList());
     assertEquals(recipe, objects.get(index).getRecipe());
     assertEquals(file, objects.get(index).getFile());
-    assertEquals(line, objects.get(index).getLine());
-    assertEquals(rule, objects.get(index).getRule());
-    assertEquals(severity, objects.get(index).getSeverity());
-    assertEquals(description, objects.get(index).getDescription());
+    assertEquals(lines, objects.get(index).getLines());
+    assertEquals(duplicatedLines, objects.get(index).getDuplicatedLines());
   }
 
   @Test
-  public void testCreateListWithUnknownPath() throws IOException, InterruptedException {
-    parse(utils.getPath("unknown-path"));
+  public void testCreateWithUnknownPath() throws IOException, InterruptedException {
+    parse(utils.getPath("path-to-unknown"));
     assertDataList(false, 0);
   }
 
@@ -96,7 +94,7 @@ public class RecipeViolationParserTest {
 
   @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
-    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkrecipe").getParentFile();
+    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
     parse(directory);
     assertDataList(false, 0);
   }
@@ -105,15 +103,15 @@ public class RecipeViolationParserTest {
   public void testCreateWithMalformedData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
-    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
   }
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'issues': [ ] }");
-    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    builder.append("{ 'size': [ ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
     assertDataList(true, 0);
   }
@@ -121,29 +119,10 @@ public class RecipeViolationParserTest {
   @Test
   public void testCreateWithInsufficientData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder.append("{ 'issues': [ { 'file': 'a.bb', 'line': 1, 'severity': 'info' } ] }");
-    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    builder.append("{ 'size': [ { 'file': 'a.file' } ] }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
     assertDataList(true, 1);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testCreateWithUnknownSeverityType() throws Exception {
-    File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder
-        .append("{")
-        .append("  'issues': [")
-        .append("    {")
-        .append("      'file': 'a.file',")
-        .append("      'line': 1,")
-        .append("      'rule': 'checksum',")
-        .append("      'severity': '???',")
-        .append("      'description': 'checksum error'")
-        .append("    }")
-        .append("  ]")
-        .append("}");
-    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
-    parse(directory);
   }
 
   @Test
@@ -151,17 +130,15 @@ public class RecipeViolationParserTest {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
-        .append("  'issues': [")
+        .append("  'size': [")
         .append("    {")
         .append("      'file': '.hidden.file',")
-        .append("      'line': 1,")
-        .append("      'rule': 'checksum',")
-        .append("      'severity': 'error',")
-        .append("      'description': 'checksum error'")
+        .append("      'total_lines': 20,")
+        .append("      'duplicated_lines': 2")
         .append("    }")
         .append("  ]")
         .append("}");
-    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
     assertDataList(true, 0);
   }
@@ -171,20 +148,18 @@ public class RecipeViolationParserTest {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
-        .append("  'issues': [")
+        .append("  'size': [")
         .append("    {")
         .append("      'file': 'a.file',")
-        .append("      'line': 1,")
-        .append("      'rule': 'checksum',")
-        .append("      'severity': 'error',")
-        .append("      'description': 'checksum error'")
+        .append("      'total_lines': 20,")
+        .append("      'duplicated_lines': 2")
         .append("    }")
         .append("  ]")
         .append("}");
-    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
     assertDataList(true, 1);
-    assertValues(0, "C-1.0.0-r0", "a.file", 1, "checksum", "error", "checksum error");
+    assertValues(0, "C-1.0.0-r0", "a.file", 20, 2);
   }
 
   @Test
@@ -192,35 +167,23 @@ public class RecipeViolationParserTest {
     File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("{")
-        .append("  'issues': [")
+        .append("  'size': [")
         .append("    {")
         .append("      'file': 'a.file',")
-        .append("      'line': 1,")
-        .append("      'rule': 'checksum',")
-        .append("      'severity': 'error',")
-        .append("      'description': 'checksum error'")
+        .append("      'total_lines': 10,")
+        .append("      'duplicated_lines': 5")
         .append("    },")
         .append("    {")
         .append("      'file': 'b.file',")
-        .append("      'line': 2,")
-        .append("      'rule': 'indent',")
-        .append("      'severity': 'warning',")
-        .append("      'description': 'indent warning'")
-        .append("    },")
-        .append("    {")
-        .append("      'file': 'c.file',")
-        .append("      'line': 3,")
-        .append("      'rule': 'typo',")
-        .append("      'severity': 'info',")
-        .append("      'description': 'typo info'")
+        .append("      'total_lines': 20,")
+        .append("      'duplicated_lines': 5")
         .append("    }")
         .append("  ]")
         .append("}");
-    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-    assertDataList(true, 3);
-    assertValues(0, "D-1.0.0-r0", "a.file", 1, "checksum", "error", "checksum error");
-    assertValues(1, "D-1.0.0-r0", "b.file", 2, "indent", "warning", "indent warning");
-    assertValues(2, "D-1.0.0-r0", "c.file", 3, "typo", "info", "typo info");
+    assertDataList(true, 2);
+    assertValues(0, "D-1.0.0-r0", "a.file", 10, 5);
+    assertValues(1, "D-1.0.0-r0", "b.file", 20, 5);
   }
 }

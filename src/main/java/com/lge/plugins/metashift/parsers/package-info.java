@@ -25,4 +25,4 @@
 /**
  * Provides parsers for the model classes.
  */
-package com.lge.plugins.metashift.models.parsers;
+package com.lge.plugins.metashift.parsers;

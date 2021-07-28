@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.parsers;
+package com.lge.plugins.metashift.parsers;
 
 import static org.junit.Assert.assertEquals;
 

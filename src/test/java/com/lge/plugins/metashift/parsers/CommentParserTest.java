@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.parsers;
+package com.lge.plugins.metashift.parsers;
 
 import static org.junit.Assert.assertEquals;
 
-import com.lge.plugins.metashift.models.CodeSizeData;
+import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
@@ -41,11 +41,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the CodeSizeParser class.
+ * Unit tests for the CommentParser class.
  *
  * @author Sung Gon Kim
  */
-public class CodeSizeParserTest {
+public class CommentParserTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -61,26 +61,24 @@ public class CodeSizeParserTest {
   }
 
   private void parse(File path) throws IOException, InterruptedException {
-    ExecutorServiceUtils.invokeAll(new CodeSizeParser(new FilePath(path), dataList));
+    ExecutorServiceUtils.invokeAll(new CommentParser(new FilePath(path), dataList));
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(CodeSizeData.class));
+    assertEquals(isAvailable, dataList.isAvailable(CommentData.class));
     assertEquals(size, dataList.size());
   }
 
-  private void assertValues(int index, String recipe, String file, long lines, long functions,
-      long classes) {
-    List<CodeSizeData> objects = dataList.objects(CodeSizeData.class).collect(Collectors.toList());
+  private void assertValues(int index, String recipe, String file, long lines, long commentLines) {
+    List<CommentData> objects = dataList.objects(CommentData.class).collect(Collectors.toList());
     assertEquals(recipe, objects.get(index).getRecipe());
     assertEquals(file, objects.get(index).getFile());
     assertEquals(lines, objects.get(index).getLines());
-    assertEquals(functions, objects.get(index).getFunctions());
-    assertEquals(classes, objects.get(index).getClasses());
+    assertEquals(commentLines, objects.get(index).getCommentLines());
   }
 
   @Test
-  public void testCreateWithUnknownPath() throws IOException, InterruptedException {
+  public void testCreateSetWithUnknownPath() throws IOException, InterruptedException {
     parse(utils.getPath("path-to-unknown"));
     assertDataList(false, 0);
   }
@@ -110,7 +108,7 @@ public class CodeSizeParserTest {
   @Test
   public void testCreateWithEmptyData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'size': [] }");
+    builder.append("{ 'size': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
     assertDataList(true, 0);
@@ -119,14 +117,19 @@ public class CodeSizeParserTest {
   @Test
   public void testCreateWithInsufficientData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder.append("{ 'size': [ { 'file': 'a.file' } ] }");
+    builder
+        .append("{")
+        .append("  'size': [")
+        .append("    { 'file': 'a.file' }")
+        .append("  ]")
+        .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
     assertDataList(true, 1);
   }
 
   @Test
-  public void testCreateWithHiddenFileData() throws IOException, InterruptedException {
+  public void testCreateWithHiddenFile() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
@@ -166,8 +169,7 @@ public class CodeSizeParserTest {
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-    assertDataList(true, 1);
-    assertValues(0, "C-1.0.0-r0", "a.file", 20, 15, 6);
+    assertValues(0, "C-1.0.0-r0", "a.file", 20, 5);
   }
 
   @Test
@@ -179,21 +181,18 @@ public class CodeSizeParserTest {
         .append("    {")
         .append("      'file': 'a.file',")
         .append("      'total_lines': 10,")
-        .append("      'functions': 10,")
-        .append("      'classes': 5")
+        .append("      'comment_lines': 5")
         .append("    },")
         .append("    {")
         .append("      'file': 'b.file',")
         .append("      'total_lines': 20,")
-        .append("      'functions': 20,")
-        .append("      'classes': 10")
+        .append("      'comment_lines': 3")
         .append("    }")
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-    assertDataList(true, 2);
-    assertValues(0, "D-1.0.0-r0", "a.file", 10, 10, 5);
-    assertValues(1, "D-1.0.0-r0", "b.file", 20, 20, 10);
+    assertValues(0, "D-1.0.0-r0", "a.file", 10, 5);
+    assertValues(1, "D-1.0.0-r0", "b.file", 20, 3);
   }
 }

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.parsers;
+package com.lge.plugins.metashift.parsers;
 
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.ErrorTestData;

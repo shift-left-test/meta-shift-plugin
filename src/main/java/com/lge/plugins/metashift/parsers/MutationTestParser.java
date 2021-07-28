@@ -22,15 +22,15 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.parsers;
+package com.lge.plugins.metashift.parsers;
 
-import com.lge.plugins.metashift.models.BranchCoverageData;
-import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.DataList;
-import com.lge.plugins.metashift.models.StatementCoverageData;
+import com.lge.plugins.metashift.models.KilledMutationTestData;
+import com.lge.plugins.metashift.models.MutationTestData;
+import com.lge.plugins.metashift.models.SkippedMutationTestData;
+import com.lge.plugins.metashift.models.SurvivedMutationTestData;
 import com.lge.plugins.metashift.utils.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.utils.xml.Tag;
-import com.lge.plugins.metashift.utils.xml.TagList;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -40,11 +40,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 /**
- * A parsers class for the CoverageData objects.
+ * A parsers class for the MutationTestData objects.
  *
  * @author Sung Gon Kim
  */
-public class CoverageParser extends FileParser {
+public class MutationTestParser extends FileParser {
 
   private final FilePath path;
   private final DataList dataList;
@@ -55,29 +55,27 @@ public class CoverageParser extends FileParser {
    * @param path     to the report directory
    * @param dataList to store objects
    */
-  public CoverageParser(FilePath path, DataList dataList) {
+  public MutationTestParser(FilePath path, DataList dataList) {
     this.path = path;
     this.dataList = dataList;
   }
 
   @Override
   public void parse() throws IOException, InterruptedException {
-    FilePath report = path.child("coverage").child("coverage.xml");
+    FilePath report = path.child("checktest").child("mutations.xml");
     try {
       SimpleXmlParser parser = new SimpleXmlParser(report);
-      List<CoverageData> objects = new ArrayList<>();
+      List<MutationTestData> objects = new ArrayList<>();
 
-      for (Tag tag : parser.getChildNodes("class")) {
-        String filename = tag.getAttribute("filename");
-        if (isHidden(filename)) {
+      for (Tag tag : parser.getChildNodes("mutation")) {
+        String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
+        if (isHidden(file)) {
           continue;
         }
-        for (Tag line : tag.getChildNodes("lines").last().getChildNodes("line")) {
-          objects.addAll(createInstances(path.getName(), filename, line));
-        }
+        objects.add(createInstance(path.getName(), tag));
       }
       dataList.addAll(objects);
-      dataList.add(CoverageData.class);
+      dataList.add(MutationTestData.class);
     } catch (ParserConfigurationException | SAXException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {
@@ -86,31 +84,34 @@ public class CoverageParser extends FileParser {
   }
 
   /**
-   * Creates a list of coverage objects based on the given tags.
+   * Parse the tag to create a data object.
    *
-   * @param recipe   name
-   * @param filename name
-   * @param line     number
-   * @return a list of coverage objects
+   * @param recipe name
+   * @param tag    to parse
+   * @return an object
+   * @throws SAXException if failed to parse the file
    */
-  private static List<CoverageData> createInstances(String recipe, String filename, Tag line) {
-    List<CoverageData> list = new ArrayList<>();
-    try {
-      long lineNumber = Long.parseLong(line.getAttribute("number", "0"));
-      boolean covered = Long.parseLong(line.getAttribute("hits", "0")) > 0;
-      TagList conditions = line.getChildNodes("cond");
-      if (conditions.isEmpty()) {
-        list.add(new StatementCoverageData(recipe, filename, lineNumber, covered));
-      } else {
-        for (Tag condition : conditions) {
-          long index = Long.parseLong(condition.getAttribute("branch_number", "0"));
-          covered = Long.parseLong(condition.getAttribute("hit", "0")) > 0;
-          list.add(new BranchCoverageData(recipe, filename, lineNumber, index, covered));
-        }
-      }
-    } catch (NullPointerException | NumberFormatException ignored) {
-      // ignored
+  private static MutationTestData createInstance(final String recipe, final Tag tag)
+      throws SAXException {
+    String detected = tag.getAttribute("detected");
+    String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
+    String mutatedClass = tag.getChildNodes("mutatedClass").first().getTextContent();
+    String mutatedMethod = tag.getChildNodes("mutatedMethod").first().getTextContent();
+    long line = Long.parseLong(tag.getChildNodes("lineNumber").first().getTextContent());
+    String mutator = tag.getChildNodes("mutator").first().getTextContent();
+    String killingTest = tag.getChildNodes("killingTest").first().getTextContent();
+    switch (detected.toLowerCase()) {
+      case "true":
+        return new KilledMutationTestData(recipe, file, mutatedClass, mutatedMethod, line, mutator,
+            killingTest);
+      case "false":
+        return new SurvivedMutationTestData(recipe, file, mutatedClass, mutatedMethod, line,
+            mutator, killingTest);
+      case "skip":
+        return new SkippedMutationTestData(recipe, file, mutatedClass, mutatedMethod, line, mutator,
+            killingTest);
+      default:
+        throw new SAXException("Unknown detected tag: " + detected);
     }
-    return list;
   }
 }

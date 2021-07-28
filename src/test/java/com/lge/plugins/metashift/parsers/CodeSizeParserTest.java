@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.parsers;
+package com.lge.plugins.metashift.parsers;
 
 import static org.junit.Assert.assertEquals;
 
-import com.lge.plugins.metashift.models.CodeViolationData;
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
@@ -41,11 +41,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the CodeViolationParser class.
+ * Unit tests for the CodeSizeParser class.
  *
  * @author Sung Gon Kim
  */
-public class CodeViolationParserTest {
+public class CodeSizeParserTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -61,27 +61,22 @@ public class CodeViolationParserTest {
   }
 
   private void parse(File path) throws IOException, InterruptedException {
-    ExecutorServiceUtils.invokeAll(new CodeViolationParser(new FilePath(path), dataList));
+    ExecutorServiceUtils.invokeAll(new CodeSizeParser(new FilePath(path), dataList));
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(CodeViolationData.class));
+    assertEquals(isAvailable, dataList.isAvailable(CodeSizeData.class));
     assertEquals(size, dataList.size());
   }
 
-  private void assertValues(int index, String recipe, String file, long line, long column,
-      String rule, String message, String description, String severity, String tool) {
-    List<CodeViolationData> objects = dataList.objects(CodeViolationData.class)
-        .collect(Collectors.toList());
+  private void assertValues(int index, String recipe, String file, long lines, long functions,
+      long classes) {
+    List<CodeSizeData> objects = dataList.objects(CodeSizeData.class).collect(Collectors.toList());
     assertEquals(recipe, objects.get(index).getRecipe());
     assertEquals(file, objects.get(index).getFile());
-    assertEquals(line, objects.get(index).getLine());
-    assertEquals(column, objects.get(index).getColumn());
-    assertEquals(rule, objects.get(index).getRule());
-    assertEquals(message, objects.get(index).getMessage());
-    assertEquals(description, objects.get(index).getDescription());
-    assertEquals(severity, objects.get(index).getSeverity());
-    assertEquals(tool, objects.get(index).getTool());
+    assertEquals(lines, objects.get(index).getLines());
+    assertEquals(functions, objects.get(index).getFunctions());
+    assertEquals(classes, objects.get(index).getClasses());
   }
 
   @Test
@@ -115,64 +110,35 @@ public class CodeViolationParserTest {
   @Test
   public void testCreateWithEmptyData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'violations': [ ] }");
+    builder.append("{ 'size': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
     assertDataList(true, 0);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithInsufficientData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder
-        .append("{")
-        .append("  'violations': [")
-        .append("    { 'file': 'a.file', 'line': 1, 'column': 100, 'rule': 'syntax' }")
-        .append("  ]")
-        .append("}");
+    builder.append("{ 'size': [ { 'file': 'a.file' } ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testCreateWithUnknownLevelType() throws Exception {
-    File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder
-        .append("{")
-        .append("  'violations': [")
-        .append("    {")
-        .append("      'file': 'a.file',")
-        .append("      'line': 1,")
-        .append("      'column': 100,")
-        .append("      'rule': 'NPE',")
-        .append("      'message': 'NPE_message',")
-        .append("      'description': 'NPE_desc',")
-        .append("      'severity': 'error',")
-        .append("      'level': '???',")
-        .append("      'tool': 'cppcheck'")
-        .append("    }")
-        .append("  ]")
-        .append("}");
-    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    parse(directory);
+    assertDataList(true, 1);
   }
 
   @Test
-  public void testCreateWithHiddenFile() throws IOException, InterruptedException {
+  public void testCreateWithHiddenFileData() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
-        .append("  'violations': [")
+        .append("  'size': [")
         .append("    {")
         .append("      'file': '.hidden.file',")
-        .append("      'line': 1,")
-        .append("      'column': 100,")
-        .append("      'rule': 'NPE',")
-        .append("      'message': 'NPE_message',")
-        .append("      'description': 'NPE_desc',")
-        .append("      'severity': 'error',")
-        .append("      'level': 'major',")
-        .append("      'tool': 'cppcheck'")
+        .append("      'total_lines': 20,")
+        .append("      'code_lines': 1,")
+        .append("      'comment_lines': 5,")
+        .append("      'duplicated_lines': 2,")
+        .append("      'functions': 15,")
+        .append("      'classes': 6")
         .append("    }")
         .append("  ]")
         .append("}");
@@ -186,25 +152,22 @@ public class CodeViolationParserTest {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
-        .append("  'violations': [")
+        .append("  'size': [")
         .append("    {")
         .append("      'file': 'a.file',")
-        .append("      'line': 1,")
-        .append("      'column': 100,")
-        .append("      'rule': 'NPE',")
-        .append("      'message': 'NPE_message',")
-        .append("      'description': 'NPE_desc',")
-        .append("      'severity': 'error',")
-        .append("      'level': 'major',")
-        .append("      'tool': 'cppcheck'")
+        .append("      'total_lines': 20,")
+        .append("      'code_lines': 1,")
+        .append("      'comment_lines': 5,")
+        .append("      'duplicated_lines': 2,")
+        .append("      'functions': 15,")
+        .append("      'classes': 6")
         .append("    }")
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
     assertDataList(true, 1);
-    assertValues(0, "C-1.0.0-r0", "a.file", 1, 100, "NPE",
-        "NPE_message", "NPE_desc", "error", "cppcheck");
+    assertValues(0, "C-1.0.0-r0", "a.file", 20, 15, 6);
   }
 
   @Test
@@ -212,49 +175,25 @@ public class CodeViolationParserTest {
     File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("{")
-        .append("  'violations': [")
+        .append("  'size': [")
         .append("    {")
         .append("      'file': 'a.file',")
-        .append("      'line': 1,")
-        .append("      'column': 100,")
-        .append("      'rule': 'NPE',")
-        .append("      'message': 'NPE_message',")
-        .append("      'description': 'NPE_desc',")
-        .append("      'severity': 'error',")
-        .append("      'level': 'major',")
-        .append("      'tool': 'cppcheck'")
+        .append("      'total_lines': 10,")
+        .append("      'functions': 10,")
+        .append("      'classes': 5")
         .append("    },")
         .append("    {")
         .append("      'file': 'b.file',")
-        .append("      'line': 2,")
-        .append("      'column': 200,")
-        .append("      'rule': 'cast',")
-        .append("      'message': 'cast_message',")
-        .append("      'description': 'cast_desc',")
-        .append("      'severity': 'warning',")
-        .append("      'level': 'minor',")
-        .append("      'tool': 'cpplint'")
-        .append("    },")
-        .append("    {")
-        .append("      'file': 'c.file',")
-        .append("      'line': 3,")
-        .append("      'column': 300,")
-        .append("      'rule': 'typo',")
-        .append("      'message': 'typo_message',")
-        .append("      'description': 'typo_desc',")
-        .append("      'severity': 'note',")
-        .append("      'level': 'info',")
-        .append("      'tool': 'clang-tidy'")
+        .append("      'total_lines': 20,")
+        .append("      'functions': 20,")
+        .append("      'classes': 10")
         .append("    }")
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-    assertValues(0, "D-1.0.0-r0", "a.file", 1, 100, "NPE", "NPE_message",
-        "NPE_desc", "error", "cppcheck");
-    assertValues(1, "D-1.0.0-r0", "b.file", 2, 200, "cast", "cast_message",
-        "cast_desc", "warning", "cpplint");
-    assertValues(2, "D-1.0.0-r0", "c.file", 3, 300, "typo", "typo_message",
-        "typo_desc", "note", "clang-tidy");
+    assertDataList(true, 2);
+    assertValues(0, "D-1.0.0-r0", "a.file", 10, 10, 5);
+    assertValues(1, "D-1.0.0-r0", "b.file", 20, 20, 10);
   }
 }

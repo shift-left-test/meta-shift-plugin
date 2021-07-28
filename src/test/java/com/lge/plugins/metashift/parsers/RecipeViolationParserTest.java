@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.parsers;
+package com.lge.plugins.metashift.parsers;
 
 import static org.junit.Assert.assertEquals;
 
-import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.DataList;
+import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
@@ -41,11 +41,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Unit tests for the CommentParser class.
+ * Unit tests for the RecipeViolationParser class.
  *
  * @author Sung Gon Kim
  */
-public class CommentParserTest {
+public class RecipeViolationParserTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -61,25 +61,29 @@ public class CommentParserTest {
   }
 
   private void parse(File path) throws IOException, InterruptedException {
-    ExecutorServiceUtils.invokeAll(new CommentParser(new FilePath(path), dataList));
+    ExecutorServiceUtils.invokeAll(new RecipeViolationParser(new FilePath(path), dataList));
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(CommentData.class));
+    assertEquals(isAvailable, dataList.isAvailable(RecipeViolationData.class));
     assertEquals(size, dataList.size());
   }
 
-  private void assertValues(int index, String recipe, String file, long lines, long commentLines) {
-    List<CommentData> objects = dataList.objects(CommentData.class).collect(Collectors.toList());
+  private void assertValues(int index, String recipe, String file, long line, String rule,
+      String severity, String description) {
+    List<RecipeViolationData> objects = dataList.objects(RecipeViolationData.class)
+        .collect(Collectors.toList());
     assertEquals(recipe, objects.get(index).getRecipe());
     assertEquals(file, objects.get(index).getFile());
-    assertEquals(lines, objects.get(index).getLines());
-    assertEquals(commentLines, objects.get(index).getCommentLines());
+    assertEquals(line, objects.get(index).getLine());
+    assertEquals(rule, objects.get(index).getRule());
+    assertEquals(severity, objects.get(index).getSeverity());
+    assertEquals(description, objects.get(index).getDescription());
   }
 
   @Test
-  public void testCreateSetWithUnknownPath() throws IOException, InterruptedException {
-    parse(utils.getPath("path-to-unknown"));
+  public void testCreateListWithUnknownPath() throws IOException, InterruptedException {
+    parse(utils.getPath("unknown-path"));
     assertDataList(false, 0);
   }
 
@@ -92,7 +96,7 @@ public class CommentParserTest {
 
   @Test
   public void testCreateWithNoFile() throws IOException, InterruptedException {
-    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkcode").getParentFile();
+    File directory = utils.createDirectory("report", "A-1.0.0-r0", "checkrecipe").getParentFile();
     parse(directory);
     assertDataList(false, 0);
   }
@@ -101,15 +105,15 @@ public class CommentParserTest {
   public void testCreateWithMalformedData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("{ {");
-    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     parse(directory);
   }
 
   @Test
   public void testCreateWithEmptyData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'size': [ ] }");
-    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    builder.append("{ 'issues': [ ] }");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     parse(directory);
     assertDataList(true, 0);
   }
@@ -117,15 +121,29 @@ public class CommentParserTest {
   @Test
   public void testCreateWithInsufficientData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder
-        .append("{")
-        .append("  'size': [")
-        .append("    { 'file': 'a.file' }")
-        .append("  ]")
-        .append("}");
-    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    builder.append("{ 'issues': [ { 'file': 'a.bb', 'line': 1, 'severity': 'info' } ] }");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     parse(directory);
     assertDataList(true, 1);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateWithUnknownSeverityType() throws Exception {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    builder
+        .append("{")
+        .append("  'issues': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'line': 1,")
+        .append("      'rule': 'checksum',")
+        .append("      'severity': '???',")
+        .append("      'description': 'checksum error'")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
+    parse(directory);
   }
 
   @Test
@@ -133,19 +151,17 @@ public class CommentParserTest {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
-        .append("  'size': [")
+        .append("  'issues': [")
         .append("    {")
         .append("      'file': '.hidden.file',")
-        .append("      'total_lines': 20,")
-        .append("      'code_lines': 1,")
-        .append("      'comment_lines': 5,")
-        .append("      'duplicated_lines': 2,")
-        .append("      'functions': 15,")
-        .append("      'classes': 6")
+        .append("      'line': 1,")
+        .append("      'rule': 'checksum',")
+        .append("      'severity': 'error',")
+        .append("      'description': 'checksum error'")
         .append("    }")
         .append("  ]")
         .append("}");
-    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     parse(directory);
     assertDataList(true, 0);
   }
@@ -155,21 +171,20 @@ public class CommentParserTest {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder
         .append("{")
-        .append("  'size': [")
+        .append("  'issues': [")
         .append("    {")
         .append("      'file': 'a.file',")
-        .append("      'total_lines': 20,")
-        .append("      'code_lines': 1,")
-        .append("      'comment_lines': 5,")
-        .append("      'duplicated_lines': 2,")
-        .append("      'functions': 15,")
-        .append("      'classes': 6")
+        .append("      'line': 1,")
+        .append("      'rule': 'checksum',")
+        .append("      'severity': 'error',")
+        .append("      'description': 'checksum error'")
         .append("    }")
         .append("  ]")
         .append("}");
-    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     parse(directory);
-    assertValues(0, "C-1.0.0-r0", "a.file", 20, 5);
+    assertDataList(true, 1);
+    assertValues(0, "C-1.0.0-r0", "a.file", 1, "checksum", "error", "checksum error");
   }
 
   @Test
@@ -177,22 +192,35 @@ public class CommentParserTest {
     File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder
         .append("{")
-        .append("  'size': [")
+        .append("  'issues': [")
         .append("    {")
         .append("      'file': 'a.file',")
-        .append("      'total_lines': 10,")
-        .append("      'comment_lines': 5")
+        .append("      'line': 1,")
+        .append("      'rule': 'checksum',")
+        .append("      'severity': 'error',")
+        .append("      'description': 'checksum error'")
         .append("    },")
         .append("    {")
         .append("      'file': 'b.file',")
-        .append("      'total_lines': 20,")
-        .append("      'comment_lines': 3")
+        .append("      'line': 2,")
+        .append("      'rule': 'indent',")
+        .append("      'severity': 'warning',")
+        .append("      'description': 'indent warning'")
+        .append("    },")
+        .append("    {")
+        .append("      'file': 'c.file',")
+        .append("      'line': 3,")
+        .append("      'rule': 'typo',")
+        .append("      'severity': 'info',")
+        .append("      'description': 'typo info'")
         .append("    }")
         .append("  ]")
         .append("}");
-    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    utils.writeLines(builder, directory, "checkrecipe", "recipe_violations.json");
     parse(directory);
-    assertValues(0, "D-1.0.0-r0", "a.file", 10, 5);
-    assertValues(1, "D-1.0.0-r0", "b.file", 20, 3);
+    assertDataList(true, 3);
+    assertValues(0, "D-1.0.0-r0", "a.file", 1, "checksum", "error", "checksum error");
+    assertValues(1, "D-1.0.0-r0", "b.file", 2, "indent", "warning", "indent warning");
+    assertValues(2, "D-1.0.0-r0", "c.file", 3, "typo", "info", "typo info");
   }
 }

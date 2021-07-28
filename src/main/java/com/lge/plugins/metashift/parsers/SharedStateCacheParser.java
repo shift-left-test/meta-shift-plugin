@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models.parsers;
+package com.lge.plugins.metashift.parsers;
 
 import com.jsoniter.any.Any;
 import com.jsoniter.spi.JsonException;
 import com.lge.plugins.metashift.models.DataList;
-import com.lge.plugins.metashift.models.DuplicationData;
+import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.IOException;
@@ -36,11 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A parsers class for the DuplicationData objects.
+ * A parsers class for SharedStateCacheData objects.
  *
  * @author Sung Gon Kim
  */
-public class DuplicationParser extends FileParser {
+public class SharedStateCacheParser extends FileParser {
 
   private final FilePath path;
   private final DataList dataList;
@@ -51,32 +51,28 @@ public class DuplicationParser extends FileParser {
    * @param path     to the report directory
    * @param dataList to store objects
    */
-  public DuplicationParser(FilePath path, DataList dataList) {
+  public SharedStateCacheParser(FilePath path, DataList dataList) {
     this.path = path;
     this.dataList = dataList;
   }
 
   @Override
   public void parse() throws IOException, InterruptedException {
-    FilePath report = path.child("checkcode").child("sage_report.json");
+    FilePath report = path.child("checkcache").child("caches.json");
     try {
       Any json = JsonUtils.createObject2(report);
-      List<Any> array = json.get("size").asList();
-      List<DuplicationData> objects = new ArrayList<>(array.size());
+      List<Any> found = json.get("Shared State", "Found").asList();
+      List<Any> missed = json.get("Shared State", "Missed").asList();
+      List<SharedStateCacheData> objects = new ArrayList<>(found.size() + missed.size());
 
-      for (Any o : array) {
-        String file = o.toString("file");
-        if (isHidden(file)) {
-          continue;
-        }
-        objects.add(new DuplicationData(
-            path.getName(),
-            file,
-            o.toLong("total_lines"),
-            o.toLong("duplicated_lines")));
+      for (Any o : found) {
+        objects.add(new SharedStateCacheData(path.getName(), o.toString(), true));
+      }
+      for (Any o : missed) {
+        objects.add(new SharedStateCacheData(path.getName(), o.toString(), false));
       }
       dataList.addAll(objects);
-      dataList.add(DuplicationData.class);
+      dataList.add(SharedStateCacheData.class);
     } catch (JsonException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {
