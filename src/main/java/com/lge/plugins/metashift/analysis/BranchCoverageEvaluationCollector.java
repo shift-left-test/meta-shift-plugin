@@ -24,14 +24,38 @@
 
 package com.lge.plugins.metashift.analysis;
 
-import com.lge.plugins.metashift.models.Distribution;
+import com.lge.plugins.metashift.models.BranchCoverageData;
+import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.CoverageData;
+import com.lge.plugins.metashift.models.Evaluation;
+import com.lge.plugins.metashift.models.PositiveEvaluation;
 import com.lge.plugins.metashift.models.Streamable;
+import com.lge.plugins.metashift.models.TestData;
 
 /**
- * DistributionCollector interface.
+ * BranchCoverageEvaluationCollector class.
  *
  * @author Sung Gon Kim
  */
-public interface DistributionCollector extends Collector<Streamable, Distribution> {
+public class BranchCoverageEvaluationCollector implements EvaluationCollector {
 
+  private final Configuration configuration;
+
+  /**
+   * Default constructor.
+   *
+   * @param configuration for evaluation
+   */
+  public BranchCoverageEvaluationCollector(Configuration configuration) {
+    this.configuration = configuration;
+  }
+
+  @Override
+  public Evaluation parse(Streamable s) {
+    boolean available = s.isAvailable(TestData.class) && s.isAvailable(BranchCoverageData.class);
+    long denominator = s.objects(BranchCoverageData.class).count();
+    long numerator = s.objects(BranchCoverageData.class).filter(CoverageData::isCovered).count();
+    double threshold = (double) configuration.getBranchCoverageThreshold() / 100.0;
+    return new PositiveEvaluation(available, denominator, numerator, threshold);
+  }
 }

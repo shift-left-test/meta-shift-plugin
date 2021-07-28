@@ -24,14 +24,38 @@
 
 package com.lge.plugins.metashift.analysis;
 
-import com.lge.plugins.metashift.models.Distribution;
+import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Evaluation;
+import com.lge.plugins.metashift.models.NegativeEvaluation;
+import com.lge.plugins.metashift.models.RecipeSizeData;
+import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.models.Streamable;
 
 /**
- * DistributionCollector interface.
+ * RecipeViolationEvaluationCollector class.
  *
  * @author Sung Gon Kim
  */
-public interface DistributionCollector extends Collector<Streamable, Distribution> {
+public class RecipeViolationEvaluationCollector implements EvaluationCollector {
 
+  private final Configuration configuration;
+
+  /**
+   * Default constructor.
+   *
+   * @param configuration for evaluation
+   */
+  public RecipeViolationEvaluationCollector(Configuration configuration) {
+    this.configuration = configuration;
+  }
+
+  @Override
+  public Evaluation parse(Streamable s) {
+    boolean available =
+        s.isAvailable(RecipeSizeData.class) && s.isAvailable(RecipeViolationData.class);
+    long denominator = s.objects(RecipeSizeData.class).mapToLong(RecipeSizeData::getLines).sum();
+    long numerator = s.objects(RecipeViolationData.class).count();
+    double threshold = configuration.getRecipeViolationThreshold();
+    return new NegativeEvaluation(available, denominator, numerator, threshold);
+  }
 }

@@ -25,23 +25,40 @@
 package com.lge.plugins.metashift.analysis;
 
 import com.lge.plugins.metashift.models.CodeSizeData;
-import com.lge.plugins.metashift.models.LinesOfCode;
+import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.DuplicationData;
+import com.lge.plugins.metashift.models.Evaluation;
+import com.lge.plugins.metashift.models.NegativeEvaluation;
 import com.lge.plugins.metashift.models.Streamable;
 
 /**
- * LinesOfCodeCollector class.
+ * DuplicationEvaluationCollector class.
  *
  * @author Sung Gon Kim
  */
-public class LinesOfCodeCollector implements Collector<Streamable, LinesOfCode> {
+public class DuplicationEvaluationCollector implements EvaluationCollector {
+
+  private final Configuration configuration;
+
+  /**
+   * Default constructor.
+   *
+   * @param configuration for evaluation
+   */
+  public DuplicationEvaluationCollector(Configuration configuration) {
+    this.configuration = configuration;
+  }
 
   @Override
-  public LinesOfCode parse(Streamable s) {
-    long lines = s.objects(CodeSizeData.class).mapToLong(CodeSizeData::getLines).sum();
-    long functions = s.objects(CodeSizeData.class).mapToLong(CodeSizeData::getFunctions).sum();
-    long classes = s.objects(CodeSizeData.class).mapToLong(CodeSizeData::getClasses).sum();
-    long files = s.objects(CodeSizeData.class).map(CodeSizeData::getFile).count();
-    long recipes = s.objects(CodeSizeData.class).map(CodeSizeData::getRecipe).distinct().count();
-    return new LinesOfCode(lines, functions, classes, files, recipes);
+  public Evaluation parse(Streamable s) {
+    boolean available = s.isAvailable(CodeSizeData.class) && s.isAvailable(DuplicationData.class);
+    long denominator = s.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum();
+    long tolerance = configuration.getDuplicationTolerance();
+    long numerator = s.objects(DuplicationData.class)
+        .filter(o -> o.getDuplicatedLines() >= tolerance)
+        .mapToLong(DuplicationData::getDuplicatedLines)
+        .sum();
+    double threshold = (double) configuration.getDuplicationThreshold() / 100.0;
+    return new NegativeEvaluation(available, denominator, numerator, threshold);
   }
 }

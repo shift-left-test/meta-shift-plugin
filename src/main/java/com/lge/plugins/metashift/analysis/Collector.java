@@ -24,20 +24,19 @@
 
 package com.lge.plugins.metashift.analysis;
 
-import com.lge.plugins.metashift.models.Streamable;
-
 /**
  * Collector interface.
  *
- * @author Sung Gon Kim
+ * @param <T> input type
+ * @param <R> output type
  */
-public interface Collector<T> {
+public interface Collector<T, R> {
 
   /**
-   * Parses the stream of objects to create a summary data.
+   * Parses the objects to create a result data.
    *
    * @param s to parse
    * @return a summary data
    */
-  T parse(Streamable s);
+  R parse(T s);
 }

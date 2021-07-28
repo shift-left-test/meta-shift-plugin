@@ -24,14 +24,37 @@
 
 package com.lge.plugins.metashift.analysis;
 
-import com.lge.plugins.metashift.models.Distribution;
+import com.lge.plugins.metashift.models.CodeSizeData;
+import com.lge.plugins.metashift.models.CommentData;
+import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Evaluation;
+import com.lge.plugins.metashift.models.PositiveEvaluation;
 import com.lge.plugins.metashift.models.Streamable;
 
 /**
- * DistributionCollector interface.
+ * CommentEvaluationCollector class.
  *
  * @author Sung Gon Kim
  */
-public interface DistributionCollector extends Collector<Streamable, Distribution> {
+public class CommentEvaluationCollector implements EvaluationCollector {
 
+  private final Configuration configuration;
+
+  /**
+   * Default constructor.
+   *
+   * @param configuration for evaluation
+   */
+  public CommentEvaluationCollector(Configuration configuration) {
+    this.configuration = configuration;
+  }
+
+  @Override
+  public Evaluation parse(Streamable s) {
+    boolean available = s.isAvailable(CodeSizeData.class) && s.isAvailable(CommentData.class);
+    long denominator = s.objects(CommentData.class).mapToLong(CommentData::getLines).sum();
+    long numerator = s.objects(CommentData.class).mapToLong(CommentData::getCommentLines).sum();
+    double threshold = (double) configuration.getCommentThreshold() / 100.0;
+    return new PositiveEvaluation(available, denominator, numerator, threshold);
+  }
 }

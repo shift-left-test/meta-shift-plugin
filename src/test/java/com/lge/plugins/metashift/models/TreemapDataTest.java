@@ -55,6 +55,12 @@ public class TreemapDataTest {
   }
 
   @Test
+  public void testCopyConstructor() {
+    TreemapData copied = new TreemapData(object);
+    assertValues(object, "A-B-C", 123, 0.5);
+  }
+
+  @Test
   public void testCreateObjectWithNegativeValue() {
     object = new TreemapData("X-X-X", 456, -100.0);
     assertValues(object, "X-X-X", 456, 0.0);
