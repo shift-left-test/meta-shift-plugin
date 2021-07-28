@@ -59,18 +59,6 @@ public class LinesOfCode implements Serializable {
   }
 
   /**
-   * Default constructor.
-   *
-   * @param lines     the number of lines
-   * @param functions the number of functions
-   * @param classes   the number of classes
-   * @param files     the number of files
-   */
-  public LinesOfCode(long lines, long functions, long classes, long files) {
-    this(lines, functions, classes, files, 0L);
-  }
-
-  /**
    * Copy constructor.
    *
    * @param other object

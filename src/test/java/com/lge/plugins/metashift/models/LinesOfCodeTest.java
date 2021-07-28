@@ -42,7 +42,7 @@ public class LinesOfCodeTest {
   @Before
   public void setUp() {
     first = new LinesOfCode(11, 22, 33, 44, 55);
-    second = new LinesOfCode(1, 2, 3, 4);
+    second = new LinesOfCode(1, 2, 3, 4, 0);
   }
 
   private void assertValues(LinesOfCode object, long lines, long functions, long classes,
