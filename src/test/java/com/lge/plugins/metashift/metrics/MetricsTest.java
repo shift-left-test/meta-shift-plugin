@@ -87,9 +87,9 @@ public class MetricsTest {
     configuration = new Configuration();
     configuration.setPremirrorCacheThreshold(50);
     configuration.setSharedStateCacheThreshold(50);
-    configuration.setRecipeViolationThreshold(0.5);
+    configuration.setRecipeViolationThreshold(0.50);
     configuration.setCommentThreshold(50);
-    configuration.setCodeViolationThreshold(0.5);
+    configuration.setCodeViolationThreshold(0.50);
     configuration.setComplexityTolerance(5);
     configuration.setComplexityThreshold(50);
     configuration.setDuplicationThreshold(50);
@@ -140,9 +140,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedPremirrorCacheData() {
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", false));
-    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "X", false));
-    recipe.add(new PremirrorCacheData("C-1.0.0-r0", "X", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "A", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "B", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "C", true));
     metrics.parse(recipes);
     assertEvaluator(metrics.getPremirrorCache(), true, false);
     assertCounter(metrics.getPremirrorCache(), 3, 1, 0.3);
@@ -150,8 +150,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedPremirrorCacheData() {
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", false));
-    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "X", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "A", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "B", true));
     metrics.parse(recipes);
     assertEvaluator(metrics.getPremirrorCache(), true, true);
     assertCounter(metrics.getPremirrorCache(), 2, 1, 0.5);
@@ -159,9 +159,9 @@ public class MetricsTest {
 
   @Test
   public void testParseWithUnqualifiedSharedStateCacheData() {
-    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", false));
-    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", false));
-    recipe.add(new SharedStateCacheData("C-1.0.0-r0", "do_X", true));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_A", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_B", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_C", true));
     metrics.parse(recipes);
     assertEvaluator(metrics.getSharedStateCache(), true, false);
     assertCounter(metrics.getSharedStateCache(), 3, 1, 0.3);
@@ -169,8 +169,8 @@ public class MetricsTest {
 
   @Test
   public void testParseWithQualifiedSharedStateCacheData() {
-    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", false));
-    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", true));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_A", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_B", true));
     metrics.parse(recipes);
     assertEvaluator(metrics.getSharedStateCache(), true, true);
     assertCounter(metrics.getSharedStateCache(), 2, 1, 0.5);

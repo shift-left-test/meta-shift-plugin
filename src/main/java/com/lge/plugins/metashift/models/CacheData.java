@@ -70,8 +70,7 @@ public abstract class CacheData extends Data {
    * @param available the cache availability
    * @param type      of the cache
    */
-  public CacheData(final String recipe, final String signature, final boolean available,
-      final Type type) {
+  public CacheData(String recipe, String signature, boolean available, Type type) {
     super(recipe);
     this.signature = signature;
     this.available = available;
@@ -91,7 +90,6 @@ public abstract class CacheData extends Data {
     }
     CacheData other = (CacheData) object;
     return new EqualsBuilder()
-        .append(getRecipe(), other.getRecipe())
         .append(getSignature(), other.getSignature())
         .isEquals();
   }
@@ -100,7 +98,6 @@ public abstract class CacheData extends Data {
   public final int hashCode() {
     return new HashCodeBuilder()
         .append(getClass())
-        .append(getRecipe())
         .append(getSignature())
         .toHashCode();
   }

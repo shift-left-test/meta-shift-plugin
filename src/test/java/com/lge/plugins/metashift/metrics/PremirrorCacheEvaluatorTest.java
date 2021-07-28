@@ -77,7 +77,7 @@ public class PremirrorCacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 10));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);
@@ -86,9 +86,9 @@ public class PremirrorCacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
-    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "X", false));
-    recipe.add(new PremirrorCacheData("C-1.0.0-r0", "X", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "A", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "B", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "C", false));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -97,9 +97,9 @@ public class PremirrorCacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
-    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "X", true));
-    recipe.add(new PremirrorCacheData("C-1.0.0-r0", "X", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "A", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "B", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "C", false));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -124,11 +124,11 @@ public class PremirrorCacheEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
-    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "X", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "A", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "B", false));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new PremirrorCacheData("C-1.0.0-r0", "X", false));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "C", false));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -139,11 +139,11 @@ public class PremirrorCacheEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
-    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "X", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "A", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "B", false));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new PremirrorCacheData("C-1.0.0-r0", "X", true));
+    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "C", true));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -208,9 +208,9 @@ public class PremirrorCacheEvaluatorTest {
 
   @Test
   public void testToJsonObject() {
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", true));
-    recipe.add(new PremirrorCacheData("B-1.0.0-r0", "X", true));
-    recipe.add(new PremirrorCacheData("C-1.0.0-r0", "X", false));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "A", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "B", true));
+    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "C", false));
     evaluator.parse(recipe);
 
     JSONObject object = evaluator.toJsonObject();

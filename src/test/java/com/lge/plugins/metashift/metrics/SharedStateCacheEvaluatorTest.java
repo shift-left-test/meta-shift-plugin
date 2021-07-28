@@ -77,7 +77,7 @@ public class SharedStateCacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 5));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 10));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);
@@ -86,9 +86,9 @@ public class SharedStateCacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithUnqualifiedData() {
-    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", true));
-    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", false));
-    recipe.add(new SharedStateCacheData("C-1.0.0-r0", "do_X", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_A", true));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_B", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_C", false));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -97,9 +97,9 @@ public class SharedStateCacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithQualifiedData() {
-    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", true));
-    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", true));
-    recipe.add(new SharedStateCacheData("C-1.0.0-r0", "do_X", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_A", true));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_B", true));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_C", false));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -124,11 +124,11 @@ public class SharedStateCacheEvaluatorTest {
   @Test
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", true));
-    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_A", true));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_B", false));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new SharedStateCacheData("C-1.0.0-r0", "do_X", false));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_C", false));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -139,11 +139,11 @@ public class SharedStateCacheEvaluatorTest {
   @Test
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", true));
-    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_A", true));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_B", false));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
-    recipe.add(new SharedStateCacheData("C-1.0.0-r0", "do_X", true));
+    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_C", true));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -208,9 +208,9 @@ public class SharedStateCacheEvaluatorTest {
 
   @Test
   public void testToJsonObject() {
-    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_X", true));
-    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "do_X", true));
-    recipe.add(new SharedStateCacheData("C-1.0.0-r0", "do_X", false));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_A", true));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_B", true));
+    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "do_C", false));
     evaluator.parse(recipe);
 
     JSONObject object = evaluator.toJsonObject();

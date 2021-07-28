@@ -39,7 +39,7 @@ import org.junit.Test;
 public class CacheDataTest {
 
   private final CacheData origin = new PremirrorCacheData("A-1.0.0-r0", "X", true);
-  private final CacheData same = new PremirrorCacheData("A-1.0.0-r0", "X", true);
+  private final CacheData same = new PremirrorCacheData("C-1.0.0-r0", "X", false);
 
   private void assertHashEquals(Object expected, Object actual) {
     assertEquals(expected.hashCode(), actual.hashCode());
@@ -64,7 +64,7 @@ public class CacheDataTest {
     assertEquals(origin, origin);
     assertEquals(origin, same);
     assertNotEquals(origin, new SharedStateCacheData("A-1.0.0-r0", "X", true));
-    assertNotEquals(origin, new PremirrorCacheData("B-1.0.0-r0", "X", true));
+    assertEquals(origin, new PremirrorCacheData("B-1.0.0-r0", "X", true));
     assertNotEquals(origin, new PremirrorCacheData("A-1.0.0-r0", "Y", true));
     assertEquals(origin, new PremirrorCacheData("A-1.0.0-r0", "X", false));
     assertNotEquals(origin, new SharedStateCacheData("A-1.0.0-r0", "X:do_A", true));
@@ -74,7 +74,7 @@ public class CacheDataTest {
   public void testHashCode() {
     assertHashEquals(origin, same);
     assertHashNotEquals(origin, new SharedStateCacheData("A-1.0.0-r0", "X", true));
-    assertHashNotEquals(origin, new PremirrorCacheData("B-1.0.0-r0", "X", true));
+    assertHashEquals(origin, new PremirrorCacheData("B-1.0.0-r0", "X", true));
     assertHashNotEquals(origin, new PremirrorCacheData("A-1.0.0-r0", "Y", true));
     assertHashEquals(origin, new PremirrorCacheData("A-1.0.0-r0", "X", false));
     assertHashNotEquals(origin, new SharedStateCacheData("A-1.0.0-r0", "X:do_A", true));
