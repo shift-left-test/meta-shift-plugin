@@ -40,38 +40,20 @@ public class Statistics implements Serializable {
   private final double average;
   private final double max;
   private final double threshold;
-  private final double value;
-
-  /**
-   * Default constructor.
-   *
-   * @param min       value
-   * @param average   value
-   * @param max       value
-   * @param threshold value
-   * @param value     of the data
-   */
-  public Statistics(double min, double average, double max, double threshold, double value) {
-    this.min = min;
-    this.average = average;
-    this.max = max;
-    this.threshold = threshold;
-    this.value = value;
-  }
+  private double value;
 
   /**
    * Default constructor.
    *
    * @param source    object
    * @param threshold value
-   * @param value     of the data
    */
-  public Statistics(DoubleSummaryStatistics source, double threshold, double value) {
+  public Statistics(DoubleSummaryStatistics source, double threshold) {
     this.min = source.getMin() == Double.POSITIVE_INFINITY ? 0.0 : source.getMin();
     this.average = source.getAverage();
     this.max = source.getMax() == Double.NEGATIVE_INFINITY ? 0.0 : source.getMax();
     this.threshold = threshold;
-    this.value = value;
+    this.value = 0.0;
   }
 
   /**
@@ -85,6 +67,17 @@ public class Statistics implements Serializable {
     this.max = other.max;
     this.threshold = other.threshold;
     this.value = other.value;
+  }
+
+  /**
+   * Copy constructor.
+   *
+   * @param other object
+   * @param value data
+   */
+  public Statistics(Statistics other, double value) {
+    this(other);
+    this.value = value;
   }
 
   /**
@@ -126,7 +119,7 @@ public class Statistics implements Serializable {
   /**
    * Returns the value of the data.
    *
-   * @return data value
+   * @return value data
    */
   public double getValue() {
     return value;

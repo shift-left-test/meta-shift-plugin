@@ -24,14 +24,41 @@
 
 package com.lge.plugins.metashift.analysis;
 
+import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Evaluation;
-import com.lge.plugins.metashift.models.Streamable;
+import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.models.Statistics;
+import java.util.DoubleSummaryStatistics;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * EvaluationCollector interface.
+ * CodeViolationStatisticsCollector class.
  *
  * @author Sung Gon Kim
  */
-public interface EvaluationCollector extends Collector<Streamable, Evaluation> {
+public class CodeViolationStatisticsCollector implements StatisticsCollector {
 
+  private final Configuration configuration;
+
+  /**
+   * Default constructor.
+   *
+   * @param configuration for evaluation
+   */
+  public CodeViolationStatisticsCollector(Configuration configuration) {
+    this.configuration = configuration;
+  }
+
+  @Override
+  public Statistics parse(Recipes s) {
+    List<Evaluation> metrics = s.stream()
+        .map(recipe -> new CodeViolationEvaluationCollector(configuration).parse(recipe))
+        .collect(Collectors.toList());
+    DoubleSummaryStatistics statistics = metrics.stream()
+        .filter(Evaluation::isAvailable)
+        .collect(Collectors.summarizingDouble(o -> o.getRatio().getValue()));
+    double threshold = configuration.getCodeViolationThreshold();
+    return new Statistics(statistics, threshold);
+  }
 }

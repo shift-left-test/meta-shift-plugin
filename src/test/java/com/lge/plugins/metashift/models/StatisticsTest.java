@@ -40,45 +40,46 @@ import org.junit.Test;
  */
 public class StatisticsTest {
 
-  private Statistics object;
+  private static final double THRESHOLD = 0.0;
+
+  DoubleSummaryStatistics source;
+  Statistics object;
 
   @Before
   public void setUp() {
-    object = new Statistics(1.0, 2.0, 3.0, 4.0, 5.0);
+    List<String> strings = Arrays.asList("1", "12", "123", "1234");
+    source = strings.stream().collect(Collectors.summarizingDouble(String::length));
+    object = new Statistics(source, THRESHOLD);
   }
 
-  private void assertValues(Statistics o, double min, double average, double max, double threshold,
-      double value) {
+  private void assertValues(Statistics o, double min, double average, double max, double value) {
     assertEquals(min, o.getMin(), 0.01);
     assertEquals(average, o.getAverage(), 0.01);
     assertEquals(max, o.getMax(), 0.01);
-    assertEquals(threshold, o.getThreshold(), 0.01);
+    assertEquals(THRESHOLD, o.getThreshold(), 0.01);
     assertEquals(value, o.getValue(), 0.01);
   }
 
   @Test
   public void testCreateObject() {
-    assertValues(object, 1.0, 2.0, 3.0, 4.0, 5.0);
+    assertValues(object, 1.0, 2.5, 4.0, 0.0);
   }
 
   @Test
   public void testCopyConstructor() {
     Statistics copied = new Statistics(object);
-    assertValues(copied, 1.0, 2.0, 3.0, 4.0, 5.0);
+    assertValues(copied, 1.0, 2.5, 4.0, 0.0);
   }
 
   @Test
-  public void testCreateWithSummaryStatistics() {
-    List<String> strings = Arrays.asList("1", "12", "123", "1234");
-    DoubleSummaryStatistics source = strings.stream()
-        .collect(Collectors.summarizingDouble(String::length));
-    object = new Statistics(source, 4.0, 5.0);
-    assertValues(object, 1.0, 2.5, 4.0, 4.0, 5.0);
+  public void testCopyConstructorWithValue() {
+    Statistics copied = new Statistics(object, 10.0);
+    assertValues(copied, 1.0, 2.5, 4.0, 10.0);
   }
 
   @Test
   public void testCreateWithEmptySummaryStatistics() {
-    object = new Statistics(new DoubleSummaryStatistics(), 0.0, 0.0);
-    assertValues(object, 0.0, 0.0, 0.0, 0.0, 0.0);
+    object = new Statistics(new DoubleSummaryStatistics(), THRESHOLD);
+    assertValues(object, 0.0, 0.0, 0.0, 0.0);
   }
 }

@@ -24,14 +24,14 @@
 
 package com.lge.plugins.metashift.analysis;
 
-import com.lge.plugins.metashift.models.Evaluation;
-import com.lge.plugins.metashift.models.Streamable;
+import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.models.Statistics;
 
 /**
- * EvaluationCollector interface.
+ * StatisticsCollector interface.
  *
  * @author Sung Gon Kim
  */
-public interface EvaluationCollector extends Collector<Streamable, Evaluation> {
+public interface StatisticsCollector extends Collector<Recipes, Statistics> {
 
 }
