@@ -60,11 +60,11 @@ public class LinesOfCodeCollectorTest {
 
   private void assertValues(long lines, long functions, long classes, long files, long recipes) {
     linesOfCode = collector.parse(this.recipes);
-    assertEquals((Long) lines, linesOfCode.getLines().getValue());
-    assertEquals((Long) functions, linesOfCode.getFunctions().getValue());
-    assertEquals((Long) classes, linesOfCode.getClasses().getValue());
-    assertEquals((Long) files, linesOfCode.getFiles().getValue());
-    assertEquals((Long) recipes, linesOfCode.getRecipes().getValue());
+    assertEquals(lines, linesOfCode.getLines());
+    assertEquals(functions, linesOfCode.getFunctions());
+    assertEquals(classes, linesOfCode.getClasses());
+    assertEquals(files, linesOfCode.getFiles());
+    assertEquals(recipes, linesOfCode.getRecipes());
   }
 
   @Test

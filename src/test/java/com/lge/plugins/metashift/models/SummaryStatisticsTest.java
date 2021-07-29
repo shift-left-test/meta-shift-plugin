@@ -26,10 +26,7 @@ package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
-import java.util.List;
-import java.util.stream.Collectors;
 import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,10 +42,15 @@ public class SummaryStatisticsTest {
 
   @Before
   public void setUp() {
-    List<String> strings = Arrays.asList("1", "12", "123", "1234");
-    DoubleSummaryStatistics source = strings.stream()
-        .collect(Collectors.summarizingDouble(String::length));
-    stats = new SummaryStatistics(source);
+    stats = new SummaryStatistics(of(1.0, 2.0, 3.0, 4.0));
+  }
+
+  private DoubleSummaryStatistics of(double... values) {
+    DoubleSummaryStatistics statistics = new DoubleSummaryStatistics();
+    for (double value : values) {
+      statistics.accept(value);
+    }
+    return statistics;
   }
 
   @Test

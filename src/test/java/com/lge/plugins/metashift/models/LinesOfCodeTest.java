@@ -47,56 +47,22 @@ public class LinesOfCodeTest {
 
   private void assertValues(LinesOfCode object, long lines, long functions, long classes,
       long files, long recipes) {
-    assertEquals((Long) lines, object.getLines().getValue());
-    assertEquals((Long) functions, object.getFunctions().getValue());
-    assertEquals((Long) classes, object.getClasses().getValue());
-    assertEquals((Long) files, object.getFiles().getValue());
-    assertEquals((Long) recipes, object.getRecipes().getValue());
-  }
-
-  private void assertDifferences(LinesOfCode object, long lines, long functions, long classes,
-      long files, long recipes) {
-    assertEquals((Long) lines, object.getLines().getDifference());
-    assertEquals((Long) functions, object.getFunctions().getDifference());
-    assertEquals((Long) classes, object.getClasses().getDifference());
-    assertEquals((Long) files, object.getFiles().getDifference());
-    assertEquals((Long) recipes, object.getRecipes().getDifference());
+    assertEquals(lines, object.getLines());
+    assertEquals(functions, object.getFunctions());
+    assertEquals(classes, object.getClasses());
+    assertEquals(files, object.getFiles());
+    assertEquals(recipes, object.getRecipes());
   }
 
   @Test
   public void testInitialState() {
     assertValues(first, 11, 22, 33, 44, 55);
-    assertDifferences(first, 0, 0, 0, 0, 0);
-
     assertValues(second, 1, 2, 3, 4, 0);
-    assertDifferences(second, 0, 0, 0, 0, 0);
   }
 
   @Test
   public void testCopyConstructor() {
     LinesOfCode object = new LinesOfCode(first);
     assertValues(object, 11, 22, 33, 44, 55);
-    assertDifferences(object, 0, 0, 0, 0, 0);
-  }
-
-  @Test
-  public void testSetDifferenceWithSelf() {
-    first.setDifference(first);
-    assertValues(first, 11, 22, 33, 44, 55);
-    assertDifferences(first, 0, 0, 0, 0, 0);
-  }
-
-  @Test
-  public void testSetDifferenceWithLarge() {
-    first.setDifference(second);
-    assertValues(first, 11, 22, 33, 44, 55);
-    assertDifferences(first, 10, 20, 30, 40, 55);
-  }
-
-  @Test
-  public void testSetDifferenceWithSmall() {
-    second.setDifference(first);
-    assertValues(second, 1, 2, 3, 4, 0);
-    assertDifferences(second, -10, -20, -30, -40, -55);
   }
 }

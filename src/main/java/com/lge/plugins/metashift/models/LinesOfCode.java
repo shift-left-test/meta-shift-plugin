@@ -35,11 +35,11 @@ public class LinesOfCode implements Serializable {
 
   private static final long serialVersionUID = -1196699667444485722L;
 
-  private ValueWithDifference<Long> lines;
-  private ValueWithDifference<Long> functions;
-  private ValueWithDifference<Long> classes;
-  private ValueWithDifference<Long> files;
-  private ValueWithDifference<Long> recipes;
+  private final long lines;
+  private final long functions;
+  private final long classes;
+  private final long files;
+  private final long recipes;
 
   /**
    * Default constructor.
@@ -51,11 +51,18 @@ public class LinesOfCode implements Serializable {
    * @param recipes   the number of recipes
    */
   public LinesOfCode(long lines, long functions, long classes, long files, long recipes) {
-    this.lines = new ValueWithDifference<>(lines, 0L);
-    this.functions = new ValueWithDifference<>(functions, 0L);
-    this.classes = new ValueWithDifference<>(classes, 0L);
-    this.files = new ValueWithDifference<>(files, 0L);
-    this.recipes = new ValueWithDifference<>(recipes, 0L);
+    this.lines = lines;
+    this.functions = functions;
+    this.classes = classes;
+    this.files = files;
+    this.recipes = recipes;
+  }
+
+  /**
+   * Default constructor.
+   */
+  public LinesOfCode() {
+    this(0, 0, 0, 0, 0);
   }
 
   /**
@@ -64,82 +71,55 @@ public class LinesOfCode implements Serializable {
    * @param other object
    */
   public LinesOfCode(LinesOfCode other) {
-    this.lines = new ValueWithDifference<>(other.lines);
-    this.functions = new ValueWithDifference<>(other.functions);
-    this.classes = new ValueWithDifference<>(other.classes);
-    this.files = new ValueWithDifference<>(other.files);
-    this.recipes = new ValueWithDifference<>(other.recipes);
+    this.lines = other.lines;
+    this.functions = other.functions;
+    this.classes = other.classes;
+    this.files = other.files;
+    this.recipes = other.recipes;
   }
 
   /**
-   * Returns the lines of code and the difference values.
+   * Returns the lines of code.
    *
    * @return the lines of code value
    */
-  public ValueWithDifference<Long> getLines() {
+  public long getLines() {
     return lines;
   }
 
   /**
-   * Returns the number of functions and the difference values.
+   * Returns the number of functions.
    *
    * @return the number of function value
    */
-  public ValueWithDifference<Long> getFunctions() {
+  public long getFunctions() {
     return functions;
   }
 
   /**
-   * Returns the number of classes and the difference values.
+   * Returns the number of classes.
    *
    * @return the number of classes
    */
-  public ValueWithDifference<Long> getClasses() {
+  public long getClasses() {
     return classes;
   }
 
   /**
-   * Returns the number of files and the difference values.
+   * Returns the number of files.
    *
    * @return the number of file value
    */
-  public ValueWithDifference<Long> getFiles() {
+  public long getFiles() {
     return files;
   }
 
   /**
-   * Returns the number of recipes and the difference values.
+   * Returns the number of recipes.
    *
    * @return the number of recipe value
    */
-  public ValueWithDifference<Long> getRecipes() {
+  public long getRecipes() {
     return recipes;
-  }
-
-  /**
-   * Sets the difference values.
-   *
-   * @param other object
-   */
-  public void setDifference(LinesOfCode other) {
-    long lines = getLines().getValue();
-    long linesDiff = lines - other.getLines().getValue();
-    this.lines = new ValueWithDifference<>(lines, linesDiff);
-
-    long functions = getFunctions().getValue();
-    long functionsDiff = functions - other.getFunctions().getValue();
-    this.functions = new ValueWithDifference<>(functions, functionsDiff);
-
-    long classes = getClasses().getValue();
-    long classesDiff = classes - other.getClasses().getValue();
-    this.classes = new ValueWithDifference<>(classes, classesDiff);
-
-    long files = getFiles().getValue();
-    long filesDiff = files - other.getFiles().getValue();
-    this.files = new ValueWithDifference<>(files, filesDiff);
-
-    long recipes = getRecipes().getValue();
-    long recipesDiff = recipes - other.getRecipes().getValue();
-    this.recipes = new ValueWithDifference<>(recipes, recipesDiff);
   }
 }

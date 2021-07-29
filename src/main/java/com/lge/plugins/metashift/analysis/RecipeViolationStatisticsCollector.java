@@ -57,7 +57,7 @@ public class RecipeViolationStatisticsCollector implements StatisticsCollector {
         .collect(Collectors.toList());
     DoubleSummaryStatistics statistics = metrics.stream()
         .filter(Evaluation::isAvailable)
-        .collect(Collectors.summarizingDouble(o -> o.getRatio().getValue()));
+        .collect(Collectors.summarizingDouble(Evaluation::getRatio));
     double threshold = configuration.getRecipeViolationThreshold();
     return new Statistics(statistics, threshold);
   }

@@ -57,7 +57,7 @@ public class TestStatisticsCollector implements StatisticsCollector {
         .collect(Collectors.toList());
     DoubleSummaryStatistics statistics = metrics.stream()
         .filter(Evaluation::isAvailable)
-        .collect(Collectors.summarizingDouble(o -> o.getRatio().getValue()));
+        .collect(Collectors.summarizingDouble(Evaluation::getRatio));
     double threshold = (double) configuration.getTestThreshold() / 100.0;
     return new Statistics(statistics, threshold);
   }

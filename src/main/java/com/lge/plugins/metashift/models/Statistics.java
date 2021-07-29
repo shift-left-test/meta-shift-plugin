@@ -57,6 +57,13 @@ public class Statistics implements Serializable {
   }
 
   /**
+   * Default constructor.
+   */
+  public Statistics() {
+    this(new DoubleSummaryStatistics(), 0.0);
+  }
+
+  /**
    * Copy constructor.
    *
    * @param other object

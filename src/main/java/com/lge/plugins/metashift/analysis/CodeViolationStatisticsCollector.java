@@ -57,7 +57,7 @@ public class CodeViolationStatisticsCollector implements StatisticsCollector {
         .collect(Collectors.toList());
     DoubleSummaryStatistics statistics = metrics.stream()
         .filter(Evaluation::isAvailable)
-        .collect(Collectors.summarizingDouble(o -> o.getRatio().getValue()));
+        .collect(Collectors.summarizingDouble(Evaluation::getRatio));
     double threshold = configuration.getCodeViolationThreshold();
     return new Statistics(statistics, threshold);
   }

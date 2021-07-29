@@ -67,7 +67,7 @@ public class BranchCoverageEvaluationCollectorTest {
     evaluation = collector.parse(recipes);
     assertEquals(denominator, evaluation.getDenominator());
     assertEquals(numerator, evaluation.getNumerator());
-    assertEquals(ratio, evaluation.getRatio().getValue(), 0.01);
+    assertEquals(ratio, evaluation.getRatio(), 0.01);
   }
 
   private void assertStatus(boolean available, boolean qualified) {

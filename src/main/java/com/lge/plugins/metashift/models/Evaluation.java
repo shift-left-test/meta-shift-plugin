@@ -38,8 +38,8 @@ public abstract class Evaluation implements Serializable {
   private final boolean available;
   private final long denominator;
   private final long numerator;
-  private ValueWithDifference<Double> ratio;
-  private final ValueWithDifference<Double> threshold;
+  private final double ratio;
+  private final double threshold;
 
   /**
    * Default constructor.
@@ -53,9 +53,8 @@ public abstract class Evaluation implements Serializable {
     this.available = available;
     this.denominator = denominator;
     this.numerator = numerator;
-    double ratio = (double) denominator > 0.0 ? (double) numerator / (double) denominator : 0.0;
-    this.ratio = new ValueWithDifference<>(ratio, 0.0);
-    this.threshold = new ValueWithDifference<>(threshold, ratio - threshold);
+    this.ratio = (double) denominator > 0.0 ? (double) numerator / (double) denominator : 0.0;
+    this.threshold = threshold;
   }
 
   /**
@@ -67,8 +66,8 @@ public abstract class Evaluation implements Serializable {
     this.available = other.available;
     this.denominator = other.denominator;
     this.numerator = other.numerator;
-    this.ratio = new ValueWithDifference<>(other.getRatio());
-    this.threshold = new ValueWithDifference<>(other.getThreshold());
+    this.ratio = other.ratio;
+    this.threshold = other.threshold;
   }
 
   /**
@@ -110,7 +109,7 @@ public abstract class Evaluation implements Serializable {
    *
    * @return ratio values
    */
-  public ValueWithDifference<Double> getRatio() {
+  public double getRatio() {
     return ratio;
   }
 
@@ -119,18 +118,7 @@ public abstract class Evaluation implements Serializable {
    *
    * @return threshold values
    */
-  public ValueWithDifference<Double> getThreshold() {
+  public double getThreshold() {
     return threshold;
-  }
-
-  /**
-   * Sets the difference value of the ratio.
-   *
-   * @param other object
-   */
-  public void setDifference(Evaluation other) {
-    double ratio = getRatio().getValue();
-    double difference = getRatio().getValue() - other.getRatio().getValue();
-    this.ratio = new ValueWithDifference<>(ratio, difference);
   }
 }

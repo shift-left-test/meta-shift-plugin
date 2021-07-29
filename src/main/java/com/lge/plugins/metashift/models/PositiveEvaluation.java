@@ -59,6 +59,6 @@ public class PositiveEvaluation extends Evaluation {
     if (!isAvailable()) {
       return false;
     }
-    return getRatio().getValue() >= getThreshold().getValue();
+    return getRatio() >= getThreshold();
   }
 }

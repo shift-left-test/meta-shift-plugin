@@ -54,97 +54,80 @@ public class EvaluationTest {
     assertEquals(qualified, object.isQualified());
   }
 
-  private void assertValues(ValueWithDifference<Double> object, double value, double difference) {
-    assertEquals(value, object.getValue(), 0.01);
-    assertEquals(difference, object.getDifference(), 0.01);
-  }
-
   @Test
   public void testCreateObject() {
     Evaluation object = new PositiveEvaluation(true, 0, 0, 0.0);
     assertStatus(object, true, true);
     assertEquals(0, object.getDenominator());
     assertEquals(0, object.getNumerator());
-    assertValues(object.getThreshold(), 0.00, 0.00);
+    assertEquals(0.0, object.getThreshold(), 0.01);
   }
 
   @Test
   public void testCopyConstructor() {
     Evaluation object = new PositiveEvaluation(positiveQualified);
     assertStatus(object, true, true);
-    assertValues(object.getRatio(), 0.66, 0.00);
-    assertValues(object.getThreshold(), 0.50, 0.16);
+    assertEquals(0.66, object.getRatio(), 0.01);
+    assertEquals(0.50, object.getThreshold(), 0.01);
   }
 
   @Test
   public void testDisabledPositiveQualified() {
     positiveQualified = new PositiveEvaluation(false, 3, 2, 0.50);
     assertStatus(positiveQualified, false, false);
-    assertValues(positiveQualified.getRatio(), 0.66, 0.00);
-    assertValues(positiveQualified.getThreshold(), 0.50, 0.16);
+    assertEquals(0.66, positiveQualified.getRatio(), 0.01);
+    assertEquals(0.50, positiveQualified.getThreshold(), 0.01);
   }
 
   @Test
   public void testPositiveWithZeroDenominator() {
     Evaluation object = new PositiveEvaluation(true, 0, 1, 0.5);
     assertStatus(object, true, false);
-    assertValues(object.getRatio(), 0.00, 0.00);
-    assertValues(object.getThreshold(), 0.50, -0.50);
+    assertEquals(0.0, object.getRatio(), 0.01);
+    assertEquals(0.5, object.getThreshold(), 0.01);
   }
 
   @Test
   public void testPositiveQualified() {
     assertStatus(positiveQualified, true, true);
-    assertValues(positiveQualified.getRatio(), 0.66, 0.00);
-    assertValues(positiveQualified.getThreshold(), 0.50, 0.16);
+    assertEquals(0.66, positiveQualified.getRatio(), 0.01);
+    assertEquals(0.50, positiveQualified.getThreshold(), 0.01);
   }
 
   @Test
   public void testPositiveUnqualified() {
     assertStatus(positiveUnqualified, true, false);
-    assertValues(positiveUnqualified.getRatio(), 0.33, 0.00);
-    assertValues(positiveUnqualified.getThreshold(), 0.50, -0.17);
-  }
-
-  @Test
-  public void testSetDifferenceOfPositiveQualified() {
-    positiveQualified.setDifference(positiveUnqualified);
-    assertEquals(0.33, positiveQualified.getRatio().getDifference(), 0.01);
+    assertEquals(0.33, positiveUnqualified.getRatio(), 0.01);
+    assertEquals(0.50, positiveUnqualified.getThreshold(), 0.01);
   }
 
   @Test
   public void testDisabledNegativeQualified() {
     negativeQualified = new NegativeEvaluation(false, 3, 1, 0.50);
     assertStatus(negativeQualified, false, false);
-    assertValues(negativeQualified.getRatio(), 0.33, 0.00);
-    assertValues(negativeQualified.getThreshold(), 0.50, -0.17);
+    assertEquals(0.33, negativeQualified.getRatio(), 0.01);
+    assertEquals(0.50, negativeQualified.getThreshold(), 0.01);
   }
 
   @Test
   public void testNegativeWithZeroDenominator() {
     Evaluation object = new NegativeEvaluation(true, 0, 1, 0.5);
     assertStatus(object, true, true);
-    assertValues(object.getRatio(), 0.00, 0.00);
-    assertValues(object.getThreshold(), 0.50, -0.50);
+    assertEquals(0.00, object.getRatio(), 0.01);
+    assertEquals(0.50, object.getThreshold(), 0.01);
   }
 
   @Test
   public void testNegativeQualified() {
     assertStatus(negativeQualified, true, true);
-    assertValues(negativeQualified.getRatio(), 0.33, 0.00);
-    assertValues(negativeQualified.getThreshold(), 0.50, -0.17);
+    assertEquals(0.33, negativeQualified.getRatio(), 0.01);
+    assertEquals(0.50, negativeQualified.getThreshold(), 0.01);
   }
 
   @Test
   public void testNegativeUnqualified() {
     assertStatus(negativeUnqualified, true, false);
-    assertValues(negativeUnqualified.getRatio(), 0.66, 0.00);
-    assertValues(negativeUnqualified.getThreshold(), 0.50, 0.16);
-  }
-
-  @Test
-  public void testSetDifferenceOfNegativeQualified() {
-    negativeQualified.setDifference(negativeUnqualified);
-    assertEquals(-0.33, negativeQualified.getRatio().getDifference(), 0.01);
+    assertEquals(0.66, negativeUnqualified.getRatio(), 0.01);
+    assertEquals(0.50, negativeUnqualified.getThreshold(), 0.01);
   }
 }

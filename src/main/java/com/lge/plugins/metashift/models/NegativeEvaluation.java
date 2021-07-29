@@ -62,6 +62,6 @@ public class NegativeEvaluation extends Evaluation {
     if (getDenominator() == 0) {
       return true;
     }
-    return getRatio().getValue() <= getThreshold().getValue();
+    return getRatio() <= getThreshold();
   }
 }

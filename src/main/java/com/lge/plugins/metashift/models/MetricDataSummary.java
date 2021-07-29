@@ -25,55 +25,70 @@
 package com.lge.plugins.metashift.models;
 
 import java.io.Serializable;
+import java.util.DoubleSummaryStatistics;
 
 /**
- * A class which holds the value and the difference.
+ * MetricDataSummary class.
  *
  * @author Sung Gon Kim
  */
-public class ValueWithDifference<T extends Number> implements Serializable {
+public class MetricDataSummary implements Serializable {
 
-  private static final long serialVersionUID = 5696129323489009062L;
+  private static final long serialVersionUID = -5243933450178054221L;
 
-  private final T value;
-  private final T difference;
+  private final Evaluation evaluation;
+  private final Statistics statistics;
+  private final Distribution distribution;
 
   /**
    * Default constructor.
    *
-   * @param value      data
-   * @param difference data
+   * @param evaluation   object
+   * @param statistics   object
+   * @param distribution object
    */
-  public ValueWithDifference(T value, T difference) {
-    this.value = value;
-    this.difference = difference;
+  public MetricDataSummary(Evaluation evaluation, Statistics statistics,
+      Distribution distribution) {
+    this.evaluation = evaluation;
+    this.statistics = statistics;
+    this.distribution = distribution;
   }
 
   /**
-   * Copy constructor.
-   *
-   * @param other object
+   * Default constructor.
    */
-  public ValueWithDifference(ValueWithDifference<T> other) {
-    this.value = other.value;
-    this.difference = other.difference;
+  public MetricDataSummary() {
+    this(
+        new PositiveEvaluation(false, 0, 0, 0),
+        new Statistics(new DoubleSummaryStatistics(), 0.0),
+        new Distribution(0, 0)
+    );
   }
 
   /**
-   * Returns the value data.
+   * Returns the evaluation object.
    *
-   * @return value data
+   * @return evaluation object
    */
-  public T getValue() {
-    return value;
+  public Evaluation getEvaluation() {
+    return evaluation;
   }
 
   /**
-   * Returns the difference data.
+   * Returns the statistics object.
    *
-   * @return difference data
+   * @return statistics object
    */
-  public T getDifference() {
-    return difference;
+  public Statistics getStatistics() {
+    return statistics;
+  }
+
+  /**
+   * Returns the distribution object.
+   *
+   * @return distribution object
+   */
+  public Distribution getDistribution() {
+    return distribution;
   }
 }
