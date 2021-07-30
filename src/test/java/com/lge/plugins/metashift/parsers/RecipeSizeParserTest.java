@@ -72,7 +72,7 @@ public class RecipeSizeParserTest {
   private void assertValues(int index, String recipe, String file, long lines) {
     List<RecipeSizeData> objects = dataList.objects(RecipeSizeData.class)
         .collect(Collectors.toList());
-    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(recipe, objects.get(index).getName());
     assertEquals(file, objects.get(index).getFile());
     assertEquals(lines, objects.get(index).getLines());
   }

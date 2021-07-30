@@ -97,7 +97,7 @@ public final class ComplexityData extends Data {
     }
     ComplexityData other = (ComplexityData) object;
     return new EqualsBuilder()
-        .append(getRecipe(), other.getRecipe())
+        .append(getName(), other.getName())
         .append(getFile(), other.getFile())
         .append(getFunction(), other.getFunction())
         .isEquals();
@@ -107,7 +107,7 @@ public final class ComplexityData extends Data {
   public int hashCode() {
     return new HashCodeBuilder()
         .append(getClass())
-        .append(getRecipe())
+        .append(getName())
         .append(getFile())
         .append(getFunction())
         .toHashCode();

@@ -121,7 +121,7 @@ public abstract class MutationTestData extends Data {
     }
     MutationTestData other = (MutationTestData) object;
     return new EqualsBuilder()
-        .append(getRecipe(), other.getRecipe())
+        .append(getName(), other.getName())
         .append(getFile(), other.getFile())
         .append(getMutatedClass(), other.getMutatedClass())
         .append(getMutatedMethod(), other.getMutatedMethod())
@@ -135,7 +135,7 @@ public abstract class MutationTestData extends Data {
   public final int hashCode() {
     return new HashCodeBuilder()
         .append(getClass())
-        .append(getRecipe())
+        .append(getName())
         .append(getFile())
         .append(getMutatedClass())
         .append(getMutatedMethod())

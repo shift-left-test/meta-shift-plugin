@@ -71,7 +71,7 @@ public class RecipeTest {
 
   @Test
   public void testInitialState() {
-    assertEquals("cmake-project-1.0.0-r0", origin.getRecipe());
+    assertEquals("cmake-project-1.0.0-r0", origin.getName());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -88,7 +88,7 @@ public class RecipeTest {
   public void testInitWithComplexName() {
     String name = "A.B.C.qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X-r+1.0-X";
     Recipe recipe = new Recipe(name);
-    assertEquals(name, recipe.getRecipe());
+    assertEquals(name, recipe.getName());
   }
 
   @Test
@@ -152,7 +152,7 @@ public class RecipeTest {
   public void testCreateRecipeWithEmptyRecipeDirectory() throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "cmake-project-1.0.0-r0");
     Recipe recipe = new Recipe(new FilePath(directory));
-    assertEquals("cmake-project-1.0.0-r0", recipe.getRecipe());
+    assertEquals("cmake-project-1.0.0-r0", recipe.getName());
     assertEquals(0, recipe.objects(Data.class).count());
     assertFalse(recipe.isAvailable(Data.class));
   }
@@ -248,6 +248,6 @@ public class RecipeTest {
   @Test
   public void testToJsonObject() {
     JSONObject object = origin.toJsonObject();
-    assertEquals("cmake-project-1.0.0-r0", object.getString("recipe"));
+    assertEquals("cmake-project-1.0.0-r0", object.getString("name"));
   }
 }

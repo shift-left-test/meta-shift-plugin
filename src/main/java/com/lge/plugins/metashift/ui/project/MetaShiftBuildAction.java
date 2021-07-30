@@ -99,7 +99,7 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
 
     logger.println("[meta-shift-plugin] Publishing the meta-shift results...");
     for (Recipe recipe : recipes) {
-      logger.printf("[meta-shift-plugin] -> %s%n", recipe.getRecipe());
+      logger.printf("[meta-shift-plugin] -> %s%n", recipe.getName());
       RecipeAction recipeAction = new RecipeAction(
           this, listener, configuration, reportRoot, recipe);
       this.addAction(recipeAction);
@@ -153,12 +153,13 @@ public class MetaShiftBuildAction extends MetricsActionBase implements RunAction
   }
 
   /**
-   * constext menu provider.
+   * context menu provider.
    */
   public ContextMenu doContextMenu(StaplerRequest request, StaplerResponse response)
       throws Exception {
     ContextMenu menu = new ContextMenu();
 
+    // TODO: RecipeAction::getDisplayName may return null.
     List<RecipeAction> actions = this.getActions(RecipeAction.class).stream()
         .sorted(Comparator.comparing(RecipeAction::getDisplayName)).collect(Collectors.toList());
 

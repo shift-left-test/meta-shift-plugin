@@ -39,6 +39,8 @@ import com.lge.plugins.metashift.parsers.TestParser;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import hudson.FilePath;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -96,11 +98,17 @@ public final class Recipe extends Data implements Streamable {
   /**
    * Creates an empty Recipe object with the given recipe name.
    *
-   * @param recipe name
+   * @param name of the recipe
    * @throws IllegalArgumentException if the recipe name is malformed
    */
-  public Recipe(final String recipe) throws IllegalArgumentException {
-    super(recipe);
+  public Recipe(final String name) throws IllegalArgumentException {
+    super(name);
+    String regexp = "^(?<recipe>[\\w-.+]+)-(?<version>[\\w-.+]+)-(?<revision>[\\w-.+]+)$";
+    Pattern pattern = Pattern.compile(regexp);
+    Matcher matcher = pattern.matcher(name);
+    if (!matcher.matches()) {
+      throw new IllegalArgumentException("Invalid recipe name: " + name);
+    }
     dataList = new DataList();
   }
 
@@ -137,7 +145,7 @@ public final class Recipe extends Data implements Streamable {
     }
     Recipe other = (Recipe) object;
     return new EqualsBuilder()
-        .append(getRecipe(), other.getRecipe())
+        .append(getName(), other.getName())
         .isEquals();
   }
 
@@ -145,7 +153,7 @@ public final class Recipe extends Data implements Streamable {
   public int hashCode() {
     return new HashCodeBuilder()
         .append(getClass())
-        .append(getRecipe())
+        .append(getName())
         .toHashCode();
   }
 }

@@ -52,7 +52,7 @@ public class CodeViolationDataTest {
 
   @Test
   public void testInitData() {
-    assertEquals("A-X-X", origin.getRecipe());
+    assertEquals("A-X-X", origin.getName());
     assertEquals("a.file", origin.getFile());
     assertEquals(1, origin.getLine());
     assertEquals(2, origin.getColumn());
@@ -124,7 +124,7 @@ public class CodeViolationDataTest {
   @Test
   public void testToJsonObject() {
     JSONObject object = origin.toJsonObject();
-    assertEquals("A-X-X", object.getString("recipe"));
+    assertEquals("A-X-X", object.getString("name"));
     assertEquals("a.file", object.getString("file"));
     assertEquals(1, object.getLong("line"));
     assertEquals(2, object.getLong("column"));

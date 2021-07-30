@@ -73,7 +73,7 @@ public class CodeViolationParserTest {
       String rule, String message, String description, String severity, String tool) {
     List<CodeViolationData> objects = dataList.objects(CodeViolationData.class)
         .collect(Collectors.toList());
-    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(recipe, objects.get(index).getName());
     assertEquals(file, objects.get(index).getFile());
     assertEquals(line, objects.get(index).getLine());
     assertEquals(column, objects.get(index).getColumn());

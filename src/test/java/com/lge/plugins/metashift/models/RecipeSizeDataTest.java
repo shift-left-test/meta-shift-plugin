@@ -50,7 +50,7 @@ public class RecipeSizeDataTest {
 
   @Test
   public void testInitData() {
-    assertEquals("A-1.0.0-r0", origin.getRecipe());
+    assertEquals("A-1.0.0-r0", origin.getName());
     assertEquals("a.bb", origin.getFile());
     assertEquals(10, origin.getLines());
   }
@@ -75,7 +75,7 @@ public class RecipeSizeDataTest {
   @Test
   public void testToJsonObject() {
     JSONObject object = origin.toJsonObject();
-    assertEquals("A-1.0.0-r0", object.getString("recipe"));
+    assertEquals("A-1.0.0-r0", object.getString("name"));
     assertEquals("a.bb", object.getString("file"));
     assertEquals(10, object.getLong("lines"));
   }

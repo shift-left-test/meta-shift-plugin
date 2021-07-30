@@ -52,7 +52,7 @@ public class MutationTestDataTest {
 
   @Test
   public void testInitData() {
-    assertEquals("A-X-X", origin.getRecipe());
+    assertEquals("A-X-X", origin.getName());
     assertEquals("a.file", origin.getFile());
     assertEquals("C", origin.getMutatedClass());
     assertEquals("f()", origin.getMutatedMethod());
@@ -112,7 +112,7 @@ public class MutationTestDataTest {
   @Test
   public void testToJsonObject() {
     JSONObject object = origin.toJsonObject();
-    assertEquals("A-X-X", object.getString("recipe"));
+    assertEquals("A-X-X", object.getString("name"));
     assertEquals("a.file", object.getString("file"));
     assertEquals("C", object.getString("mutatedClass"));
     assertEquals("f()", object.getString("mutatedMethod"));

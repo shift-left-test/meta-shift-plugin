@@ -118,7 +118,7 @@ public final class CodeSizeEvaluator extends NullEvaluator<CodeSizeEvaluator> {
 
   @Override
   protected void parseImpl(final Streamable c) {
-    recipes = c.objects(CodeSizeData.class).map(CodeSizeData::getRecipe).distinct().count();
+    recipes = c.objects(CodeSizeData.class).map(CodeSizeData::getName).distinct().count();
     files = c.objects(CodeSizeData.class).map(CodeSizeData::getFile).distinct().count();
     lines = c.objects(CodeSizeData.class).mapToLong(CodeSizeData::getLines).sum();
     functions = c.objects(CodeSizeData.class).mapToLong(CodeSizeData::getFunctions).sum();

@@ -105,7 +105,7 @@ public abstract class CoverageData extends Data {
     }
     CoverageData other = (CoverageData) object;
     return new EqualsBuilder()
-        .append(getRecipe(), other.getRecipe())
+        .append(getName(), other.getName())
         .append(getFile(), other.getFile())
         .append(getLine(), other.getLine())
         .append(getIndex(), other.getIndex())
@@ -116,7 +116,7 @@ public abstract class CoverageData extends Data {
   public int hashCode() {
     return new HashCodeBuilder()
         .append(getClass())
-        .append(getRecipe())
+        .append(getName())
         .append(getFile())
         .append(getLine())
         .append(getIndex())

@@ -45,7 +45,7 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author Sung Gon Kim
  */
-public class TestFactoryTest {
+public class TestParserTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -71,9 +71,9 @@ public class TestFactoryTest {
 
   private void assertValues(int index, String recipe, String suite, String name, String message) {
     List<TestData> objects = dataList.objects(TestData.class).collect(Collectors.toList());
-    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(recipe, objects.get(index).getName());
     assertEquals(suite, objects.get(index).getSuite());
-    assertEquals(name, objects.get(index).getName());
+    assertEquals(name, objects.get(index).getTest());
     assertEquals(message, objects.get(index).getMessage());
   }
 

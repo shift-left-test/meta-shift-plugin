@@ -73,7 +73,7 @@ public class MutationTestParserTest {
       String mutatedMethod, long line, String mutator, String killingTest) {
     List<MutationTestData> objects = dataList.objects(MutationTestData.class)
         .collect(Collectors.toList());
-    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(recipe, objects.get(index).getName());
     assertEquals(file, objects.get(index).getFile());
     assertEquals(mutatedClass, objects.get(index).getMutatedClass());
     assertEquals(mutatedMethod, objects.get(index).getMutatedMethod());

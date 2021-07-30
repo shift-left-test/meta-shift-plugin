@@ -57,7 +57,7 @@ public abstract class TestData extends Data {
   /**
    * Represents the name of the test.
    */
-  private final String name;
+  private final String test;
 
   /**
    * Represents the message of the test.
@@ -74,15 +74,15 @@ public abstract class TestData extends Data {
    *
    * @param recipe  name
    * @param suite   name
-   * @param name    of the test
+   * @param test    name
    * @param message of the test
    * @param status  of the test
    */
-  public TestData(final String recipe, final String suite, final String name,
+  public TestData(final String recipe, final String suite, final String test,
       final String message, final Status status) {
     super(recipe);
     this.suite = suite;
-    this.name = name;
+    this.test = test;
     this.message = message;
     this.status = status;
   }
@@ -100,9 +100,9 @@ public abstract class TestData extends Data {
     }
     TestData other = (TestData) object;
     return new EqualsBuilder()
-        .append(getRecipe(), other.getRecipe())
-        .append(getSuite(), other.getSuite())
         .append(getName(), other.getName())
+        .append(getSuite(), other.getSuite())
+        .append(getTest(), other.getTest())
         .isEquals();
   }
 
@@ -110,9 +110,9 @@ public abstract class TestData extends Data {
   public final int hashCode() {
     return new HashCodeBuilder()
         .append(getClass())
-        .append(getRecipe())
-        .append(getSuite())
         .append(getName())
+        .append(getSuite())
+        .append(getTest())
         .toHashCode();
   }
 
@@ -130,8 +130,8 @@ public abstract class TestData extends Data {
    *
    * @return the name of the test
    */
-  public final String getName() {
-    return name;
+  public final String getTest() {
+    return test;
   }
 
   /**

@@ -73,7 +73,7 @@ public class ComplexityParserTest {
       long end, long value) {
     List<ComplexityData> objects = dataList.objects(ComplexityData.class)
         .collect(Collectors.toList());
-    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(recipe, objects.get(index).getName());
     assertEquals(file, objects.get(index).getFile());
     assertEquals(function, objects.get(index).getFunction());
     assertEquals(start, objects.get(index).getStart());

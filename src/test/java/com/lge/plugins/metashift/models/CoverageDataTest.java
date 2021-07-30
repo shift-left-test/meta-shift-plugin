@@ -53,7 +53,7 @@ public class CoverageDataTest {
 
   @Test
   public void testInitData() {
-    assertEquals("A-B-C", origin.getRecipe());
+    assertEquals("A-B-C", origin.getName());
     assertEquals("a.file", origin.getFile());
     assertEquals(1, origin.getLine());
     assertEquals(0, origin.getIndex());
@@ -87,7 +87,7 @@ public class CoverageDataTest {
   @Test
   public void testToJsonObject() {
     JSONObject object = origin.toJsonObject();
-    assertEquals("A-B-C", object.getString("recipe"));
+    assertEquals("A-B-C", object.getString("name"));
     assertEquals("a.file", object.getString("file"));
     assertEquals(1, object.getLong("line"));
     assertTrue(object.getBoolean("covered"));

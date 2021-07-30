@@ -113,7 +113,7 @@ public class RecipeTestActionTest {
 
     JSONArray recipeTests = action.getTableModelJson();
     assertNotNull(recipeTests.getJSONObject(0).getString("suite"));
-    assertNotNull(recipeTests.getJSONObject(0).getString("name"));
+    assertNotNull(recipeTests.getJSONObject(0).getString("test"));
     assertNotNull(recipeTests.getJSONObject(0).getString("message"));
   }
 

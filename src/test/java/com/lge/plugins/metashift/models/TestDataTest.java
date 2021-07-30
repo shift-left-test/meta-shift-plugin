@@ -50,9 +50,9 @@ public class TestDataTest {
 
   @Test
   public void testInitData() {
-    assertEquals("A-1.0.0-r0", origin.getRecipe());
+    assertEquals("A-1.0.0-r0", origin.getName());
     assertEquals("a.suite", origin.getSuite());
-    assertEquals("a.tc", origin.getName());
+    assertEquals("a.tc", origin.getTest());
     assertEquals("msg", origin.getMessage());
     assertEquals("PASSED", origin.getStatus());
   }
@@ -87,9 +87,9 @@ public class TestDataTest {
   @Test
   public void testToJsonObject() {
     JSONObject object = origin.toJsonObject();
-    assertEquals("A-1.0.0-r0", object.getString("recipe"));
+    assertEquals("A-1.0.0-r0", object.getString("name"));
     assertEquals("a.suite", object.getString("suite"));
-    assertEquals("a.tc", object.getString("name"));
+    assertEquals("a.tc", object.getString("test"));
     assertEquals("msg", object.getString("message"));
     assertEquals("PASSED", object.getString("status"));
   }

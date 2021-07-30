@@ -25,12 +25,10 @@
 package com.lge.plugins.metashift.models;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
 
 /**
- * Represents a data object for all metrics.
+ * Represents a data object.
  *
  * @author Sung Gon Kim
  */
@@ -42,24 +40,17 @@ public abstract class Data implements Serializable {
   private static final long serialVersionUID = -7672797936775946949L;
 
   /**
-   * Represents the name of the recipe.
+   * Represents the name of the data.
    */
-  private final String recipe;
+  private final String name;
 
   /**
    * Default constructor.
    *
-   * @param recipe name
-   * @throws IllegalArgumentException if the recipe name is malformed
+   * @param name of the data
    */
-  public Data(final String recipe) {
-    String regexp = "^(?<recipe>[\\w-.+]+)-(?<version>[\\w-.+]+)-(?<revision>[\\w-.+]+)$";
-    Pattern pattern = Pattern.compile(regexp);
-    Matcher matcher = pattern.matcher(recipe);
-    if (!matcher.matches()) {
-      throw new IllegalArgumentException("Invalid recipe name: " + recipe);
-    }
-    this.recipe = recipe;
+  public Data(final String name) {
+    this.name = name;
   }
 
   /**
@@ -80,12 +71,12 @@ public abstract class Data implements Serializable {
   public abstract int hashCode();
 
   /**
-   * Returns the name of the recipe.
+   * Returns the name of the data.
    *
-   * @return the name of the recipe
+   * @return the name of the data
    */
-  public String getRecipe() {
-    return recipe;
+  public String getName() {
+    return name;
   }
 
   /**

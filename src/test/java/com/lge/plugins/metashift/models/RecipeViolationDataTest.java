@@ -52,7 +52,7 @@ public class RecipeViolationDataTest {
 
   @Test
   public void testInitData() {
-    assertEquals("A-X-X", origin.getRecipe());
+    assertEquals("A-X-X", origin.getName());
     assertEquals("a.file", origin.getFile());
     assertEquals(1, origin.getLine());
     assertEquals("error_rule", origin.getRule());
@@ -109,7 +109,7 @@ public class RecipeViolationDataTest {
   @Test
   public void testToJsonObject() {
     JSONObject object = origin.toJsonObject();
-    assertEquals("A-X-X", object.getString("recipe"));
+    assertEquals("A-X-X", object.getString("name"));
     assertEquals("a.file", object.getString("file"));
     assertEquals(1, object.getLong("line"));
     assertEquals("error_rule", object.getString("rule"));

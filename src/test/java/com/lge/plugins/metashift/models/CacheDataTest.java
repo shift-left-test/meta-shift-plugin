@@ -28,6 +28,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
+import java.util.Set;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 
@@ -51,7 +53,7 @@ public class CacheDataTest {
 
   @Test
   public void testInitData() {
-    assertEquals("A-1.0.0-r0", origin.getRecipe());
+    assertEquals("A-1.0.0-r0", origin.getName());
     assertEquals("X", origin.getSignature());
     assertTrue(origin.isAvailable());
     assertEquals("PREMIRROR", origin.getType());
@@ -81,9 +83,17 @@ public class CacheDataTest {
   }
 
   @Test
+  public void testUniqueness() {
+    Set<CacheData> objects = new HashSet<>();
+    objects.add(origin);
+    objects.add(same);
+    assertEquals(1, objects.size());
+  }
+
+  @Test
   public void testToJsonObject() {
     JSONObject object = origin.toJsonObject();
-    assertEquals("A-1.0.0-r0", object.getString("recipe"));
+    assertEquals("A-1.0.0-r0", object.getString("name"));
     assertEquals("X", object.getString("signature"));
     assertTrue(object.getBoolean("available"));
   }

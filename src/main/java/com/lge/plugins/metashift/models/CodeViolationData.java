@@ -92,7 +92,7 @@ public abstract class CodeViolationData extends ViolationData {
     }
     CodeViolationData other = (CodeViolationData) object;
     return new EqualsBuilder()
-        .append(getRecipe(), other.getRecipe())
+        .append(getName(), other.getName())
         .append(getFile(), other.getFile())
         .append(getLine(), other.getLine())
         .append(getColumn(), other.getColumn())
@@ -105,7 +105,7 @@ public abstract class CodeViolationData extends ViolationData {
   public final int hashCode() {
     return new HashCodeBuilder()
         .append(getClass())
-        .append(getRecipe())
+        .append(getName())
         .append(getFile())
         .append(getLine())
         .append(getColumn())

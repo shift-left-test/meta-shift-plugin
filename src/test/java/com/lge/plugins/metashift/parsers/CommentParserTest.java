@@ -71,7 +71,7 @@ public class CommentParserTest {
 
   private void assertValues(int index, String recipe, String file, long lines, long commentLines) {
     List<CommentData> objects = dataList.objects(CommentData.class).collect(Collectors.toList());
-    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(recipe, objects.get(index).getName());
     assertEquals(file, objects.get(index).getFile());
     assertEquals(lines, objects.get(index).getLines());
     assertEquals(commentLines, objects.get(index).getCommentLines());

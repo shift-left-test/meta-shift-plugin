@@ -72,7 +72,7 @@ public class CodeSizeParserTest {
   private void assertValues(int index, String recipe, String file, long lines, long functions,
       long classes) {
     List<CodeSizeData> objects = dataList.objects(CodeSizeData.class).collect(Collectors.toList());
-    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(recipe, objects.get(index).getName());
     assertEquals(file, objects.get(index).getFile());
     assertEquals(lines, objects.get(index).getLines());
     assertEquals(functions, objects.get(index).getFunctions());

@@ -75,7 +75,7 @@ public class RecipeSizeData extends Data {
     }
     RecipeSizeData other = (RecipeSizeData) object;
     return new EqualsBuilder()
-        .append(getRecipe(), other.getRecipe())
+        .append(getName(), other.getName())
         .append(getFile(), other.getFile())
         .isEquals();
   }
@@ -84,7 +84,7 @@ public class RecipeSizeData extends Data {
   public int hashCode() {
     return new HashCodeBuilder()
         .append(getClass())
-        .append(getRecipe())
+        .append(getName())
         .append(getFile())
         .toHashCode();
   }

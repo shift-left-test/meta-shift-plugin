@@ -83,7 +83,7 @@ public final class DuplicationData extends Data {
     }
     DuplicationData other = (DuplicationData) object;
     return new EqualsBuilder()
-        .append(getRecipe(), other.getRecipe())
+        .append(getName(), other.getName())
         .append(getFile(), other.getFile())
         .isEquals();
   }
@@ -92,7 +92,7 @@ public final class DuplicationData extends Data {
   public int hashCode() {
     return new HashCodeBuilder()
         .append(getClass())
-        .append(getRecipe())
+        .append(getName())
         .append(getFile())
         .toHashCode();
   }

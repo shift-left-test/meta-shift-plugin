@@ -73,7 +73,7 @@ public class RecipeViolationParserTest {
       String severity, String description) {
     List<RecipeViolationData> objects = dataList.objects(RecipeViolationData.class)
         .collect(Collectors.toList());
-    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(recipe, objects.get(index).getName());
     assertEquals(file, objects.get(index).getFile());
     assertEquals(line, objects.get(index).getLine());
     assertEquals(rule, objects.get(index).getRule());

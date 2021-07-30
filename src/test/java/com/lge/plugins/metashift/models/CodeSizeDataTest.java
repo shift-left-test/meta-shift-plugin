@@ -50,7 +50,7 @@ public class CodeSizeDataTest {
 
   @Test
   public void testInitData() {
-    assertEquals("A-1.0.0-r0", origin.getRecipe());
+    assertEquals("A-1.0.0-r0", origin.getName());
     assertEquals("a.file", origin.getFile());
     assertEquals(100, origin.getLines());
     assertEquals(50, origin.getFunctions());
@@ -81,7 +81,7 @@ public class CodeSizeDataTest {
   @Test
   public void testToJsonObject() {
     JSONObject object = origin.toJsonObject();
-    assertEquals("A-1.0.0-r0", object.getString("recipe"));
+    assertEquals("A-1.0.0-r0", object.getString("name"));
     assertEquals("a.file", object.getString("file"));
     assertEquals(100, object.getLong("lines"));
     assertEquals(50, object.getLong("functions"));

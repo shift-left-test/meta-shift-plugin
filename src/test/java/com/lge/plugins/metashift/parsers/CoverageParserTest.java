@@ -72,7 +72,7 @@ public class CoverageParserTest {
   private void assertValues(int i, String recipe, String file, long line, long index,
       boolean covered) {
     List<CoverageData> objects = dataList.objects(CoverageData.class).collect(Collectors.toList());
-    assertEquals(recipe, objects.get(i).getRecipe());
+    assertEquals(recipe, objects.get(i).getName());
     assertEquals(file, objects.get(i).getFile());
     assertEquals(line, objects.get(i).getLine());
     assertEquals(index, objects.get(i).getIndex());

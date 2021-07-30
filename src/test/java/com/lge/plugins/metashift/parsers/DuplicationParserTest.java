@@ -73,7 +73,7 @@ public class DuplicationParserTest {
       long duplicatedLines) {
     List<DuplicationData> objects = dataList.objects(DuplicationData.class)
         .collect(Collectors.toList());
-    assertEquals(recipe, objects.get(index).getRecipe());
+    assertEquals(recipe, objects.get(index).getName());
     assertEquals(file, objects.get(index).getFile());
     assertEquals(lines, objects.get(index).getLines());
     assertEquals(duplicatedLines, objects.get(index).getDuplicatedLines());

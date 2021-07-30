@@ -69,7 +69,7 @@ public class RecipeAction extends MetricsActionBase implements Action {
       throws IOException, InterruptedException {
     super(configuration, recipe);
 
-    this.name = recipe.getRecipe();
+    this.name = recipe.getName();
     this.parent = parent;
 
     // parse metadata.json
