@@ -58,7 +58,7 @@ public class BuildStatusCollector implements Collector<Recipes, BuildStatusSumma
   private Result toResult(boolean unstable, Evaluation evaluation) {
     boolean available = evaluation.isAvailable();
     boolean qualified = evaluation.isQualified();
-    return (!unstable || !available || qualified) ? Result.SUCCESS : Result.UNSTABLE;
+    return !unstable || !available || qualified ? Result.SUCCESS : Result.UNSTABLE;
   }
 
   /**
