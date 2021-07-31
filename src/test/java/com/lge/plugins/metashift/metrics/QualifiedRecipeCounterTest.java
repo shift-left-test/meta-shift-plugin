@@ -46,6 +46,7 @@ import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.models.SkippedMutationTestData;
 import com.lge.plugins.metashift.models.StatementCoverageData;
+import com.lge.plugins.metashift.utils.ConfigurationUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Before;
@@ -67,17 +68,7 @@ public class QualifiedRecipeCounterTest {
 
   @Before
   public void setUp() {
-    configuration = new Configuration();
-    configuration.setPremirrorCacheThreshold(50);
-    configuration.setSharedStateCacheThreshold(50);
-    configuration.setRecipeViolationThreshold(0.5);
-    configuration.setCommentThreshold(50);
-    configuration.setCodeViolationThreshold(0.5);
-    configuration.setComplexityTolerance(5);
-    configuration.setComplexityThreshold(50);
-    configuration.setDuplicationThreshold(50);
-    configuration.setTestThreshold(50);
-    configuration.setMutationTestThreshold(50);
+    configuration = ConfigurationUtils.of(50, 5, false);
     counter = new QualifiedRecipeCounter(configuration);
     recipe1 = new Recipe("A-1.0.0-r0");
     recipe2 = new Recipe("B-1.0.0-r0");

@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.utils.ConfigurationUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,33 +68,13 @@ public class BuildStatusTest {
 
   @Test
   public void setBuildStatusAsFalse() {
-    status.setPremirrorCacheAsUnstable(false);
-    status.setSharedStateCacheAsUnstable(false);
-    status.setCodeViolationsAsUnstable(false);
-    status.setCommentsAsUnstable(false);
-    status.setComplexityAsUnstable(false);
-    status.setStatementCoverageAsUnstable(false);
-    status.setBranchCoverageAsUnstable(false);
-    status.setDuplicationsAsUnstable(false);
-    status.setMutationTestAsUnstable(false);
-    status.setRecipeViolationsAsUnstable(false);
-    status.setTestAsUnstable(false);
+    status = ConfigurationUtils.of(50, 5, false);
     assertValues(false, false, false, false, false, false, false, false, false, false, false);
   }
 
   @Test
   public void setBuildStatusAsTrue() {
-    status.setPremirrorCacheAsUnstable(true);
-    status.setSharedStateCacheAsUnstable(true);
-    status.setCodeViolationsAsUnstable(true);
-    status.setCommentsAsUnstable(true);
-    status.setComplexityAsUnstable(true);
-    status.setStatementCoverageAsUnstable(true);
-    status.setBranchCoverageAsUnstable(true);
-    status.setDuplicationsAsUnstable(true);
-    status.setMutationTestAsUnstable(true);
-    status.setRecipeViolationsAsUnstable(true);
-    status.setTestAsUnstable(true);
+    status = ConfigurationUtils.of(50, 5, true);
     assertValues(true, true, true, true, true, true, true, true, true, true, true);
   }
 }

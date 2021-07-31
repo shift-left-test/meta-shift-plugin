@@ -22,58 +22,16 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.analysis;
 
-import java.io.Serializable;
+import com.lge.plugins.metashift.models.Evaluation;
+import com.lge.plugins.metashift.models.Streamable;
 
 /**
- * Counter class.
+ * Evaluator interface.
  *
  * @author Sung Gon Kim
  */
-public class Counter implements Serializable {
+public interface Evaluator extends Collector<Streamable, Evaluation> {
 
-  private static final long serialVersionUID = 6152247773057621263L;
-
-  private final long denominator;
-  private final long numerator;
-
-  /**
-   * Default constructor.
-   *
-   * @param denominator value
-   * @param numerator   value
-   */
-  public Counter(long denominator, long numerator) {
-    this.denominator = denominator;
-    this.numerator = numerator;
-  }
-
-  /**
-   * Copy constructor.
-   *
-   * @param other object
-   */
-  public Counter(Counter other) {
-    this.denominator = other.denominator;
-    this.numerator = other.numerator;
-  }
-
-  /**
-   * Returns the numerator value.
-   *
-   * @return numerator
-   */
-  public long getCount() {
-    return this.numerator;
-  }
-
-  /**
-   * Returns the ratio of the value.
-   *
-   * @return ratio
-   */
-  public double getRatio() {
-    return denominator > 0 ? (double) numerator / denominator : 0.0;
-  }
 }

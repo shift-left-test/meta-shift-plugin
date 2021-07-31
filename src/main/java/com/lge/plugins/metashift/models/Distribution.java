@@ -35,10 +35,10 @@ public class Distribution implements Serializable {
 
   private static final long serialVersionUID = -5877880387901811750L;
 
-  private final Counter first;
-  private final Counter second;
-  private final Counter third;
-  private final Counter fourth;
+  private final Scale first;
+  private final Scale second;
+  private final Scale third;
+  private final Scale fourth;
   private final long total;
 
   /**
@@ -52,10 +52,10 @@ public class Distribution implements Serializable {
   public Distribution(long firstNumerator, long secondNumerator, long thirdNumerator,
       long fourthNumerator) {
     total = firstNumerator + secondNumerator + thirdNumerator + fourthNumerator;
-    first = new Counter(total, firstNumerator);
-    second = new Counter(total, secondNumerator);
-    third = new Counter(total, thirdNumerator);
-    fourth = new Counter(total, fourthNumerator);
+    first = new Scale(total, firstNumerator);
+    second = new Scale(total, secondNumerator);
+    third = new Scale(total, thirdNumerator);
+    fourth = new Scale(total, fourthNumerator);
   }
 
   /**
@@ -85,10 +85,10 @@ public class Distribution implements Serializable {
    * @param other object
    */
   public Distribution(Distribution other) {
-    this.first = new Counter(other.first);
-    this.second = new Counter(other.second);
-    this.third = new Counter(other.third);
-    this.fourth = new Counter(other.fourth);
+    this.first = new Scale(other.first);
+    this.second = new Scale(other.second);
+    this.third = new Scale(other.third);
+    this.fourth = new Scale(other.fourth);
     this.total = other.total;
   }
 
@@ -97,7 +97,7 @@ public class Distribution implements Serializable {
    *
    * @return counter object
    */
-  public Counter getFirst() {
+  public Scale getFirst() {
     return first;
   }
 
@@ -106,7 +106,7 @@ public class Distribution implements Serializable {
    *
    * @return counter object
    */
-  public Counter getSecond() {
+  public Scale getSecond() {
     return second;
   }
 
@@ -115,7 +115,7 @@ public class Distribution implements Serializable {
    *
    * @return counter object
    */
-  public Counter getThird() {
+  public Scale getThird() {
     return third;
   }
 
@@ -124,7 +124,7 @@ public class Distribution implements Serializable {
    *
    * @return counter object
    */
-  public Counter getFourth() {
+  public Scale getFourth() {
     return fourth;
   }
 

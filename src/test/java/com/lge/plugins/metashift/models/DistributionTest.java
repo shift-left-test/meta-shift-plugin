@@ -47,7 +47,7 @@ public class DistributionTest {
     quartet = new Distribution(3, 2, 1, 0);
   }
 
-  private void assertValues(Counter o, long numerator, double ratio) {
+  private void assertValues(Scale o, long numerator, double ratio) {
     assertEquals(numerator, o.getCount());
     assertEquals(ratio, o.getRatio(), 0.01);
   }

@@ -54,6 +54,7 @@ import com.lge.plugins.metashift.models.SkippedMutationTestData;
 import com.lge.plugins.metashift.models.SkippedTestData;
 import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
+import com.lge.plugins.metashift.utils.ConfigurationUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
@@ -84,19 +85,7 @@ public class MetricsTest {
   public void setUp() {
     utils = new TemporaryFileUtils(folder);
     builder = new StringBuilder();
-    configuration = new Configuration();
-    configuration.setPremirrorCacheThreshold(50);
-    configuration.setSharedStateCacheThreshold(50);
-    configuration.setRecipeViolationThreshold(0.50);
-    configuration.setCommentThreshold(50);
-    configuration.setCodeViolationThreshold(0.50);
-    configuration.setComplexityTolerance(5);
-    configuration.setComplexityThreshold(50);
-    configuration.setDuplicationThreshold(50);
-    configuration.setTestThreshold(50);
-    configuration.setStatementCoverageThreshold(50);
-    configuration.setBranchCoverageThreshold(50);
-    configuration.setMutationTestThreshold(50);
+    configuration = ConfigurationUtils.of(50, 5, false);
     metrics = new Metrics(configuration);
     recipe = new Recipe("A-1.0.0-r0");
     recipes = new Recipes();

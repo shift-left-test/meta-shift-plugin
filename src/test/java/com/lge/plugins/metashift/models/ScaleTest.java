@@ -30,20 +30,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit tests for the Counter class.
+ * Unit tests for the Scale class.
  *
  * @author Sung Gon Kim
  */
-public class CounterTest {
+public class ScaleTest {
 
-  private Counter object;
+  private Scale object;
 
   @Before
   public void setUp() {
-    object = new Counter(10, 5);
+    object = new Scale(10, 5);
   }
 
-  private void assertValues(Counter o, long numerator, double ratio) {
+  private void assertValues(Scale o, long numerator, double ratio) {
     assertEquals(numerator, o.getCount());
     assertEquals(ratio, o.getRatio(), 0.01);
   }
@@ -55,13 +55,13 @@ public class CounterTest {
 
   @Test
   public void testCopyConstructor() {
-    Counter copied = new Counter(object);
+    Scale copied = new Scale(object);
     assertValues(copied, 5, 0.5);
   }
 
   @Test
   public void testCreateObjectWithZeroDenominator() {
-    object = new Counter(0, 1);
+    object = new Scale(0, 1);
     assertValues(object, 1, 0.0);
   }
 }
