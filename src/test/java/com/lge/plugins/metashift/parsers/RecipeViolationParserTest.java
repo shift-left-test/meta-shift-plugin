@@ -65,7 +65,7 @@ public class RecipeViolationParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(RecipeViolationData.class));
+    assertEquals(isAvailable, dataList.contains(RecipeViolationData.class));
     assertEquals(size, dataList.size());
   }
 

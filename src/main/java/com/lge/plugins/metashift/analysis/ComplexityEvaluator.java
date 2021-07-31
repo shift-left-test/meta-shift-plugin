@@ -51,7 +51,7 @@ public class ComplexityEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
-    boolean available = s.isAvailable(CodeSizeData.class) && s.isAvailable(ComplexityData.class);
+    boolean available = s.contains(CodeSizeData.class) && s.contains(ComplexityData.class);
     long denominator = s.objects(ComplexityData.class).count();
     long tolerance = configuration.getComplexityTolerance();
     long numerator = s.objects(ComplexityData.class).filter(o -> o.getValue() >= tolerance).count();

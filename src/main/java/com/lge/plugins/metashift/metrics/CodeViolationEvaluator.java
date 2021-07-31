@@ -74,7 +74,7 @@ public final class CodeViolationEvaluator extends ViolationEvaluator<CodeViolati
         c.objects(InfoCodeViolationData.class).count()
     ));
 
-    setAvailable(c.isAvailable(CodeSizeData.class) && c.isAvailable(CodeViolationData.class));
+    setAvailable(c.contains(CodeSizeData.class) && c.contains(CodeViolationData.class));
     setDenominator(c.objects(CodeSizeData.class).mapToLong(CodeSizeData::getLines).sum());
     setNumerator(getMajor().getNumerator() + getMinor().getNumerator() + getInfo().getNumerator());
   }

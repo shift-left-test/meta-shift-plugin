@@ -58,7 +58,7 @@ public final class CommentEvaluator extends PositiveEvaluator<CommentEvaluator> 
 
   @Override
   protected void parseImpl(final Streamable c) {
-    setAvailable(c.isAvailable(CodeSizeData.class) && c.isAvailable(CommentData.class));
+    setAvailable(c.contains(CodeSizeData.class) && c.contains(CommentData.class));
     setDenominator(c.objects(CommentData.class).mapToLong(CommentData::getLines).sum());
     setNumerator(c.objects(CommentData.class).mapToLong(CommentData::getCommentLines).sum());
   }

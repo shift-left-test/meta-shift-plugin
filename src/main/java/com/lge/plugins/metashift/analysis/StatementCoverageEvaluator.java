@@ -52,7 +52,7 @@ public class StatementCoverageEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
-    boolean available = s.isAvailable(TestData.class) && s.isAvailable(StatementCoverageData.class);
+    boolean available = s.contains(TestData.class) && s.contains(StatementCoverageData.class);
     long denominator = s.objects(StatementCoverageData.class).count();
     long numerator = s.objects(StatementCoverageData.class).filter(CoverageData::isCovered).count();
     double threshold = (double) configuration.getStatementCoverageThreshold() / 100.0;

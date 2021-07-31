@@ -59,7 +59,7 @@ public class StatementCoverageEvaluator extends PositiveEvaluator<StatementCover
 
   @Override
   protected void parseImpl(final Streamable c) {
-    setAvailable(c.isAvailable(TestData.class) && c.isAvailable(StatementCoverageData.class));
+    setAvailable(c.contains(TestData.class) && c.contains(StatementCoverageData.class));
     setDenominator(c.objects(StatementCoverageData.class).count());
     setNumerator(c.objects(StatementCoverageData.class).filter(CoverageData::isCovered).count());
   }

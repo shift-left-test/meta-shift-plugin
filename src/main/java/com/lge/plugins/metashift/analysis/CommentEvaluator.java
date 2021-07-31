@@ -51,7 +51,7 @@ public class CommentEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
-    boolean available = s.isAvailable(CodeSizeData.class) && s.isAvailable(CommentData.class);
+    boolean available = s.contains(CodeSizeData.class) && s.contains(CommentData.class);
     long denominator = s.objects(CommentData.class).mapToLong(CommentData::getLines).sum();
     long numerator = s.objects(CommentData.class).mapToLong(CommentData::getCommentLines).sum();
     double threshold = (double) configuration.getCommentThreshold() / 100.0;

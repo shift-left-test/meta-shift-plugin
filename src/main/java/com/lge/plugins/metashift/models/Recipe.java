@@ -123,8 +123,8 @@ public final class Recipe extends Data implements Streamable {
   }
 
   @Override
-  public <T> boolean isAvailable(final Class<T> clazz) {
-    return dataList.isAvailable(clazz);
+  public <T> boolean contains(final Class<T> clazz) {
+    return dataList.contains(clazz);
   }
 
   @Override

@@ -71,7 +71,7 @@ public final class ComplexityEvaluator extends NegativeEvaluator<ComplexityEvalu
         .sorted(Comparator.comparingLong(ComplexityData::getValue).reversed())
         .collect(Collectors.toList());
 
-    setAvailable(c.isAvailable(CodeSizeData.class) && c.isAvailable(ComplexityData.class));
+    setAvailable(c.contains(CodeSizeData.class) && c.contains(ComplexityData.class));
     setDenominator(objects.stream().distinct().count());
     setNumerator(objects.stream().distinct().filter(o -> o.getValue() >= tolerance).count());
   }

@@ -65,7 +65,7 @@ public class MutationTestParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(MutationTestData.class));
+    assertEquals(isAvailable, dataList.contains(MutationTestData.class));
     assertEquals(size, dataList.size());
   }
 

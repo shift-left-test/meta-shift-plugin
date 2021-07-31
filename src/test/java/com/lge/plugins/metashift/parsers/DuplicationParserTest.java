@@ -65,7 +65,7 @@ public class DuplicationParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(DuplicationData.class));
+    assertEquals(isAvailable, dataList.contains(DuplicationData.class));
     assertEquals(size, dataList.size());
   }
 

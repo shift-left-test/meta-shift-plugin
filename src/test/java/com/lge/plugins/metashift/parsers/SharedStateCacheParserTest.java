@@ -63,7 +63,7 @@ public class SharedStateCacheParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(SharedStateCacheData.class));
+    assertEquals(isAvailable, dataList.contains(SharedStateCacheData.class));
     assertEquals(size, dataList.size());
   }
 

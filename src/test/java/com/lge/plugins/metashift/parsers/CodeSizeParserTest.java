@@ -65,7 +65,7 @@ public class CodeSizeParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(CodeSizeData.class));
+    assertEquals(isAvailable, dataList.contains(CodeSizeData.class));
     assertEquals(size, dataList.size());
   }
 

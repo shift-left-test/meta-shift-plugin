@@ -51,7 +51,7 @@ public class MutationTestEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
-    boolean available = s.isAvailable(MutationTestData.class);
+    boolean available = s.contains(MutationTestData.class);
     long denominator = s.objects(MutationTestData.class).count();
     long numerator = s.objects(KilledMutationTestData.class).count();
     double threshold = (double) configuration.getMutationTestThreshold() / 100.0;

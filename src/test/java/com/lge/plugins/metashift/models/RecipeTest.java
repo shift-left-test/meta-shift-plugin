@@ -154,7 +154,7 @@ public class RecipeTest {
     Recipe recipe = new Recipe(new FilePath(directory));
     assertEquals("cmake-project-1.0.0-r0", recipe.getName());
     assertEquals(0, recipe.objects(Data.class).count());
-    assertFalse(recipe.isAvailable(Data.class));
+    assertFalse(recipe.contains(Data.class));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -199,12 +199,12 @@ public class RecipeTest {
     assertEquals(7, recipe.objects(BranchCoverageData.class).count());
     assertEquals(6, recipe.objects(MutationTestData.class).count());
 
-    assertTrue(recipe.isAvailable(CacheData.class));
-    assertTrue(recipe.isAvailable(RecipeViolationData.class));
-    assertTrue(recipe.isAvailable(CodeViolationData.class));
-    assertTrue(recipe.isAvailable(TestData.class));
-    assertTrue(recipe.isAvailable(CoverageData.class));
-    assertTrue(recipe.isAvailable(MutationTestData.class));
+    assertTrue(recipe.contains(CacheData.class));
+    assertTrue(recipe.contains(RecipeViolationData.class));
+    assertTrue(recipe.contains(CodeViolationData.class));
+    assertTrue(recipe.contains(TestData.class));
+    assertTrue(recipe.contains(CoverageData.class));
+    assertTrue(recipe.contains(MutationTestData.class));
   }
 
   @Test

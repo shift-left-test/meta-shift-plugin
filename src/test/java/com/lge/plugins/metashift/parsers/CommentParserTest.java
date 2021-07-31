@@ -65,7 +65,7 @@ public class CommentParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(CommentData.class));
+    assertEquals(isAvailable, dataList.contains(CommentData.class));
     assertEquals(size, dataList.size());
   }
 

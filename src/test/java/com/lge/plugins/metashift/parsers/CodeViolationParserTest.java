@@ -65,7 +65,7 @@ public class CodeViolationParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(CodeViolationData.class));
+    assertEquals(isAvailable, dataList.contains(CodeViolationData.class));
     assertEquals(size, dataList.size());
   }
 

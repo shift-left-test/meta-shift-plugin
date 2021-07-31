@@ -65,7 +65,7 @@ public class CoverageParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(CoverageData.class));
+    assertEquals(isAvailable, dataList.contains(CoverageData.class));
     assertEquals(size, dataList.size());
   }
 

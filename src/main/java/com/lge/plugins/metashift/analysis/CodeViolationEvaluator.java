@@ -51,7 +51,7 @@ public class CodeViolationEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
-    boolean available = s.isAvailable(CodeSizeData.class) && s.isAvailable(CodeViolationData.class);
+    boolean available = s.contains(CodeSizeData.class) && s.contains(CodeViolationData.class);
     long denominator = s.objects(CodeSizeData.class).mapToLong(CodeSizeData::getLines).sum();
     long numerator = s.objects(CodeViolationData.class).count();
     double threshold = configuration.getCodeViolationThreshold();

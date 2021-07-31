@@ -65,7 +65,7 @@ public class RecipeSizeParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(RecipeSizeData.class));
+    assertEquals(isAvailable, dataList.contains(RecipeSizeData.class));
     assertEquals(size, dataList.size());
   }
 

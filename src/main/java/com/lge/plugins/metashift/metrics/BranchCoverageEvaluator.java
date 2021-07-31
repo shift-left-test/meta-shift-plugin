@@ -59,7 +59,7 @@ public class BranchCoverageEvaluator extends PositiveEvaluator<BranchCoverageEva
 
   @Override
   protected void parseImpl(final Streamable c) {
-    setAvailable(c.isAvailable(TestData.class) && c.isAvailable(BranchCoverageData.class));
+    setAvailable(c.contains(TestData.class) && c.contains(BranchCoverageData.class));
     setDenominator(c.objects(BranchCoverageData.class).count());
     setNumerator(c.objects(BranchCoverageData.class).filter(CoverageData::isCovered).count());
   }

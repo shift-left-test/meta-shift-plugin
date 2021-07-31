@@ -149,7 +149,7 @@ public final class TestEvaluator extends PositiveEvaluator<TestEvaluator> {
         c.objects(SkippedTestData.class).count()
     ));
 
-    setAvailable(c.isAvailable(TestData.class));
+    setAvailable(c.contains(TestData.class));
     setDenominator(getPassed().getDenominator());
     setNumerator(getPassed().getNumerator());
   }

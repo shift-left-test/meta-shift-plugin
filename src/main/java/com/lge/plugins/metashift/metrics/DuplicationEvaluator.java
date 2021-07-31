@@ -64,7 +64,7 @@ public final class DuplicationEvaluator extends NegativeEvaluator<DuplicationEva
 
   @Override
   protected void parseImpl(final Streamable c) {
-    setAvailable(c.isAvailable(CodeSizeData.class) && c.isAvailable(DuplicationData.class));
+    setAvailable(c.contains(CodeSizeData.class) && c.contains(DuplicationData.class));
     setDenominator(c.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum());
     setNumerator(c.objects(DuplicationData.class)
         .filter(o -> o.getDuplicatedLines() >= tolerance)

@@ -39,7 +39,7 @@ public interface Streamable {
    * @param clazz class type
    * @return true if the object type is available, false otherwise
    */
-  <T> boolean isAvailable(final Class<T> clazz);
+  <T> boolean contains(final Class<T> clazz);
 
   /**
    * Returns the stream of the given class type.

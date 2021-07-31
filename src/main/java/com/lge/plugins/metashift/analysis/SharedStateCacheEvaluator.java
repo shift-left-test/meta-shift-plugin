@@ -50,7 +50,7 @@ public class SharedStateCacheEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
-    boolean available = s.isAvailable(SharedStateCacheData.class);
+    boolean available = s.contains(SharedStateCacheData.class);
     long denominator = s.objects(SharedStateCacheData.class).distinct().count();
     long numerator = s.objects(SharedStateCacheData.class).distinct()
         .filter(SharedStateCacheData::isAvailable).count();

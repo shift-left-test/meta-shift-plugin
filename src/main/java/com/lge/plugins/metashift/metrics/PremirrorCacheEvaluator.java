@@ -57,7 +57,7 @@ public class PremirrorCacheEvaluator extends PositiveEvaluator<PremirrorCacheEva
 
   @Override
   protected void parseImpl(final Streamable c) {
-    setAvailable(c.isAvailable(PremirrorCacheData.class));
+    setAvailable(c.contains(PremirrorCacheData.class));
     setDenominator(c.objects(PremirrorCacheData.class).distinct().count());
     setNumerator(c.objects(PremirrorCacheData.class).distinct()
         .filter(PremirrorCacheData::isAvailable).count());

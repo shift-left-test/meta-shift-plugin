@@ -52,7 +52,7 @@ public class BranchCoverageEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
-    boolean available = s.isAvailable(TestData.class) && s.isAvailable(BranchCoverageData.class);
+    boolean available = s.contains(TestData.class) && s.contains(BranchCoverageData.class);
     long denominator = s.objects(BranchCoverageData.class).count();
     long numerator = s.objects(BranchCoverageData.class).filter(CoverageData::isCovered).count();
     double threshold = (double) configuration.getBranchCoverageThreshold() / 100.0;

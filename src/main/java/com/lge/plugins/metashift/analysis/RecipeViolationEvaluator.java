@@ -52,7 +52,7 @@ public class RecipeViolationEvaluator implements Evaluator {
   @Override
   public Evaluation parse(Streamable s) {
     boolean available =
-        s.isAvailable(RecipeSizeData.class) && s.isAvailable(RecipeViolationData.class);
+        s.contains(RecipeSizeData.class) && s.contains(RecipeViolationData.class);
     long denominator = s.objects(RecipeSizeData.class).mapToLong(RecipeSizeData::getLines).sum();
     long numerator = s.objects(RecipeViolationData.class).count();
     double threshold = configuration.getRecipeViolationThreshold();

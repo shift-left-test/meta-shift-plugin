@@ -51,7 +51,7 @@ public class UnitTestEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
-    boolean available = s.isAvailable(TestData.class);
+    boolean available = s.contains(TestData.class);
     long denominator = s.objects(TestData.class).count();
     long numerator = s.objects(PassedTestData.class).count();
     double threshold = (double) configuration.getTestThreshold() / 100.0;

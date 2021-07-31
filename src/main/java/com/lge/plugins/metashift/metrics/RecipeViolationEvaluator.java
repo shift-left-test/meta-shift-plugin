@@ -74,7 +74,7 @@ public final class RecipeViolationEvaluator extends ViolationEvaluator<RecipeVio
         c.objects(InfoRecipeViolationData.class).count()
     ));
 
-    setAvailable(c.isAvailable(RecipeSizeData.class) && c.isAvailable(RecipeViolationData.class));
+    setAvailable(c.contains(RecipeSizeData.class) && c.contains(RecipeViolationData.class));
     setDenominator(c.objects(RecipeSizeData.class).mapToLong(RecipeSizeData::getLines).sum());
     setNumerator(getMajor().getNumerator() + getMinor().getNumerator() + getInfo().getNumerator());
   }

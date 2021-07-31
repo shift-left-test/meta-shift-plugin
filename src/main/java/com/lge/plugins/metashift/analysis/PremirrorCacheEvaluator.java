@@ -50,7 +50,7 @@ public class PremirrorCacheEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
-    boolean available = s.isAvailable(PremirrorCacheData.class);
+    boolean available = s.contains(PremirrorCacheData.class);
     long denominator = s.objects(PremirrorCacheData.class).distinct().count();
     long numerator = s.objects(PremirrorCacheData.class).distinct()
         .filter(PremirrorCacheData::isAvailable).count();

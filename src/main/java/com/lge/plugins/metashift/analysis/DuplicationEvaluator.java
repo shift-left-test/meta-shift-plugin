@@ -51,7 +51,7 @@ public class DuplicationEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
-    boolean available = s.isAvailable(CodeSizeData.class) && s.isAvailable(DuplicationData.class);
+    boolean available = s.contains(CodeSizeData.class) && s.contains(DuplicationData.class);
     long denominator = s.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum();
     long tolerance = configuration.getDuplicationTolerance();
     long numerator = s.objects(DuplicationData.class)

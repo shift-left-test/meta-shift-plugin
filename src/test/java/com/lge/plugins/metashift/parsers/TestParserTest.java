@@ -65,7 +65,7 @@ public class TestParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(TestData.class));
+    assertEquals(isAvailable, dataList.contains(TestData.class));
     assertEquals(size, dataList.size());
   }
 

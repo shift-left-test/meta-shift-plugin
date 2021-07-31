@@ -65,7 +65,7 @@ public class ComplexityParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(ComplexityData.class));
+    assertEquals(isAvailable, dataList.contains(ComplexityData.class));
     assertEquals(size, dataList.size());
   }
 

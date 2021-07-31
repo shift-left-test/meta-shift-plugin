@@ -55,7 +55,7 @@ public class DataListTest {
   public void testAddSingleData() {
     dataList.add(new CodeSizeData("A-B-C", "a.file", 10, 1, 1));
     assertEquals(1, dataList.size());
-    assertTrue(dataList.isAvailable(CodeSizeData.class));
+    assertTrue(dataList.contains(CodeSizeData.class));
   }
 
   @Test
@@ -63,16 +63,16 @@ public class DataListTest {
     dataList.add(new CodeSizeData("A-B-C", "a.file", 10, 1, 1));
     dataList.add(new PremirrorCacheData("A-B-C", "A:B", true));
     assertEquals(2, dataList.size());
-    assertTrue(dataList.isAvailable(CodeSizeData.class));
-    assertTrue(dataList.isAvailable(PremirrorCacheData.class));
+    assertTrue(dataList.contains(CodeSizeData.class));
+    assertTrue(dataList.contains(PremirrorCacheData.class));
   }
 
   @Test
   public void testContainsWithInheritedData() {
     dataList.add(new MajorCodeViolationData("A-B-C", "a.file", 1, 1, "r", "m", "d", "e", "t"));
-    assertTrue(dataList.isAvailable(MajorCodeViolationData.class));
-    assertTrue(dataList.isAvailable(CodeViolationData.class));
-    assertTrue(dataList.isAvailable(ViolationData.class));
+    assertTrue(dataList.contains(MajorCodeViolationData.class));
+    assertTrue(dataList.contains(CodeViolationData.class));
+    assertTrue(dataList.contains(ViolationData.class));
   }
 
   @Test

@@ -101,7 +101,7 @@ public class DataList implements Streamable, Serializable {
   }
 
   @Override
-  public <T> boolean isAvailable(Class<T> clazz) {
+  public <T> boolean contains(Class<T> clazz) {
     return types.stream().anyMatch(clazz::isAssignableFrom);
   }
 

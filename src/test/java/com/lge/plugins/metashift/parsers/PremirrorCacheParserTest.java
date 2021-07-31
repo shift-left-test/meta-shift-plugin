@@ -63,7 +63,7 @@ public class PremirrorCacheParserTest {
   }
 
   private void assertDataList(boolean isAvailable, int size) {
-    assertEquals(isAvailable, dataList.isAvailable(PremirrorCacheData.class));
+    assertEquals(isAvailable, dataList.contains(PremirrorCacheData.class));
     assertEquals(size, dataList.size());
   }
 

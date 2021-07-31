@@ -57,7 +57,7 @@ public class SharedStateCacheEvaluator extends PositiveEvaluator<SharedStateCach
 
   @Override
   protected void parseImpl(final Streamable c) {
-    setAvailable(c.isAvailable(SharedStateCacheData.class));
+    setAvailable(c.contains(SharedStateCacheData.class));
     setDenominator(c.objects(SharedStateCacheData.class).distinct().count());
     setNumerator(c.objects(SharedStateCacheData.class).distinct()
         .filter(SharedStateCacheData::isAvailable).count());

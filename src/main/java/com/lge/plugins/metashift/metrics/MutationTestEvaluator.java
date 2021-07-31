@@ -130,7 +130,7 @@ public final class MutationTestEvaluator extends PositiveEvaluator<MutationTestE
         c.objects(SkippedMutationTestData.class).count()
     ));
 
-    setAvailable(c.isAvailable(MutationTestData.class));
+    setAvailable(c.contains(MutationTestData.class));
     setDenominator(getKilled().getDenominator());
     setNumerator(getKilled().getNumerator());
   }
