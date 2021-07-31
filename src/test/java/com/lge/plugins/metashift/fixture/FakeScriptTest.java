@@ -77,7 +77,7 @@ public class FakeScriptTest {
   @Test
   public void testToFile() throws IOException {
     fakeSource.toFile();
-    File file = FileUtils.getFile(source, fakeRecipe.getRecipe(), fakeSource.getFilename());
+    File file = FileUtils.getFile(source, fakeRecipe.getName(), fakeSource.getFilename());
     assertTrue(file.exists());
     assertEquals(fakeSource.getLines(), FileUtils.readLines(file, StandardCharsets.UTF_8).size());
   }

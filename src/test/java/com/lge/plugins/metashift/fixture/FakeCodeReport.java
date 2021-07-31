@@ -122,7 +122,7 @@ public class FakeCodeReport implements FakeReport {
   @Override
   public void toFile(File directory) throws IOException {
     List<String> lines = new ArrayList<>();
-    File file = FileUtils.getFile(directory, recipe.getRecipe(), "checkcode", "sage_report.json");
+    File file = FileUtils.getFile(directory, recipe.getName(), "checkcode", "sage_report.json");
     JSONObject object = new JSONObject();
     object.put("version", "0.4.0");
     object.put("complexity", createComplexityList());

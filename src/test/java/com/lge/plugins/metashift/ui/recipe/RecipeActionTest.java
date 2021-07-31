@@ -117,7 +117,7 @@ public class RecipeActionTest {
 
     RecipeAction recipeAction = recipeActions.get(0);
 
-    assertEquals(fakeRecipe.getRecipe(), recipeAction.getDisplayName());
+    assertEquals(fakeRecipe.getName(), recipeAction.getDisplayName());
 
     assertCodeSizeDelta(recipeAction, 0, 0, 1, 10);
 

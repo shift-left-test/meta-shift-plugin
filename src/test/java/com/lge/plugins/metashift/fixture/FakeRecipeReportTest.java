@@ -68,7 +68,7 @@ public class FakeRecipeReportTest {
   public void testToFileCreatesFilesJson() throws IOException, InterruptedException {
     fakeReport.toFile(report);
 
-    File file = FileUtils.getFile(report, fakeRecipe.getRecipe(), "checkrecipe", "files.json");
+    File file = FileUtils.getFile(report, fakeRecipe.getName(), "checkrecipe", "files.json");
     assertTrue(file.exists());
 
     List<FakeScript> scripts = fakeRecipe.getScripts();
@@ -76,13 +76,13 @@ public class FakeRecipeReportTest {
 
     JSONObject first = (JSONObject) object.getJSONArray("lines_of_code").get(0);
     File aFile = FileUtils.getFile(fakeRecipe.getSourcePath(),
-        fakeRecipe.getRecipe(), scripts.get(0).getFilename());
+        fakeRecipe.getName(), scripts.get(0).getFilename());
     assertEquals(aFile.getAbsolutePath(), first.getString("file"));
     assertEquals(10, first.getLong("code_lines"));
 
     JSONObject second = (JSONObject) object.getJSONArray("lines_of_code").get(1);
     File bFile = FileUtils.getFile(fakeRecipe.getSourcePath(),
-        fakeRecipe.getRecipe(), scripts.get(1).getFilename());
+        fakeRecipe.getName(), scripts.get(1).getFilename());
     assertEquals(bFile.getAbsolutePath(), second.getString("file"));
     assertEquals(20, second.getLong("code_lines"));
   }
@@ -91,7 +91,7 @@ public class FakeRecipeReportTest {
   public void testToFile() throws IOException, InterruptedException {
     fakeReport.toFile(report);
 
-    File file = FileUtils.getFile(report, fakeRecipe.getRecipe(),
+    File file = FileUtils.getFile(report, fakeRecipe.getName(),
         "checkrecipe", "recipe_violations.json");
     assertTrue(file.exists());
 

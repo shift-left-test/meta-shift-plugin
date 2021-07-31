@@ -50,7 +50,7 @@ public class FakeRecipeReport implements FakeReport {
     recipe.getScripts().forEach(script -> {
       JSONObject o = new JSONObject();
       File file = FileUtils
-          .getFile(recipe.getSourcePath(), recipe.getRecipe(), script.getFilename());
+          .getFile(recipe.getSourcePath(), recipe.getName(), script.getFilename());
       o.put("file", file.getAbsolutePath());
       o.put("code_lines", script.getLines());
       array.add(o);
@@ -90,7 +90,7 @@ public class FakeRecipeReport implements FakeReport {
   }
 
   private File getPathOf(File directory, String filename) {
-    return FileUtils.getFile(directory, recipe.getRecipe(), "checkrecipe", filename);
+    return FileUtils.getFile(directory, recipe.getName(), "checkrecipe", filename);
   }
 
   @Override

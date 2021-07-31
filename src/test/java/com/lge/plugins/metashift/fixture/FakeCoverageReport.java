@@ -117,7 +117,7 @@ public class FakeCoverageReport implements FakeReport {
 
   @Override
   public void toFile(File directory) throws IOException {
-    File file = FileUtils.getFile(directory, recipe.getRecipe(), "coverage", "coverage.xml");
+    File file = FileUtils.getFile(directory, recipe.getName(), "coverage", "coverage.xml");
     FileUtils.forceMkdirParent(file);
     List<String> lines = new ArrayList<>();
     lines.add("<?xml version=\"1.0\" ?>");

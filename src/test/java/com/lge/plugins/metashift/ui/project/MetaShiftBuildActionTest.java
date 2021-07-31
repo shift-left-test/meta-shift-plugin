@@ -170,14 +170,14 @@ public class MetaShiftBuildActionTest {
     JSONArray expected = new JSONArray();
     expected.add(newJsonObject(newJsonArray(0, 0), "", "", new JSONObject()));
     expected.add(newJsonObject(newJsonArray(0, 100), "", "", new JSONObject()));
-    expected.add(newJsonObject(newJsonArray(10, 27), fakeRecipe.getRecipe(), fakeRecipe.getRecipe(),
+    expected.add(newJsonObject(newJsonArray(10, 27), fakeRecipe.getName(), fakeRecipe.getName(),
         newQualifiedMapJsonObject()));
     assertEquals(expected, buildAction.getRecipesTreemapModel().getJSONArray("series"));
 
     JSONArray recipeTableModel = buildAction.getRecipesTableModel();
 
     assertArrayEquals(new String[]{
-        fakeRecipe.getRecipe(),
+        fakeRecipe.getName(),
     }, recipeTableModel.stream().map(o ->
         ((JSONObject) o).getString("name")).toArray());
 

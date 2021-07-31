@@ -59,7 +59,7 @@ public class FakeRecipeTest {
     assertEquals(0, fakeRecipe.getPremirrorMissed());
     assertEquals(0, fakeRecipe.getSharedStateFound());
     assertEquals(0, fakeRecipe.getSharedStateMissed());
-    assertEquals(new File(source, fakeRecipe.getRecipe()), fakeRecipe.getSourcePath());
+    assertEquals(new File(source, fakeRecipe.getName()), fakeRecipe.getSourcePath());
     assertFalse(fakeRecipe.getSourcePath().exists());
     assertEquals(0, fakeRecipe.getSources().size());
     assertEquals(0, fakeRecipe.getScripts().size());

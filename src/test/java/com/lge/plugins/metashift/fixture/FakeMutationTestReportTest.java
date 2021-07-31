@@ -70,7 +70,7 @@ public class FakeMutationTestReportTest {
     fakeRecipe.add(new FakeSource(fakeRecipe, 10, 5, 5, 0).setMutationTests(1, 2, 3));
     fakeReport.toFile(report);
 
-    File file = FileUtils.getFile(report, fakeRecipe.getRecipe(), "checktest", "mutations.xml");
+    File file = FileUtils.getFile(report, fakeRecipe.getName(), "checktest", "mutations.xml");
     assertTrue(file.exists());
 
     List<String> lines = FileUtils.readLines(file, StandardCharsets.UTF_8);

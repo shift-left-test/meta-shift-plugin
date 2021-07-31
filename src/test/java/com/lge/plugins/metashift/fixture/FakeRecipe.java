@@ -60,12 +60,12 @@ public class FakeRecipe implements FakeReport {
     this(sourcePath, "");
   }
 
-  public String getRecipe() {
+  public String getName() {
     return recipe;
   }
 
   public File getSourcePath() {
-    return new File(sourcePath, getRecipe());
+    return new File(sourcePath, getName());
   }
 
   public long getPremirrorFound() {

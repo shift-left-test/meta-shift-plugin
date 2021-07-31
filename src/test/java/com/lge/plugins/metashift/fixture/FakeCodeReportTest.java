@@ -68,7 +68,7 @@ public class FakeCodeReportTest {
         .setCodeViolations(1, 2, 3));
     fakeReport.toFile(report);
 
-    File file = FileUtils.getFile(report, fakeRecipe.getRecipe(), "checkcode", "sage_report.json");
+    File file = FileUtils.getFile(report, fakeRecipe.getName(), "checkcode", "sage_report.json");
     assertTrue(file.exists());
 
     JSONObject object = JsonUtils.createObject(new FilePath(file));

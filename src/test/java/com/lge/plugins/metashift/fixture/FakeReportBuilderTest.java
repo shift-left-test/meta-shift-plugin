@@ -79,7 +79,7 @@ public class FakeReportBuilderTest {
     builder.add(recipe);
     builder.toFile(report);
 
-    File root = FileUtils.getFile(report, recipe.getRecipe());
+    File root = FileUtils.getFile(report, recipe.getName());
     assertTrue(root.exists());
     assertTrue(FileUtils.getFile(root, "metadata.json").exists());
     assertTrue(FileUtils.getFile(root, "checkcache", "caches.json").exists());

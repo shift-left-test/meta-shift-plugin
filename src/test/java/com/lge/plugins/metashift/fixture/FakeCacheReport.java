@@ -79,7 +79,7 @@ public class FakeCacheReport implements FakeReport {
     object.put("Shared State", sharedState);
     object.put("Premirror", premirror);
 
-    File report = FileUtils.getFile(directory, recipe.getRecipe(), "checkcache", "caches.json");
+    File report = FileUtils.getFile(directory, recipe.getName(), "checkcache", "caches.json");
     JsonUtils.saveAs(object, report);
   }
 }

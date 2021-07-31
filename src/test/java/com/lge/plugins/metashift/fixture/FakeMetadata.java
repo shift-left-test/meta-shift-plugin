@@ -47,7 +47,7 @@ public class FakeMetadata implements FakeReport {
   public void toFile(File directory) throws IOException {
     JSONObject object = new JSONObject();
     object.put("S", recipe.getSourcePath().getAbsolutePath());
-    File report = FileUtils.getFile(directory, recipe.getRecipe(), "metadata.json");
+    File report = FileUtils.getFile(directory, recipe.getName(), "metadata.json");
     JsonUtils.saveAs(object, report);
   }
 }

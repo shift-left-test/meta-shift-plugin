@@ -70,7 +70,7 @@ public class FakeTestReportTest {
     fakeRecipe.add(new FakeSource(fakeRecipe, 10, 5, 5, 0).setTests(1, 2, 3, 4));
     fakeReport.toFile(report);
 
-    File root = FileUtils.getFile(report, fakeRecipe.getRecipe(), "test");
+    File root = FileUtils.getFile(report, fakeRecipe.getName(), "test");
     assertTrue(root.exists());
     assertExists(root, "passed_", 1);
     assertExists(root, "failed_", 2);

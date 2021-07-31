@@ -114,7 +114,7 @@ public class FakeMutationTestReport implements FakeReport {
 
   @Override
   public void toFile(File directory) throws IOException {
-    File file = FileUtils.getFile(directory, recipe.getRecipe(), "checktest", "mutations.xml");
+    File file = FileUtils.getFile(directory, recipe.getName(), "checktest", "mutations.xml");
     FileUtils.forceMkdirParent(file);
     List<String> lines = new ArrayList<>();
     lines.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

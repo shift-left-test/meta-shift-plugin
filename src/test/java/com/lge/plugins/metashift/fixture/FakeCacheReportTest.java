@@ -67,7 +67,7 @@ public class FakeCacheReportTest {
     fakeRecipe.setSharedState(3, 4);
     fakeReport.toFile(report);
 
-    File file = FileUtils.getFile(report, fakeRecipe.getRecipe(), "checkcache", "caches.json");
+    File file = FileUtils.getFile(report, fakeRecipe.getName(), "checkcache", "caches.json");
     assertTrue(file.exists());
 
     JSONObject object = JsonUtils.createObject(new FilePath(file));

@@ -165,9 +165,9 @@ public class RecipeTest {
     fakeRecipe.add(new FakeSource(10, 5, 5, 0));
     builder.add(fakeRecipe);
     builder.toFile(report);
-    File file = FileUtils.getFile(report, fakeRecipe.getRecipe(), "checkcode", "sage_report.json");
+    File file = FileUtils.getFile(report, fakeRecipe.getName(), "checkcode", "sage_report.json");
     FileUtils.write(file, "{ }", StandardCharsets.UTF_8);
-    new Recipe(new FilePath(new File(report, fakeRecipe.getRecipe())));
+    new Recipe(new FilePath(new File(report, fakeRecipe.getName())));
   }
 
   @Test
@@ -186,7 +186,7 @@ public class RecipeTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
 
-    Recipe recipe = new Recipe(new FilePath(new File(report, fakeRecipe.getRecipe())));
+    Recipe recipe = new Recipe(new FilePath(new File(report, fakeRecipe.getName())));
     assertEquals(3, recipe.objects(PremirrorCacheData.class).count());
     assertEquals(7, recipe.objects(SharedStateCacheData.class).count());
     assertEquals(1, recipe.objects(CommentData.class).count());
@@ -231,7 +231,7 @@ public class RecipeTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
 
-    Recipe recipe = new Recipe(new FilePath(new File(report, fakeRecipe.getRecipe())));
+    Recipe recipe = new Recipe(new FilePath(new File(report, fakeRecipe.getName())));
     assertEquals(3, recipe.objects(PremirrorCacheData.class).count());
     assertEquals(7, recipe.objects(SharedStateCacheData.class).count());
     assertEquals(2, recipe.objects(CommentData.class).count());

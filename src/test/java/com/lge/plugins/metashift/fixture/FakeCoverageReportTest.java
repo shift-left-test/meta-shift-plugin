@@ -72,7 +72,7 @@ public class FakeCoverageReportTest {
         .setBranchCoverage(3, 4));
     fakeReport.toFile(report);
 
-    File file = FileUtils.getFile(report, fakeRecipe.getRecipe(), "coverage", "coverage.xml");
+    File file = FileUtils.getFile(report, fakeRecipe.getName(), "coverage", "coverage.xml");
     assertTrue(file.exists());
 
     List<String> lines = FileUtils.readLines(file, StandardCharsets.UTF_8);

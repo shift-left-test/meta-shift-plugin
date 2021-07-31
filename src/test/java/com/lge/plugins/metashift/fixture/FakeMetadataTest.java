@@ -64,7 +64,7 @@ public class FakeMetadataTest {
   @Test
   public void testToFile() throws IOException, InterruptedException {
     fakeReport.toFile(report);
-    File file = FileUtils.getFile(report, fakeRecipe.getRecipe(), "metadata.json");
+    File file = FileUtils.getFile(report, fakeRecipe.getName(), "metadata.json");
     assertTrue(file.exists());
     JSONObject object = JsonUtils.createObject(new FilePath(file));
     assertEquals(fakeRecipe.getSourcePath().getAbsolutePath(), object.getString("S"));
