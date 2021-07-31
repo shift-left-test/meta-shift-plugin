@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.common;
+package com.lge.plugins.metashift.models;
 
 /**
  * Aggregate interface.

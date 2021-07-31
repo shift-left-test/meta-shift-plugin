@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift.analysis;
 
-import com.lge.plugins.metashift.common.Aggregate;
+import com.lge.plugins.metashift.models.Aggregate;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.Recipes;
@@ -33,6 +33,11 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * BuildStatusResolver class.
+ *
+ * @author Sung Gon Kim
+ */
 public class BuildStatusResolver implements Aggregate<Result>, Collector<Recipes, Void> {
 
   private final Configuration configuration;

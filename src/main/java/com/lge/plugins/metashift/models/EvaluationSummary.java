@@ -24,7 +24,6 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.common.Aggregate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
