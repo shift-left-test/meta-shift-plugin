@@ -56,7 +56,7 @@ public class Configuration implements Criteria, BuildStatus {
   /**
    * Represents the tolerance of the complexity.
    */
-  private long complexityTolerance;
+  private int complexityTolerance;
 
   /**
    * Represents the threshold for the complexity.
@@ -76,7 +76,7 @@ public class Configuration implements Criteria, BuildStatus {
   /**
    * Represents the duplication tolerance.
    */
-  private long duplicationTolerance;
+  private int duplicationTolerance;
 
   /**
    * Represents the threshold for the duplications.
@@ -193,9 +193,9 @@ public class Configuration implements Criteria, BuildStatus {
       final double recipeViolationThreshold,
       final int commentThreshold,
       final double codeViolationThreshold,
-      final long complexityTolerance,
+      final int complexityTolerance,
       final int complexityThreshold,
-      final long duplicationTolerance,
+      final int duplicationTolerance,
       final int duplicationThreshold,
       final int testThreshold,
       final int statementCoverageThreshold,
@@ -281,12 +281,12 @@ public class Configuration implements Criteria, BuildStatus {
   }
 
   @Override
-  public long getComplexityTolerance() {
+  public int getComplexityTolerance() {
     return complexityTolerance;
   }
 
   @Override
-  public void setComplexityTolerance(long tolerance) {
+  public void setComplexityTolerance(int tolerance) {
     complexityTolerance = tolerance;
   }
 
@@ -321,12 +321,12 @@ public class Configuration implements Criteria, BuildStatus {
   }
 
   @Override
-  public long getDuplicationTolerance() {
+  public int getDuplicationTolerance() {
     return duplicationTolerance;
   }
 
   @Override
-  public void setDuplicationTolerance(long tolerance) {
+  public void setDuplicationTolerance(int tolerance) {
     this.duplicationTolerance = tolerance;
   }
 

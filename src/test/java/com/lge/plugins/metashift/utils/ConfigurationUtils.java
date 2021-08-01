@@ -33,7 +33,7 @@ import com.lge.plugins.metashift.models.Configuration;
  */
 public class ConfigurationUtils {
 
-  public static Configuration of(int threshold, long tolerance, boolean status) {
+  public static Configuration of(int threshold, int tolerance, boolean status) {
     Configuration configuration = new Configuration();
 
     configuration.setPremirrorCacheThreshold(threshold);

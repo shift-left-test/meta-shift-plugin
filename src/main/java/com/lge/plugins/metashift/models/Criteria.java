@@ -92,14 +92,14 @@ public interface Criteria {
    *
    * @return complexity tolerance
    */
-  long getComplexityTolerance();
+  int getComplexityTolerance();
 
   /**
    * Sets the complexity tolerance.
    *
    * @param tolerance fot the complexity
    */
-  void setComplexityTolerance(long tolerance);
+  void setComplexityTolerance(int tolerance);
 
   /**
    * Returns the complexity threshold.
@@ -148,14 +148,14 @@ public interface Criteria {
    *
    * @return minimum duplicate lines
    */
-  long getDuplicationTolerance();
+  int getDuplicationTolerance();
 
   /**
    * Sets the minimum duplicate lines.
    *
    * @param tolerance for duplications
    */
-  void setDuplicationTolerance(long tolerance);
+  void setDuplicationTolerance(int tolerance);
 
   /**
    * Returns the duplication threshold.
