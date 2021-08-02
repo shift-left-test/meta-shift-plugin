@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author Sung Gon Kim
  */
-public class PremirrorCacheParser extends FileParser {
+public class PremirrorCacheParser extends Parser {
 
   private final FilePath path;
   private final DataList dataList;

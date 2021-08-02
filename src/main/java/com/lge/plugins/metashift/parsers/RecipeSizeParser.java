@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author Sung Gon Kim
  */
-public class RecipeSizeParser extends FileParser {
+public class RecipeSizeParser extends Parser {
 
   private final FilePath path;
   private final DataList dataList;

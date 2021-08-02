@@ -22,44 +22,49 @@
  * THE SOFTWARE.
  */
 
-package com.lge.plugins.metashift.models;
+package com.lge.plugins.metashift.parsers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.Callable;
 
 /**
- * Represents a set of Recipe objects.
+ * Parser class.
  *
  * @author Sung Gon Kim
  */
-public final class Recipes extends ArrayList<Recipe> implements Streamable {
+public abstract class Parser implements Callable<Void> {
 
   /**
-   * Represents the UUID of the class.
+   * Test if the path of the file is hidden.
+   *
+   * @param path to a file
+   * @return true if the path is hidden, false otherwise
    */
-  private static final long serialVersionUID = 9217713417115395018L;
+  protected boolean isHidden(String path) {
+    File file = new File(path);
+    do {
+      String filename = file.getName();
+      if (filename.equals(".") || filename.equals("..") || !filename.startsWith(".")) {
+        file = file.getParentFile();
+      } else {
+        return true;
+      }
+    } while (file != null);
+    return false;
+  }
 
   /**
-   * Creates an empty list of Recipe objects.
+   * Parses the report files.
+   *
+   * @throws IOException          if failed to operate with the files
+   * @throws InterruptedException if an interruption occurs
    */
-  public Recipes() {
-    super();
-  }
+  public abstract void parse() throws IOException, InterruptedException;
 
   @Override
-  public <T> boolean contains(final Class<T> clazz) {
-    return stream().anyMatch(recipe -> recipe.contains(clazz));
-  }
-
-  @Override
-  public <T> Stream<T> objects(final Class<T> clazz) {
-    Stream<T> merged = Stream.empty();
-    List<Stream<T>> streams = stream().map(o -> o.objects(clazz)).collect(Collectors.toList());
-    for (Stream<T> stream : streams) {
-      merged = Stream.concat(merged, stream);
-    }
-    return merged;
+  public Void call() throws Exception {
+    parse();
+    return null;
   }
 }

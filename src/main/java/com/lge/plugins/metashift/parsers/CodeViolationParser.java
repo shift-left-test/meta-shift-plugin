@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author Sung Gon Kim
  */
-public class CodeViolationParser extends FileParser {
+public class CodeViolationParser extends Parser {
 
   private final FilePath path;
   private final DataList dataList;

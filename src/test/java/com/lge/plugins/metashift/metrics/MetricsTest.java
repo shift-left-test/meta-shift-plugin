@@ -54,12 +54,14 @@ import com.lge.plugins.metashift.models.SkippedMutationTestData;
 import com.lge.plugins.metashift.models.SkippedTestData;
 import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.SurvivedMutationTestData;
+import com.lge.plugins.metashift.parsers.FileParser;
 import com.lge.plugins.metashift.utils.ConfigurationUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.output.NullPrintStream;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -393,7 +395,7 @@ public class MetricsTest {
         .append("  'Shared State': { 'Found': [], 'Missed': [] }")
         .append("}");
     utils.writeLines(builder, directory, "checkcache", "caches.json");
-    recipe = new Recipe(new FilePath(directory));
+    recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
     assertEvaluator(metrics.getPremirrorCache(), true, false);
     assertCounter(metrics.getPremirrorCache(), 0, 0, 0.0);
@@ -407,7 +409,7 @@ public class MetricsTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    recipe = new Recipe(new FilePath(directory));
+    recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
     assertEvaluator(metrics.getCodeSize(), false, false);
     assertCounter(metrics.getCodeSize(), 0, 0, 0.0);
@@ -419,7 +421,7 @@ public class MetricsTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    recipe = new Recipe(new FilePath(directory));
+    recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
     assertEvaluator(metrics.getCodeViolations(), true, true);
     assertCounter(metrics.getCodeViolations(), 0, 0, 0.0);
@@ -431,7 +433,7 @@ public class MetricsTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    recipe = new Recipe(new FilePath(directory));
+    recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
     assertEvaluator(metrics.getComments(), true, false);
     assertCounter(metrics.getComments(), 0, 0, 0.0);
@@ -443,7 +445,7 @@ public class MetricsTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    recipe = new Recipe(new FilePath(directory));
+    recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
     assertEvaluator(metrics.getComplexity(), true, true);
     assertCounter(metrics.getComplexity(), 0, 0, 0.0);
@@ -456,7 +458,7 @@ public class MetricsTest {
     builder.append("<classes> </classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
 
-    recipe = new Recipe(new FilePath(directory));
+    recipe = new FileParser().parseEach(new FilePath(directory));
     recipe.add(new PassedTestData("B-1.0.0-r0", "test", "test", ""));
 
     metrics.parse(recipe);
@@ -472,7 +474,7 @@ public class MetricsTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
-    recipe = new Recipe(new FilePath(directory));
+    recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
     assertEvaluator(metrics.getDuplications(), true, true);
     assertCounter(metrics.getDuplications(), 0, 0, 0.0);
@@ -484,7 +486,7 @@ public class MetricsTest {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("<mutations></mutations>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
-    recipe = new Recipe(new FilePath(directory));
+    recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
     assertEvaluator(metrics.getMutationTest(), true, false);
     assertCounter(metrics.getMutationTest(), 0, 0, 0.0);
@@ -500,7 +502,7 @@ public class MetricsTest {
     builder = new StringBuilder();
     builder.append("{ 'lines_of_code' : [ ] }");
     utils.writeLines(builder, directory, "checkrecipe", "files.json");
-    recipe = new Recipe(new FilePath(directory));
+    recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
     assertEvaluator(metrics.getRecipeViolations(), true, true);
     assertCounter(metrics.getRecipeViolations(), 0, 0, 0.0);
@@ -512,7 +514,7 @@ public class MetricsTest {
     File directory = utils.createDirectory("report", "C-1.0.0-r0");
     builder.append("<testsuites> </testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
-    recipe = new Recipe(new FilePath(directory));
+    recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
     assertEvaluator(metrics.getTest(), true, false);
     assertCounter(metrics.getTest(), 0, 0, 0.0);

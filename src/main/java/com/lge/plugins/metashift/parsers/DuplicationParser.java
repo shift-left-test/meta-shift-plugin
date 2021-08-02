@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author Sung Gon Kim
  */
-public class DuplicationParser extends FileParser {
+public class DuplicationParser extends Parser {
 
   private final FilePath path;
   private final DataList dataList;

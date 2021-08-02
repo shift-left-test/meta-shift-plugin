@@ -44,7 +44,7 @@ import org.xml.sax.SAXException;
  *
  * @author Sung Gon Kim
  */
-public class CoverageParser extends FileParser {
+public class CoverageParser extends Parser {
 
   private final FilePath path;
   private final DataList dataList;

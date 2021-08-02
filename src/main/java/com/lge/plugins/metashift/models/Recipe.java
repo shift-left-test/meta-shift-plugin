@@ -24,23 +24,6 @@
 
 package com.lge.plugins.metashift.models;
 
-import com.lge.plugins.metashift.parsers.CodeSizeParser;
-import com.lge.plugins.metashift.parsers.CodeViolationParser;
-import com.lge.plugins.metashift.parsers.CommentParser;
-import com.lge.plugins.metashift.parsers.ComplexityParser;
-import com.lge.plugins.metashift.parsers.CoverageParser;
-import com.lge.plugins.metashift.parsers.DuplicationParser;
-import com.lge.plugins.metashift.parsers.MutationTestParser;
-import com.lge.plugins.metashift.parsers.PremirrorCacheParser;
-import com.lge.plugins.metashift.parsers.RecipeSizeParser;
-import com.lge.plugins.metashift.parsers.RecipeViolationParser;
-import com.lge.plugins.metashift.parsers.SharedStateCacheParser;
-import com.lge.plugins.metashift.parsers.TestParser;
-import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
-import hudson.FilePath;
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -63,53 +46,23 @@ public final class Recipe extends Data implements Streamable {
   private final DataList dataList;
 
   /**
-   * Creates a Recipe object using the given recipe directory.
-   *
-   * @param path to the recipe directory
-   * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
-   * @throws IOException              if a file IO fails
-   * @throws InterruptedException     if an interruption occurs
-   */
-  public Recipe(final FilePath path)
-      throws IllegalArgumentException, IOException, InterruptedException {
-    this(path.getName());
-    if (!path.exists()) {
-      throw new IllegalArgumentException("Directory not found: " + path);
-    }
-    if (!path.isDirectory()) {
-      throw new IllegalArgumentException("Not a directory: " + path);
-    }
-    ExecutorServiceUtils.invokeAll(
-        new CodeSizeParser(path, dataList),
-        new CodeViolationParser(path, dataList),
-        new CommentParser(path, dataList),
-        new ComplexityParser(path, dataList),
-        new CoverageParser(path, dataList),
-        new DuplicationParser(path, dataList),
-        new MutationTestParser(path, dataList),
-        new PremirrorCacheParser(path, dataList),
-        new RecipeSizeParser(path, dataList),
-        new RecipeViolationParser(path, dataList),
-        new SharedStateCacheParser(path, dataList),
-        new TestParser(path, dataList)
-    );
-  }
-
-  /**
    * Creates an empty Recipe object with the given recipe name.
    *
    * @param name of the recipe
-   * @throws IllegalArgumentException if the recipe name is malformed
    */
   public Recipe(final String name) throws IllegalArgumentException {
+    this(name, new DataList());
+  }
+
+  /**
+   * Create a Recipe object with the given recipe name.
+   *
+   * @param name     of the recipe
+   * @param dataList objects
+   */
+  public Recipe(final String name, final DataList dataList) {
     super(name);
-    String regexp = "^(?<recipe>[\\w-.+]+)-(?<version>[\\w-.+]+)-(?<revision>[\\w-.+]+)$";
-    Pattern pattern = Pattern.compile(regexp);
-    Matcher matcher = pattern.matcher(name);
-    if (!matcher.matches()) {
-      throw new IllegalArgumentException("Invalid recipe name: " + name);
-    }
-    dataList = new DataList();
+    this.dataList = dataList;
   }
 
   /**

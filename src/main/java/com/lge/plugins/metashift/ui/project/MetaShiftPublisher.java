@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.ui.project;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.parsers.FileParser;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import hudson.AbortException;
@@ -268,7 +269,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     }
 
     try {
-      Recipes recipes = new Recipes(reportPath, listener.getLogger());
+      Recipes recipes = new FileParser(listener.getLogger()).parse(reportPath);
 
       ExecutorServiceUtils
           .invokeAll(publishReport(run, reportPath, listener, configuration, recipes));

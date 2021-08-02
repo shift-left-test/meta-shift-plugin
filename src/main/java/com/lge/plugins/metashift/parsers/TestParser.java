@@ -45,7 +45,7 @@ import org.xml.sax.SAXException;
  *
  * @author Sung Gon Kim
  */
-public class TestParser extends FileParser {
+public class TestParser extends Parser {
 
   private final FilePath path;
   private final DataList dataList;

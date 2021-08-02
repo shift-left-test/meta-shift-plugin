@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author Sung Gon Kim
  */
-public class CommentParser extends FileParser {
+public class CommentParser extends Parser {
 
   private final FilePath path;
   private final DataList dataList;

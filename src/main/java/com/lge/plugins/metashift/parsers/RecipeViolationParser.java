@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author Sung Gon Kim
  */
-public class RecipeViolationParser extends FileParser {
+public class RecipeViolationParser extends Parser {
 
   private final FilePath path;
   private final DataList dataList;

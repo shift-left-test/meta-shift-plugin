@@ -25,27 +25,13 @@
 package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
-import com.lge.plugins.metashift.fixture.FakeRecipe;
-import com.lge.plugins.metashift.fixture.FakeReportBuilder;
-import com.lge.plugins.metashift.fixture.FakeScript;
-import com.lge.plugins.metashift.fixture.FakeSource;
-import com.lge.plugins.metashift.utils.TemporaryFileUtils;
-import hudson.FilePath;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 /**
  * Unit tests for the Recipe class.
@@ -54,41 +40,18 @@ import org.junit.rules.TemporaryFolder;
  */
 public class RecipeTest {
 
-  @Rule
-  public final TemporaryFolder folder = new TemporaryFolder();
-  private TemporaryFileUtils utils;
   private Recipe origin;
   private Recipe same;
-  private FakeReportBuilder builder;
 
   @Before
   public void setUp() {
-    utils = new TemporaryFileUtils(folder);
-    origin = new Recipe("cmake-project-1.0.0-r0");
-    same = new Recipe("cmake-project-1.0.0-r0");
-    builder = new FakeReportBuilder();
+    origin = new Recipe("A-1.0.0-r0");
+    same = new Recipe("A-1.0.0-r0");
   }
 
   @Test
   public void testInitialState() {
-    assertEquals("cmake-project-1.0.0-r0", origin.getName());
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testInitWithEmptyString() {
-    new Recipe("");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testInitWithInsufficientName() {
-    new Recipe("cmake-project");
-  }
-
-  @Test
-  public void testInitWithComplexName() {
-    String name = "A.B.C.qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X-r+1.0-X";
-    Recipe recipe = new Recipe(name);
-    assertEquals(name, recipe.getName());
+    assertEquals("A-1.0.0-r0", origin.getName());
   }
 
   @Test
@@ -132,122 +95,9 @@ public class RecipeTest {
     assertEquals(3, recipe.objects(TestData.class).count());
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeWithUnknownPath() throws IOException, InterruptedException {
-    new Recipe(new FilePath(utils.getPath("path-to-unknown")));
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeWithoutDirectory() throws IOException, InterruptedException {
-    new Recipe(new FilePath(utils.createFile("path-to-file")));
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testCreateRecipeWithMalformedDirectoryName()
-      throws IOException, InterruptedException {
-    new Recipe(new FilePath(utils.createDirectory("report", "ABC")));
-  }
-
-  @Test
-  public void testCreateRecipeWithEmptyRecipeDirectory() throws IOException, InterruptedException {
-    File directory = utils.createDirectory("report", "cmake-project-1.0.0-r0");
-    Recipe recipe = new Recipe(new FilePath(directory));
-    assertEquals("cmake-project-1.0.0-r0", recipe.getName());
-    assertEquals(0, recipe.objects(Data.class).count());
-    assertFalse(recipe.contains(Data.class));
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testParseInvalidFormatFiles() throws IOException, InterruptedException {
-    File source = utils.createDirectory("source");
-    File report = utils.createDirectory("report");
-    FakeRecipe fakeRecipe = new FakeRecipe(source);
-    fakeRecipe.add(new FakeSource(10, 5, 5, 0));
-    builder.add(fakeRecipe);
-    builder.toFile(report);
-    File file = FileUtils.getFile(report, fakeRecipe.getName(), "checkcode", "sage_report.json");
-    FileUtils.write(file, "{ }", StandardCharsets.UTF_8);
-    new Recipe(new FilePath(new File(report, fakeRecipe.getName())));
-  }
-
-  @Test
-  public void testParseSingleSourceFiles() throws IOException, InterruptedException {
-    File source = utils.createDirectory("source");
-    File report = utils.createDirectory("report");
-    FakeRecipe fakeRecipe = new FakeRecipe(source).setPremirror(1, 2).setSharedState(3, 4)
-        .add(new FakeScript(10, 1, 2, 3))
-        .add(new FakeSource(10, 5, 5, 3)
-            .setComplexity(100, 1, 2)
-            .setCodeViolations(1, 2, 3)
-            .setTests(1, 2, 3, 4)
-            .setStatementCoverage(1, 2)
-            .setBranchCoverage(3, 4)
-            .setMutationTests(1, 2, 3));
-    builder.add(fakeRecipe);
-    builder.toFile(report);
-
-    Recipe recipe = new Recipe(new FilePath(new File(report, fakeRecipe.getName())));
-    assertEquals(3, recipe.objects(PremirrorCacheData.class).count());
-    assertEquals(7, recipe.objects(SharedStateCacheData.class).count());
-    assertEquals(1, recipe.objects(CommentData.class).count());
-    assertEquals(1, recipe.objects(DuplicationData.class).count());
-    assertEquals(6, recipe.objects(CodeViolationData.class).count());
-    assertEquals(3, recipe.objects(ComplexityData.class).count());
-    assertEquals(6, recipe.objects(RecipeViolationData.class).count());
-    assertEquals(10, recipe.objects(TestData.class).count());
-    assertEquals(3, recipe.objects(StatementCoverageData.class).count());
-    assertEquals(7, recipe.objects(BranchCoverageData.class).count());
-    assertEquals(6, recipe.objects(MutationTestData.class).count());
-
-    assertTrue(recipe.contains(CacheData.class));
-    assertTrue(recipe.contains(RecipeViolationData.class));
-    assertTrue(recipe.contains(CodeViolationData.class));
-    assertTrue(recipe.contains(TestData.class));
-    assertTrue(recipe.contains(CoverageData.class));
-    assertTrue(recipe.contains(MutationTestData.class));
-  }
-
-  @Test
-  public void testParseMultipleSourceFiles() throws IOException, InterruptedException {
-    File source = utils.createDirectory("source");
-    File report = utils.createDirectory("report");
-    FakeRecipe fakeRecipe = new FakeRecipe(source).setPremirror(1, 2).setSharedState(3, 4)
-        .add(new FakeScript(10, 1, 2, 3))
-        .add(new FakeScript(10, 1, 2, 3))
-        .add(new FakeSource(10, 5, 5, 3)
-            .setComplexity(100, 1, 2)
-            .setCodeViolations(1, 2, 3)
-            .setTests(1, 2, 3, 4)
-            .setStatementCoverage(1, 2)
-            .setBranchCoverage(3, 4)
-            .setMutationTests(1, 2, 3))
-        .add(new FakeSource(10, 5, 5, 3)
-            .setComplexity(100, 1, 2)
-            .setCodeViolations(1, 2, 3)
-            .setTests(1, 2, 3, 4)
-            .setStatementCoverage(1, 2)
-            .setBranchCoverage(3, 4)
-            .setMutationTests(1, 2, 3));
-    builder.add(fakeRecipe);
-    builder.toFile(report);
-
-    Recipe recipe = new Recipe(new FilePath(new File(report, fakeRecipe.getName())));
-    assertEquals(3, recipe.objects(PremirrorCacheData.class).count());
-    assertEquals(7, recipe.objects(SharedStateCacheData.class).count());
-    assertEquals(2, recipe.objects(CommentData.class).count());
-    assertEquals(2, recipe.objects(DuplicationData.class).count());
-    assertEquals(12, recipe.objects(CodeViolationData.class).count());
-    assertEquals(6, recipe.objects(ComplexityData.class).count());
-    assertEquals(12, recipe.objects(RecipeViolationData.class).count());
-    assertEquals(20, recipe.objects(TestData.class).count());
-    assertEquals(6, recipe.objects(StatementCoverageData.class).count());
-    assertEquals(14, recipe.objects(BranchCoverageData.class).count());
-    assertEquals(12, recipe.objects(MutationTestData.class).count());
-  }
-
   @Test
   public void testToJsonObject() {
     JSONObject object = origin.toJsonObject();
-    assertEquals("cmake-project-1.0.0-r0", object.getString("name"));
+    assertEquals("A-1.0.0-r0", object.getString("name"));
   }
 }
