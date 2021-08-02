@@ -88,7 +88,7 @@ public class RecipeViolationCounterTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new MajorRecipeViolationData("A-A-A", "a.file", 1, "X", "X", "X"));
     recipe1.add(new MinorRecipeViolationData("A-A-A", "a.file", 1, "X", "X", "X"));
     recipe1.add(new InfoRecipeViolationData("A-A-A", "a.file", 1, "X", "X", "X"));

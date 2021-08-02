@@ -61,7 +61,6 @@ import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.output.NullPrintStream;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

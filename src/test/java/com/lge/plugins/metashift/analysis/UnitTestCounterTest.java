@@ -91,7 +91,7 @@ public class UnitTestCounterTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new PassedTestData("A-A-A", "A", "A", "X"));
     recipe1.add(new FailedTestData("A-A-A", "A", "B", "X"));
     recipe1.add(new ErrorTestData("A-A-A", "A", "C", "X"));

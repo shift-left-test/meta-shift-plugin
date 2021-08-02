@@ -98,7 +98,7 @@ public class BranchCoverageEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipeWithUnqualifiedData() {
+  public void testParseSingleRecipeWithUnqualifiedData() {
     recipe1.add(new PassedTestData("A-A-A", "A", "X", "X"));
     recipe1.add(new BranchCoverageData("A-A-A", "a.file", 1, 1, false));
     recipe1.add(new BranchCoverageData("A-A-A", "b.file", 1, 1, false));

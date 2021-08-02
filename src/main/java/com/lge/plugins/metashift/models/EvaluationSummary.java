@@ -32,22 +32,22 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * @author Sung Gon Kim
  */
-public class EvaluationSummary extends Data implements Aggregate<Double> {
+public class EvaluationSummary extends Data implements Aggregate<Evaluation> {
 
   private static final long serialVersionUID = -3037651377691916500L;
 
-  private final long linesOfCode;
-  private final double premirrorCache;
-  private final double sharedStateCache;
-  private final double recipeViolations;
-  private final double comments;
-  private final double codeViolations;
-  private final double complexity;
-  private final double duplications;
-  private final double unitTests;
-  private final double statementCoverage;
-  private final double branchCoverage;
-  private final double mutationTests;
+  private final LinesOfCode linesOfCode;
+  private final Evaluation premirrorCache;
+  private final Evaluation sharedStateCache;
+  private final Evaluation recipeViolations;
+  private final Evaluation comments;
+  private final Evaluation codeViolations;
+  private final Evaluation complexity;
+  private final Evaluation duplications;
+  private final Evaluation unitTests;
+  private final Evaluation statementCoverage;
+  private final Evaluation branchCoverage;
+  private final Evaluation mutationTests;
 
   /**
    * Default constructor.
@@ -72,18 +72,18 @@ public class EvaluationSummary extends Data implements Aggregate<Double> {
       Evaluation unitTests, Evaluation statementCoverage, Evaluation branchCoverage,
       Evaluation mutationTests) {
     super(name);
-    this.linesOfCode = linesOfCode.getLines();
-    this.premirrorCache = premirrorCache.getRatio();
-    this.sharedStateCache = sharedStateCache.getRatio();
-    this.recipeViolations = recipeViolations.getRatio();
-    this.comments = comments.getRatio();
-    this.codeViolations = codeViolations.getRatio();
-    this.complexity = complexity.getRatio();
-    this.duplications = duplications.getRatio();
-    this.unitTests = unitTests.getRatio();
-    this.statementCoverage = statementCoverage.getRatio();
-    this.branchCoverage = branchCoverage.getRatio();
-    this.mutationTests = mutationTests.getRatio();
+    this.linesOfCode = linesOfCode;
+    this.premirrorCache = premirrorCache;
+    this.sharedStateCache = sharedStateCache;
+    this.recipeViolations = recipeViolations;
+    this.comments = comments;
+    this.codeViolations = codeViolations;
+    this.complexity = complexity;
+    this.duplications = duplications;
+    this.unitTests = unitTests;
+    this.statementCoverage = statementCoverage;
+    this.branchCoverage = branchCoverage;
+    this.mutationTests = mutationTests;
   }
 
   @Override
@@ -116,62 +116,62 @@ public class EvaluationSummary extends Data implements Aggregate<Double> {
    *
    * @return the lines of code
    */
-  public long getLinesOfCode() {
+  public LinesOfCode getLinesOfCode() {
     return linesOfCode;
   }
 
   @Override
-  public Double getPremirrorCache() {
+  public Evaluation getPremirrorCache() {
     return premirrorCache;
   }
 
   @Override
-  public Double getSharedStateCache() {
+  public Evaluation getSharedStateCache() {
     return sharedStateCache;
   }
 
   @Override
-  public Double getRecipeViolations() {
+  public Evaluation getRecipeViolations() {
     return recipeViolations;
   }
 
   @Override
-  public Double getComments() {
+  public Evaluation getComments() {
     return comments;
   }
 
   @Override
-  public Double getCodeViolations() {
+  public Evaluation getCodeViolations() {
     return codeViolations;
   }
 
   @Override
-  public Double getComplexity() {
+  public Evaluation getComplexity() {
     return complexity;
   }
 
   @Override
-  public Double getDuplications() {
+  public Evaluation getDuplications() {
     return duplications;
   }
 
   @Override
-  public Double getUnitTests() {
+  public Evaluation getUnitTests() {
     return unitTests;
   }
 
   @Override
-  public Double getStatementCoverage() {
+  public Evaluation getStatementCoverage() {
     return statementCoverage;
   }
 
   @Override
-  public Double getBranchCoverage() {
+  public Evaluation getBranchCoverage() {
     return branchCoverage;
   }
 
   @Override
-  public Double getMutationTests() {
+  public Evaluation getMutationTests() {
     return mutationTests;
   }
 }

@@ -100,7 +100,7 @@ public class ComplexityEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipeWithUnqualifiedData() {
+  public void testParseSingleRecipeWithUnqualifiedData() {
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
     recipe1.add(new ComplexityData("A-A-A", "a.file", "func1", 1, 1, 10));
     recipe1.add(new ComplexityData("A-A-A", "a.file", "func2", 1, 1, 10));
@@ -120,7 +120,7 @@ public class ComplexityEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipeWithLowTolerance() {
+  public void testParseSingleRecipeWithLowTolerance() {
     configuration.setComplexityTolerance(0);
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
     recipe1.add(new ComplexityData("A-A-A", "a.file", "func1", 1, 1, 10));

@@ -88,7 +88,7 @@ public class DuplicationCounterTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
     recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 1));
     assertValues(10, 10);
@@ -96,7 +96,7 @@ public class DuplicationCounterTest {
   }
 
   @Test
-  public void testParseSingRecipeWithLowTolerance() {
+  public void testParseSingleRecipeWithLowTolerance() {
     configuration.setDuplicationTolerance(0);
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
     recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 1));
@@ -105,7 +105,7 @@ public class DuplicationCounterTest {
   }
 
   @Test
-  public void testParseSingRecipeWithHighTolerance() {
+  public void testParseSingleRecipeWithHighTolerance() {
     configuration.setDuplicationTolerance(100);
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
     recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 1));

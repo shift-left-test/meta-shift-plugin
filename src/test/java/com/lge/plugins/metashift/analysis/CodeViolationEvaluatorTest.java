@@ -100,7 +100,7 @@ public class CodeViolationEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipeWithUnqualifiedData() {
+  public void testParseSingleRecipeWithUnqualifiedData() {
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 1, 1, 1));
     recipe1.add(new MajorCodeViolationData("A-A-A", "a.file", 1, 1, "X", "X", "X", "X", "X"));
     recipe1.add(new MinorCodeViolationData("A-A-A", "a.file", 1, 1, "X", "X", "X", "X", "X"));

@@ -88,7 +88,7 @@ public class MutationTestCounterTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new KilledMutationTestData("A-A-A", "a.file", "X", "X", 1, "X", "X"));
     recipe1.add(new SurvivedMutationTestData("A-A-A", "b.file", "X", "X", 1, "X", "X"));
     recipe1.add(new SkippedMutationTestData("A-A-A", "c.file", "X", "X", 1, "X", "X"));

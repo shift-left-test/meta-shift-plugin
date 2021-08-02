@@ -59,17 +59,17 @@ public class EvaluationSummaryTest {
         newEvaluation(true, 10, 9, 0.5),
         newEvaluation(true, 10, 10, 0.5)
     );
-    assertEquals(1, summary.getLinesOfCode());
-    assertEquals(0.0, summary.getPremirrorCache(), 0.01);
-    assertEquals(0.1, summary.getSharedStateCache(), 0.01);
-    assertEquals(0.2, summary.getRecipeViolations(), 0.01);
-    assertEquals(0.3, summary.getComments(), 0.01);
-    assertEquals(0.4, summary.getCodeViolations(), 0.01);
-    assertEquals(0.5, summary.getComplexity(), 0.01);
-    assertEquals(0.6, summary.getDuplications(), 0.01);
-    assertEquals(0.7, summary.getUnitTests(), 0.01);
-    assertEquals(0.8, summary.getStatementCoverage(), 0.01);
-    assertEquals(0.9, summary.getBranchCoverage(), 0.01);
-    assertEquals(1.0, summary.getMutationTests(), 0.01);
+    assertEquals(1, summary.getLinesOfCode().getLines());
+    assertEquals(0.0, summary.getPremirrorCache().getRatio(), 0.01);
+    assertEquals(0.1, summary.getSharedStateCache().getRatio(), 0.01);
+    assertEquals(0.2, summary.getRecipeViolations().getRatio(), 0.01);
+    assertEquals(0.3, summary.getComments().getRatio(), 0.01);
+    assertEquals(0.4, summary.getCodeViolations().getRatio(), 0.01);
+    assertEquals(0.5, summary.getComplexity().getRatio(), 0.01);
+    assertEquals(0.6, summary.getDuplications().getRatio(), 0.01);
+    assertEquals(0.7, summary.getUnitTests().getRatio(), 0.01);
+    assertEquals(0.8, summary.getStatementCoverage().getRatio(), 0.01);
+    assertEquals(0.9, summary.getBranchCoverage().getRatio(), 0.01);
+    assertEquals(1.0, summary.getMutationTests().getRatio(), 0.01);
   }
 }

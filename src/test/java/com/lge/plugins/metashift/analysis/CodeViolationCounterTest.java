@@ -88,7 +88,7 @@ public class CodeViolationCounterTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new MajorCodeViolationData("A-A-A", "a.file", 1, 1, "X", "X", "X", "X", "X"));
     recipe1.add(new MinorCodeViolationData("A-A-A", "a.file", 1, 1, "X", "X", "X", "X", "X"));
     recipe1.add(new InfoCodeViolationData("A-A-A", "a.file", 1, 1, "X", "X", "X", "X", "X"));

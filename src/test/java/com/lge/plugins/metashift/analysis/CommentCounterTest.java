@@ -84,7 +84,7 @@ public class CommentCounterTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new CommentData("A-A-A", "a.file", 2, 1));
     recipe1.add(new CommentData("A-A-A", "b.file", 2, 1));
     assertValues(2, 2);

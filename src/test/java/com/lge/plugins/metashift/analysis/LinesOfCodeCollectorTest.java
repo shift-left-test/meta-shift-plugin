@@ -79,7 +79,7 @@ public class LinesOfCodeCollectorTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 1, 1, 1));
     recipe1.add(new CodeSizeData("A-A-A", "b.file", 1, 1, 1));
     assertValues(2, 2, 2, 2, 1);

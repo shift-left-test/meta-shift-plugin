@@ -89,7 +89,7 @@ public class PremirrorCacheEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipeWithUnqualifiedData() {
+  public void testParseSingleRecipeWithUnqualifiedData() {
     recipe1.add(new PremirrorCacheData("A-A-A", "A", false));
     recipe1.add(new PremirrorCacheData("A-A-A", "B", false));
     assertValues(2, 0, 0.0);

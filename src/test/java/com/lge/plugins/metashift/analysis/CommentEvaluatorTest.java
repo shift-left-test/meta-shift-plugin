@@ -97,7 +97,7 @@ public class CommentEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipeWithUnqualifiedData() {
+  public void testParseSingleRecipeWithUnqualifiedData() {
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 3, 1, 1));
     recipe1.add(new CodeSizeData("A-A-A", "b.file", 3, 1, 1));
     recipe1.add(new CommentData("A-A-A", "a.file", 3, 1));

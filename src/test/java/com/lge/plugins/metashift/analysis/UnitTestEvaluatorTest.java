@@ -92,7 +92,7 @@ public class UnitTestEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipeWithUnqualifiedData() {
+  public void testParseSingleRecipeWithUnqualifiedData() {
     recipe1.add(new PassedTestData("A-A-A", "A", "A", "X"));
     recipe1.add(new FailedTestData("A-A-A", "A", "B", "X"));
     recipe1.add(new ErrorTestData("A-A-A", "A", "C", "X"));

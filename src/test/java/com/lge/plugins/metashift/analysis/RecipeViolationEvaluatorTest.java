@@ -101,7 +101,7 @@ public class RecipeViolationEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipeWithUnqualifiedData() {
+  public void testParseSingleRecipeWithUnqualifiedData() {
     recipe1.add(new RecipeSizeData("A-A-A", "a.file", 1));
     recipe1.add(new MajorRecipeViolationData("A-A-A", "a.file", 1, "X", "X", "X"));
     recipe1.add(new MinorRecipeViolationData("A-A-A", "a.file", 1, "X", "X", "X"));

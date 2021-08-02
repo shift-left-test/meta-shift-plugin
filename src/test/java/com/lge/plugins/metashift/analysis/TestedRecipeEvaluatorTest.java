@@ -57,7 +57,7 @@ public class TestedRecipeEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 1, 1, 1));
     recipe1.add(new FailedTestData("A-A-A", "A", "A", "A"));
     assertValues(1, 1, 1.0);

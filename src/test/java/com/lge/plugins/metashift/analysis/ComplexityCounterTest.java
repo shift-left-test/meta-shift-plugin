@@ -88,7 +88,7 @@ public class ComplexityCounterTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new ComplexityData("A-A-A", "a.file", "func1", 1, 1, 10));
     recipe1.add(new ComplexityData("A-A-A", "a.file", "func2", 2, 2, 1));
     assertValues(1, 1);
@@ -96,7 +96,7 @@ public class ComplexityCounterTest {
   }
 
   @Test
-  public void testParseSingRecipeWithLowTolerance() {
+  public void testParseSingleRecipeWithLowTolerance() {
     configuration.setComplexityTolerance(0);
     recipe1.add(new ComplexityData("A-A-A", "a.file", "func1", 1, 1, 10));
     recipe1.add(new ComplexityData("A-A-A", "a.file", "func2", 2, 2, 1));
@@ -105,7 +105,7 @@ public class ComplexityCounterTest {
   }
 
   @Test
-  public void testParseSingRecipeWithHighTolerance() {
+  public void testParseSingleRecipeWithHighTolerance() {
     configuration.setComplexityTolerance(100);
     recipe1.add(new ComplexityData("A-A-A", "a.file", "func1", 1, 1, 10));
     recipe1.add(new ComplexityData("A-A-A", "a.file", "func2", 2, 2, 1));

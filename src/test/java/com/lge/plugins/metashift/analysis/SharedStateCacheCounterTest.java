@@ -84,7 +84,7 @@ public class SharedStateCacheCounterTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new SharedStateCacheData("A-A-A", "A", true));
     recipe1.add(new SharedStateCacheData("A-A-A", "B", false));
     assertValues(1, 1);

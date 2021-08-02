@@ -100,7 +100,7 @@ public class DuplicationEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipeWithUnqualifiedData() {
+  public void testParseSingleRecipeWithUnqualifiedData() {
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
     recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 10));
@@ -120,7 +120,7 @@ public class DuplicationEvaluatorTest {
   }
 
   @Test
-  public void testParseSingRecipeWithLowTolerance() {
+  public void testParseSingleRecipeWithLowTolerance() {
     configuration.setDuplicationTolerance(0);
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));

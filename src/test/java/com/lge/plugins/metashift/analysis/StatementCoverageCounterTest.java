@@ -84,7 +84,7 @@ public class StatementCoverageCounterTest {
   }
 
   @Test
-  public void testParseSingRecipe() {
+  public void testParseSingleRecipe() {
     recipe1.add(new StatementCoverageData("A-A-A", "a.file", 1, true));
     recipe1.add(new StatementCoverageData("A-A-A", "b.file", 1, true));
     assertValues(2, 0);
