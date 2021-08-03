@@ -24,33 +24,16 @@
 
 package com.lge.plugins.metashift.models;
 
-import java.io.Serializable;
-
 /**
- * TreemapData class.
+ * NegativeTreemapData class.
  *
  * @author Sung Gon Kim
  */
-public abstract class TreemapData implements Serializable {
+public class NegativeTreemapData extends TreemapData {
 
-  /**
-   * Grade enumeration.
-   */
-  public enum Grade {
-    BEST,
-    BETTER,
-    GOOD,
-    ORDINARY,
-    BAD,
-    WORSE,
-    WORST,
-  }
+  private static final long serialVersionUID = -3614276430684611714L;
 
-  private static final long serialVersionUID = -5314580050953091011L;
-
-  private final String name;
-  private final long linesOfCode;
-  private final double value;
+  private final double max;
 
   /**
    * Default constructor.
@@ -59,43 +42,21 @@ public abstract class TreemapData implements Serializable {
    * @param linesOfCode the number of lines
    * @param value       of the data
    */
-  public TreemapData(String name, long linesOfCode, double value) {
-    this.name = name;
-    this.linesOfCode = linesOfCode;
-    this.value = Math.max(0.0, value);
+  public NegativeTreemapData(String name, long linesOfCode, double max, double value) {
+    super(name, linesOfCode, value);
+    this.max = max;
   }
 
-  /**
-   * Returns the name of the data.
-   *
-   * @return recipe name
-   */
-  public String getName() {
-    return name;
+  @Override
+  public Grade getGrade() {
+    int length = Grade.values().length;
+    double slot = max / (double) length;
+    double ratio = getValue();
+    for (int i = 0; i < length; i++) {
+      if (slot * i <= ratio && ratio < slot * (i + 1)) {
+        return Grade.values()[i];
+      }
+    }
+    return Grade.WORST;
   }
-
-  /**
-   * Returns the lines of code.
-   *
-   * @return the lines of code
-   */
-  public long getLinesOfCode() {
-    return linesOfCode;
-  }
-
-  /**
-   * Returns the value of the data.
-   *
-   * @return the value of the data
-   */
-  public double getValue() {
-    return value;
-  }
-
-  /**
-   * Returns the grade of the data.
-   *
-   * @return grade
-   */
-  public abstract Grade getGrade();
 }
