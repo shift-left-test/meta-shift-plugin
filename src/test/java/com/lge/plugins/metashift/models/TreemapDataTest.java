@@ -51,17 +51,17 @@ public class TreemapDataTest {
     assertEquals(name, o.getName());
     assertEquals(linesOfCode, o.getLinesOfCode());
     assertEquals(value, o.getValue(), 0.01);
-    assertEquals(grade, o.getGrade());
+    assertEquals(grade.ordinal(), o.getGrade());
   }
 
   private void assertPositiveGrade(double value, Grade grade) {
     TreemapData o = new PositiveTreemapData("", 0, MAX, value);
-    assertEquals(grade, o.getGrade());
+    assertEquals(grade.ordinal(), o.getGrade());
   }
 
   private void assertNegativeGrade(double value, Grade grade) {
     TreemapData o = new NegativeTreemapData("", 0, MAX, value);
-    assertEquals(grade, o.getGrade());
+    assertEquals(grade.ordinal(), o.getGrade());
   }
 
   @Test

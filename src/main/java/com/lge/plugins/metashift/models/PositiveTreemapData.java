@@ -49,15 +49,15 @@ public class PositiveTreemapData extends TreemapData {
   }
 
   @Override
-  public Grade getGrade() {
+  public int getGrade() {
     int length = Grade.values().length;
     double slot = max / (double) length;
     double ratio = getValue();
     for (int i = 0; i < length; i++) {
       if (slot * i <= ratio && ratio < slot * (i + 1)) {
-        return Grade.values()[length - 1 - i];
+        return Grade.values()[length - 1 - i].ordinal();
       }
     }
-    return Grade.BEST;
+    return Grade.BEST.ordinal();
   }
 }

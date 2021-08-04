@@ -48,15 +48,15 @@ public class NegativeTreemapData extends TreemapData {
   }
 
   @Override
-  public Grade getGrade() {
+  public int getGrade() {
     int length = Grade.values().length;
     double slot = max / (double) length;
     double ratio = getValue();
     for (int i = 0; i < length; i++) {
       if (slot * i <= ratio && ratio < slot * (i + 1)) {
-        return Grade.values()[i];
+        return Grade.values()[i].ordinal();
       }
     }
-    return Grade.WORST;
+    return Grade.WORST.ordinal();
   }
 }

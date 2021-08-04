@@ -97,5 +97,5 @@ public abstract class TreemapData implements Serializable {
    *
    * @return grade
    */
-  public abstract Grade getGrade();
+  public abstract int getGrade();
 }

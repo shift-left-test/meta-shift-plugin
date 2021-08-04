@@ -75,7 +75,7 @@ public class TreemapDataAggregatorTest {
     assertEquals(recipe, objects.get(index).getName());
     assertEquals(linesOfCode, objects.get(index).getLinesOfCode());
     assertEquals(value, objects.get(index).getValue(), 0.01);
-    assertEquals(grade, objects.get(index).getGrade());
+    assertEquals(grade.ordinal(), objects.get(index).getGrade());
   }
 
   @Test
