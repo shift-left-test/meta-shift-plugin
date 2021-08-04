@@ -33,12 +33,21 @@ import java.io.Serializable;
  */
 public abstract class Evaluation implements Serializable {
 
+  /**
+   * Represents the evaluation type.
+   */
+  protected enum Type {
+    POSITIVE,
+    NEGATIVE,
+  }
+
   private static final long serialVersionUID = 6414517999564046375L;
 
   private final boolean available;
   private final long denominator;
   private final long numerator;
   private final double threshold;
+  private final Type type;
 
   /**
    * Default constructor.
@@ -47,12 +56,15 @@ public abstract class Evaluation implements Serializable {
    * @param denominator value
    * @param numerator   value
    * @param threshold   value
+   * @param type        value
    */
-  public Evaluation(boolean available, long denominator, long numerator, double threshold) {
+  public Evaluation(boolean available, long denominator, long numerator, double threshold,
+      Type type) {
     this.available = available;
     this.denominator = denominator;
     this.numerator = numerator;
     this.threshold = threshold;
+    this.type = type;
   }
 
   /**
@@ -65,6 +77,7 @@ public abstract class Evaluation implements Serializable {
     this.denominator = other.denominator;
     this.numerator = other.numerator;
     this.threshold = other.threshold;
+    this.type = other.type;
   }
 
   /**
@@ -117,5 +130,14 @@ public abstract class Evaluation implements Serializable {
    */
   public double getThreshold() {
     return threshold;
+  }
+
+  /**
+   * Returns the evaluation type.
+   *
+   * @return evaluation type
+   */
+  public String getType() {
+    return type.name();
   }
 }

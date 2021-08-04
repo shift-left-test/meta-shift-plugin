@@ -42,7 +42,7 @@ public class PositiveEvaluation extends Evaluation {
    * @param threshold   value
    */
   public PositiveEvaluation(boolean available, long denominator, long numerator, double threshold) {
-    super(available, denominator, numerator, threshold);
+    super(available, denominator, numerator, threshold, Type.POSITIVE);
   }
 
   /**
