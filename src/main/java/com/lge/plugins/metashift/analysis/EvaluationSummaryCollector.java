@@ -63,6 +63,7 @@ public class EvaluationSummaryCollector implements Collector<Recipe, EvaluationS
     return createEvaluationSummary(recipe.getName(), recipe);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private EvaluationSummary createEvaluationSummary(String name, Streamable o) {
     return new EvaluationSummary(
         name,

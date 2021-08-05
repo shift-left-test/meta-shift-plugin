@@ -71,4 +71,10 @@ public class LinesOfCodeTest {
     assertValues(first.getDifference(second), 10, 20, 30, 40, 55);
     assertValues(second.getDifference(first), -10, -20, -30, -40, -55);
   }
+
+  @Test
+  public void testGetDifferenceWithNull() {
+    assertValues(first.getDifference(null), 11, 22, 33, 44, 55);
+    assertValues(second.getDifference(null), 1, 2, 3, 4, 0);
+  }
 }

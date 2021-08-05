@@ -75,7 +75,7 @@ public class FakeCoverageReport implements FakeReport {
 
   private List<String> createBranchCoverageMissed(FakeSource source, long index) {
     List<String> lines = new ArrayList<>();
-    if (source.getBranchCoverageCovered() == 0) {
+    if (source.getBranchCoverageMissed() == 0) {
       return lines;
     }
     long branch_number = 0;

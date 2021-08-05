@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -46,7 +47,9 @@ import org.apache.commons.io.IOUtils;
  *
  * @author Sung Gon Kim
  */
-public class FileStore {
+public class FileStore implements Serializable {
+
+  private static final long serialVersionUID = 4545484736312677003L;
 
   /**
    * Represents the path to storage directory.

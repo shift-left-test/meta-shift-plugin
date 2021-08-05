@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * LinesOfCode class.
@@ -123,12 +124,13 @@ public class LinesOfCode implements Serializable {
    * @return object with the difference values
    */
   public LinesOfCode getDifference(LinesOfCode other) {
+    LinesOfCode o = Optional.ofNullable(other).orElse(new LinesOfCode(0, 0, 0, 0, 0));
     return new LinesOfCode(
-        this.lines - other.lines,
-        this.functions - other.functions,
-        this.classes - other.classes,
-        this.files - other.files,
-        this.recipes - other.recipes
+        this.lines - o.lines,
+        this.functions - o.functions,
+        this.classes - o.classes,
+        this.files - o.files,
+        this.recipes - o.recipes
     );
   }
 }

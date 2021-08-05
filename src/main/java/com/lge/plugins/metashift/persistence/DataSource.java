@@ -30,13 +30,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * Provides functionalities to map keys and values using the filesystem.
  *
  * @author Sung Gon Kim
  */
-public class DataSource {
+public class DataSource implements Serializable {
+
+  private static final long serialVersionUID = -2877661754512254098L;
 
   /**
    * Represents the file store object.
