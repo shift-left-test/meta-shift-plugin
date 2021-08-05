@@ -73,7 +73,7 @@ public class CommentDataWriterTest {
     treemapAggregator = new TreemapDataAggregator(new CommentEvaluator(configuration));
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
     reader = new ArchiveReader(dataSource).getComments();
-    writer = new ArchiveWriter(dataSource).getComments();
+    writer = new ArchiveWriter(dataSource, new FilePath(folder.newFolder())).getComments();
     recipe1 = new Recipe(RECIPE1);
     recipe2 = new Recipe(RECIPE2);
     recipes = new Recipes();

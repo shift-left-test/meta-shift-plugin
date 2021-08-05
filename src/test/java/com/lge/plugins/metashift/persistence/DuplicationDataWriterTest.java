@@ -75,7 +75,7 @@ public class DuplicationDataWriterTest {
     treemapAggregator = new TreemapDataAggregator(new DuplicationEvaluator(configuration));
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
     reader = new ArchiveReader(dataSource).getDuplications();
-    writer = new ArchiveWriter(dataSource).getDuplications();
+    writer = new ArchiveWriter(dataSource, new FilePath(folder.newFolder())).getDuplications();
     recipe1 = new Recipe(RECIPE1);
     recipe2 = new Recipe(RECIPE2);
     recipes = new Recipes();
@@ -119,7 +119,8 @@ public class DuplicationDataWriterTest {
     assertEquals(expected, reader.getSummaries(recipe.getName()));
   }
 
-  private void assertObjects(Recipe recipe, String file, JSONArray expected) throws IOException {
+  private void assertObjects(Recipe recipe, String file, JSONArray expected)
+      throws IOException, InterruptedException {
     writer.addObjects(recipe);
     assertEquals(expected, reader.getObjects(recipe.getName(), file));
   }
@@ -183,7 +184,7 @@ public class DuplicationDataWriterTest {
   }
 
   @Test
-  public void getRecipeObjects() throws IOException {
+  public void testGetRecipeObjects() throws IOException, InterruptedException {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 0, 0));
     List<DuplicationData> first = Collections.singletonList(
         new DuplicationData(RECIPE1, "a.file", 1, 0));

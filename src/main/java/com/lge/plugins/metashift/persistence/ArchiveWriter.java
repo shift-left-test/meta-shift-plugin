@@ -30,6 +30,7 @@ import com.lge.plugins.metashift.models.TreemapData;
 import com.lge.plugins.metashift.persistence.Archiver.Data;
 import com.lge.plugins.metashift.persistence.Archiver.Metric;
 import com.lge.plugins.metashift.persistence.Archiver.Scope;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.List;
 import net.sf.json.JSONArray;
@@ -43,14 +44,17 @@ import net.sf.json.JSONObject;
 public class ArchiveWriter implements Aggregate<DataWriter> {
 
   private final DataSource dataSource;
+  private final FilePath path;
 
   /**
    * Default constructor.
    *
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public ArchiveWriter(DataSource dataSource) {
+  public ArchiveWriter(DataSource dataSource, FilePath path) {
     this.dataSource = dataSource;
+    this.path = path;
   }
 
   /**
@@ -92,56 +96,56 @@ public class ArchiveWriter implements Aggregate<DataWriter> {
 
   @Override
   public CacheDataWriter getPremirrorCache() {
-    return new CacheDataWriter(Metric.PREMIRROR_CACHE, dataSource);
+    return new CacheDataWriter(Metric.PREMIRROR_CACHE, dataSource, path);
   }
 
   @Override
   public CacheDataWriter getSharedStateCache() {
-    return new CacheDataWriter(Metric.SHARED_STATE_CACHE, dataSource);
+    return new CacheDataWriter(Metric.SHARED_STATE_CACHE, dataSource, path);
   }
 
   @Override
   public RecipeViolationDataWriter getRecipeViolations() {
-    return new RecipeViolationDataWriter(dataSource);
+    return new RecipeViolationDataWriter(dataSource, path);
   }
 
   @Override
   public CommentDataWriter getComments() {
-    return new CommentDataWriter(dataSource);
+    return new CommentDataWriter(dataSource, path);
   }
 
   @Override
   public CodeViolationDataWriter getCodeViolations() {
-    return new CodeViolationDataWriter(dataSource);
+    return new CodeViolationDataWriter(dataSource, path);
   }
 
   @Override
   public ComplexityDataWriter getComplexity() {
-    return new ComplexityDataWriter(dataSource);
+    return new ComplexityDataWriter(dataSource, path);
   }
 
   @Override
   public DuplicationDataWriter getDuplications() {
-    return new DuplicationDataWriter(dataSource);
+    return new DuplicationDataWriter(dataSource, path);
   }
 
   @Override
   public UnitTestDataWriter getUnitTests() {
-    return new UnitTestDataWriter(dataSource);
+    return new UnitTestDataWriter(dataSource, path);
   }
 
   @Override
   public StatementCoverageDataWriter getStatementCoverage() {
-    return new StatementCoverageDataWriter(dataSource);
+    return new StatementCoverageDataWriter(dataSource, path);
   }
 
   @Override
   public BranchCoverageDataWriter getBranchCoverage() {
-    return new BranchCoverageDataWriter(dataSource);
+    return new BranchCoverageDataWriter(dataSource, path);
   }
 
   @Override
   public MutationTestDataWriter getMutationTests() {
-    return new MutationTestDataWriter(dataSource);
+    return new MutationTestDataWriter(dataSource, path);
   }
 }

@@ -24,8 +24,8 @@
 
 package com.lge.plugins.metashift.persistence;
 
-import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.DataSummary;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.List;
 import net.sf.json.JSONArray;
@@ -42,9 +42,10 @@ public class CommentDataWriter extends DataWriter {
    * Default constructor.
    *
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public CommentDataWriter(DataSource dataSource) {
-    super(Metric.COMMENTS, dataSource);
+  public CommentDataWriter(DataSource dataSource, FilePath path) {
+    super(Metric.COMMENTS, dataSource, path);
   }
 
   @Override
@@ -68,17 +69,5 @@ public class CommentDataWriter extends DataWriter {
     JSONArray array = new JSONArray();
     summaries.forEach(o -> array.add(toJsonObject(o)));
     put(array, Scope.RECIPE.name(), getMetric().name(), Data.SUMMARIES.name(), recipe);
-  }
-
-  /**
-   * Adds the data objects.
-   *
-   * @param recipe  name
-   * @param file    name
-   * @param objects to add
-   */
-  public void addObjects(String recipe, String file, List<CommentData> objects) throws IOException {
-    JSONArray array = JSONArray.fromObject(objects);
-    put(array, Scope.RECIPE.name(), getMetric().name(), Data.OBJECTS.name(), recipe, file);
   }
 }

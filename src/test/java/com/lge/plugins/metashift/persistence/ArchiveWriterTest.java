@@ -76,7 +76,7 @@ public class ArchiveWriterTest {
     treemapAggregator = new TreemapDataAggregator(new RecipeEvaluator(configuration));
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
     reader = new ArchiveReader(dataSource);
-    writer = new ArchiveWriter(dataSource);
+    writer = new ArchiveWriter(dataSource, new FilePath(folder.newFolder()));
     recipe1 = new Recipe(RECIPE1);
     recipe2 = new Recipe(RECIPE2);
     recipes = new Recipes();

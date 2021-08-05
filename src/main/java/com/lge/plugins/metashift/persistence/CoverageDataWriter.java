@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.persistence;
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.Recipe;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -49,10 +50,12 @@ public class CoverageDataWriter extends DataWriter {
    *
    * @param metric     type
    * @param dataSource for persistent objects
+   * @param path       to the report directory
+   * @param clazz      class type
    */
-  public CoverageDataWriter(Metric metric, DataSource dataSource,
+  public CoverageDataWriter(Metric metric, DataSource dataSource, FilePath path,
       Class<? extends CoverageData> clazz) {
-    super(metric, dataSource);
+    super(metric, dataSource, path);
     this.clazz = clazz;
   }
 
@@ -85,13 +88,14 @@ public class CoverageDataWriter extends DataWriter {
    *
    * @param recipe to add
    */
-  public void addObjects(Recipe recipe) throws IOException {
+  public void addObjects(Recipe recipe) throws IOException, InterruptedException {
     Map<String, List<CoverageData>> group = recipe.objects(clazz)
         .collect(Collectors.groupingBy(CoverageData::getFile));
     for (Entry<String, List<CoverageData>> entry : group.entrySet()) {
       put(JSONArray.fromObject(entry.getValue()),
           Scope.RECIPE.name(), getMetric().name(), Data.OBJECTS.name(),
           recipe.getName(), entry.getKey());
+      writeFile(recipe.getName(), entry.getKey());
     }
   }
 }

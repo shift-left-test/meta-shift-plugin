@@ -25,10 +25,14 @@
 package com.lge.plugins.metashift.persistence;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.aggregators.BranchCoverageDataSummaryAggregator;
 import com.lge.plugins.metashift.aggregators.TreemapDataAggregator;
 import com.lge.plugins.metashift.analysis.BranchCoverageEvaluator;
+import com.lge.plugins.metashift.fixture.FakeRecipe;
+import com.lge.plugins.metashift.fixture.FakeReportBuilder;
+import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
@@ -37,8 +41,10 @@ import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.parsers.FileParser;
 import com.lge.plugins.metashift.utils.ConfigurationUtils;
 import hudson.FilePath;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,15 +76,21 @@ public class BranchCoverageDataWriterTest {
   private Recipes recipes;
   private Recipe recipe1;
   private Recipe recipe2;
+  private FakeReportBuilder builder;
+  private File source;
+  private File report;
 
   @Before
   public void setUp() throws IOException, InterruptedException {
+    builder = new FakeReportBuilder();
+    source = new File(folder.newFolder(), "source");
+    report = new File(folder.newFolder(), "report");
     Configuration configuration = ConfigurationUtils.of(50, 5, false);
     summaryAggregator = new BranchCoverageDataSummaryAggregator(configuration);
     treemapAggregator = new TreemapDataAggregator(new BranchCoverageEvaluator(configuration));
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
     reader = new ArchiveReader(dataSource).getBranchCoverage();
-    writer = new ArchiveWriter(dataSource).getBranchCoverage();
+    writer = new ArchiveWriter(dataSource, new FilePath(report)).getBranchCoverage();
     recipe1 = new Recipe(RECIPE1);
     recipe2 = new Recipe(RECIPE2);
     recipes = new Recipes();
@@ -123,7 +135,8 @@ public class BranchCoverageDataWriterTest {
     assertEquals(expected, reader.getSummaries(recipe.getName()));
   }
 
-  private void assertObjects(Recipe recipe, String file, JSONArray expected) throws IOException {
+  private void assertObjects(Recipe recipe, String file, JSONArray expected)
+      throws IOException, InterruptedException {
     writer.addObjects(recipe);
     assertEquals(expected, reader.getObjects(recipe.getName(), file));
   }
@@ -193,7 +206,7 @@ public class BranchCoverageDataWriterTest {
   }
 
   @Test
-  public void getRecipeObjects() throws IOException {
+  public void testGetRecipeObjects() throws IOException, InterruptedException {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 0, 0));
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
     List<CoverageData> first = Collections.singletonList(
@@ -206,5 +219,20 @@ public class BranchCoverageDataWriterTest {
     second.forEach(recipe1::add);
     assertObjects(recipe1, "a.file", JSONArray.fromObject(first));
     assertObjects(recipe1, "b.file", JSONArray.fromObject(second));
+  }
+
+  @Test
+  public void testReadFile() throws IOException, InterruptedException {
+    builder.add(new FakeRecipe(source)
+        .add(new FakeSource(1, 1, 0, 0)
+            .setTests(1, 0, 0, 0)
+            .setBranchCoverage(1, 0)));
+    builder.toFile(report);
+    Recipes recipes = new FileParser().parse(new FilePath(report));
+    BranchCoverageData data = recipes.objects(BranchCoverageData.class)
+        .findFirst()
+        .orElseThrow(AssertionError::new);
+    writer.addObjects(recipes.get(0));
+    assertTrue(reader.readFile(data.getName(), data.getFile()).contains(FakeSource.SOURCE_LINE));
   }
 }

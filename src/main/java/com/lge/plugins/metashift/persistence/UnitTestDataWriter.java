@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.persistence;
 
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.TestData;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.List;
 import net.sf.json.JSONArray;
@@ -42,9 +43,10 @@ public class UnitTestDataWriter extends DataWriter {
    * Default constructor.
    *
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public UnitTestDataWriter(DataSource dataSource) {
-    super(Metric.UNIT_TESTS, dataSource);
+  public UnitTestDataWriter(DataSource dataSource, FilePath path) {
+    super(Metric.UNIT_TESTS, dataSource, path);
   }
 
   @Override

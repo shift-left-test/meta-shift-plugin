@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.persistence;
 
 import com.lge.plugins.metashift.models.CodeViolationData;
+import hudson.FilePath;
 
 /**
  * CodeViolationDataWriter class.
@@ -37,8 +38,9 @@ public class CodeViolationDataWriter extends ViolationDataWriter {
    * Default constructor.
    *
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public CodeViolationDataWriter(DataSource dataSource) {
-    super(Metric.CODE_VIOLATIONS, dataSource, CodeViolationData.class);
+  public CodeViolationDataWriter(DataSource dataSource, FilePath path) {
+    super(Metric.CODE_VIOLATIONS, dataSource, path, CodeViolationData.class);
   }
 }

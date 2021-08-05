@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.persistence;
 
 import com.lge.plugins.metashift.models.RecipeViolationData;
+import hudson.FilePath;
 
 /**
  * RecipeViolationDataWriter class.
@@ -37,8 +38,9 @@ public class RecipeViolationDataWriter extends ViolationDataWriter {
    * Default constructor.
    *
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public RecipeViolationDataWriter(DataSource dataSource) {
-    super(Metric.RECIPE_VIOLATIONS, dataSource, RecipeViolationData.class);
+  public RecipeViolationDataWriter(DataSource dataSource, FilePath path) {
+    super(Metric.RECIPE_VIOLATIONS, dataSource, path, RecipeViolationData.class);
   }
 }

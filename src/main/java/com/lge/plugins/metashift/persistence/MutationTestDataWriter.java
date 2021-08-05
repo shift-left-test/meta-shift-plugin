@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.persistence;
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +47,10 @@ public class MutationTestDataWriter extends DataWriter {
    * Default constructor.
    *
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public MutationTestDataWriter(DataSource dataSource) {
-    super(Metric.MUTATION_TESTS, dataSource);
+  public MutationTestDataWriter(DataSource dataSource, FilePath path) {
+    super(Metric.MUTATION_TESTS, dataSource, path);
   }
 
   @Override
@@ -81,13 +83,14 @@ public class MutationTestDataWriter extends DataWriter {
    *
    * @param recipe to add
    */
-  public void addObjects(Recipe recipe) throws IOException {
+  public void addObjects(Recipe recipe) throws IOException, InterruptedException {
     Map<String, List<MutationTestData>> group = recipe.objects(MutationTestData.class)
         .collect(Collectors.groupingBy(MutationTestData::getFile));
     for (Entry<String, List<MutationTestData>> entry : group.entrySet()) {
       put(JSONArray.fromObject(entry.getValue()),
           Scope.RECIPE.name(), getMetric().name(), Data.OBJECTS.name(),
           recipe.getName(), entry.getKey());
+      writeFile(recipe.getName(), entry.getKey());
     }
   }
 }

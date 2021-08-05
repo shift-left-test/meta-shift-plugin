@@ -75,7 +75,7 @@ public class PremirrorCacheDataWriterTest {
     treemapAggregator = new TreemapDataAggregator(new PremirrorCacheEvaluator(configuration));
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
     reader = new ArchiveReader(dataSource).getPremirrorCache();
-    writer = new ArchiveWriter(dataSource).getPremirrorCache();
+    writer = new ArchiveWriter(dataSource, new FilePath(folder.newFolder())).getPremirrorCache();
     recipe1 = new Recipe(RECIPE1);
     recipe2 = new Recipe(RECIPE2);
     recipes = new Recipes();

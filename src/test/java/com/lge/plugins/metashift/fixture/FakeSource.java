@@ -38,7 +38,7 @@ import org.apache.commons.io.FileUtils;
  */
 public class FakeSource implements FakeFile {
 
-  private static final String SOURCE_LINE = "HELLO WORLD";
+  public static final String SOURCE_LINE = "HELLO WORLD";
 
   private FakeRecipe recipe;
   private final String filename;
@@ -66,24 +66,24 @@ public class FakeSource implements FakeFile {
   private long minorViolations;
   private long infoViolations;
 
-  public FakeSource(String prefix, long totalLines, long codeLines, long commentLines,
+  public FakeSource(String name, long totalLines, long codeLines, long commentLines,
       long duplicatedLines) {
-    this(null, prefix, totalLines, codeLines, commentLines, duplicatedLines);
+    this(null, name, totalLines, codeLines, commentLines, duplicatedLines);
   }
 
   public FakeSource(long totalLines, long codeLines, long commentLines, long duplicatedLines) {
-    this(null, "", totalLines, codeLines, commentLines, duplicatedLines);
+    this(null, FakeRandom.nextString(), totalLines, codeLines, commentLines, duplicatedLines);
   }
 
   public FakeSource(FakeRecipe recipe, long totalLines, long codeLines, long commentLines,
       long duplicatedLines) {
-    this(recipe, "", totalLines, codeLines, commentLines, duplicatedLines);
+    this(recipe, FakeRandom.nextString(), totalLines, codeLines, commentLines, duplicatedLines);
   }
 
-  public FakeSource(FakeRecipe recipe, String prefix, long totalLines, long codeLines,
+  public FakeSource(FakeRecipe recipe, String name, long totalLines, long codeLines,
       long commentLines, long duplicatedLines) {
     this.recipe = recipe;
-    this.filename = prefix + FakeRandom.nextString() + ".cpp";
+    this.filename = name;
     this.totalLines = totalLines;
     this.codeLines = codeLines;
     this.commentLines = commentLines;

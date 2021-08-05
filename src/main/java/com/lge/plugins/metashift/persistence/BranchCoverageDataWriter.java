@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.persistence;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
+import hudson.FilePath;
 
 /**
  * BranchCoverageDataWriter class.
@@ -37,8 +38,9 @@ public class BranchCoverageDataWriter extends CoverageDataWriter {
    * Default constructor.
    *
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public BranchCoverageDataWriter(DataSource dataSource) {
-    super(Metric.BRANCH_COVERAGE, dataSource, BranchCoverageData.class);
+  public BranchCoverageDataWriter(DataSource dataSource, FilePath path) {
+    super(Metric.BRANCH_COVERAGE, dataSource, path, BranchCoverageData.class);
   }
 }

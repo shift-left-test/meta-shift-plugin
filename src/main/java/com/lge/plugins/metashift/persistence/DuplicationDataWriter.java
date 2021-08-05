@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.persistence;
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Recipe;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +47,10 @@ public class DuplicationDataWriter extends DataWriter {
    * Default constructor.
    *
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public DuplicationDataWriter(DataSource dataSource) {
-    super(Metric.DUPLICATIONS, dataSource);
+  public DuplicationDataWriter(DataSource dataSource, FilePath path) {
+    super(Metric.DUPLICATIONS, dataSource, path);
   }
 
   @Override
@@ -79,13 +81,14 @@ public class DuplicationDataWriter extends DataWriter {
    *
    * @param recipe to add
    */
-  public void addObjects(Recipe recipe) throws IOException {
+  public void addObjects(Recipe recipe) throws IOException, InterruptedException {
     Map<String, List<DuplicationData>> group = recipe.objects(DuplicationData.class)
         .collect(Collectors.groupingBy(DuplicationData::getFile));
     for (Entry<String, List<DuplicationData>> entry : group.entrySet()) {
       put(JSONArray.fromObject(entry.getValue()),
           Scope.RECIPE.name(), getMetric().name(), Data.OBJECTS.name(),
           recipe.getName(), entry.getKey());
+      writeFile(recipe.getName(), entry.getKey());
     }
   }
 }

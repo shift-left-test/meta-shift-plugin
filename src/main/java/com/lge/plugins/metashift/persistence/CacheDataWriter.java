@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.persistence;
 
 import com.lge.plugins.metashift.models.CacheData;
 import com.lge.plugins.metashift.models.DataSummary;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.List;
 import net.sf.json.JSONArray;
@@ -43,9 +44,10 @@ public class CacheDataWriter extends DataWriter {
    *
    * @param metric     type
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public CacheDataWriter(Metric metric, DataSource dataSource) {
-    super(metric, dataSource);
+  public CacheDataWriter(Metric metric, DataSource dataSource, FilePath path) {
+    super(metric, dataSource, path);
   }
 
   @Override

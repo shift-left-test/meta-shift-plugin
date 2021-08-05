@@ -26,7 +26,11 @@ package com.lge.plugins.metashift.persistence;
 
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.TreemapData;
+import com.lge.plugins.metashift.utils.JsonUtils;
+import hudson.FilePath;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -40,16 +44,19 @@ public abstract class DataWriter implements Archiver {
 
   private final Archiver.Metric metric;
   private final DataSource dataSource;
+  private final FilePath path;
 
   /**
    * Default constructor.
    *
    * @param metric     type
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public DataWriter(Metric metric, DataSource dataSource) {
+  public DataWriter(Metric metric, DataSource dataSource, FilePath path) {
     this.metric = metric;
     this.dataSource = dataSource;
+    this.path = path;
   }
 
   protected Archiver.Metric getMetric() {
@@ -58,6 +65,25 @@ public abstract class DataWriter implements Archiver {
 
   protected void put(Object object, String... names) throws IOException {
     dataSource.put(object, names);
+  }
+
+  private FilePath getFilePath(FilePath base, String prefix, String file) {
+    return new File(file).isAbsolute() ?
+        new FilePath(base.getChannel(), file) :
+        new FilePath(new FilePath(base.getChannel(), prefix), file);
+  }
+
+  protected void writeFile(String recipe, String file) throws IOException, InterruptedException {
+    if (dataSource.has(Scope.RECIPE.name(), Data.FILE.name(), recipe, file)) {
+      return;
+    }
+    try {
+      JSONObject metadata = JsonUtils.createObject(path.child(recipe).child("metadata.json"));
+      FilePath filePath = getFilePath(path, metadata.getString("S"), file);
+      dataSource.put(filePath.readToString(), Scope.RECIPE.name(), Data.FILE.name(), recipe, file);
+    } catch (NoSuchFileException ignored) {
+      // ignored
+    }
   }
 
   /**

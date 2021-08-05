@@ -75,7 +75,7 @@ public class SharedStateCacheDataWriterTest {
     treemapAggregator = new TreemapDataAggregator(new SharedStateCacheEvaluator(configuration));
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
     reader = new ArchiveReader(dataSource).getSharedStateCache();
-    writer = new ArchiveWriter(dataSource).getSharedStateCache();
+    writer = new ArchiveWriter(dataSource, new FilePath(folder.newFolder())).getSharedStateCache();
     recipe1 = new Recipe(RECIPE1);
     recipe2 = new Recipe(RECIPE2);
     recipes = new Recipes();

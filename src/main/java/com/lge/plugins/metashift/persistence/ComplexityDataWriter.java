@@ -27,6 +27,7 @@ package com.lge.plugins.metashift.persistence;
 import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.Recipe;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +47,10 @@ public class ComplexityDataWriter extends DataWriter {
    * Default constructor.
    *
    * @param dataSource for persistent objects
+   * @param path       to the report directory
    */
-  public ComplexityDataWriter(DataSource dataSource) {
-    super(Metric.COMPLEXITY, dataSource);
+  public ComplexityDataWriter(DataSource dataSource, FilePath path) {
+    super(Metric.COMPLEXITY, dataSource, path);
   }
 
   @Override
@@ -80,13 +82,14 @@ public class ComplexityDataWriter extends DataWriter {
    *
    * @param recipe to add
    */
-  public void addObjects(Recipe recipe) throws IOException {
+  public void addObjects(Recipe recipe) throws IOException, InterruptedException {
     Map<String, List<ComplexityData>> group = recipe.objects(ComplexityData.class)
         .collect(Collectors.groupingBy(ComplexityData::getFile));
     for (Entry<String, List<ComplexityData>> entry : group.entrySet()) {
       put(JSONArray.fromObject(entry.getValue()),
           Scope.RECIPE.name(), getMetric().name(), Data.OBJECTS.name(),
           recipe.getName(), entry.getKey());
+      writeFile(recipe.getName(), entry.getKey());
     }
   }
 }

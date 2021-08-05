@@ -34,7 +34,6 @@ import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
-import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SkippedTestData;
@@ -80,7 +79,7 @@ public class UnitTestDataWriterTest {
     treemapAggregator = new TreemapDataAggregator(new UnitTestEvaluator(configuration));
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
     reader = new ArchiveReader(dataSource).getUnitTests();
-    writer = new ArchiveWriter(dataSource).getUnitTests();
+    writer = new ArchiveWriter(dataSource, new FilePath(folder.newFolder())).getUnitTests();
     recipe1 = new Recipe(RECIPE1);
     recipe2 = new Recipe(RECIPE2);
     recipes = new Recipes();

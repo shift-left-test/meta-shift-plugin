@@ -81,7 +81,7 @@ public class MutationTestDataWriterTest {
     treemapAggregator = new TreemapDataAggregator(new MutationTestEvaluator(configuration));
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
     reader = new ArchiveReader(dataSource).getMutationTests();
-    writer = new ArchiveWriter(dataSource).getMutationTests();
+    writer = new ArchiveWriter(dataSource, new FilePath(folder.newFolder())).getMutationTests();
     recipe1 = new Recipe(RECIPE1);
     recipe2 = new Recipe(RECIPE2);
     recipes = new Recipes();
@@ -127,7 +127,8 @@ public class MutationTestDataWriterTest {
     assertEquals(expected, reader.getSummaries(recipe.getName()));
   }
 
-  private void assertObjects(Recipe recipe, String file, JSONArray expected) throws IOException {
+  private void assertObjects(Recipe recipe, String file, JSONArray expected)
+      throws IOException, InterruptedException {
     writer.addObjects(recipe);
     assertEquals(expected, reader.getObjects(recipe.getName(), file));
   }
@@ -200,7 +201,7 @@ public class MutationTestDataWriterTest {
   }
 
   @Test
-  public void getRecipeObjects() throws IOException {
+  public void testGetRecipeObjects() throws IOException, InterruptedException {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 0, 0));
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
     List<MutationTestData> first = Arrays.asList(
