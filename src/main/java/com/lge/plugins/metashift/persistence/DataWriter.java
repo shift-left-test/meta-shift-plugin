@@ -49,7 +49,7 @@ public abstract class DataWriter implements Archiver {
   /**
    * Default constructor.
    *
-   * @param metric     type
+   * @param metric     enum type
    * @param dataSource for persistent objects
    * @param path       to the report directory
    */
@@ -68,9 +68,11 @@ public abstract class DataWriter implements Archiver {
   }
 
   private FilePath getFilePath(FilePath base, String prefix, String file) {
-    return new File(file).isAbsolute() ?
-        new FilePath(base.getChannel(), file) :
-        new FilePath(new FilePath(base.getChannel(), prefix), file);
+    if (new File(file).isAbsolute()) {
+      return new FilePath(base.getChannel(), file);
+    } else {
+      return new FilePath(new FilePath(base.getChannel(), prefix), file);
+    }
   }
 
   protected void writeFile(String recipe, String file) throws IOException, InterruptedException {

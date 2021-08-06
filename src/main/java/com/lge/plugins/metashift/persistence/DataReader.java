@@ -40,32 +40,68 @@ public class DataReader implements Archiver, Serializable {
   private final Archiver.Metric metric;
   private final DataSource dataSource;
 
+  /**
+   * Default constructor.
+   *
+   * @param metric     type
+   * @param dataSource for persistent objects
+   */
   public DataReader(Archiver.Metric metric, DataSource dataSource) {
     this.metric = metric;
     this.dataSource = dataSource;
   }
 
+  /**
+   * Returns the summary objects.
+   *
+   * @return summary objects
+   */
   public JSONArray getSummaries() {
     JSONArray o = dataSource.get(Scope.PROJECT.name(), metric.name(), Data.SUMMARIES.name());
     return Optional.ofNullable(o).orElse(new JSONArray());
   }
 
+  /**
+   * Returns the summary objects of the recipe.
+   *
+   * @param recipe name
+   * @return summary objects
+   */
   public JSONArray getSummaries(String recipe) {
     JSONArray o = dataSource.get(Scope.RECIPE.name(), metric.name(), Data.SUMMARIES.name(), recipe);
     return Optional.ofNullable(o).orElse(new JSONArray());
   }
 
+  /**
+   * Returns the treemap objects
+   *
+   * @return treemap objects
+   */
   public JSONArray getTreemap() {
     JSONArray o = dataSource.get(Scope.PROJECT.name(), metric.name(), Data.TREEMAP.name());
     return Optional.ofNullable(o).orElse(new JSONArray());
   }
 
+  /**
+   * Returns the segmented objects.
+   *
+   * @param recipe name
+   * @param file   name
+   * @return segmented objects
+   */
   public JSONArray getObjects(String recipe, String file) {
     JSONArray o = dataSource
         .get(Scope.RECIPE.name(), metric.name(), Data.OBJECTS.name(), recipe, file);
     return Optional.ofNullable(o).orElse(new JSONArray());
   }
 
+  /**
+   * Returns the content of the file.
+   *
+   * @param recipe name
+   * @param file   name
+   * @return content of the file
+   */
   public String readFile(String recipe, String file) {
     String o = dataSource.get(Scope.RECIPE.name(), Data.FILE.name(), recipe, file);
     return Optional.ofNullable(o).orElse("");

@@ -66,8 +66,10 @@ public class TreemapDataAggregator implements Aggregator<TreemapData> {
     long linesOfCode = new LinesOfCodeCollector().parse(recipe).getLines();
     Evaluation evaluation = evaluator.parse(recipe);
     double ratio = evaluator.parse(recipe).getRatio();
-    return evaluation instanceof PositiveEvaluation ?
-        new PositiveTreemapData(recipe.getName(), linesOfCode, max, ratio) :
-        new NegativeTreemapData(recipe.getName(), linesOfCode, max, ratio);
+    if (evaluation instanceof PositiveEvaluation) {
+      return new PositiveTreemapData(recipe.getName(), linesOfCode, max, ratio);
+    } else {
+      return new NegativeTreemapData(recipe.getName(), linesOfCode, max, ratio);
+    }
   }
 }

@@ -24,6 +24,9 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * NegativeTreemapData class.
  *
@@ -33,30 +36,20 @@ public class NegativeTreemapData extends TreemapData {
 
   private static final long serialVersionUID = -3614276430684611714L;
 
-  private final double max;
-
   /**
    * Default constructor.
    *
    * @param name        of the data
    * @param linesOfCode the number of lines
+   * @param max         of the data
    * @param value       of the data
    */
   public NegativeTreemapData(String name, long linesOfCode, double max, double value) {
-    super(name, linesOfCode, value);
-    this.max = max;
+    super(name, linesOfCode, max, value);
   }
 
   @Override
-  public int getGrade() {
-    int length = Grade.values().length;
-    double slot = max / (double) length;
-    double ratio = getValue();
-    for (int i = 0; i < length; i++) {
-      if (slot * i <= ratio && ratio < slot * (i + 1)) {
-        return Grade.values()[i].ordinal();
-      }
-    }
-    return Grade.WORST.ordinal();
+  protected List<Grade> getGrades() {
+    return Arrays.asList(Grade.values());
   }
 }
