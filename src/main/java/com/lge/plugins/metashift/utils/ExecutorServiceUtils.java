@@ -39,9 +39,22 @@ import java.util.concurrent.Future;
  */
 public class ExecutorServiceUtils {
 
+  /**
+   * Function interface which throws exceptions.
+   *
+   * @param <T> input type
+   * @param <R> output type
+   */
   @FunctionalInterface
   public interface Function<T, R> {
 
+    /**
+     * Applies the function to get the result.
+     *
+     * @param t input
+     * @return output
+     * @throws Exception if failed to operate
+     */
     R apply(T t) throws Exception;
   }
 
