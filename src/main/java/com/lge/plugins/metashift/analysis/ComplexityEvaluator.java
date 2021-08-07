@@ -56,6 +56,6 @@ public class ComplexityEvaluator implements Evaluator {
     long tolerance = configuration.getComplexityTolerance();
     long numerator = s.objects(ComplexityData.class).filter(o -> o.getValue() >= tolerance).count();
     double threshold = (double) configuration.getComplexityThreshold() / 100.0;
-    return new NegativeEvaluation(available, denominator, numerator, threshold);
+    return new NegativeEvaluation(available, denominator, numerator, threshold, tolerance);
   }
 }

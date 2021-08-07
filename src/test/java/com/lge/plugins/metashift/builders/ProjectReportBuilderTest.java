@@ -102,7 +102,7 @@ public class ProjectReportBuilderTest {
   }
 
   private JSONObject newEvaluation(boolean available, long denominator, long numerator,
-      boolean qualified, double threshold, String type) {
+      boolean qualified, double threshold, long tolerance, String type) {
     JSONObject o = new JSONObject();
     o.put("available", available);
     o.put("denominator", denominator);
@@ -110,6 +110,7 @@ public class ProjectReportBuilderTest {
     o.put("ratio", denominator == 0 ? 0.0 : (double) numerator / (double) denominator);
     o.put("qualified", qualified);
     o.put("threshold", threshold);
+    o.put("tolerance", tolerance);
     o.put("type", type);
     return o;
   }
@@ -147,7 +148,7 @@ public class ProjectReportBuilderTest {
 
   @Test
   public void testGetTestedRecipes() {
-    assertEquals(newEvaluation(false, 2, 2, false, 0.0, "POSITIVE"), report.getTestedRecipes());
+    assertEquals(newEvaluation(false, 2, 2, false, 0.0, 0, "POSITIVE"), report.getTestedRecipes());
   }
 
   @Test
@@ -166,7 +167,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetPremirrorCache() {
     ProjectGroup group = report.getPremirrorCache();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0, 0.25, 0.5), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     JSONArray expected = new JSONArray();
@@ -181,7 +182,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetSharedStateCache() {
     ProjectGroup group = report.getSharedStateCache();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.0, 0.25, 0.5), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     JSONArray expected = new JSONArray();
@@ -196,7 +197,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetRecipeViolations() {
     ProjectGroup group = report.getRecipeViolations();
-    assertEquals(newEvaluation(true, 21, 9, true, 0.5, "NEGATIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 21, 9, true, 0.5, 0, "NEGATIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.3, 1.65, 3.0), group.getStatistics());
     assertEquals(newDistribution(3, 3, 3, 0), group.getDistribution());
     JSONArray expected = new JSONArray();
@@ -211,7 +212,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetComments() {
     ProjectGroup group = report.getComments();
-    assertEquals(newEvaluation(true, 21, 10, false, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 21, 10, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.0, 0.25, 0.5), group.getStatistics());
     assertEquals(newDistribution(10, 11, 0, 0), group.getDistribution());
     JSONArray expected = new JSONArray();
@@ -226,7 +227,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetCodeViolations() {
     ProjectGroup group = report.getCodeViolations();
-    assertEquals(newEvaluation(true, 21, 9, true, 0.5, "NEGATIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 21, 9, true, 0.5, 0, "NEGATIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.3, 1.65, 3.0), group.getStatistics());
     assertEquals(newDistribution(3, 3, 3, 0), group.getDistribution());
     JSONArray expected = new JSONArray();
@@ -241,7 +242,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetComplexity() {
     ProjectGroup group = report.getComplexity();
-    assertEquals(newEvaluation(true, 21, 11, false, 0.5, "NEGATIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 21, 11, false, 0.5, 5, "NEGATIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.5, 0.75, 1.0), group.getStatistics());
     assertEquals(newDistribution(11, 10, 0, 0), group.getDistribution());
     JSONArray expected = new JSONArray();
@@ -256,7 +257,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetDuplications() {
     ProjectGroup group = report.getDuplications();
-    assertEquals(newEvaluation(true, 21, 10, true, 0.5, "NEGATIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 21, 10, true, 0.5, 5, "NEGATIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.0, 0.25, 0.5), group.getStatistics());
     assertEquals(newDistribution(10, 11, 0, 0), group.getDistribution());
     JSONArray expected = new JSONArray();
@@ -271,7 +272,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetUnitTests() {
     ProjectGroup group = report.getUnitTests();
-    assertEquals(newEvaluation(true, 6, 3, true, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 6, 3, true, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.25, 0.625, 1.0), group.getStatistics());
     assertEquals(newDistribution(3, 1, 1, 1), group.getDistribution());
     JSONArray expected = new JSONArray();
@@ -286,7 +287,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetStatementCoverage() {
     ProjectGroup group = report.getStatementCoverage();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.0, 0.25, 0.5), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     JSONArray expected = new JSONArray();
@@ -301,7 +302,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetBranchCoverage() {
     ProjectGroup group = report.getBranchCoverage();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.0, 0.25, 0.5), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     JSONArray expected = new JSONArray();
@@ -316,7 +317,7 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetMutationTests() {
     ProjectGroup group = report.getMutationTests();
-    assertEquals(newEvaluation(true, 5, 3, true, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 5, 3, true, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.3333333333333333, 0.6666666666666666, 1.0), group.getStatistics());
     assertEquals(newDistribution(3, 1, 1, 0), group.getDistribution());
     JSONArray expected = new JSONArray();

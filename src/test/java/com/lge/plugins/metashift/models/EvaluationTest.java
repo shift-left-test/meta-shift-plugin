@@ -56,11 +56,12 @@ public class EvaluationTest {
 
   @Test
   public void testCreateObject() {
-    Evaluation object = new PositiveEvaluation(true, 0, 0, 0.0);
+    Evaluation object = new PositiveEvaluation(true, 0, 0, 0.0, 10);
     assertStatus(object, true, true);
     assertEquals(0, object.getDenominator());
     assertEquals(0, object.getNumerator());
     assertEquals(0.0, object.getThreshold(), 0.01);
+    assertEquals(10, object.getTolerance());
   }
 
   @Test
@@ -69,6 +70,7 @@ public class EvaluationTest {
     assertStatus(object, true, true);
     assertEquals(0.66, object.getRatio(), 0.01);
     assertEquals(0.50, object.getThreshold(), 0.01);
+    assertEquals(0, object.getTolerance());
   }
 
   @Test

@@ -47,6 +47,7 @@ public abstract class Evaluation implements Serializable {
   private final long denominator;
   private final long numerator;
   private final double threshold;
+  private final long tolerance;
   private final Type type;
 
   /**
@@ -56,14 +57,16 @@ public abstract class Evaluation implements Serializable {
    * @param denominator value
    * @param numerator   value
    * @param threshold   value
+   * @param tolerance   value
    * @param type        value
    */
   public Evaluation(boolean available, long denominator, long numerator, double threshold,
-      Type type) {
+      long tolerance, Type type) {
     this.available = available;
     this.denominator = denominator;
     this.numerator = numerator;
     this.threshold = threshold;
+    this.tolerance = tolerance;
     this.type = type;
   }
 
@@ -77,6 +80,7 @@ public abstract class Evaluation implements Serializable {
     this.denominator = other.denominator;
     this.numerator = other.numerator;
     this.threshold = other.threshold;
+    this.tolerance = other.tolerance;
     this.type = other.type;
   }
 
@@ -115,21 +119,30 @@ public abstract class Evaluation implements Serializable {
   }
 
   /**
-   * Returns the ratio and difference values.
+   * Returns the ratio value.
    *
-   * @return ratio values
+   * @return ratio value
    */
   public double getRatio() {
     return (double) denominator > 0.0 ? (double) numerator / (double) denominator : 0.0;
   }
 
   /**
-   * Returns the threshold and difference values.
+   * Returns the threshold value.
    *
-   * @return threshold values
+   * @return threshold value
    */
   public double getThreshold() {
     return threshold;
+  }
+
+  /**
+   * Returns the tolerance value.
+   *
+   * @return tolerance value
+   */
+  public long getTolerance() {
+    return tolerance;
   }
 
   /**

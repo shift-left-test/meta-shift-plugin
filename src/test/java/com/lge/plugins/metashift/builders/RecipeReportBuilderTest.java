@@ -117,7 +117,7 @@ public class RecipeReportBuilderTest {
   }
 
   private JSONObject newEvaluation(boolean available, long denominator, long numerator,
-      boolean qualified, double threshold, String type) {
+      boolean qualified, double threshold, long tolerance, String type) {
     JSONObject o = new JSONObject();
     o.put("available", available);
     o.put("denominator", denominator);
@@ -125,6 +125,7 @@ public class RecipeReportBuilderTest {
     o.put("ratio", denominator == 0 ? 0.0 : (double) numerator / (double) denominator);
     o.put("qualified", qualified);
     o.put("threshold", threshold);
+    o.put("tolerance", tolerance);
     o.put("type", type);
     return o;
   }
@@ -154,7 +155,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetPremirrorCache() {
     RecipeGroup group = report.getPremirrorCache();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.25), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     assertEquals(4, group.getSummaries().size());
@@ -163,7 +164,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetSharedStateCache() {
     RecipeGroup group = report.getSharedStateCache();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.25), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     assertEquals(4, group.getSummaries().size());
@@ -172,7 +173,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetRecipeViolations() {
     RecipeGroup group = report.getRecipeViolations();
-    assertEquals(newEvaluation(true, 21, 9, true, 0.5, "NEGATIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 21, 9, true, 0.5, 0, "NEGATIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.42857142857142855), group.getStatistics());
     assertEquals(newDistribution(3, 3, 3, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
@@ -187,7 +188,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetComments() {
     RecipeGroup group = report.getComments();
-    assertEquals(newEvaluation(true, 21, 10, false, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 21, 10, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.47619047619047616), group.getStatistics());
     assertEquals(newDistribution(10, 11, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
@@ -198,7 +199,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetCodeViolations() {
     RecipeGroup group = report.getCodeViolations();
-    assertEquals(newEvaluation(true, 21, 9, true, 0.5, "NEGATIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 21, 9, true, 0.5, 0, "NEGATIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.42857142857142855), group.getStatistics());
     assertEquals(newDistribution(3, 3, 3, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
@@ -213,7 +214,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetComplexity() {
     RecipeGroup group = report.getComplexity();
-    assertEquals(newEvaluation(true, 21, 11, false, 0.5, "NEGATIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 21, 11, false, 0.5, 5, "NEGATIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.5238095238095238), group.getStatistics());
     assertEquals(newDistribution(11, 10, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
@@ -228,7 +229,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetDuplications() {
     RecipeGroup group = report.getDuplications();
-    assertEquals(newEvaluation(true, 21, 10, true, 0.5, "NEGATIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 21, 10, true, 0.5, 5, "NEGATIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.47619047619047616), group.getStatistics());
     assertEquals(newDistribution(10, 11, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
@@ -243,7 +244,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetUnitTests() {
     RecipeGroup group = report.getUnitTests();
-    assertEquals(newEvaluation(true, 6, 3, true, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 6, 3, true, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.5), group.getStatistics());
     assertEquals(newDistribution(3, 1, 1, 1), group.getDistribution());
     assertEquals(6, group.getSummaries().size());
@@ -252,7 +253,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetStatementCoverage() {
     RecipeGroup group = report.getStatementCoverage();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.25), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
@@ -267,7 +268,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetBranchCoverage() {
     RecipeGroup group = report.getBranchCoverage();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.25), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
@@ -282,7 +283,7 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetMutationTests() {
     RecipeGroup group = report.getMutationTests();
-    assertEquals(newEvaluation(true, 5, 3, true, 0.5, "POSITIVE"), group.getEvaluation());
+    assertEquals(newEvaluation(true, 5, 3, true, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.6), group.getStatistics());
     assertEquals(newDistribution(3, 1, 1, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());

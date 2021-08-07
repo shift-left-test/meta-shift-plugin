@@ -58,6 +58,6 @@ public class DuplicationEvaluator implements Evaluator {
         .filter(o -> o.getDuplicatedLines() >= tolerance)
         .mapToLong(DuplicationData::getDuplicatedLines).sum();
     double threshold = (double) configuration.getDuplicationThreshold() / 100.0;
-    return new NegativeEvaluation(available, denominator, numerator, threshold);
+    return new NegativeEvaluation(available, denominator, numerator, threshold, tolerance);
   }
 }

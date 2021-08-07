@@ -40,9 +40,23 @@ public class NegativeEvaluation extends Evaluation {
    * @param denominator value
    * @param numerator   value
    * @param threshold   value
+   * @param tolerance   value
+   */
+  public NegativeEvaluation(boolean available, long denominator, long numerator, double threshold,
+      long tolerance) {
+    super(available, denominator, numerator, threshold, tolerance, Type.NEGATIVE);
+  }
+
+  /**
+   * Default constructor.
+   *
+   * @param available   status
+   * @param denominator value
+   * @param numerator   value
+   * @param threshold   value
    */
   public NegativeEvaluation(boolean available, long denominator, long numerator, double threshold) {
-    super(available, denominator, numerator, threshold, Type.NEGATIVE);
+    this(available, denominator, numerator, threshold, 0);
   }
 
   /**
