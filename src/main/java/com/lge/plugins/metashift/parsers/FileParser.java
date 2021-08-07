@@ -32,6 +32,7 @@ import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -93,6 +94,8 @@ public class FileParser {
     recipes.removeIf(recipe -> new CodeSizeEvaluator().parse(recipe).getLines() == 0);
     logger.printf("[meta-shift-plugin] -> %d recipe data removed.%n",
         directories.size() - recipes.size());
+
+    Collections.sort(recipes);
 
     logger.println("[meta-shift-plugin] Successfully parsed.");
     return recipes;

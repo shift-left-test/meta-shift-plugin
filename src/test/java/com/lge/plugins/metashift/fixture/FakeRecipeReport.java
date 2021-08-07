@@ -50,7 +50,7 @@ public class FakeRecipeReport implements FakeReport {
     recipe.getScripts().forEach(script -> {
       JSONObject o = new JSONObject();
       File file = FileUtils
-          .getFile(recipe.getSourcePath(), recipe.getName(), script.getFilename());
+          .getFile(recipe.getSourcePath(), script.getFilename());
       o.put("file", file.getAbsolutePath());
       o.put("code_lines", script.getLines());
       array.add(o);

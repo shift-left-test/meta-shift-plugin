@@ -26,13 +26,14 @@ package com.lge.plugins.metashift.models;
 
 import java.io.Serializable;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 
 /**
  * Represents a data object.
  *
  * @author Sung Gon Kim
  */
-public abstract class Data implements Serializable {
+public abstract class Data implements Serializable, Comparable<Data> {
 
   /**
    * Represents the UUID of the class.
@@ -69,6 +70,13 @@ public abstract class Data implements Serializable {
    */
   @Override
   public abstract int hashCode();
+
+  @Override
+  public int compareTo(Data other) {
+    return new CompareToBuilder()
+        .append(getName(), other.getName())
+        .toComparison();
+  }
 
   /**
    * Returns the name of the data.

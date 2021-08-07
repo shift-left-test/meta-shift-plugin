@@ -75,14 +75,12 @@ public class FakeRecipeReportTest {
     JSONObject object = JsonUtils.createObject(new FilePath(file));
 
     JSONObject first = (JSONObject) object.getJSONArray("lines_of_code").get(0);
-    File aFile = FileUtils.getFile(fakeRecipe.getSourcePath(),
-        fakeRecipe.getName(), scripts.get(0).getFilename());
+    File aFile = FileUtils.getFile(fakeRecipe.getSourcePath(), scripts.get(0).getFilename());
     assertEquals(aFile.getAbsolutePath(), first.getString("file"));
     assertEquals(10, first.getLong("code_lines"));
 
     JSONObject second = (JSONObject) object.getJSONArray("lines_of_code").get(1);
-    File bFile = FileUtils.getFile(fakeRecipe.getSourcePath(),
-        fakeRecipe.getName(), scripts.get(1).getFilename());
+    File bFile = FileUtils.getFile(fakeRecipe.getSourcePath(), scripts.get(1).getFilename());
     assertEquals(bFile.getAbsolutePath(), second.getString("file"));
     assertEquals(20, second.getLong("code_lines"));
   }

@@ -113,6 +113,10 @@ public class FakeSource implements FakeFile {
     return filename;
   }
 
+  public String getAbsolutePath() {
+    return getFile().getAbsolutePath();
+  }
+
   public File getFile() {
     Objects.requireNonNull(recipe);
     return new File(recipe.getSourcePath(), getFilename());
