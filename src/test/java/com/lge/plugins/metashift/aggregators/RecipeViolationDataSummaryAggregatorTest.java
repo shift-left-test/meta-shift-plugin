@@ -73,12 +73,12 @@ public class RecipeViolationDataSummaryAggregatorTest {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode().getLines());
-    assertEquals(major, summary.getDistribution().getFirst().getCount());
-    assertEquals(minor, summary.getDistribution().getSecond().getCount());
-    assertEquals(info, summary.getDistribution().getThird().getCount());
-    assertEquals(ratio, summary.getEvaluation().getRatio(), 0.01);
-    assertEquals(qualified, summary.getEvaluation().isQualified());
+    assertEquals(linesOfCode, summary.getLinesOfCode());
+    assertEquals(major, summary.getFirst());
+    assertEquals(minor, summary.getSecond());
+    assertEquals(info, summary.getThird());
+    assertEquals(ratio, summary.getRatio(), 0.01);
+    assertEquals(qualified, summary.isQualified());
   }
 
   @Test

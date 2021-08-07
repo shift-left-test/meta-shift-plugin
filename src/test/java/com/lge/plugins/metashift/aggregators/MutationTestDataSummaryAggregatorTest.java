@@ -73,12 +73,12 @@ public class MutationTestDataSummaryAggregatorTest {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode().getLines());
-    assertEquals(killed, summary.getDistribution().getFirst().getCount());
-    assertEquals(survived, summary.getDistribution().getSecond().getCount());
-    assertEquals(skipped, summary.getDistribution().getThird().getCount());
-    assertEquals(ratio, summary.getEvaluation().getRatio(), 0.01);
-    assertEquals(qualified, summary.getEvaluation().isQualified());
+    assertEquals(linesOfCode, summary.getLinesOfCode());
+    assertEquals(killed, summary.getFirst());
+    assertEquals(survived, summary.getSecond());
+    assertEquals(skipped, summary.getThird());
+    assertEquals(ratio, summary.getRatio(), 0.01);
+    assertEquals(qualified, summary.isQualified());
   }
 
   @Test

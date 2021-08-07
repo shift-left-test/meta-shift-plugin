@@ -36,9 +36,13 @@ public class DataSummary extends Data {
 
   private static final long serialVersionUID = 6768623147726489246L;
 
-  private final LinesOfCode linesOfCode;
-  private final Distribution distribution;
-  private final Evaluation evaluation;
+  private final long linesOfCode;
+  private final long first;
+  private final long second;
+  private final long third;
+  private final long fourth;
+  private final double ratio;
+  private final boolean qualified;
 
   /**
    * Default constructor.
@@ -51,9 +55,13 @@ public class DataSummary extends Data {
   public DataSummary(String name, LinesOfCode linesOfCode, Distribution distribution,
       Evaluation evaluation) {
     super(name);
-    this.linesOfCode = linesOfCode;
-    this.distribution = distribution;
-    this.evaluation = evaluation;
+    this.linesOfCode = linesOfCode.getLines();
+    this.first = distribution.getFirst().getCount();
+    this.second = distribution.getSecond().getCount();
+    this.third = distribution.getThird().getCount();
+    this.fourth = distribution.getFourth().getCount();
+    this.ratio = evaluation.getRatio();
+    this.qualified = evaluation.isQualified();
   }
 
   /**
@@ -61,26 +69,71 @@ public class DataSummary extends Data {
    *
    * @return the lines of code
    */
-  public LinesOfCode getLinesOfCode() {
+  public long getLinesOfCode() {
     return linesOfCode;
   }
 
   /**
-   * Returns the distribution.
+   * Returns the number in total.
    *
-   * @return distribution
+   * @return total number
    */
-  public Distribution getDistribution() {
-    return distribution;
+  public long getTotal() {
+    return first + second + third + fourth;
   }
 
   /**
-   * Returns the evaluation.
+   * Returns the number of the first element.
    *
-   * @return evaluation
+   * @return the number of the first element
    */
-  public Evaluation getEvaluation() {
-    return evaluation;
+  public long getFirst() {
+    return first;
+  }
+
+  /**
+   * Returns the number of the second element.
+   *
+   * @return the number of the second element
+   */
+  public long getSecond() {
+    return second;
+  }
+
+  /**
+   * Returns the number of the third element.
+   *
+   * @return the number of the third element
+   */
+  public long getThird() {
+    return third;
+  }
+
+  /**
+   * Returns the number of the fourth element.
+   *
+   * @return the number of the fourth element
+   */
+  public long getFourth() {
+    return fourth;
+  }
+
+  /**
+   * Returns the ratio value.
+   *
+   * @return ratio value
+   */
+  public double getRatio() {
+    return ratio;
+  }
+
+  /**
+   * Returns the qualification status.
+   *
+   * @return qualification status
+   */
+  public boolean isQualified() {
+    return qualified;
   }
 
   @Override

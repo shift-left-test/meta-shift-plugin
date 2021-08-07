@@ -74,11 +74,11 @@ public class SharedStateCacheDataSummaryAggregatorTest {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode().getLines());
-    assertEquals(hits, summary.getDistribution().getFirst().getCount());
-    assertEquals(misses, summary.getDistribution().getSecond().getCount());
-    assertEquals(ratio, summary.getEvaluation().getRatio(), 0.01);
-    assertEquals(qualified, summary.getEvaluation().isQualified());
+    assertEquals(linesOfCode, summary.getLinesOfCode());
+    assertEquals(hits, summary.getFirst());
+    assertEquals(misses, summary.getSecond());
+    assertEquals(ratio, summary.getRatio(), 0.01);
+    assertEquals(qualified, summary.isQualified());
   }
 
   private void assertValues(int index, String signature, boolean available) {

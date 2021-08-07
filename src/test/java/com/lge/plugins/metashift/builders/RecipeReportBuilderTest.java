@@ -177,8 +177,8 @@ public class RecipeReportBuilderTest {
     assertEquals(newStatistics(0.42857142857142855), group.getStatistics());
     assertEquals(newDistribution(3, 3, 3, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(3.0, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.3, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(3.0, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.3, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(3, group.getObjects(RECIPE1).size());
     assertEquals(6, group.getObjects(RECIPE2).size());
     assertFalse(group.readFile(RECIPE1).isEmpty());
@@ -192,8 +192,8 @@ public class RecipeReportBuilderTest {
     assertEquals(newStatistics(0.47619047619047616), group.getStatistics());
     assertEquals(newDistribution(10, 11, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.0, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.5, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.0, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -203,8 +203,8 @@ public class RecipeReportBuilderTest {
     assertEquals(newStatistics(0.42857142857142855), group.getStatistics());
     assertEquals(newDistribution(3, 3, 3, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(3.0, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.3, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(3.0, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.3, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(3, group.getObjects(FILE1).size());
     assertEquals(6, group.getObjects(FILE2).size());
     assertFalse(group.readFile(FILE1).isEmpty());
@@ -218,8 +218,8 @@ public class RecipeReportBuilderTest {
     assertEquals(newStatistics(0.5238095238095238), group.getStatistics());
     assertEquals(newDistribution(11, 10, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(1.0, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.5, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(1.0, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(1, group.getObjects(FILE1).size());
     assertEquals(10, group.getObjects(FILE2).size());
     assertFalse(group.readFile(FILE1).isEmpty());
@@ -233,8 +233,8 @@ public class RecipeReportBuilderTest {
     assertEquals(newStatistics(0.47619047619047616), group.getStatistics());
     assertEquals(newDistribution(10, 11, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.0, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.5, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.0, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(0, group.getObjects(FILE1).size());
     assertEquals(1, group.getObjects(FILE2).size());
     assertFalse(group.readFile(FILE1).isEmpty());
@@ -257,8 +257,8 @@ public class RecipeReportBuilderTest {
     assertEquals(newStatistics(0.25), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.5, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.0, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(2, group.getObjects(FILE1).size());
     assertEquals(2, group.getObjects(FILE2).size());
     assertFalse(group.readFile(FILE1).isEmpty());
@@ -272,8 +272,8 @@ public class RecipeReportBuilderTest {
     assertEquals(newStatistics(0.25), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.5, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.0, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(2, group.getObjects(FILE1).size());
     assertEquals(2, group.getObjects(FILE2).size());
     assertFalse(group.readFile(FILE1).isEmpty());
@@ -288,8 +288,8 @@ public class RecipeReportBuilderTest {
     assertEquals(newDistribution(3, 1, 1, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.3333333333333333,
-        summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(1.0, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+        summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(1.0, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(3, group.getObjects(FILE1).size());
     assertEquals(2, group.getObjects(FILE2).size());
     assertFalse(group.readFile(FILE1).isEmpty());

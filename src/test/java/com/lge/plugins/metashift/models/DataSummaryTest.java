@@ -38,21 +38,21 @@ public class DataSummaryTest {
   private static final String RECIPE = "A-1.0.0-r0";
 
   private void assertLinesOfCode(DataSummary o, long linesOfCode) {
-    assertEquals(linesOfCode, o.getLinesOfCode().getLines());
+    assertEquals(linesOfCode, o.getLinesOfCode());
   }
 
   private void assertDistribution(DataSummary o, long first, long second, long third, long fourth) {
     long total = first + second + third + fourth;
-    assertEquals(total, o.getDistribution().getTotal());
-    assertEquals(first, o.getDistribution().getFirst().getCount());
-    assertEquals(second, o.getDistribution().getSecond().getCount());
-    assertEquals(third, o.getDistribution().getThird().getCount());
-    assertEquals(fourth, o.getDistribution().getFourth().getCount());
+    assertEquals(total, o.getTotal());
+    assertEquals(first, o.getFirst());
+    assertEquals(second, o.getSecond());
+    assertEquals(third, o.getThird());
+    assertEquals(fourth, o.getFourth());
   }
 
   private void assertEvaluation(DataSummary o, double ratio, boolean qualified) {
-    assertEquals(ratio, o.getEvaluation().getRatio(), 0.01);
-    assertEquals(qualified, o.getEvaluation().isQualified());
+    assertEquals(ratio, o.getRatio(), 0.01);
+    assertEquals(qualified, o.isQualified());
   }
 
   @Test

@@ -73,11 +73,11 @@ public class BranchCoverageDataSummaryAggregatorTest {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode().getLines());
-    assertEquals(covered, summary.getDistribution().getFirst().getCount());
-    assertEquals(uncovered, summary.getDistribution().getSecond().getCount());
-    assertEquals(ratio, summary.getEvaluation().getRatio(), 0.01);
-    assertEquals(qualified, summary.getEvaluation().isQualified());
+    assertEquals(linesOfCode, summary.getLinesOfCode());
+    assertEquals(covered, summary.getFirst());
+    assertEquals(uncovered, summary.getSecond());
+    assertEquals(ratio, summary.getRatio(), 0.01);
+    assertEquals(qualified, summary.isQualified());
   }
 
   @Test

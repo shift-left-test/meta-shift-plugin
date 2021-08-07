@@ -71,11 +71,11 @@ public class CommentDataSummaryAggregatorTest {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode().getLines());
-    assertEquals(comments, summary.getDistribution().getFirst().getCount());
-    assertEquals(others, summary.getDistribution().getSecond().getCount());
-    assertEquals(ratio, summary.getEvaluation().getRatio(), 0.01);
-    assertEquals(qualified, summary.getEvaluation().isQualified());
+    assertEquals(linesOfCode, summary.getLinesOfCode());
+    assertEquals(comments, summary.getFirst());
+    assertEquals(others, summary.getSecond());
+    assertEquals(ratio, summary.getRatio(), 0.01);
+    assertEquals(qualified, summary.isQualified());
   }
 
   @Test

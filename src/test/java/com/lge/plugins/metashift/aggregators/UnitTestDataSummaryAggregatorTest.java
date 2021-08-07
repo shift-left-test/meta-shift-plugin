@@ -78,13 +78,13 @@ public class UnitTestDataSummaryAggregatorTest {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode().getLines());
-    assertEquals(passed, summary.getDistribution().getFirst().getCount());
-    assertEquals(failed, summary.getDistribution().getSecond().getCount());
-    assertEquals(error, summary.getDistribution().getThird().getCount());
-    assertEquals(skipped, summary.getDistribution().getFourth().getCount());
-    assertEquals(ratio, summary.getEvaluation().getRatio(), 0.01);
-    assertEquals(qualified, summary.getEvaluation().isQualified());
+    assertEquals(linesOfCode, summary.getLinesOfCode());
+    assertEquals(passed, summary.getFirst());
+    assertEquals(failed, summary.getSecond());
+    assertEquals(error, summary.getThird());
+    assertEquals(skipped, summary.getFourth());
+    assertEquals(ratio, summary.getRatio(), 0.01);
+    assertEquals(qualified, summary.isQualified());
   }
 
   private void assertValues(int index, String suite, String test, String message, String status) {

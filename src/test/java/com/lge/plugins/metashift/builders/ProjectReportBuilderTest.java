@@ -175,8 +175,8 @@ public class ProjectReportBuilderTest {
     expected.add(newTreemapData(RECIPE2, 20, 0.0, 6));
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.5, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.0, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -190,8 +190,8 @@ public class ProjectReportBuilderTest {
     expected.add(newTreemapData(RECIPE2, 20, 0.0, 6));
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.5, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.0, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -205,8 +205,8 @@ public class ProjectReportBuilderTest {
     expected.add(newTreemapData(RECIPE2, 20, 0.3, 0));
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(3.0, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.3, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(3.0, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.3, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -220,8 +220,8 @@ public class ProjectReportBuilderTest {
     expected.add(newTreemapData(RECIPE2, 20, 0.5, 0));
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.0, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.5, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.0, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -235,8 +235,8 @@ public class ProjectReportBuilderTest {
     expected.add(newTreemapData(RECIPE2, 20, 0.3, 0));
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(3.0, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.3, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(3.0, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.3, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -250,8 +250,8 @@ public class ProjectReportBuilderTest {
     expected.add(newTreemapData(RECIPE2, 20, 0.5, 3));
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(1.0, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.5, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(1.0, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -265,8 +265,8 @@ public class ProjectReportBuilderTest {
     expected.add(newTreemapData(RECIPE2, 20, 0.5, 6));
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.0, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.5, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.0, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -280,8 +280,8 @@ public class ProjectReportBuilderTest {
     expected.add(newTreemapData(RECIPE2, 20, 1.0, 0));
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.25, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(1.0, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.25, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(1.0, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -295,8 +295,8 @@ public class ProjectReportBuilderTest {
     expected.add(newTreemapData(RECIPE2, 20, 0.0, 6));
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.5, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.0, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -310,8 +310,8 @@ public class ProjectReportBuilderTest {
     expected.add(newTreemapData(RECIPE2, 20, 0.0, 6));
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.5, summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(0.0, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+    assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test
@@ -326,7 +326,7 @@ public class ProjectReportBuilderTest {
     assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.3333333333333333,
-        summaries.get(0).getJSONObject("evaluation").getDouble("ratio"), 0.01);
-    assertEquals(1.0, summaries.get(1).getJSONObject("evaluation").getDouble("ratio"), 0.01);
+        summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(1.0, summaries.get(1).getDouble("ratio"), 0.01);
   }
 }
