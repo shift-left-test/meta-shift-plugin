@@ -129,14 +129,14 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     put(Metric.NONE, Data.LINES_OF_CODE, recipe.getName(), JSONObject.fromObject(linesOfCode));
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void add(Metric metric, Evaluator evaluator, Counter counter,
       RecipeAggregator<?> aggregator, Recipe recipe) throws IOException {
     Evaluation evaluation = evaluator.parse(recipe);
-    Distribution distribution = counter.parse(recipe);
-    List<?> summaries = aggregator.parse(recipe);
-
     put(metric, Data.EVALUATION, recipe.getName(), JSONObject.fromObject(evaluation));
+    Distribution distribution = counter.parse(recipe);
     put(metric, Data.DISTRIBUTION, recipe.getName(), JSONObject.fromObject(distribution));
+    List<?> summaries = aggregator.parse(recipe);
     put(metric, Data.SUMMARIES, recipe.getName(), JSONArray.fromObject(summaries));
   }
 

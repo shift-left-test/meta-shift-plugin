@@ -114,18 +114,18 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
     put(Metric.NONE, Data.LINES_OF_CODE, JSONObject.fromObject(linesOfCode));
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void add(Metric metric, Evaluator evaluator, Counter counter,
       Aggregator<DataSummary> aggregator, Recipes recipes) throws IOException {
     Evaluation evaluation = evaluator.parse(recipes);
-    Statistics statistics = new StatisticsCollector(evaluator).parse(recipes);
-    Distribution distribution = counter.parse(recipes);
-    List<TreemapData> treemap = new TreemapDataAggregator(evaluator).parse(recipes);
-    List<DataSummary> summaries = aggregator.parse(recipes);
-
     put(metric, Data.EVALUATION, JSONObject.fromObject(evaluation));
+    Statistics statistics = new StatisticsCollector(evaluator).parse(recipes);
     put(metric, Data.STATISTICS, JSONObject.fromObject(statistics));
+    Distribution distribution = counter.parse(recipes);
     put(metric, Data.DISTRIBUTION, JSONObject.fromObject(distribution));
+    List<TreemapData> treemap = new TreemapDataAggregator(evaluator).parse(recipes);
     put(metric, Data.TREEMAP, JSONArray.fromObject(treemap));
+    List<DataSummary> summaries = aggregator.parse(recipes);
     put(metric, Data.SUMMARIES, JSONArray.fromObject(summaries));
   }
 
