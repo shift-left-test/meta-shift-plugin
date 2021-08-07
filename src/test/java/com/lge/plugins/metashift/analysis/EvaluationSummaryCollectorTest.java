@@ -64,15 +64,6 @@ public class EvaluationSummaryCollectorTest {
     recipes.add(recipe2);
   }
 
-  private void assertLinesOfCode(EvaluationSummary o, long lines, long functions, long classes,
-      long files, long recipes) {
-    assertEquals(lines, o.getLinesOfCode().getLines());
-    assertEquals(functions, o.getLinesOfCode().getFunctions());
-    assertEquals(classes, o.getLinesOfCode().getClasses());
-    assertEquals(files, o.getLinesOfCode().getFiles());
-    assertEquals(recipes, o.getLinesOfCode().getRecipes());
-  }
-
   private void assertPremirrorCache(EvaluationSummary o, boolean available, double ratio,
       boolean qualified) {
     assertEquals(available, o.getPremirrorCache().isAvailable());

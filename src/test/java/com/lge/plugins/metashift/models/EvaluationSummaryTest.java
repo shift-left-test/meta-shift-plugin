@@ -59,7 +59,7 @@ public class EvaluationSummaryTest {
         newEvaluation(true, 10, 9, 0.5),
         newEvaluation(true, 10, 10, 0.5)
     );
-    assertEquals(1, summary.getLinesOfCode().getLines());
+    assertEquals(1, summary.getLinesOfCode());
     assertEquals(0.0, summary.getPremirrorCache().getRatio(), 0.01);
     assertEquals(0.1, summary.getSharedStateCache().getRatio(), 0.01);
     assertEquals(0.2, summary.getRecipeViolations().getRatio(), 0.01);

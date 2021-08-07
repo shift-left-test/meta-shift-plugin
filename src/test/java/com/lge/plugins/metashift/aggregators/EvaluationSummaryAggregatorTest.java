@@ -67,7 +67,7 @@ public class EvaluationSummaryAggregatorTest {
   private void assertValues(int index, long linesOfCode, double premirrorCache,
       double sharedStateCache) {
     summaries = aggregator.parse(recipes);
-    assertEquals(linesOfCode, summaries.get(index).getLinesOfCode().getLines());
+    assertEquals(linesOfCode, summaries.get(index).getLinesOfCode());
     assertEquals(premirrorCache, summaries.get(index).getPremirrorCache().getRatio(), 0.01);
     assertEquals(sharedStateCache, summaries.get(index).getSharedStateCache().getRatio(), 0.01);
   }
