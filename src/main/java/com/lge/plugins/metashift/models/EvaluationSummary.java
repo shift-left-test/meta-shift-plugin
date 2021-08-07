@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.models;
 
+import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -34,30 +35,63 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class EvaluationSummary extends Data implements Aggregate<EvaluationSummary.Group> {
 
-  public static class Group {
+  /**
+   * EvaluationSummary.Group class.
+   */
+  public static class Group implements Serializable {
+
+    private static final long serialVersionUID = -40855088536329406L;
 
     private final double ratio;
     private final boolean available;
     private final boolean qualified;
 
+    /**
+     * Default constructor.
+     *
+     * @param ratio     value
+     * @param available status
+     * @param qualified status
+     */
     public Group(double ratio, boolean available, boolean qualified) {
       this.ratio = ratio;
       this.available = available;
       this.qualified = qualified;
     }
 
+    /**
+     * Returns the ratio value.
+     *
+     * @return ratio value
+     */
     public double getRatio() {
       return ratio;
     }
 
+    /**
+     * Returns the availability status.
+     *
+     * @return availability
+     */
     public boolean isAvailable() {
       return available;
     }
 
+    /**
+     * Returns the qualification status.
+     *
+     * @return qualification status
+     */
     public boolean isQualified() {
       return qualified;
     }
 
+    /**
+     * Create a Group instance using the given Evaluation object.
+     *
+     * @param evaluation object
+     * @return a Group instance
+     */
     public static Group of(Evaluation evaluation) {
       return new Group(evaluation.getRatio(), evaluation.isAvailable(), evaluation.isQualified());
     }
@@ -65,18 +99,18 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
 
   private static final long serialVersionUID = -3037651377691916500L;
 
-  private final LinesOfCode linesOfCode;
-  private final Evaluation premirrorCache;
-  private final Evaluation sharedStateCache;
-  private final Evaluation recipeViolations;
-  private final Evaluation comments;
-  private final Evaluation codeViolations;
-  private final Evaluation complexity;
-  private final Evaluation duplications;
-  private final Evaluation unitTests;
-  private final Evaluation statementCoverage;
-  private final Evaluation branchCoverage;
-  private final Evaluation mutationTests;
+  private final long linesOfCode;
+  private final Group premirrorCache;
+  private final Group sharedStateCache;
+  private final Group recipeViolations;
+  private final Group comments;
+  private final Group codeViolations;
+  private final Group complexity;
+  private final Group duplications;
+  private final Group unitTests;
+  private final Group statementCoverage;
+  private final Group branchCoverage;
+  private final Group mutationTests;
 
   /**
    * Default constructor.
@@ -101,18 +135,18 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
       Evaluation unitTests, Evaluation statementCoverage, Evaluation branchCoverage,
       Evaluation mutationTests) {
     super(name);
-    this.linesOfCode = linesOfCode;
-    this.premirrorCache = premirrorCache;
-    this.sharedStateCache = sharedStateCache;
-    this.recipeViolations = recipeViolations;
-    this.comments = comments;
-    this.codeViolations = codeViolations;
-    this.complexity = complexity;
-    this.duplications = duplications;
-    this.unitTests = unitTests;
-    this.statementCoverage = statementCoverage;
-    this.branchCoverage = branchCoverage;
-    this.mutationTests = mutationTests;
+    this.linesOfCode = linesOfCode.getLines();
+    this.premirrorCache = Group.of(premirrorCache);
+    this.sharedStateCache = Group.of(sharedStateCache);
+    this.recipeViolations = Group.of(recipeViolations);
+    this.comments = Group.of(comments);
+    this.codeViolations = Group.of(codeViolations);
+    this.complexity = Group.of(complexity);
+    this.duplications = Group.of(duplications);
+    this.unitTests = Group.of(unitTests);
+    this.statementCoverage = Group.of(statementCoverage);
+    this.branchCoverage = Group.of(branchCoverage);
+    this.mutationTests = Group.of(mutationTests);
   }
 
   @Override
@@ -146,61 +180,61 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
    * @return the lines of code
    */
   public long getLinesOfCode() {
-    return linesOfCode.getLines();
+    return linesOfCode;
   }
 
   @Override
   public Group getPremirrorCache() {
-    return Group.of(premirrorCache);
+    return premirrorCache;
   }
 
   @Override
   public Group getSharedStateCache() {
-    return Group.of(sharedStateCache);
+    return sharedStateCache;
   }
 
   @Override
   public Group getRecipeViolations() {
-    return Group.of(recipeViolations);
+    return recipeViolations;
   }
 
   @Override
   public Group getComments() {
-    return Group.of(comments);
+    return comments;
   }
 
   @Override
   public Group getCodeViolations() {
-    return Group.of(codeViolations);
+    return codeViolations;
   }
 
   @Override
   public Group getComplexity() {
-    return Group.of(complexity);
+    return complexity;
   }
 
   @Override
   public Group getDuplications() {
-    return Group.of(duplications);
+    return duplications;
   }
 
   @Override
   public Group getUnitTests() {
-    return Group.of(unitTests);
+    return unitTests;
   }
 
   @Override
   public Group getStatementCoverage() {
-    return Group.of(statementCoverage);
+    return statementCoverage;
   }
 
   @Override
   public Group getBranchCoverage() {
-    return Group.of(branchCoverage);
+    return branchCoverage;
   }
 
   @Override
   public Group getMutationTests() {
-    return Group.of(mutationTests);
+    return mutationTests;
   }
 }
