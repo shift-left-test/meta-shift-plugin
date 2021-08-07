@@ -79,8 +79,11 @@ import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.Statistics;
 import com.lge.plugins.metashift.models.TreemapData;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils.Function;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Callable;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -109,11 +112,6 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
     dataSource.put(object, Scope.PROJECT.name(), metric.name(), data.name());
   }
 
-  private void addLinesOfCode(Recipes recipes) throws IOException {
-    LinesOfCode linesOfCode = new LinesOfCodeCollector().parse(recipes);
-    put(Metric.NONE, Data.LINES_OF_CODE, JSONObject.fromObject(linesOfCode));
-  }
-
   @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void add(Metric metric, Evaluator evaluator, Counter counter,
       Aggregator<DataSummary> aggregator, Recipes recipes) throws IOException {
@@ -129,130 +127,153 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
     put(metric, Data.SUMMARIES, JSONArray.fromObject(summaries));
   }
 
-  private void addPremirrorCache(Recipes recipes) throws IOException {
+  private Void addLinesOfCode(Recipes recipes) throws IOException {
+    LinesOfCode linesOfCode = new LinesOfCodeCollector().parse(recipes);
+    put(Metric.NONE, Data.LINES_OF_CODE, JSONObject.fromObject(linesOfCode));
+    return null;
+  }
+
+  private Void addPremirrorCache(Recipes recipes) throws IOException {
     add(Metric.PREMIRROR_CACHE,
         new PremirrorCacheEvaluator(configuration),
         new PremirrorCacheCounter(),
         new PremirrorCacheDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addSharedStateCache(Recipes recipes) throws IOException {
+  private Void addSharedStateCache(Recipes recipes) throws IOException {
     add(Metric.SHARED_STATE_CACHE,
         new SharedStateCacheEvaluator(configuration),
         new SharedStateCacheCounter(),
         new SharedStateCacheDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addRecipeViolations(Recipes recipes) throws IOException {
+  private Void addRecipeViolations(Recipes recipes) throws IOException {
     add(Metric.RECIPE_VIOLATIONS,
         new RecipeViolationEvaluator(configuration),
         new RecipeViolationCounter(),
         new RecipeViolationDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addComments(Recipes recipes) throws IOException {
+  private Void addComments(Recipes recipes) throws IOException {
     add(Metric.COMMENTS,
         new CommentEvaluator(configuration),
         new CommentCounter(),
         new CommentDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addCodeViolations(Recipes recipes) throws IOException {
+  private Void addCodeViolations(Recipes recipes) throws IOException {
     add(Metric.CODE_VIOLATIONS,
         new CodeViolationEvaluator(configuration),
         new CodeViolationCounter(),
         new CodeViolationDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addComplexity(Recipes recipes) throws IOException {
+  private Void addComplexity(Recipes recipes) throws IOException {
     add(Metric.COMPLEXITY,
         new ComplexityEvaluator(configuration),
         new ComplexityCounter(configuration),
         new ComplexityDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addDuplications(Recipes recipes) throws IOException {
+  private Void addDuplications(Recipes recipes) throws IOException {
     add(Metric.DUPLICATIONS,
         new DuplicationEvaluator(configuration),
         new DuplicationCounter(configuration),
         new DuplicationDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addTestedRecipes(Recipes recipes) throws IOException {
+  private Void addTestedRecipes(Recipes recipes) throws IOException {
     Evaluation evaluation = new TestedRecipeEvaluator().parse(recipes);
     put(Metric.TESTED_RECIPES, Data.EVALUATION, JSONObject.fromObject(evaluation));
+    return null;
   }
 
-  private void addUnitTests(Recipes recipes) throws IOException {
+  private Void addUnitTests(Recipes recipes) throws IOException {
     add(Metric.UNIT_TESTS,
         new UnitTestEvaluator(configuration),
         new UnitTestCounter(),
         new UnitTestDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addStatementCoverage(Recipes recipes) throws IOException {
+  private Void addStatementCoverage(Recipes recipes) throws IOException {
     add(Metric.STATEMENT_COVERAGE,
         new StatementCoverageEvaluator(configuration),
         new StatementCoverageCounter(),
         new StatementCoverageDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addBranchCoverage(Recipes recipes) throws IOException {
+  private Void addBranchCoverage(Recipes recipes) throws IOException {
     add(Metric.BRANCH_COVERAGE,
         new BranchCoverageEvaluator(configuration),
         new BranchCoverageCounter(),
         new BranchCoverageDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addMutationTests(Recipes recipes) throws IOException {
+  private Void addMutationTests(Recipes recipes) throws IOException {
     add(Metric.MUTATION_TESTS,
         new MutationTestEvaluator(configuration),
         new MutationTestCounter(),
         new MutationTestDataSummaryAggregator(configuration),
         recipes);
+    return null;
   }
 
-  private void addTreemap(Recipes recipes) throws IOException {
+  private Void addTreemap(Recipes recipes) throws IOException {
     Evaluator evaluator = new RecipeEvaluator(configuration);
     List<TreemapData> objects = new TreemapDataAggregator(evaluator).parse(recipes);
     put(Metric.NONE, Data.TREEMAP, JSONArray.fromObject(objects));
+    return null;
   }
 
-  private void addSummaries(Recipes recipes) throws IOException {
+  private Void addSummaries(Recipes recipes) throws IOException {
     List<EvaluationSummary> objects = new EvaluationSummaryAggregator(configuration).parse(recipes);
     put(Metric.NONE, Data.SUMMARIES, JSONArray.fromObject(objects));
+    return null;
+  }
+
+  private Callable<Void> newTask(Function<Recipes, Void> functor, Recipes recipes) {
+    return () -> functor.apply(recipes);
   }
 
   @Override
   public ProjectReport parse(Recipes recipes) throws IOException, InterruptedException {
-    addLinesOfCode(recipes);
-
-    addPremirrorCache(recipes);
-    addSharedStateCache(recipes);
-    addRecipeViolations(recipes);
-    addComments(recipes);
-    addCodeViolations(recipes);
-    addComplexity(recipes);
-    addDuplications(recipes);
-    addTestedRecipes(recipes);
-    addUnitTests(recipes);
-    addStatementCoverage(recipes);
-    addBranchCoverage(recipes);
-    addMutationTests(recipes);
-
-    addTreemap(recipes);
-    addSummaries(recipes);
-
+    ExecutorServiceUtils.invokeAll(
+        newTask(this::addLinesOfCode, recipes),
+        newTask(this::addPremirrorCache, recipes),
+        newTask(this::addSharedStateCache, recipes),
+        newTask(this::addRecipeViolations, recipes),
+        newTask(this::addComments, recipes),
+        newTask(this::addCodeViolations, recipes),
+        newTask(this::addComplexity, recipes),
+        newTask(this::addDuplications, recipes),
+        newTask(this::addTestedRecipes, recipes),
+        newTask(this::addUnitTests, recipes),
+        newTask(this::addStatementCoverage, recipes),
+        newTask(this::addBranchCoverage, recipes),
+        newTask(this::addMutationTests, recipes),
+        newTask(this::addTreemap, recipes),
+        newTask(this::addSummaries, recipes)
+    );
     return new ProjectReport(dataSource);
   }
 }

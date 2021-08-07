@@ -79,6 +79,8 @@ import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.ViolationData;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
+import com.lge.plugins.metashift.utils.ExecutorServiceUtils.Function;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.File;
@@ -87,6 +89,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -124,11 +127,6 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     dataSource.put(object, Scope.RECIPE.name(), metric.name(), data.name(), recipe, file);
   }
 
-  private void addLinesOfCode(Recipe recipe) throws IOException {
-    LinesOfCode linesOfCode = new LinesOfCodeCollector().parse(recipe);
-    put(Metric.NONE, Data.LINES_OF_CODE, recipe.getName(), JSONObject.fromObject(linesOfCode));
-  }
-
   @SuppressWarnings("PMD.UnusedPrivateMethod")
   private void add(Metric metric, Evaluator evaluator, Counter counter,
       RecipeAggregator<?> aggregator, Recipe recipe) throws IOException {
@@ -140,6 +138,12 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     put(metric, Data.SUMMARIES, recipe.getName(), JSONArray.fromObject(summaries));
   }
 
+  private Void addLinesOfCode(Recipe recipe) throws IOException {
+    LinesOfCode linesOfCode = new LinesOfCodeCollector().parse(recipe);
+    put(Metric.NONE, Data.LINES_OF_CODE, recipe.getName(), JSONObject.fromObject(linesOfCode));
+    return null;
+  }
+
   private FilePath getFilePath(FilePath base, String prefix, String file) {
     if (new File(file).isAbsolute()) {
       return new FilePath(base.getChannel(), file);
@@ -148,9 +152,9 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     }
   }
 
-  private void writeFile(String recipe, String file) throws IOException, InterruptedException {
+  private Void writeFile(String recipe, String file) throws IOException, InterruptedException {
     if (dataSource.has(Scope.RECIPE.name(), Metric.NONE.name(), Data.FILE.name(), recipe, file)) {
-      return;
+      return null;
     }
     try {
       JSONObject metadata = JsonUtils.createObject(path.child(recipe).child("metadata.json"));
@@ -159,33 +163,37 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     } catch (NoSuchFileException ignored) {
       // ignored
     }
+    return null;
   }
 
-  private <T> void addObjects(Metric metric, String recipe, Map<String, List<T>> group)
+  private <T> Void addObjects(Metric metric, String recipe, Map<String, List<T>> group)
       throws IOException, InterruptedException {
     for (Entry<String, List<T>> entry : group.entrySet()) {
       put(metric, Data.OBJECTS, recipe, entry.getKey(), JSONArray.fromObject(entry.getValue()));
       writeFile(recipe, entry.getKey());
     }
+    return null;
   }
 
-  private void addPremirrorCache(Recipe recipe) throws IOException {
+  private Void addPremirrorCache(Recipe recipe) throws IOException {
     add(Metric.PREMIRROR_CACHE,
         new PremirrorCacheEvaluator(configuration),
         new PremirrorCacheCounter(),
         new PremirrorCacheDataSummaryAggregator(configuration),
         recipe);
+    return null;
   }
 
-  private void addSharedStateCache(Recipe recipe) throws IOException {
+  private Void addSharedStateCache(Recipe recipe) throws IOException {
     add(Metric.SHARED_STATE_CACHE,
         new SharedStateCacheEvaluator(configuration),
         new SharedStateCacheCounter(),
         new SharedStateCacheDataSummaryAggregator(configuration),
         recipe);
+    return null;
   }
 
-  private void addRecipeViolations(Recipe recipe) throws IOException, InterruptedException {
+  private Void addRecipeViolations(Recipe recipe) throws IOException, InterruptedException {
     add(Metric.RECIPE_VIOLATIONS,
         new RecipeViolationEvaluator(configuration),
         new RecipeViolationCounter(),
@@ -195,17 +203,19 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     Map<String, List<ViolationData>> group = recipe.objects(RecipeViolationData.class)
         .collect(Collectors.groupingBy(ViolationData::getFile));
     addObjects(Metric.RECIPE_VIOLATIONS, recipe.getName(), group);
+    return null;
   }
 
-  private void addComments(Recipe recipe) throws IOException {
+  private Void addComments(Recipe recipe) throws IOException {
     add(Metric.COMMENTS,
         new CommentEvaluator(configuration),
         new CommentCounter(),
         new CommentDataSummaryAggregator(configuration),
         recipe);
+    return null;
   }
 
-  private void addCodeViolations(Recipe recipe) throws IOException, InterruptedException {
+  private Void addCodeViolations(Recipe recipe) throws IOException, InterruptedException {
     add(Metric.CODE_VIOLATIONS,
         new CodeViolationEvaluator(configuration),
         new CodeViolationCounter(),
@@ -215,9 +225,10 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     Map<String, List<ViolationData>> group = recipe.objects(CodeViolationData.class)
         .collect(Collectors.groupingBy(ViolationData::getFile));
     addObjects(Metric.CODE_VIOLATIONS, recipe.getName(), group);
+    return null;
   }
 
-  private void addComplexity(Recipe recipe) throws IOException, InterruptedException {
+  private Void addComplexity(Recipe recipe) throws IOException, InterruptedException {
     add(Metric.COMPLEXITY,
         new ComplexityEvaluator(configuration),
         new ComplexityCounter(configuration),
@@ -228,9 +239,10 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
         .filter(o -> o.getValue() >= configuration.getComplexityTolerance())
         .collect(Collectors.groupingBy(ComplexityData::getFile));
     addObjects(Metric.COMPLEXITY, recipe.getName(), group);
+    return null;
   }
 
-  private void addDuplications(Recipe recipe) throws IOException, InterruptedException {
+  private Void addDuplications(Recipe recipe) throws IOException, InterruptedException {
     add(Metric.DUPLICATIONS,
         new DuplicationEvaluator(configuration),
         new DuplicationCounter(configuration),
@@ -241,17 +253,19 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
         .filter(o -> o.getDuplicatedLines() >= configuration.getDuplicationTolerance())
         .collect(Collectors.groupingBy(DuplicationData::getFile));
     addObjects(Metric.DUPLICATIONS, recipe.getName(), group);
+    return null;
   }
 
-  private void addUnitTests(Recipe recipe) throws IOException {
+  private Void addUnitTests(Recipe recipe) throws IOException {
     add(Metric.UNIT_TESTS,
         new UnitTestEvaluator(configuration),
         new UnitTestCounter(),
         new UnitTestDataSummaryAggregator(configuration),
         recipe);
+    return null;
   }
 
-  private void addStatementCoverage(Recipe recipe) throws IOException, InterruptedException {
+  private Void addStatementCoverage(Recipe recipe) throws IOException, InterruptedException {
     add(Metric.STATEMENT_COVERAGE,
         new StatementCoverageEvaluator(configuration),
         new StatementCoverageCounter(),
@@ -261,9 +275,10 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     Map<String, List<CoverageData>> group = recipe.objects(StatementCoverageData.class)
         .collect(Collectors.groupingBy(CoverageData::getFile));
     addObjects(Metric.STATEMENT_COVERAGE, recipe.getName(), group);
+    return null;
   }
 
-  private void addBranchCoverage(Recipe recipe) throws IOException, InterruptedException {
+  private Void addBranchCoverage(Recipe recipe) throws IOException, InterruptedException {
     add(Metric.BRANCH_COVERAGE,
         new BranchCoverageEvaluator(configuration),
         new BranchCoverageCounter(),
@@ -273,9 +288,10 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     Map<String, List<CoverageData>> group = recipe.objects(BranchCoverageData.class)
         .collect(Collectors.groupingBy(CoverageData::getFile));
     addObjects(Metric.BRANCH_COVERAGE, recipe.getName(), group);
+    return null;
   }
 
-  private void addMutationTests(Recipe recipe) throws IOException, InterruptedException {
+  private Void addMutationTests(Recipe recipe) throws IOException, InterruptedException {
     add(Metric.MUTATION_TESTS,
         new MutationTestEvaluator(configuration),
         new MutationTestCounter(),
@@ -285,24 +301,29 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     Map<String, List<MutationTestData>> group = recipe.objects(MutationTestData.class)
         .collect(Collectors.groupingBy(MutationTestData::getFile));
     addObjects(Metric.MUTATION_TESTS, recipe.getName(), group);
+    return null;
+  }
+
+  private Callable<Void> newTask(Function<Recipe, Void> functor, Recipe recipe) {
+    return () -> functor.apply(recipe);
   }
 
   @Override
   public RecipeReport parse(Recipe recipe) throws IOException, InterruptedException {
-    addLinesOfCode(recipe);
-
-    addPremirrorCache(recipe);
-    addSharedStateCache(recipe);
-    addRecipeViolations(recipe);
-    addComments(recipe);
-    addCodeViolations(recipe);
-    addComplexity(recipe);
-    addDuplications(recipe);
-    addUnitTests(recipe);
-    addStatementCoverage(recipe);
-    addBranchCoverage(recipe);
-    addMutationTests(recipe);
-
+    ExecutorServiceUtils.invokeAll(
+        newTask(this::addLinesOfCode, recipe),
+        newTask(this::addPremirrorCache, recipe),
+        newTask(this::addSharedStateCache, recipe),
+        newTask(this::addRecipeViolations, recipe),
+        newTask(this::addComments, recipe),
+        newTask(this::addCodeViolations, recipe),
+        newTask(this::addComplexity, recipe),
+        newTask(this::addDuplications, recipe),
+        newTask(this::addUnitTests, recipe),
+        newTask(this::addStatementCoverage, recipe),
+        newTask(this::addBranchCoverage, recipe),
+        newTask(this::addMutationTests, recipe)
+    );
     return new RecipeReport(dataSource, recipe.getName());
   }
 }

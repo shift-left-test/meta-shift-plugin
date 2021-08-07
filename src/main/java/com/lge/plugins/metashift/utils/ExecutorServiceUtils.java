@@ -39,6 +39,12 @@ import java.util.concurrent.Future;
  */
 public class ExecutorServiceUtils {
 
+  @FunctionalInterface
+  public interface Function<T, R> {
+
+    R apply(T t) throws Exception;
+  }
+
   /**
    * Invokes all the tasks.
    *
