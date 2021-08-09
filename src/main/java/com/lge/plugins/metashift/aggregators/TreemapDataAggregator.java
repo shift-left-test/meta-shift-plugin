@@ -58,7 +58,9 @@ public class TreemapDataAggregator implements Aggregator<TreemapData> {
   public List<TreemapData> parse(Recipes recipes) {
     double max = recipes.stream().mapToDouble(o -> evaluator.parse(o).getRatio()).max().orElse(0.0);
     List<TreemapData> objects = new ArrayList<>();
-    recipes.forEach(o -> objects.add(newTreeMapData(o, max)));
+    recipes.stream()
+        .filter(o -> evaluator.parse(o).isAvailable())
+        .forEach(o -> objects.add(newTreeMapData(o, max)));
     return objects;
   }
 
