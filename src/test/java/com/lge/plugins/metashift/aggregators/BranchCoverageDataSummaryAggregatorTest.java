@@ -90,7 +90,7 @@ public class BranchCoverageDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new BranchCoverageData(RECIPE1, "a.file", 1, 1, true));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 1, 0, 1.0, false);
+    assertEquals(0, summaries.size());
   }
 
   @Test

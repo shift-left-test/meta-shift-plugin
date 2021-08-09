@@ -86,6 +86,9 @@ public abstract class DataSummaryAggregator implements Aggregator<DataSummary> {
 
   @Override
   public List<DataSummary> parse(Recipes recipes) {
-    return recipes.stream().map(this::newDataSummary).collect(Collectors.toList());
+    return recipes.stream()
+        .filter(o -> getEvaluator(configuration).parse(o).isAvailable())
+        .map(this::newDataSummary)
+        .collect(Collectors.toList());
   }
 }
