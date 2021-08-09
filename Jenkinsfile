@@ -17,7 +17,7 @@ pipeline {
         }
         stage("Test") {
             steps {
-                sh "HOME=${env.WORKSPACE} mvn -s ${env.WORKSPACE}/settings.xml verify"
+                sh "HOME=${env.WORKSPACE}/home mvn -s ${env.WORKSPACE}/settings.xml verify"
             }
         }
         stage("Coverage") {
