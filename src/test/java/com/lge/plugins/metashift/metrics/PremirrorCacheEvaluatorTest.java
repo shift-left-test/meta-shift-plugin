@@ -77,7 +77,7 @@ public class PremirrorCacheEvaluatorTest {
 
   @Test
   public void testParseRecipeWithNoMatchingData() {
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 10));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 10, 10));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, false, false);

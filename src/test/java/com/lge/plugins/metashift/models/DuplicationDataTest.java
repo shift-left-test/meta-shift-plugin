@@ -27,7 +27,7 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import net.sf.json.JSONObject;
+import java.util.HashSet;
 import org.junit.Test;
 
 /**
@@ -37,8 +37,8 @@ import org.junit.Test;
  */
 public class DuplicationDataTest {
 
-  private final DuplicationData origin = new DuplicationData("A-1.0.0-r0", "a.file", 10, 5);
-  private final DuplicationData same = new DuplicationData("A-1.0.0-r0", "a.file", 10, 5);
+  private final DuplicationData origin = new DuplicationData("A-1.0.0-r0", "a.file", 50, 1, 10);
+  private final DuplicationData same = new DuplicationData("A-1.0.0-r0", "a.file", 50, 1, 10);
 
   private void assertHashEquals(Object expected, Object actual) {
     assertEquals(expected.hashCode(), actual.hashCode());
@@ -52,8 +52,11 @@ public class DuplicationDataTest {
   public void testInitData() {
     assertEquals("A-1.0.0-r0", origin.getName());
     assertEquals("a.file", origin.getFile());
-    assertEquals(10, origin.getLines());
-    assertEquals(5, origin.getDuplicatedLines());
+    assertEquals(50, origin.getLines());
+    assertEquals(1, origin.getStart());
+    assertEquals(10, origin.getEnd());
+    assertEquals(9, origin.getDuplicatedLines());
+    assertEquals(new HashSet<>(), origin.getDuplicateBlocks());
   }
 
   @Test
@@ -62,27 +65,22 @@ public class DuplicationDataTest {
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new DuplicationData("B-1.0.0-r0", "a.file", 10, 5));
-    assertNotEquals(origin, new DuplicationData("A-1.0.0-r0", "b.file", 10, 5));
-    assertEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 10000, 5));
-    assertEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 10, 5000));
+    assertNotEquals(origin, new DuplicationData("B-1.0.0-r0", "a.file", 50, 1, 10));
+    assertNotEquals(origin, new DuplicationData("A-1.0.0-r0", "b.file", 50, 1, 10));
+    assertEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 500, 1, 10));
+    assertNotEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 50, 10, 10));
+    assertNotEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 50, 1, 100));
   }
 
   @Test
   public void testHashCode() {
+    assertHashNotEquals(origin, new Object());
+    assertHashEquals(origin, origin);
     assertHashEquals(origin, same);
-    assertHashNotEquals(origin, new DuplicationData("B-1.0.0-r0", "a.file", 10, 5));
-    assertHashNotEquals(origin, new DuplicationData("A-1.0.0-r0", "b.file", 10, 5));
-    assertHashEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 10000, 5));
-    assertHashEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 10, 5000));
-  }
-
-  @Test
-  public void testToJsonObject() {
-    JSONObject object = origin.toJsonObject();
-    assertEquals("A-1.0.0-r0", object.getString("name"));
-    assertEquals("a.file", object.getString("file"));
-    assertEquals(10, object.getLong("lines"));
-    assertEquals(5, object.getLong("duplicatedLines"));
+    assertHashNotEquals(origin, new DuplicationData("B-1.0.0-r0", "a.file", 50, 1, 10));
+    assertHashNotEquals(origin, new DuplicationData("A-1.0.0-r0", "b.file", 50, 1, 10));
+    assertHashEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 500, 1, 10));
+    assertHashNotEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 50, 10, 10));
+    assertHashNotEquals(origin, new DuplicationData("A-1.0.0-r0", "a.file", 50, 1, 100));
   }
 }

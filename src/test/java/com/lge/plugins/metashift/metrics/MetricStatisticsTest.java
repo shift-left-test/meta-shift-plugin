@@ -177,9 +177,9 @@ public class MetricStatisticsTest {
   @Test
   public void testGetDuplications() {
     recipe1.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
-    recipe1.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 10));
+    recipe1.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 0, 10));
     recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 10, 1, 1));
-    recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 10, 0));
+    recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 10, 0, 0));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
     stats.parse(recipes);
     assertValues(stats.getDuplications(), 0.0, 1.0, 0.5);
@@ -226,7 +226,7 @@ public class MetricStatisticsTest {
     recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 5, 1, 1));
     recipe2.add(new InfoCodeViolationData("B-1.0.0-r0", "a.file", 1, 2, "r", "m", "d", "E", "t"));
     recipe2.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 1));
-    recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 5, 0));
+    recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 5, 0, 0));
     recipe2.add(new RecipeSizeData("B-1.0.0-r0", "a.file", 5));
     recipe2.add(new InfoRecipeViolationData("B-1.0.0-r0", "a.file", 1, "info", "info", "info"));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));
@@ -258,7 +258,7 @@ public class MetricStatisticsTest {
     recipe2.add(new CodeSizeData("B-1.0.0-r0", "a.file", 5, 1, 1));
     recipe2.add(new InfoCodeViolationData("B-1.0.0-r0", "a.file", 1, 2, "r", "m", "d", "E", "t"));
     recipe2.add(new ComplexityData("B-1.0.0-r0", "a.file", "f()", 5, 10, 1));
-    recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 5, 0));
+    recipe2.add(new DuplicationData("B-1.0.0-r0", "a.file", 5, 0, 0));
     recipe2.add(new RecipeSizeData("B-1.0.0-r0", "a.file", 5));
     recipe2.add(new InfoRecipeViolationData("B-1.0.0-r0", "a.file", 1, "info", "info", "info"));
     recipe3.add(new CodeSizeData("C-1.0.0-r0", "a.file", 1, 1, 1));

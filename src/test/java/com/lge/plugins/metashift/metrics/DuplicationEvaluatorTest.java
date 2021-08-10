@@ -88,7 +88,7 @@ public class DuplicationEvaluatorTest {
   @Test
   public void testParseRecipeWithUnqualifiedData() {
     recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 20, 1, 1));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 12));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 0, 12));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, false);
@@ -98,7 +98,7 @@ public class DuplicationEvaluatorTest {
   @Test
   public void testParseRecipeWithQualifiedData() {
     recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 30, 1, 1));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 30, 12));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 30, 0, 12));
     evaluator.parse(recipe);
 
     assertEvaluator(evaluator, true, true);
@@ -107,7 +107,7 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testParseRecipeResetValues() {
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 6));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 10, 0, 6));
     assertEquals(10, evaluator.parse(recipe).getDenominator());
     assertEquals(0, evaluator.parse(new Recipe("A-1.0.0-r0")).getDenominator());
   }
@@ -124,11 +124,11 @@ public class DuplicationEvaluatorTest {
   public void testParseRecipesWithUnqualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
     recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 5, 0));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 5, 0, 0));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
     recipe.add(new CodeSizeData("B-1.0.0-r0", "a.file", 10, 1, 1));
-    recipe.add(new DuplicationData("B-1.0.0-r0", "a.file", 10, 10));
+    recipe.add(new DuplicationData("B-1.0.0-r0", "a.file", 10, 0, 10));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -140,11 +140,11 @@ public class DuplicationEvaluatorTest {
   public void testParseRecipesWithQualifiedData() {
     recipe = new Recipe("A-1.0.0-r0");
     recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 0));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 0, 0));
     recipes.add(recipe);
     recipe = new Recipe("B-1.0.0-r0");
     recipe.add(new CodeSizeData("B-1.0.0-r0", "a.file", 10, 1, 1));
-    recipe.add(new DuplicationData("B-1.0.0-r0", "a.file", 10, 10));
+    recipe.add(new DuplicationData("B-1.0.0-r0", "a.file", 10, 0, 10));
     recipes.add(recipe);
     evaluator.parse(recipes);
 
@@ -154,7 +154,7 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testParseRecipesResetValues() {
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 0));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 0, 0));
     assertEquals(20, evaluator.parse(recipes).getDenominator());
     assertEquals(0, evaluator.parse(new Recipes()).getDenominator());
   }
@@ -171,7 +171,7 @@ public class DuplicationEvaluatorTest {
   public void testUnstableBuildStatusWithQualifiedData() {
     configuration.setDuplicationsAsUnstable(true);
     evaluator = new DuplicationEvaluator(configuration);
-    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0, 0));
     evaluator.parse(recipe);
     assertTrue(evaluator.isStable());
   }
@@ -181,7 +181,7 @@ public class DuplicationEvaluatorTest {
     configuration.setDuplicationsAsUnstable(true);
     evaluator = new DuplicationEvaluator(configuration);
     recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0, 10));
     evaluator.parse(recipe);
     assertFalse(evaluator.isStable());
   }
@@ -190,7 +190,7 @@ public class DuplicationEvaluatorTest {
   public void testStableBuildStatusWithUnqualifiedData() {
     configuration.setDuplicationsAsUnstable(false);
     evaluator = new DuplicationEvaluator(configuration);
-    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0, 10));
     evaluator.parse(recipe);
     assertTrue(evaluator.isStable());
   }
@@ -198,7 +198,7 @@ public class DuplicationEvaluatorTest {
   @Test
   public void testJsonObject() {
     recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 30, 1, 1));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 30, 12));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 30, 0, 12));
     evaluator.parse(recipe);
 
     JSONObject object = evaluator.toJsonObject();

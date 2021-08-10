@@ -69,8 +69,27 @@ public class FakeCodeReport implements FakeReport {
     return array;
   }
 
+  private JSONObject newObject(String file, long start, long length) {
+    JSONObject o = new JSONObject();
+    o.put("file", file);
+    o.put("start", start);
+    o.put("end", start + length);
+    return o;
+  }
+
   private JSONArray createDuplicationList() {
-    return new JSONArray();
+    JSONArray array = new JSONArray();
+    for (FakeSource source : recipe.getSources()) {
+      JSONObject first = newObject(
+          source.getFile().getAbsolutePath(),
+          FakeRandom.nextNumber(),
+          source.getDuplicatedLines());
+      JSONArray pair = new JSONArray();
+      pair.add(first);
+      pair.add(first);
+      array.add(pair);
+    }
+    return array;
   }
 
   private JSONArray createSizeList() {

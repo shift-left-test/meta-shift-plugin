@@ -178,7 +178,7 @@ public class BuildStatusResolverTest {
   public void testStableDuplications() {
     configuration.setDuplicationsAsUnstable(false);
     recipe.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe.add(new DuplicationData("A-A-A", "a.file", 10, 10));
+    recipe.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
     assertAs(Result.SUCCESS, BuildStatusResolver::getDuplications);
   }
 
@@ -186,7 +186,7 @@ public class BuildStatusResolverTest {
   public void testUnstableDuplications() {
     configuration.setDuplicationsAsUnstable(true);
     recipe.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe.add(new DuplicationData("A-A-A", "a.file", 10, 10));
+    recipe.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
     assertAs(Result.UNSTABLE, BuildStatusResolver::getDuplications);
   }
 

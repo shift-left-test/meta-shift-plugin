@@ -32,8 +32,9 @@ import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A parsers class for the DuplicationData objects.
@@ -56,24 +57,47 @@ public class DuplicationParser extends Parser {
     this.dataList = dataList;
   }
 
+  private DuplicationData newObject(String recipe, List<Any> sizes, Any object) {
+    String file = object.toString("file");
+    Any data = sizes.stream()
+        .filter(o -> o.toString("file").equals(file))
+        .findFirst().orElseThrow(JsonException::new);
+    return new DuplicationData(
+        recipe,
+        file,
+        data.toLong("total_lines"),
+        object.toLong("start"),
+        object.toLong("end"));
+  }
+
+  private void addObjects(Set<DuplicationData> objects, DuplicationData first,
+      DuplicationData second) {
+    objects.add(first);
+    objects.add(second);
+    DuplicationData a = objects.stream().filter(o -> o == first).findFirst().orElse(first);
+    DuplicationData b = objects.stream().filter(o -> o == second).findFirst().orElse(second);
+    a.add(b);
+    b.add(a);
+  }
+
   @Override
   public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       Any json = JsonUtils.createObject2(report);
-      List<Any> array = json.get("size").asList();
-      List<DuplicationData> objects = new ArrayList<>(array.size());
-
-      for (Any o : array) {
-        String file = o.toString("file");
-        if (isHidden(file)) {
+      List<Any> sizes = json.get("size").asList();
+      List<Any> duplications = json.get("duplications").asList();
+      Set<DuplicationData> objects = new HashSet<>();
+      for (Any pair : duplications) {
+        if (pair.size() != 2) {
           continue;
         }
-        objects.add(new DuplicationData(
-            path.getName(),
-            file,
-            o.toLong("total_lines"),
-            o.toLong("duplicated_lines")));
+        DuplicationData first = newObject(path.getName(), sizes, pair.get(0));
+        DuplicationData second = newObject(path.getName(), sizes, pair.get(1));
+        if (isHidden(first.getFile()) || isHidden(second.getFile())) {
+          continue;
+        }
+        addObjects(objects, first, second);
       }
       dataList.addAll(objects);
       dataList.add(DuplicationData.class);

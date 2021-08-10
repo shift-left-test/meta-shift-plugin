@@ -279,9 +279,9 @@ public class MetricsTest {
   @Test
   public void testParseWithUnqualifiedDuplicationData() {
     recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 5, 1, 1));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 5, 0));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 5, 0, 0));
     recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0, 10));
     metrics.parse(recipes);
     assertEvaluator(metrics.getDuplications(), true, false);
     assertCounter(metrics.getDuplications(), 15, 10, 0.6);
@@ -290,9 +290,9 @@ public class MetricsTest {
   @Test
   public void testParseWithQualifiedDuplicationData() {
     recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 20, 1, 1));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 0));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "a.file", 20, 0, 0));
     recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0, 10));
     metrics.parse(recipes);
     assertEvaluator(metrics.getDuplications(), true, true);
     assertCounter(metrics.getDuplications(), 30, 10, 0.3);
@@ -406,7 +406,7 @@ public class MetricsTest {
   public void testParseRecipeWithEmptyCodeSizeData()
       throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
+    builder.append("{ 'size': [], 'violations': [], 'complexity': [], 'duplications': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
@@ -418,7 +418,7 @@ public class MetricsTest {
   public void testParseRecipeWithEmptyCodeViolationData()
       throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
+    builder.append("{ 'size': [], 'violations': [], 'complexity': [], 'duplications': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
@@ -430,7 +430,7 @@ public class MetricsTest {
   public void testParseRecipeWithEmptyCommentData()
       throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
+    builder.append("{ 'size': [], 'violations': [], 'complexity': [], 'duplications': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
@@ -442,7 +442,7 @@ public class MetricsTest {
   public void testParseRecipeWithEmptyComplexityData()
       throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
+    builder.append("{ 'size': [], 'violations': [], 'complexity': [], 'duplications': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
@@ -471,7 +471,7 @@ public class MetricsTest {
   public void testParseRecipeWithEmptyDuplicationData()
       throws IOException, InterruptedException {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'size': [], 'violations': [], 'complexity': [] }");
+    builder.append("{ 'size': [], 'violations': [], 'complexity': [], 'duplications': [] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     recipe = new FileParser().parseEach(new FilePath(directory));
     metrics.parse(recipe);
@@ -525,7 +525,7 @@ public class MetricsTest {
     configuration.setDuplicationsAsUnstable(true);
     metrics = new Metrics(configuration);
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0, 0));
     metrics.parse(recipe);
     assertTrue(metrics.isStable());
   }
@@ -538,7 +538,7 @@ public class MetricsTest {
     recipe.add(new CodeSizeData("A-1.0.0-r0", "a.file", 10, 1, 1));
     recipe.add(new CodeSizeData("A-1.0.0-r0", "b.file", 10, 1, 1));
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0, 10));
     metrics.parse(recipe);
     assertFalse(metrics.isStable());
   }
@@ -549,7 +549,7 @@ public class MetricsTest {
     configuration.setDuplicationsAsUnstable(false);
     metrics = new Metrics(configuration);
     recipe.add(new CommentData("A-1.0.0-r0", "a.file", 10, 5));
-    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 10));
+    recipe.add(new DuplicationData("A-1.0.0-r0", "b.file", 10, 0, 10));
     metrics.parse(recipe);
     assertTrue(metrics.isStable());
   }

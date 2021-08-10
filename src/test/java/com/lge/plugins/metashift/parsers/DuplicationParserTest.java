@@ -33,6 +33,7 @@ import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Before;
@@ -72,6 +73,7 @@ public class DuplicationParserTest {
   private void assertValues(int index, String recipe, String file, long lines,
       long duplicatedLines) {
     List<DuplicationData> objects = dataList.objects(DuplicationData.class)
+        .sorted(Comparator.comparing(DuplicationData::getFile))
         .collect(Collectors.toList());
     assertEquals(recipe, objects.get(index).getName());
     assertEquals(file, objects.get(index).getFile());
@@ -110,7 +112,7 @@ public class DuplicationParserTest {
   @Test
   public void testCreateWithEmptyData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
-    builder.append("{ 'size': [ ] }");
+    builder.append("{ 'size': [ ], 'duplications': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
     assertDataList(true, 0);
@@ -119,10 +121,10 @@ public class DuplicationParserTest {
   @Test
   public void testCreateWithInsufficientData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
-    builder.append("{ 'size': [ { 'file': 'a.file' } ] }");
+    builder.append("{ 'size': [ { 'file': 'a.file' } ], 'duplications': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-    assertDataList(true, 1);
+    assertDataList(true, 0);
   }
 
   @Test
@@ -136,6 +138,12 @@ public class DuplicationParserTest {
         .append("      'total_lines': 20,")
         .append("      'duplicated_lines': 2")
         .append("    }")
+        .append("  ],")
+        .append("  'duplications': [")
+        .append("    [")
+        .append("      { 'file': '.hidden.file', 'start': 0, 'end': 10 },")
+        .append("      { 'file': '.hidden.file', 'start': 10, 'end': 20 }")
+        .append("    ]")
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
@@ -154,11 +162,17 @@ public class DuplicationParserTest {
         .append("      'total_lines': 20,")
         .append("      'duplicated_lines': 2")
         .append("    }")
+        .append("  ],")
+        .append("  'duplications': [")
+        .append("    [")
+        .append("      { 'file': 'a.file', 'start': 0, 'end': 2 },")
+        .append("      { 'file': 'a.file', 'start': 10, 'end': 12 }")
+        .append("    ]")
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-    assertDataList(true, 1);
+    assertDataList(true, 2);
     assertValues(0, "C-1.0.0-r0", "a.file", 20, 2);
   }
 
@@ -178,12 +192,22 @@ public class DuplicationParserTest {
         .append("      'total_lines': 20,")
         .append("      'duplicated_lines': 5")
         .append("    }")
+        .append("  ],")
+        .append("  'duplications': [")
+        .append("    [")
+        .append("      { 'file': 'a.file', 'start': 0, 'end': 5 },")
+        .append("      { 'file': 'a.file', 'start': 5, 'end': 10 }")
+        .append("    ],")
+        .append("    [")
+        .append("      { 'file': 'b.file', 'start': 0, 'end': 5 },")
+        .append("      { 'file': 'b.file', 'start': 15, 'end': 20 }")
+        .append("    ]")
         .append("  ]")
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-    assertDataList(true, 2);
+    assertDataList(true, 4);
     assertValues(0, "D-1.0.0-r0", "a.file", 10, 5);
-    assertValues(1, "D-1.0.0-r0", "b.file", 20, 5);
+    assertValues(2, "D-1.0.0-r0", "b.file", 20, 5);
   }
 }

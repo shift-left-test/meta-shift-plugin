@@ -92,9 +92,9 @@ public class DuplicationEvaluatorTest {
 
   @Test
   public void testParseRecipesWithNoCodeSizeData() {
-    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 1));
+    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 0, 1));
     assertValues(30, 20, 0.66);
     assertStatus(false, false);
   }
@@ -102,9 +102,9 @@ public class DuplicationEvaluatorTest {
   @Test
   public void testParseSingleRecipeWithUnqualifiedData() {
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 1));
+    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 0, 1));
     assertValues(30, 20, 0.66);
     assertStatus(true, false);
   }
@@ -112,9 +112,9 @@ public class DuplicationEvaluatorTest {
   @Test
   public void testParseSingleRecipeWithQualifiedData() {
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 1));
-    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 1));
+    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 1));
+    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 0, 1));
     assertValues(30, 10, 0.33);
     assertStatus(true, true);
   }
@@ -123,9 +123,9 @@ public class DuplicationEvaluatorTest {
   public void testParseSingleRecipeWithLowTolerance() {
     configuration.setDuplicationTolerance(0);
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 1));
+    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 0, 1));
     assertValues(30, 21, 0.7);
     assertStatus(true, false);
   }
@@ -134,9 +134,9 @@ public class DuplicationEvaluatorTest {
   public void testParseSingleRecipeWithHighTolerance() {
     configuration.setDuplicationTolerance(100);
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 1));
-    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 1));
+    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 1));
+    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 0, 1));
     assertValues(30, 0, 0.0);
     assertStatus(true, true);
   }
@@ -144,13 +144,13 @@ public class DuplicationEvaluatorTest {
   @Test
   public void testParseMultipleRecipesWithUnqualifiedData() {
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 1));
+    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 0, 1));
     recipe2.add(new CodeSizeData("B-B-B", "a.file", 10, 1, 1));
-    recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 10));
-    recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 10));
-    recipe2.add(new DuplicationData("B-B-B", "c.file", 10, 1));
+    recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 0, 10));
+    recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 0, 10));
+    recipe2.add(new DuplicationData("B-B-B", "c.file", 10, 0, 1));
     assertValues(60, 40, 0.66);
     assertStatus(true, false);
   }
@@ -158,13 +158,13 @@ public class DuplicationEvaluatorTest {
   @Test
   public void testParseMultipleRecipesWithQualifiedData() {
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 1));
-    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 1));
+    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 1));
+    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 0, 1));
     recipe2.add(new CodeSizeData("B-B-B", "a.file", 10, 1, 1));
-    recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 10));
-    recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 1));
-    recipe2.add(new DuplicationData("B-B-B", "c.file", 10, 1));
+    recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 0, 10));
+    recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 0, 1));
+    recipe2.add(new DuplicationData("B-B-B", "c.file", 10, 0, 1));
     assertValues(60, 20, 0.33);
     assertStatus(true, true);
   }
@@ -173,13 +173,13 @@ public class DuplicationEvaluatorTest {
   public void testParseMultipleRecipesWithLowTolerance() {
     configuration.setDuplicationTolerance(0);
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 1));
+    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 0, 1));
     recipe2.add(new CodeSizeData("B-B-B", "a.file", 10, 1, 1));
-    recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 10));
-    recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 10));
-    recipe2.add(new DuplicationData("B-B-B", "c.file", 10, 1));
+    recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 0, 10));
+    recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 0, 10));
+    recipe2.add(new DuplicationData("B-B-B", "c.file", 10, 0, 1));
     assertValues(60, 42, 0.7);
     assertStatus(true, false);
   }
@@ -188,13 +188,13 @@ public class DuplicationEvaluatorTest {
   public void testParseMultipleRecipesWithHighTolerance() {
     configuration.setDuplicationTolerance(100);
     recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 10));
-    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 1));
-    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 1));
+    recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 1));
+    recipe1.add(new DuplicationData("A-A-A", "c.file", 10, 0, 1));
     recipe2.add(new CodeSizeData("B-B-B", "a.file", 10, 1, 1));
-    recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 10));
-    recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 1));
-    recipe2.add(new DuplicationData("B-B-B", "c.file", 10, 1));
+    recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 0, 10));
+    recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 0, 1));
+    recipe2.add(new DuplicationData("B-B-B", "c.file", 10, 0, 1));
     assertValues(60, 0, 0.0);
     assertStatus(true, true);
   }
