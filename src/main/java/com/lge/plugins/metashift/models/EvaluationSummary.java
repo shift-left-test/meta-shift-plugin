@@ -42,21 +42,42 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
 
     private static final long serialVersionUID = -40855088536329406L;
 
-    private final double ratio;
+    private final long denominator;
+    private final long numerator;
     private final boolean available;
     private final boolean qualified;
 
     /**
      * Default constructor.
      *
-     * @param ratio     value
-     * @param available status
-     * @param qualified status
+     * @param denominator value
+     * @param numerator   value
+     * @param available   status
+     * @param qualified   status
      */
-    public Group(double ratio, boolean available, boolean qualified) {
-      this.ratio = ratio;
+    public Group(long denominator, long numerator, boolean available, boolean qualified) {
+      this.denominator = denominator;
+      this.numerator = numerator;
       this.available = available;
       this.qualified = qualified;
+    }
+
+    /**
+     * Returns the denominator value.
+     *
+     * @return denominator
+     */
+    public long getDenominator() {
+      return denominator;
+    }
+
+    /**
+     * Returns the numerator value.
+     *
+     * @return numerator
+     */
+    public long getNumerator() {
+      return numerator;
     }
 
     /**
@@ -65,7 +86,7 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
      * @return ratio value
      */
     public double getRatio() {
-      return ratio;
+      return denominator != 0 ? (double) numerator / (double) denominator : 0;
     }
 
     /**
@@ -93,7 +114,8 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
      * @return a Group instance
      */
     public static Group of(Evaluation evaluation) {
-      return new Group(evaluation.getRatio(), evaluation.isAvailable(), evaluation.isQualified());
+      return new Group(evaluation.getDenominator(), evaluation.getNumerator(),
+          evaluation.isAvailable(), evaluation.isQualified());
     }
   }
 
