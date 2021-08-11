@@ -49,11 +49,8 @@ public class DuplicationCounter implements Counter {
 
   @Override
   public Distribution parse(Streamable s) {
-    long tolerance = configuration.getDuplicationTolerance();
     long total = s.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum();
-    long duplicate = s.objects(DuplicationData.class)
-        .filter(o -> o.getDuplicatedLines() >= tolerance)
-        .mapToLong(DuplicationData::getDuplicatedLines).sum();
+    long duplicate = new DuplicationCalculator(configuration).parse(s);
     long unique = total - duplicate;
     return new Distribution(duplicate, unique);
   }

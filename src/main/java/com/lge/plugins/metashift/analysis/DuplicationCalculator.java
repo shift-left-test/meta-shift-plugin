@@ -24,19 +24,21 @@
 
 package com.lge.plugins.metashift.analysis;
 
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DuplicationData;
-import com.lge.plugins.metashift.models.Evaluation;
-import com.lge.plugins.metashift.models.NegativeEvaluation;
 import com.lge.plugins.metashift.models.Streamable;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * DuplicationEvaluator class.
+ * DuplicationCalculator class.
  *
  * @author Sung Gon Kim
  */
-public class DuplicationEvaluator implements Evaluator {
+public class DuplicationCalculator implements Collector<Streamable, Long> {
 
   private final Configuration configuration;
 
@@ -45,17 +47,31 @@ public class DuplicationEvaluator implements Evaluator {
    *
    * @param configuration for evaluation
    */
-  public DuplicationEvaluator(Configuration configuration) {
+  public DuplicationCalculator(Configuration configuration) {
     this.configuration = configuration;
   }
 
+  private long calculateDuplicateLines(List<DuplicationData> objects) {
+    BitSet marks = new BitSet();
+    objects.forEach(o -> marks.set((int) o.getStart(), (int) o.getEnd()));
+    return marks.cardinality();
+  }
+
+  private List<List<DuplicationData>> getGroups(List<DuplicationData> s) {
+    Map<String, Map<String, List<DuplicationData>>> groups = s.stream()
+        .collect(Collectors.groupingBy(DuplicationData::getName,
+            Collectors.groupingBy(DuplicationData::getFile)));
+    List<List<DuplicationData>> objects = new ArrayList<>();
+    groups.values().forEach(o -> objects.addAll(o.values()));
+    return objects;
+  }
+
   @Override
-  public Evaluation parse(Streamable s) {
-    boolean available = s.contains(CodeSizeData.class) && s.contains(DuplicationData.class);
-    long denominator = s.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum();
+  public Long parse(Streamable s) {
     long tolerance = configuration.getDuplicationTolerance();
-    long numerator = new DuplicationCalculator(configuration).parse(s);
-    double threshold = (double) configuration.getDuplicationThreshold() / 100.0;
-    return new NegativeEvaluation(available, denominator, numerator, threshold, tolerance);
+    List<DuplicationData> objects = s.objects(DuplicationData.class)
+        .filter(o -> o.getDuplicatedLines() >= tolerance)
+        .collect(Collectors.toList());
+    return getGroups(objects).stream().mapToLong(this::calculateDuplicateLines).sum();
   }
 }
