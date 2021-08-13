@@ -108,7 +108,7 @@ public abstract class TreemapData implements Serializable {
     double slot = max / (double) grades.size();
     double ratio = getValue();
     for (int i = 0; i < grades.size(); i++) {
-      if (slot * i <= ratio && ratio < slot * (i + 1)) {
+      if (slot * i <= ratio && ratio <= slot * (i + 1)) {
         return grades.get(i).ordinal();
       }
     }

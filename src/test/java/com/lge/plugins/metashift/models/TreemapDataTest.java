@@ -87,32 +87,32 @@ public class TreemapDataTest {
 
   @Test
   public void testPositiveTreemapDataOfWorseGrade() {
-    assertPositiveGrade(1.0, Grade.WORSE);
+    assertPositiveGrade(1.0, Grade.WORST);
   }
 
   @Test
   public void testPositiveTreemapDataOfBadGrade() {
-    assertPositiveGrade(2.0, Grade.BAD);
+    assertPositiveGrade(2.0, Grade.WORSE);
   }
 
   @Test
   public void testPositiveTreemapDataOfOrdinaryGrade() {
-    assertPositiveGrade(3.0, Grade.ORDINARY);
+    assertPositiveGrade(3.0, Grade.BAD);
   }
 
   @Test
   public void testPositiveTreemapDataOfGoodGrade() {
-    assertPositiveGrade(4.0, Grade.GOOD);
+    assertPositiveGrade(4.0, Grade.ORDINARY);
   }
 
   @Test
   public void testPositiveTreemapDataOfBetterGrade() {
-    assertPositiveGrade(5.0, Grade.BETTER);
+    assertPositiveGrade(5.0, Grade.GOOD);
   }
 
   @Test
   public void testPositiveTreemapDataOfBestGrade() {
-    assertPositiveGrade(6.0, Grade.BEST);
+    assertPositiveGrade(6.0, Grade.BETTER);
   }
 
   @Test
@@ -132,32 +132,32 @@ public class TreemapDataTest {
 
   @Test
   public void testNegativeTreemapDataOfBetterGrade() {
-    assertNegativeGrade(1.0, Grade.BETTER);
+    assertNegativeGrade(1.0, Grade.BEST);
   }
 
   @Test
   public void testNegativeTreemapDataOfGoodGrade() {
-    assertNegativeGrade(2.0, Grade.GOOD);
+    assertNegativeGrade(2.0, Grade.BETTER);
   }
 
   @Test
   public void testNegativeTreemapDataOfOrdinaryGrade() {
-    assertNegativeGrade(3.0, Grade.ORDINARY);
+    assertNegativeGrade(3.0, Grade.GOOD);
   }
 
   @Test
   public void testNegativeTreemapDataOfBadGrade() {
-    assertNegativeGrade(4.0, Grade.BAD);
+    assertNegativeGrade(4.0, Grade.ORDINARY);
   }
 
   @Test
   public void testNegativeTreemapDataOfWorseGrade() {
-    assertNegativeGrade(5.0, Grade.WORSE);
+    assertNegativeGrade(5.0, Grade.BAD);
   }
 
   @Test
   public void testNegativeTreemapDataOfWorstGrade() {
-    assertNegativeGrade(6.0, Grade.WORST);
+    assertNegativeGrade(6.0, Grade.WORSE);
   }
 
   @Test
