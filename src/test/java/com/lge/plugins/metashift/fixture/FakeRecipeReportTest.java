@@ -27,13 +27,13 @@ package com.lge.plugins.metashift.fixture;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.jsoniter.any.Any;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -72,17 +72,17 @@ public class FakeRecipeReportTest {
     assertTrue(file.exists());
 
     List<FakeScript> scripts = fakeRecipe.getScripts();
-    JSONObject object = JsonUtils.createObject(new FilePath(file));
+    Any object = JsonUtils.createObject2(new FilePath(file));
 
-    JSONObject first = (JSONObject) object.getJSONArray("lines_of_code").get(0);
+    Any first = object.get("lines_of_code").asList().get(0);
     File aFile = FileUtils.getFile(fakeRecipe.getSourcePath(), scripts.get(0).getFilename());
-    assertEquals(aFile.getAbsolutePath(), first.getString("file"));
-    assertEquals(10, first.getLong("code_lines"));
+    assertEquals(aFile.getAbsolutePath(), first.toString("file"));
+    assertEquals(10, first.toLong("code_lines"));
 
-    JSONObject second = (JSONObject) object.getJSONArray("lines_of_code").get(1);
+    Any second = object.get("lines_of_code").asList().get(1);
     File bFile = FileUtils.getFile(fakeRecipe.getSourcePath(), scripts.get(1).getFilename());
-    assertEquals(bFile.getAbsolutePath(), second.getString("file"));
-    assertEquals(20, second.getLong("code_lines"));
+    assertEquals(bFile.getAbsolutePath(), second.toString("file"));
+    assertEquals(20, second.toLong("code_lines"));
   }
 
   @Test
@@ -93,7 +93,7 @@ public class FakeRecipeReportTest {
         "checkrecipe", "recipe_violations.json");
     assertTrue(file.exists());
 
-    JSONObject object = JsonUtils.createObject(new FilePath(file));
-    assertEquals(12, object.getJSONArray("issues").size());
+    Any object = JsonUtils.createObject2(new FilePath(file));
+    assertEquals(12, object.get("issues").asList().size());
   }
 }

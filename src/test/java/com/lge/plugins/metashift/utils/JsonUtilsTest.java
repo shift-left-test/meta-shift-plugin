@@ -59,31 +59,16 @@ public class JsonUtilsTest {
 
   @Test
   public void testCreateWithNullFile() throws IOException, InterruptedException {
-    assertEquals(JsonUtils.EMPTY, JsonUtils.createObject(null));
-  }
-
-  @Test
-  public void testCreate2WithNullFile() throws IOException, InterruptedException {
     assertEquals(JsonUtils.EMPTY2, JsonUtils.createObject2(null));
   }
 
   @Test(expected = IOException.class)
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    JsonUtils.createObject(new FilePath(utils.getPath("path-to-unknown")));
-  }
-
-  @Test(expected = IOException.class)
-  public void testCreate2WithUnknownPath() throws IOException, InterruptedException {
     JsonUtils.createObject2(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
   public void testCreateWithNoneFile() throws IOException, InterruptedException {
-    JsonUtils.createObject(new FilePath(utils.createDirectory("directory")));
-  }
-
-  @Test(expected = IOException.class)
-  public void testCreate2WithNoneFile() throws IOException, InterruptedException {
     JsonUtils.createObject2(new FilePath(utils.createDirectory("directory")));
   }
 
@@ -92,21 +77,12 @@ public class JsonUtilsTest {
     builder.append("{ }");
     File file = utils.createFile("test.json");
     utils.writeLines(builder, file);
-
-    assertSame(JsonUtils.createObject(new FilePath(file)),
-        JsonUtils.createObject(new FilePath(file)));
+    assertSame(JsonUtils.createObject2(new FilePath(file)),
+        JsonUtils.createObject2(new FilePath(file)));
   }
 
   @Test
   public void testCreateObject() throws IOException, InterruptedException {
-    builder.append("{ \"message\": \"test\" }");
-    File file = utils.createFile("test.json");
-    utils.writeLines(builder, file);
-    assertEquals("test", JsonUtils.createObject(new FilePath(file)).getString("message"));
-  }
-
-  @Test
-  public void testCreate2Object() throws IOException, InterruptedException {
     builder.append("{ \"message\": \"test\" }");
     File file = utils.createFile("test.json");
     utils.writeLines(builder, file);
@@ -121,8 +97,8 @@ public class JsonUtilsTest {
     File file2 = utils.createFile("test2.json");
     utils.writeLines(builder, file2);
 
-    assertSame(JsonUtils.createObject(new FilePath(file1)),
-        JsonUtils.createObject(new FilePath(file2)));
+    assertSame(JsonUtils.createObject2(new FilePath(file1)),
+        JsonUtils.createObject2(new FilePath(file2)));
   }
 
   @Test
@@ -137,8 +113,8 @@ public class JsonUtilsTest {
     File file2 = utils.createFile("test2.json");
     utils.writeLines(builder, file2);
 
-    assertNotSame(JsonUtils.createObject(new FilePath(file1)),
-        JsonUtils.createObject(new FilePath(file2)));
+    assertNotSame(JsonUtils.createObject2(new FilePath(file1)),
+        JsonUtils.createObject2(new FilePath(file2)));
   }
 
   @Test

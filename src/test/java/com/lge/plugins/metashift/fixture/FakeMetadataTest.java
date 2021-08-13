@@ -27,12 +27,12 @@ package com.lge.plugins.metashift.fixture;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.jsoniter.any.Any;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
-import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -66,7 +66,7 @@ public class FakeMetadataTest {
     fakeReport.toFile(report);
     File file = FileUtils.getFile(report, fakeRecipe.getName(), "metadata.json");
     assertTrue(file.exists());
-    JSONObject object = JsonUtils.createObject(new FilePath(file));
-    assertEquals(fakeRecipe.getSourcePath().getAbsolutePath(), object.getString("S"));
+    Any object = JsonUtils.createObject2(new FilePath(file));
+    assertEquals(fakeRecipe.getSourcePath().getAbsolutePath(), object.toString("S"));
   }
 }

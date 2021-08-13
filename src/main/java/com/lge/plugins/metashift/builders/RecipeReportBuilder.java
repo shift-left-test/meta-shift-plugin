@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.builders;
 
+import com.jsoniter.any.Any;
 import com.lge.plugins.metashift.aggregators.BranchCoverageDataSummaryAggregator;
 import com.lge.plugins.metashift.aggregators.CodeViolationDataSummaryAggregator;
 import com.lge.plugins.metashift.aggregators.CommentDataSummaryAggregator;
@@ -157,8 +158,8 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
       return null;
     }
     try {
-      JSONObject metadata = JsonUtils.createObject(path.child(recipe).child("metadata.json"));
-      FilePath filePath = getFilePath(path, metadata.getString("S"), file);
+      Any metadata = JsonUtils.createObject2(path.child(recipe).child("metadata.json"));
+      FilePath filePath = getFilePath(path, metadata.toString("S"), file);
       put(Metric.NONE, Data.FILE, recipe, file, filePath.readToString());
     } catch (NoSuchFileException ignored) {
       // ignored

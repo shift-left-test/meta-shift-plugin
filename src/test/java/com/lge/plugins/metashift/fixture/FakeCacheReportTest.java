@@ -27,12 +27,12 @@ package com.lge.plugins.metashift.fixture;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.jsoniter.any.Any;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
-import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -70,18 +70,18 @@ public class FakeCacheReportTest {
     File file = FileUtils.getFile(report, fakeRecipe.getName(), "checkcache", "caches.json");
     assertTrue(file.exists());
 
-    JSONObject object = JsonUtils.createObject(new FilePath(file));
-    JSONObject premirror = object.getJSONObject("Premirror");
-    assertEquals(3, premirror.getJSONObject("Summary").getLong("Wanted"));
-    assertEquals(1, premirror.getJSONObject("Summary").getLong("Found"));
-    assertEquals(2, premirror.getJSONObject("Summary").getLong("Missed"));
-    assertEquals(1, premirror.getJSONArray("Found").size());
-    assertEquals(2, premirror.getJSONArray("Missed").size());
-    JSONObject sharedState = object.getJSONObject("Shared State");
-    assertEquals(7, sharedState.getJSONObject("Summary").getLong("Wanted"));
-    assertEquals(3, sharedState.getJSONObject("Summary").getLong("Found"));
-    assertEquals(4, sharedState.getJSONObject("Summary").getLong("Missed"));
-    assertEquals(3, sharedState.getJSONArray("Found").size());
-    assertEquals(4, sharedState.getJSONArray("Missed").size());
+    Any object = JsonUtils.createObject2(new FilePath(file));
+    Any premirror = object.get("Premirror");
+    assertEquals(3, premirror.get("Summary").toLong("Wanted"));
+    assertEquals(1, premirror.get("Summary").toLong("Found"));
+    assertEquals(2, premirror.get("Summary").toLong("Missed"));
+    assertEquals(1, premirror.get("Found").size());
+    assertEquals(2, premirror.get("Missed").size());
+    Any sharedState = object.get("Shared State");
+    assertEquals(7, sharedState.get("Summary").toLong("Wanted"));
+    assertEquals(3, sharedState.get("Summary").toLong("Found"));
+    assertEquals(4, sharedState.get("Summary").toLong("Missed"));
+    assertEquals(3, sharedState.get("Found").asList().size());
+    assertEquals(4, sharedState.get("Missed").asList().size());
   }
 }

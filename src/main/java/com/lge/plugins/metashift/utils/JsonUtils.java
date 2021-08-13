@@ -66,7 +66,9 @@ public class JsonUtils {
    *
    * @param file to a json file
    * @return a JSON object
+   * @deprecated replaced by createObject2, due to the slow performance
    */
+  @Deprecated
   public static synchronized JSONObject createObject(final FilePath file)
       throws IOException, InterruptedException {
     if (file == null) {
@@ -74,7 +76,7 @@ public class JsonUtils {
     }
     String checksum = file.digest();
     if (!objects.containsKey(checksum)) {
-      objects.put(checksum, getObject(file));
+      objects.put(checksum, JSONObject.fromObject(file.readToString()));
     }
     return objects.get(checksum);
   }
@@ -101,18 +103,6 @@ public class JsonUtils {
       }
     }
     return objects2.get(checksum);
-  }
-
-  /**
-   * Returns a JSON object using the file.
-   *
-   * @param file to parse
-   * @return a JSON object
-   * @throws IOException if failed to operate with the file
-   */
-  private static JSONObject getObject(final FilePath file)
-      throws IOException, InterruptedException {
-    return JSONObject.fromObject(file.readToString());
   }
 
   /**
