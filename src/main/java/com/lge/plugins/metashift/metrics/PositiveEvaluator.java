@@ -48,4 +48,8 @@ public abstract class PositiveEvaluator<T> extends Evaluator<T> {
     }
     return (double) getNumerator() / (double) getDenominator() >= getThreshold();
   }
+
+  public boolean isPositive() {
+    return true;
+  }
 }

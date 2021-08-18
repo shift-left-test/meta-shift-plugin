@@ -1,0 +1,21 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <div class="column">
+    <h2>Statistics
+      <span class="metrics-threshold">Threshold: ${it.thresholdString}</span>
+      <j:if test="${!empty scale}">
+      <span class="metrics-scale">${scale}</span>
+      </j:if>
+    </h2>
+    <statistics-bar class="section ${statistics_class}"
+      evaluation='${it.group.evaluation}'
+      statistics='${it.group.statistics}' />
+  </div>
+  <div class="column">
+    <h2>Distribution</h2>
+    <distribution-bar class="section"
+      labels="${labels}"
+      distribution='${it.group.distribution}' />
+  </div>
+</j:jelly>

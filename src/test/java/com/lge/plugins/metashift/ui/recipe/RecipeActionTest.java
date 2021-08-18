@@ -25,19 +25,19 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.builders.RecipeReport;
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
-import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
+import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+
 import java.io.File;
 import java.util.List;
 import net.sf.json.JSONObject;
@@ -109,7 +109,7 @@ public class RecipeActionTest {
     builder.add(fakeRecipe);
     builder.toFile(report);
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
-    MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
+    BuildAction buildAction = run.getAction(BuildAction.class);
 
     List<RecipeAction> recipeActions = buildAction.getActions(RecipeAction.class);
 
@@ -121,140 +121,73 @@ public class RecipeActionTest {
 
     assertCodeSizeDelta(recipeAction, 0, 0, 1, 10);
 
-    JSONObject codeSizeJson = recipeAction.getCodeSizeJson();
-    assertFalse(codeSizeJson.getBoolean("qualified"));
-    assertEquals(0, codeSizeJson.getInt("functions"));
-    assertEquals(0, codeSizeJson.getInt("classes"));
+    RecipeReport recipeReport = recipeAction.getReport();
+    assertValues(recipeReport.getPremirrorCache().getEvaluation(), false, true, 0.8, 0, 0, 0);
+    assertValues(recipeReport.getSharedStateCache().getEvaluation(), false, true, 0.8, 0, 0, 0);
+    assertValues(recipeReport.getCodeViolations().getEvaluation(), false, true, 0.1, 10, 6, 0.6);
+    assertValues(recipeReport.getComments().getEvaluation(), true, true, 0.2, 10, 5, 0.5);
+    assertValues(recipeReport.getComplexity().getEvaluation(), false, true, 0.1, 11, 5, 0.45);
+    assertValues(recipeReport.getStatementCoverage().getEvaluation(), false, true, 0.8, 3, 1, 0.33);
+    assertValues(recipeReport.getBranchCoverage().getEvaluation(), true, true, 0.4, 7, 3, 0.42);
+    assertValues(recipeReport.getDuplications().getEvaluation(), true, true, 0.1, 10, 0, 0.0);
+    assertValues(recipeReport.getMutationTests().getEvaluation(), false, true, 0.85, 6, 1, 0.16);
+    assertValues(recipeReport.getRecipeViolations().getEvaluation(), false, true, 0.1, 10, 6, 0.6);
+    assertValues(recipeReport.getUnitTests().getEvaluation(), false, true, 0.95, 10, 1, 0.1);
 
-    assertFalse(codeSizeJson.getBoolean("available"));
-    assertEquals(1, codeSizeJson.getInt("files"));
-    assertEquals(0, codeSizeJson.getInt("threshold"));
-    assertEquals(10, codeSizeJson.getInt("lines"));
-    assertEquals(0, codeSizeJson.getInt("denominator"));
-    assertEquals(0, codeSizeJson.getInt("numerator"));
-    assertEquals(0, codeSizeJson.getInt("ratio"));
-
-    assertValues(recipeAction.getPremirrorCacheJson(), false, true, 0.8, 0, 0, 0);
-    assertValues(recipeAction.getSharedStateCacheJson(), false, true, 0.8, 0, 0, 0);
-    assertValues(recipeAction.getCodeViolationsJson(), false, true, 0.1, 10, 6, 0.6);
-    assertValues(recipeAction.getCommentsJson(), true, true, 0.2, 10, 5, 0.5);
-    assertValues(recipeAction.getComplexityJson(), false, true, 0.1, 11, 5, 0.45);
-    assertValues(recipeAction.getStatementCoverageJson(), false, true, 0.8, 3, 1, 0.33);
-    assertValues(recipeAction.getBranchCoverageJson(), true, true, 0.4, 7, 3, 0.42);
-    assertValues(recipeAction.getDuplicationsJson(), true, true, 0.1, 10, 0, 0.0);
-    assertValues(recipeAction.getMutationTestJson(), false, true, 0.85, 6, 1, 0.16);
-    assertValues(recipeAction.getRecipeViolationsJson(), false, true, 0.1, 10, 6, 0.6);
-    assertValues(recipeAction.getTestJson(), false, true, 0.95, 10, 1, 0.1);
-
-    JSONObject branchCoverageStatistics = recipeAction.getBranchCoverageStatisticsJson();
+    JSONObject branchCoverageStatistics = recipeReport.getBranchCoverage().getStatistics();
     assertEquals(0.42, branchCoverageStatistics.getDouble("average"), 0.01);
     assertEquals(0.42, branchCoverageStatistics.getDouble("min"), 0.01);
     assertEquals(0.42, branchCoverageStatistics.getDouble("max"), 0.01);
-    assertEquals(1, branchCoverageStatistics.getInt("count"));
-    assertEquals(0.42, branchCoverageStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.42, branchCoverageStatistics.getDouble("scale"), 0.01);
-    assertTrue(branchCoverageStatistics.getBoolean("available"));
-    assertTrue(branchCoverageStatistics.getBoolean("percent"));
 
-    JSONObject codeViolationsStatistics = recipeAction.getCodeViolationsStatisticsJson();
+    JSONObject codeViolationsStatistics = recipeReport.getCodeViolations().getStatistics();
     assertEquals(0.6, codeViolationsStatistics.getDouble("average"), 0.01);
     assertEquals(0.6, codeViolationsStatistics.getDouble("min"), 0.01);
     assertEquals(0.6, codeViolationsStatistics.getDouble("max"), 0.01);
-    assertEquals(1, codeViolationsStatistics.getInt("count"));
-    assertEquals(0.6, codeViolationsStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.6, codeViolationsStatistics.getDouble("scale"), 0.01);
-    assertTrue(codeViolationsStatistics.getBoolean("available"));
-    assertFalse(codeViolationsStatistics.getBoolean("percent"));
 
-    JSONObject commentsStatistics = recipeAction.getCommentsStatisticsJson();
+    JSONObject commentsStatistics = recipeReport.getComments().getStatistics();
     assertEquals(0.5, commentsStatistics.getDouble("average"), 0.01);
     assertEquals(0.5, commentsStatistics.getDouble("min"), 0.01);
     assertEquals(0.5, commentsStatistics.getDouble("max"), 0.01);
-    assertEquals(1, commentsStatistics.getInt("count"));
-    assertEquals(0.5, commentsStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.5, commentsStatistics.getDouble("scale"), 0.01);
-    assertTrue(commentsStatistics.getBoolean("available"));
-    assertTrue(commentsStatistics.getBoolean("percent"));
 
-    JSONObject complexityStatistics = recipeAction.getComplexityStatisticsJson();
+    JSONObject complexityStatistics = recipeReport.getComplexity().getStatistics();
     assertEquals(0.45, complexityStatistics.getDouble("average"), 0.01);
     assertEquals(0.45, complexityStatistics.getDouble("min"), 0.01);
     assertEquals(0.45, complexityStatistics.getDouble("max"), 0.01);
-    assertEquals(1, complexityStatistics.getInt("count"));
-    assertEquals(0.45, complexityStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.45, complexityStatistics.getDouble("scale"), 0.01);
-    assertTrue(complexityStatistics.getBoolean("available"));
-    assertTrue(complexityStatistics.getBoolean("percent"));
 
-    JSONObject duplicationsStatistics = recipeAction.getDuplicationsStatisticsJson();
+    JSONObject duplicationsStatistics = recipeReport.getDuplications().getStatistics();
     assertEquals(0.0, duplicationsStatistics.getDouble("average"), 0.01);
     assertEquals(0.0, duplicationsStatistics.getDouble("min"), 0.01);
     assertEquals(0.0, duplicationsStatistics.getDouble("max"), 0.01);
-    assertEquals(1, duplicationsStatistics.getInt("count"));
-    assertEquals(0.0, duplicationsStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.0, duplicationsStatistics.getDouble("scale"), 0.01);
-    assertTrue(duplicationsStatistics.getBoolean("available"));
-    assertTrue(duplicationsStatistics.getBoolean("percent"));
 
-    JSONObject mutationTestStatistics = recipeAction.getMutationTestStatisticsJson();
+    JSONObject mutationTestStatistics = recipeReport.getMutationTests().getStatistics();
     assertEquals(0.16, mutationTestStatistics.getDouble("average"), 0.01);
     assertEquals(0.16, mutationTestStatistics.getDouble("min"), 0.01);
     assertEquals(0.16, mutationTestStatistics.getDouble("max"), 0.01);
-    assertEquals(1, mutationTestStatistics.getInt("count"));
-    assertEquals(0.16, mutationTestStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.16, mutationTestStatistics.getDouble("scale"), 0.01);
-    assertTrue(mutationTestStatistics.getBoolean("available"));
-    assertTrue(mutationTestStatistics.getBoolean("percent"));
 
-    JSONObject premirrorCacheStatistics = recipeAction.getPremirrorCacheStatisticsJson();
+    JSONObject premirrorCacheStatistics = recipeReport.getPremirrorCache().getStatistics();
     assertEquals(0.0, premirrorCacheStatistics.getDouble("average"), 0.01);
     assertEquals(0.0, premirrorCacheStatistics.getDouble("min"), 0.01);
     assertEquals(0.0, premirrorCacheStatistics.getDouble("max"), 0.01);
-    assertEquals(1, premirrorCacheStatistics.getInt("count"));
-    assertEquals(0.0, premirrorCacheStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.0, premirrorCacheStatistics.getDouble("scale"), 0.01);
-    assertTrue(premirrorCacheStatistics.getBoolean("available"));
-    assertTrue(premirrorCacheStatistics.getBoolean("percent"));
 
-    JSONObject recipeViolationsStatistics = recipeAction.getRecipeViolationsStatisticsJson();
+    JSONObject recipeViolationsStatistics = recipeReport.getRecipeViolations().getStatistics();
     assertEquals(0.6, recipeViolationsStatistics.getDouble("average"), 0.01);
     assertEquals(0.6, recipeViolationsStatistics.getDouble("min"), 0.01);
     assertEquals(0.6, recipeViolationsStatistics.getDouble("max"), 0.01);
-    assertEquals(1, recipeViolationsStatistics.getInt("count"));
-    assertEquals(0.6, recipeViolationsStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.6, recipeViolationsStatistics.getDouble("scale"), 0.01);
-    assertTrue(recipeViolationsStatistics.getBoolean("available"));
-    assertFalse(recipeViolationsStatistics.getBoolean("percent"));
 
-    JSONObject sharedStateCacheStatistics = recipeAction.getSharedStateCacheStatisticsJson();
+    JSONObject sharedStateCacheStatistics = recipeReport.getSharedStateCache().getStatistics();
     assertEquals(0.0, sharedStateCacheStatistics.getDouble("average"), 0.01);
     assertEquals(0.0, sharedStateCacheStatistics.getDouble("min"), 0.01);
     assertEquals(0.0, sharedStateCacheStatistics.getDouble("max"), 0.01);
-    assertEquals(1, sharedStateCacheStatistics.getInt("count"));
-    assertEquals(0.0, sharedStateCacheStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.0, sharedStateCacheStatistics.getDouble("scale"), 0.01);
-    assertTrue(sharedStateCacheStatistics.getBoolean("available"));
-    assertTrue(sharedStateCacheStatistics.getBoolean("percent"));
 
-    JSONObject statementCoverageStatistics = recipeAction.getStatementCoverageStatisticsJson();
+    JSONObject statementCoverageStatistics = recipeReport.getStatementCoverage().getStatistics();
     assertEquals(0.33, statementCoverageStatistics.getDouble("average"), 0.01);
     assertEquals(0.33, statementCoverageStatistics.getDouble("min"), 0.01);
     assertEquals(0.33, statementCoverageStatistics.getDouble("max"), 0.01);
-    assertEquals(1, statementCoverageStatistics.getInt("count"));
-    assertEquals(0.33, statementCoverageStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.33, statementCoverageStatistics.getDouble("scale"), 0.01);
-    assertTrue(statementCoverageStatistics.getBoolean("available"));
-    assertTrue(statementCoverageStatistics.getBoolean("percent"));
 
-    JSONObject testStatistics = recipeAction.getTestStatisticsJson();
+    JSONObject testStatistics = recipeReport.getUnitTests().getStatistics();
     assertEquals(0.1, testStatistics.getDouble("average"), 0.01);
     assertEquals(0.1, testStatistics.getDouble("min"), 0.01);
     assertEquals(0.1, testStatistics.getDouble("max"), 0.01);
-    assertEquals(1, testStatistics.getInt("count"));
-    assertEquals(0.1, testStatistics.getDouble("sum"), 0.01);
-    assertEquals(0.1, testStatistics.getDouble("scale"), 0.01);
-    assertTrue(testStatistics.getBoolean("available"));
-    assertTrue(testStatistics.getBoolean("percent"));
   }
 
   @Test
@@ -275,7 +208,7 @@ public class RecipeActionTest {
     assertNotNull(run);
     FreeStyleBuild run2 = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
-    MetaShiftBuildAction buildAction = run2.getAction(MetaShiftBuildAction.class);
+    BuildAction buildAction = run2.getAction(BuildAction.class);
     RecipeAction recipeAction = buildAction.getAction(RecipeAction.class);
     assertCodeSizeDelta(recipeAction, 0, 0, 0, 0);
   }

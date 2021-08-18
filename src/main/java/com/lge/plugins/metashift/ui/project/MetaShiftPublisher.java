@@ -24,10 +24,12 @@
 
 package com.lge.plugins.metashift.ui.project;
 
+import com.lge.plugins.metashift.analysis.BuildStatusResolver;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.parsers.FileParser;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import hudson.AbortException;
 import hudson.EnvVars;
@@ -229,19 +231,18 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       FilePath buildPath = new FilePath(run.getRootDir());
       DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
 
-      MetaShiftBuildAction buildAction = new MetaShiftBuildAction(
-          run, listener, configuration, reportPath, dataSource, recipes);
+      BuildAction buildAction = new BuildAction(
+          run, listener, configuration, dataSource, reportPath, recipes);
       run.addAction(buildAction);
 
-      if (!buildAction.getMetrics().isStable()) {
-        listener.getLogger().println(
-            "[meta-shift-plugin] NOTE: one of the metrics does not meet the goal.");
-        Result runResult = run.getResult() == null ? Result.SUCCESS : run.getResult();
+      BuildStatusResolver buildStatus = new BuildStatusResolver(configuration);
+      Result buildResult = buildStatus.getCombined();
 
-        if (runResult.isBetterThan(Result.UNSTABLE)) {
-          run.setResult(Result.UNSTABLE);
-        }
+      Result runResult = run.getResult() == null ? Result.SUCCESS : run.getResult();
+      if (runResult.isBetterThan(buildResult)) {
+        run.setResult(buildResult);
       }
+
       return null;
     };
   }

@@ -19,10 +19,15 @@ suite('tested-simple-view', () => {
   });
 
   test('property', async () => {
+    const testedRecipes = {
+      ratio: 0.3,
+      numerrator: 3,
+      denominator: 10,
+    };
+
     const el = (await fixture(html`
         <tested-simple-view name="test"
-          tested='3'
-          recipes='10'
+          testedRecipes='${JSON.stringify(testedRecipes)}'
           delta='0.101010'
         ></tested-simple-view>`
     )) as TestedSimpleView;
@@ -41,10 +46,15 @@ suite('tested-simple-view', () => {
   });
 
   test('property-no-recipes', async () => {
+    const testedRecipes = {
+      ratio: 0,
+      numerrator: 0,
+      denominator: 0,
+    };
+
     const el = (await fixture(html`
         <tested-simple-view name="test"
-          tested='0'
-          recipes='0'
+          testedRecipes='${JSON.stringify(testedRecipes)}'
           delta='0'
         ></tested-simple-view>`
     )) as TestedSimpleView;

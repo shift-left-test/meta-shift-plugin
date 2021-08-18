@@ -23,19 +23,13 @@ suite('metrics-simple-view', () => {
       available: true,
       qualified: true,
       ratio: 0.3333333,
-    };
-
-    const qualifiedRate = {
-      denominator: 10,
-      numerator: 1,
-      ratio: 0.444444,
+      threshold: 0.4,
     };
 
     const el = (await fixture(html`
         <metrics-simple-view name="test"
-          metricsValue='${JSON.stringify(metricsValue)}'
+          evaluation='${JSON.stringify(metricsValue)}'
           delta='0.22222'
-          qualifiedRate='${JSON.stringify(qualifiedRate)}'
         ></metrics-simple-view>`
     )) as MetricsSimpleView;
 
@@ -57,20 +51,14 @@ suite('metrics-simple-view', () => {
       available: true,
       qualified: true,
       ratio: 0.3333333,
-    };
-
-    const qualifiedRate = {
-      denominator: 10,
-      numerator: 1,
-      ratio: 0.444444,
+      threshold: 0.4,
     };
 
     const el = (await fixture(html`
         <metrics-simple-view name="test"
           class="percent"
-          metricsValue='${JSON.stringify(metricsValue)}'
+          evaluation='${JSON.stringify(metricsValue)}'
           delta='0.22222'
-          qualifiedRate='${JSON.stringify(qualifiedRate)}'
         ></metrics-simple-view>`
     )) as MetricsSimpleView;
 

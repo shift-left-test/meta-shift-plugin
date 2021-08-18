@@ -38,7 +38,15 @@ module.exports = {
         test: /\.(css|scss)$/,
         use: [
           'style-loader',
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: {
+                compileType: 'icss',
+              },
+            },
+          },
           'sass-loader',
         ],
       },

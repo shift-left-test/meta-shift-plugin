@@ -1,0 +1,19 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <metrics-simple-view name="Premirror Cache" class="link percent ${metrics_class}"
+    url="premirror_cache"
+    evaluation="${it.report.premirrorCache.evaluation}"
+    delta="${it.premirrorCacheDelta}"
+    statistics="${it.report.premirrorCache.statistics}" />
+  <metrics-simple-view name="Shared State Cache" class="link percent ${metrics_class}"
+    url="shared_state_cache"
+    evaluation="${it.report.sharedStateCache.evaluation}"
+    delta="${it.sharedStateCacheDelta}"
+    statistics="${it.report.sharedStateCache.statistics}" />
+  <metrics-simple-view name="Recipe Violations" class="link ${metrics_class}"
+    url="recipe_violations"
+    evaluation="${it.report.recipeViolations.evaluation}"
+    delta="${it.recipeViolationsDelta}"
+    statistics="${it.report.recipeViolations.statistics}" />
+</j:jelly>

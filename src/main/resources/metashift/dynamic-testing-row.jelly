@@ -1,0 +1,24 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <metrics-simple-view name="Unit Tests" class="link percent ${metrics_class}"
+    url="unit_tests"
+    evaluation="${it.report.unitTests.evaluation}"
+    delta="${it.testDelta}"
+    statistics="${it.report.unitTests.statistics}" />
+  <metrics-simple-view name="Statement Coverage" class="link percent ${metrics_class}"
+    url="statement_coverage"
+    evaluation="${it.report.statementCoverage.evaluation}"
+    delta="${it.statementCoverageDelta}"
+    statistics="${it.report.statementCoverage.statistics}" />
+  <metrics-simple-view name="Branch Coverage" class="link percent ${metrics_class}"
+    url="branch_coverage"
+    evaluation="${it.report.branchCoverage.evaluation}"
+    delta="${it.branchCoverageDelta}"
+    statistics="${it.report.branchCoverage.statistics}" />
+  <metrics-simple-view name="Mutation Tests" class="link percent ${metrics_class}"
+    url="mutation_tests"
+    evaluation="${it.report.mutationTests.evaluation}"
+    delta="${it.mutationTestDelta}"
+    statistics="${it.report.mutationTests.statistics}" />
+</j:jelly>

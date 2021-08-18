@@ -51,4 +51,8 @@ public abstract class NegativeEvaluator<T> extends Evaluator<T> {
     }
     return (double) getNumerator() / (double) getDenominator() <= getThreshold();
   }
+
+  public boolean isPositive() {
+    return false;
+  }
 }

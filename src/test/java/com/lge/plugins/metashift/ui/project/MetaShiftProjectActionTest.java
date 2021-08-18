@@ -32,6 +32,8 @@ import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
+import com.lge.plugins.metashift.ui.build.BuildAction;
+
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -104,7 +106,7 @@ public class MetaShiftProjectActionTest {
     MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
     project.getPublishersList().add(publisher);
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
-    MetaShiftBuildAction buildAction = run.getAction(MetaShiftBuildAction.class);
+    BuildAction buildAction = run.getAction(BuildAction.class);
 
     projectAction.doIndex(req, rsp);
 

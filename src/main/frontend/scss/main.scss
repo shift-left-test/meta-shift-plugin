@@ -68,9 +68,27 @@
     width: 100%;
   }
 
+  .column {
+    width: 50%;
+    display: inline-block;
+    position: relative;
+  }
+
+  .metrics-threshold {
+    display: inline-block;
+    color: rgb(201, 201, 201);
+    font-weight: normal;
+    position: absolute;
+    right: calc(50% - 120px);
+  }
   // recipe metrics detail page scale value
   .metrics-scale {
     font-size: 40px;
+    display: inline-block;
+    font-weight: normal;
+    position: absolute;
+    right: 0%;
+    top: 25px;
   }
 
   .metashift-code {
@@ -79,35 +97,6 @@
 
   .cm-line {
     @extend .metashift-code;
-  }
-
-  .ico {
-    padding: 0px 35px 5px 10px;
-    background-position: 50%;
-    background-size: 24px 24px;
-    background-repeat: no-repeat;
-    float: right;
-    height: 24px;
-    content:"";
-  }
-
-  // icon
-  .ico-pass:after {
-    @extend .ico;
-
-    background-image: url('../img/check_circle_black_36dp.png');
-  }
-
-  .ico-fail:after {
-    @extend .ico;
-
-    background-image: url('../img/cancel_black_36dp.png');
-  }
-
-  .ico-na:after {
-    @extend .ico;
-
-    background-image: url('../img/remove_circle_black_36dp.png');
   }
 
   .badge {
@@ -172,11 +161,23 @@
         background-color: $progress-bar-color;
       }
 
+      .progress-bar.positive {
+        background-color: $progress-bar-color-positive;
+      }
+
+      .progress-bar.negative {
+        background-color: $progress-bar-color-negative;
+      }
+
       .progress-bar-legend {
         position: absolute;
         top: 5px;
         text-align: center;
         width: 100%;
+      }
+
+      .qualified-check {
+        text-align: center;
       }
     }
     
@@ -184,6 +185,20 @@
       background-color: black;
       color: white;
     }
+  }
+
+  .qualified {
+    font-size: 20px;
+  }
+
+  .qualified-pass {
+    @extend .qualified;
+    color: $qualified-pass;
+  }
+
+  .qualified-fail {
+    @extend .qualified;
+    color: $qualified-fail;
   }
 
   // split.js
@@ -287,6 +302,12 @@ code-size {
   }
 }
 
+code-size.summary {
+  .size-item {
+    width: 190px;
+  }
+}
+
 metrics-simple-view {
   display: inline-block;
   background-color: #fff;
@@ -317,8 +338,21 @@ metrics-simple-view {
     .icon {
       display: inline-block;
       position: absolute;
-      right: 0px;
-      width: 0px;
+      right: 6px;
+      top: 3px;
+      font-size: 20px;
+
+      .fa-check-circle {
+        color: green;
+      }
+
+      .fa-times-circle {
+        color: red;
+      }
+
+      .fa-minus-circle {
+        color: black;
+      }
     }
   }
 
@@ -496,7 +530,7 @@ distribution-bar {
   }
 }
 
-scale-bar {
+statistics-bar {
   @extend distribution-bar;
 
   .metrics-stats {
@@ -526,16 +560,24 @@ scale-bar {
 
     .pointer-text {
       position: relative;
-      left: -12px;
+      left: -8px;
+      top: 6px;
     }
   }
-  .scale {
+
+  .threshold {
+    color: $threshold-color;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: $threshold-outline-color;
+  }
+
+  .avg {
     color: $average-color;
     -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: $average-outline-color;
   }
 
-  .avg {
+  .scale {
     color: $scale-color;
     -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: $scale-outline-color;
@@ -546,7 +588,7 @@ test-rate {
   @extend distribution-bar;
 }
 
-recipe-treemap {
+.treemap-chart {
   .chart {
     height: 300px;
   }
@@ -558,25 +600,25 @@ recipe-treemap {
     top: -20px;
 
     .legend-1 {
-      color: #e83336;
+      color: $treemap-colors-legend1;
     }
     .legend-2 {
-      color: #b83b40;
+      color: $treemap-colors-legend2;
     }
     .legend-3 {
-      color: #6e3d44;
+      color: $treemap-colors-legend3;
     }
     .legend-4 {
-      color: #575866;
+      color: $treemap-colors-legend4;
     }
     .legend-5 {
-      color: #306946;
+      color: $treemap-colors-legend5;
     }
     .legend-6 {
-      color: #33a653;
+      color: $treemap-colors-legend6;
     }
     .legend-7 {
-      color: #30cf3a;
+      color: $treemap-colors-legend7;
     }
   }
 

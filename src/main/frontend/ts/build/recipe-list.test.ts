@@ -14,7 +14,7 @@ suite('recipe-list', () => {
         <recipe-list></recipe-list>`
     )) as RecipeList;
 
-    assert.isNotNull(el.querySelector('#recipes-table'),
+    assert.isNotNull(el.querySelector('.paged-table'),
         el.outerHTML);
   });
 
@@ -26,7 +26,7 @@ suite('recipe-list', () => {
     const model = {
       responseJSON: [{
         name: 'test',
-        lines: 10,
+        linesOfCode: 10,
         premirrorCache: {available: true, ratio: 0.20,
           numerator: 10, denominator: 100},
         sharedStateCache: {available: true, ratio: 0.3011,
@@ -41,13 +41,13 @@ suite('recipe-list', () => {
           numerator: 10, denominator: 100},
         duplications: {available: true, ratio: 0.80001,
           numerator: 10, denominator: 100},
-        test: {available: true, ratio: 0.9,
+        unitTests: {available: true, ratio: 0.9,
           numerator: 10, denominator: 100},
         statementCoverage: {available: true, ratio: 1.0,
           numerator: 10, denominator: 100},
         branchCoverage: {available: true, ratio: 0.99,
           numerator: 10, denominator: 100},
-        mutationTest: {available: true, ratio: 0.11,
+        mutationTests: {available: true, ratio: 0.11,
           numerator: 10, denominator: 100},
       }],
     };
@@ -64,7 +64,7 @@ suite('recipe-list', () => {
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="lines"]');
+        'div.tabulator-cell[tabulator-field="linesOfCode"]');
     assert.include(elChild.textContent, '10',
         elChild.outerHTML);
 
@@ -104,7 +104,7 @@ suite('recipe-list', () => {
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="test"]');
+        'div.tabulator-cell[tabulator-field="unitTests"]');
     assert.include(elChild.textContent, '90%',
         elChild.outerHTML);
 
@@ -119,7 +119,7 @@ suite('recipe-list', () => {
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="mutationTest"]');
+        'div.tabulator-cell[tabulator-field="mutationTests"]');
     assert.include(elChild.textContent, '11%',
         elChild.outerHTML);
   });
@@ -132,7 +132,7 @@ suite('recipe-list', () => {
     const model = {
       responseJSON: [{
         name: 'test',
-        lines: 10,
+        linesOfCode: 10,
         premirrorCache: {available: false, ratio: 0.20,
           numerator: 10, denominator: 100},
         sharedStateCache: {available: false, ratio: 0.3011,
@@ -147,13 +147,13 @@ suite('recipe-list', () => {
           numerator: 10, denominator: 100},
         duplications: {available: false, ratio: 0.80001,
           numerator: 10, denominator: 100},
-        test: {available: false, ratio: 0.9,
+        unitTests: {available: false, ratio: 0.9,
           numerator: 10, denominator: 100},
         statementCoverage: {available: true, ratio: 1.0,
           numerator: 10, denominator: 100},
         branchCoverage: {available: true, ratio: 0.99,
           numerator: 10, denominator: 100},
-        mutationTest: {available: false, ratio: 0.11,
+        mutationTests: {available: false, ratio: 0.11,
           numerator: 10, denominator: 100},
       }],
     };
@@ -170,7 +170,7 @@ suite('recipe-list', () => {
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="lines"]');
+        'div.tabulator-cell[tabulator-field="linesOfCode"]');
     assert.include(elChild.textContent, '10',
         elChild.outerHTML);
 
@@ -210,7 +210,7 @@ suite('recipe-list', () => {
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="test"]');
+        'div.tabulator-cell[tabulator-field="unitTests"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
 
@@ -225,7 +225,7 @@ suite('recipe-list', () => {
         elChild.outerHTML);
 
     elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="mutationTest"]');
+        'div.tabulator-cell[tabulator-field="mutationTests"]');
     assert.include(elChild.textContent, 'N/A',
         elChild.outerHTML);
   });

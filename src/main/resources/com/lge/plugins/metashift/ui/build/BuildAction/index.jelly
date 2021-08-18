@@ -1,0 +1,55 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metashift">
+  <l:layout title="meta-shift report">
+    <st:adjunct includes="com.lge.plugins.metashift.front"/>
+    <st:include it="${it.run}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <st:bind var="proxy" value="${it}" />
+      <div class="metashift">
+      <div class="page">
+        <h1>Overview</h1>
+        <h2>Lines of Code</h2>
+        <div class="section">
+          <code-size
+            codeSize="${it.codeSizeJson}"
+            codeSizeDelta="${it.codeSizeDeltaJson}" />
+        </div>
+        <h2>Build Performance</h2>
+        <div class="section">
+          <ms:build-performance-row />
+        </div>
+        <h2>Code Quality</h2>
+        <h3>Static Analysis</h3>
+        <div class="section">
+          <ms:static-analysis-row />
+        </div>
+        <h3>Dynamic Testing</h3>
+        <div class="section">
+          <tested-simple-view name="Tested Recipes"
+            testedRecipes="${it.report.testedRecipes}"
+            delta="${it.testedRecipesDelta}" />
+          <ms:dynamic-testing-row />
+        </div>
+        <h1>Recipes</h1>
+        <div>
+          <build-treemap />
+        </div>
+        <div class="section">
+          <recipe-list />
+        </div>
+      </div>
+      </div>
+      <script type="text/javascript">
+      {
+        document.querySelector("build-treemap").setAjaxFunc(
+          proxy.getRecipesTreemapModel
+        )
+        document.querySelector("recipe-list").setAjaxFunc(
+          proxy.getRecipesTableModel
+        )
+      }
+      </script>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

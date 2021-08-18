@@ -1,0 +1,34 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metashift">
+  <l:layout title="meta-shift report">
+    <st:adjunct includes="com.lge.plugins.metashift.front"/>
+    <st:include it="${it.run}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <st:bind var="proxy" value="${it}" />
+      <div class="metashift">
+        <div class="page">
+          <h1>Overview</h1>
+          <ms:metrics-stats-header 
+            statistics_class="show_scale percent"
+            scale="${it.scale}"
+            labels='[
+              {"name":"Hits", "clazz": "valid-good"},
+              {"name":"Misses", "clazz": "invalid"}
+              ]' />
+          <h1>Details</h1>
+          <shared-state-cache-list class="section"
+            page='${it.getUrlParameter("page")}'
+            sort='${it.getUrlParameter("sort")}' />
+        </div>
+      </div>
+      <script type="text/javascript">
+      {
+        document.querySelector("shared-state-cache-list").setAjaxFunc(
+          proxy.getTableModel
+        )
+      }
+      </script>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

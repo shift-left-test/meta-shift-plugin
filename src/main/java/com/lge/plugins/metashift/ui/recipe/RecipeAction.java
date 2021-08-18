@@ -24,29 +24,20 @@
 
 package com.lge.plugins.metashift.ui.recipe;
 
-import com.lge.plugins.metashift.metrics.CodeSizeDelta;
-import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
-import com.lge.plugins.metashift.metrics.Evaluator;
-import com.lge.plugins.metashift.metrics.MetricStatistics;
-import com.lge.plugins.metashift.metrics.Metrics;
+import com.lge.plugins.metashift.builders.RecipeReport;
+import com.lge.plugins.metashift.builders.RecipeReportBuilder;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.models.SummaryStatistics;
-import com.lge.plugins.metashift.ui.MetricsActionBase;
-import com.lge.plugins.metashift.ui.project.MetaShiftBuildAction;
-import com.lge.plugins.metashift.utils.JsonUtils;
+import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.ui.ActionParentBase;
+import com.lge.plugins.metashift.ui.build.BuildAction;
 import hudson.FilePath;
-import hudson.Functions;
 import hudson.model.Action;
 import hudson.model.Run;
-import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -54,215 +45,67 @@ import org.kohsuke.stapler.export.ExportedBean;
  * The recipe action class.
  */
 @ExportedBean
-public class RecipeAction extends MetricsActionBase implements Action {
+public class RecipeAction extends ActionParentBase implements Action {
 
-  MetaShiftBuildAction parent;
+  BuildAction parent;
 
   @Exported(visibility = 999)
   public String name;
 
+  private final RecipeReport recipeReport;
+
   /**
    * Default constructor.
    */
-  public RecipeAction(MetaShiftBuildAction parent, TaskListener listener,
-      Configuration configuration, FilePath reportRoot, Recipe recipe)
+  public RecipeAction(BuildAction parent,
+      Configuration configuration, DataSource dataSource,
+      FilePath reportRoot, Recipe recipe)
       throws IOException, InterruptedException {
-    super(configuration, recipe);
+    super();
 
     this.name = recipe.getName();
     this.parent = parent;
 
-    // parse metadata.json
-    JSONObject metadata = JsonUtils.createObject(
-        reportRoot.child(this.name).child("metadata.json"));
+    this.recipeReport = new RecipeReportBuilder(configuration, dataSource, reportRoot)
+        .parse(recipe);
 
-    this.addAction(new RecipeSharedStateCacheAction(
-        this, reportRoot.getChannel(), metadata, "Shared State Cache", "sharedstate_cache", true,
-        listener, recipe));
-    this.addAction(new RecipePremirrorCacheAction(
-        this, reportRoot.getChannel(), metadata, "Premirror Cache", "premirror_cache", true,
-        listener, recipe));
-    this.addAction(new RecipeCodeViolationsAction(
-        this, reportRoot.getChannel(), metadata, "Code Violations", "code_violations", false,
-        listener, recipe));
-    this.addAction(new RecipeCommentsAction(
-        this, reportRoot.getChannel(), metadata, "Comments", "comments", true,
-        listener, recipe));
-    this.addAction(new RecipeComplexityAction(
-        this, reportRoot.getChannel(), metadata, "Complexity", "complexity", true,
-        listener, recipe));
-    this.addAction(new RecipeStatementCoverageAction(
-        this, reportRoot.getChannel(), metadata, "Statement Coverage", "statement_coverage", true,
-        listener, recipe));
-    this.addAction(new RecipeBranchCoverageAction(
-        this, reportRoot.getChannel(), metadata, "Branch Coverage", "branch_coverage", true,
-        listener, recipe));
-    this.addAction(new RecipeDuplicationsAction(
-        this, reportRoot.getChannel(), metadata, "Duplications", "duplications", true,
-        listener, recipe));
-    this.addAction(new RecipeMutationTestAction(
-        this, reportRoot.getChannel(), metadata, "Mutation Tests", "mutation_test", true,
-        listener, recipe));
-    this.addAction(new RecipeRecipeViolationsAction(
-        this, reportRoot.getChannel(), metadata, "Recipe Violations", "recipe_violations", false,
-        listener, recipe));
-    this.addAction(new RecipeTestAction(
-        this, reportRoot.getChannel(), metadata, "Unit Tests", "test", true,
-        listener, recipe));
+    this.addAction(this.childActionSharedStateCache = new RecipeActionChild(
+        this, this.getReport().getSharedStateCache(),
+        "Shared State Cache", "shared_state_cache", true));
+    this.addAction(this.childActionPremirrorCache = new RecipeActionChild(
+        this, this.getReport().getPremirrorCache(),
+        "Premirror Cache", "premirror_cache", true));
+    this.addAction(this.childActionCodeViolations = new RecipeActionChild(
+        this, this.getReport().getCodeViolations(),
+        "Code Violations", "code_violations", false));
+    this.addAction(this.childActionComments = new RecipeActionChild(
+        this, this.getReport().getComments(),
+        "Comments", "comments", true));
+    this.addAction(this.childActionComplexity = new RecipeActionChild(
+        this, this.getReport().getComplexity(),
+        "Complexity", "complexity", true));
+    this.addAction(this.childActionStatementCoverage = new RecipeActionChild(
+        this, this.getReport().getStatementCoverage(),
+        "Statement Coverage", "statement_coverage", true));
+    this.addAction(this.childActionBranchCoverage = new RecipeActionChild(
+        this, this.getReport().getBranchCoverage(),
+        "Branch Coverage", "branch_coverage", true));
+    this.addAction(this.childActionDuplications = new RecipeActionChild(
+        this, this.getReport().getDuplications(),
+        "Duplications", "duplications", true));
+    this.addAction(this.childActionMutationTests = new RecipeActionChild(
+        this, this.getReport().getMutationTests(),
+        "Mutation Tests", "mutation_tests", true));
+    this.addAction(this.childActionRecipeViolations = new RecipeActionChild(
+        this, this.getReport().getRecipeViolations(),
+        "Recipe Violations", "recipe_violations", false));
+    this.addAction(this.childActionUnitTests = new RecipeActionChild(
+        this, this.getReport().getUnitTests(),
+        "Unit Tests", "unit_tests", true));
   }
 
-  public MetaShiftBuildAction getParentAction() {
+  public BuildAction getParentAction() {
     return this.parent;
-  }
-
-  public Run<?, ?> getRun() {
-    return this.parent.getRun();
-  }
-
-  public MetricStatistics getMetricStatistics() {
-    return this.parent.getMetricStatistics();
-  }
-
-  private JSONObject getMetricStatisticsJson(SummaryStatistics statistics,
-      Evaluator<?> evaluator, boolean isPercent) {
-    JSONObject result = statistics.toJsonObject();
-    result.put("scale", evaluator.getRatio());
-    result.put("available", evaluator.isAvailable());
-    result.put("percent", isPercent);
-
-    return result;
-  }
-
-  /**
-   * premirrorcache statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getPremirrorCacheStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getPremirrorCache(),
-        this.getMetrics().getPremirrorCache(),
-        true);
-  }
-
-  /**
-   * sharedstatecache statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getSharedStateCacheStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getSharedStateCache(),
-        this.getMetrics().getSharedStateCache(),
-        true);
-  }
-
-  /**
-   * recipeviolation statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getRecipeViolationsStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getRecipeViolations(),
-        this.getMetrics().getRecipeViolations(),
-        false);
-  }
-
-  /**
-   * comments statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getCommentsStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getComments(),
-        this.getMetrics().getComments(),
-        true);
-  }
-
-  /**
-   * codeviolations statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getCodeViolationsStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getCodeViolations(),
-        this.getMetrics().getCodeViolations(),
-        false);
-  }
-
-  /**
-   * complexity statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getComplexityStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getComplexity(),
-        this.getMetrics().getComplexity(),
-        true);
-  }
-
-  /**
-   * duplications statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getDuplicationsStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getDuplications(),
-        this.getMetrics().getDuplications(),
-        true);
-  }
-
-  /**
-   * test statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getTestStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getTest(),
-        this.getMetrics().getTest(),
-        true);
-  }
-
-  /**
-   * statementcoverage statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getStatementCoverageStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getStatementCoverage(),
-        this.getMetrics().getStatementCoverage(),
-        true);
-  }
-
-  /**
-   * branchcoverage statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getBranchCoverageStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getBranchCoverage(),
-        this.getMetrics().getBranchCoverage(),
-        true);
-  }
-
-  /**
-   * mutationtest statistics json.
-   *
-   * @return json string
-   */
-  public JSONObject getMutationTestStatisticsJson() {
-    return this.getMetricStatisticsJson(
-        this.parent.getMetricStatistics().getMutationTest(),
-        this.getMetrics().getMutationTest(),
-        true);
   }
 
   public String getName() {
@@ -289,56 +132,30 @@ public class RecipeAction extends MetricsActionBase implements Action {
     return getUrlName();
   }
 
-  private void addActionToMenu(ContextMenu menu, RecipeActionChild action) {
-    if (action != null) {
-      String base = Functions.getIconFilePath(action);
-      String icon = Stapler.getCurrentRequest().getContextPath()
-          + (base.startsWith("images/") ? Functions.getResourcePath() : "")
-          + '/' + base;
-
-      menu.add(action.getUrlName(), icon, action.getDisplayName());
-    }
+  @Override
+  public Run<?, ?> getRun() {
+    return this.parent.getRun();
   }
 
-  /**
-   * constext menu provider for recipe action.
-   */
-  public ContextMenu doContextMenu(StaplerRequest request, StaplerResponse response)
-      throws Exception {
-    ContextMenu menu = new ContextMenu();
-
-    final MenuItem headerBuildPerformance = new MenuItem().withDisplayName("Build Performance");
-    headerBuildPerformance.header = true;
-    menu.add(headerBuildPerformance);
-    this.addActionToMenu(menu, this.getAction(RecipePremirrorCacheAction.class));
-    this.addActionToMenu(menu, this.getAction(RecipeSharedStateCacheAction.class));
-    this.addActionToMenu(menu, this.getAction(RecipeRecipeViolationsAction.class));
-    final MenuItem headerCodeQuality = new MenuItem().withDisplayName("Code Quality");
-    headerCodeQuality.header = true;
-    menu.add(headerCodeQuality);
-    this.addActionToMenu(menu, this.getAction(RecipeCommentsAction.class));
-    this.addActionToMenu(menu, this.getAction(RecipeCodeViolationsAction.class));
-    this.addActionToMenu(menu, this.getAction(RecipeComplexityAction.class));
-    this.addActionToMenu(menu, this.getAction(RecipeDuplicationsAction.class));
-    this.addActionToMenu(menu, this.getAction(RecipeTestAction.class));
-    this.addActionToMenu(menu, this.getAction(RecipeStatementCoverageAction.class));
-    this.addActionToMenu(menu, this.getAction(RecipeBranchCoverageAction.class));
-    this.addActionToMenu(menu, this.getAction(RecipeMutationTestAction.class));
-
-    return menu;
+  public RecipeReport getReport() {
+    return this.recipeReport;
   }
 
-  private Metrics getPreviousMetrics() {
+  private RecipeReport getPreviousReport() {
     if (getParentAction().getPreviousBuildAction() != null) {
       List<RecipeAction> recipes =
           getParentAction().getPreviousBuildAction().getActions(RecipeAction.class);
-      RecipeAction prevRecipe = recipes.stream().filter(
-          o -> o.name.equals(this.name)).findFirst().orElse(null);
+      RecipeAction prevRecipe = recipes.stream()
+          .filter(o -> o.name.equals(this.name)).findFirst().orElse(null);
       if (prevRecipe != null) {
-        return prevRecipe.getMetrics();
+        return prevRecipe.getReport();
       }
     }
     return null;
+  }
+
+  public JSONObject getCodeSizeJson() {
+    return this.getReport().getLinesOfCode().discard("recipes");
   }
 
   /**
@@ -347,15 +164,20 @@ public class RecipeAction extends MetricsActionBase implements Action {
    * @return CodeSizeDelta object
    */
   public JSONObject getCodeSizeDeltaJson() {
-    CodeSizeEvaluator previous =
-        Optional.ofNullable(getPreviousMetrics())
-            .map(Metrics::getCodeSize).orElse(null);
-    CodeSizeEvaluator current = getMetrics().getCodeSize();
-    return CodeSizeDelta.between(previous, current).toJsonObject().discard("recipes");
+    JSONObject previous =
+        Optional.ofNullable(getPreviousReport())
+            .map(RecipeReport::getLinesOfCode).orElse(null);
+    JSONObject current = getReport().getLinesOfCode();
+    if (previous == null) {
+      return current.discard("recipes");
+    }
+    JSONObject delta = new JSONObject();
+    delta.put("lines", current.getLong("lines") - previous.getLong("lines"));
+    delta.put("functions", current.getLong("functions") - previous.getLong("functions"));
+    delta.put("classes", current.getLong("classes") - previous.getLong("classes"));
+    delta.put("files", current.getLong("files") - previous.getLong("files"));
+
+    return delta;
   }
 
-  @Override
-  public JSONObject getCodeSizeJson() {
-    return this.getMetrics().getCodeSize().toJsonObject().discard("recipes");
-  }
 }

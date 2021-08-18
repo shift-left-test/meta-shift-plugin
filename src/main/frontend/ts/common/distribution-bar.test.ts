@@ -19,13 +19,18 @@ suite('distribution-bar', () => {
   });
 
   test('itemlist', async () => {
-    const items = [
-      {clazz: 'valid-good', label: 'test', width: 30, count: 100},
-      {clazz: 'valid-bad', label: 'test2', width: 70, count: 600},
+    const distribution = {
+      first: {ratio: 0.3, count: 100},
+      second: {ratio: 0.7, count: 600},
+    };
+    const labels = [
+      {clazz: 'valid-good', name: 'test'},
+      {clazz: 'valid-bad', name: 'test2'},
     ];
 
     const el = (await fixture(html`
-      <distribution-bar items="${JSON.stringify(items)}"><distribution-bar>
+      <distribution-bar distribution="${JSON.stringify(distribution)}"
+      labels="${JSON.stringify(labels)}"><distribution-bar>
     `)) as DistributionBar;
 
     let elChild = el.querySelector('div.label.valid-good');

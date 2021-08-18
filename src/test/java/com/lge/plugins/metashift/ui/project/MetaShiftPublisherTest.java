@@ -32,6 +32,7 @@ import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeActionChild;
 import hudson.model.FreeStyleBuild;
@@ -115,9 +116,9 @@ public class MetaShiftPublisherTest {
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
     // verify MetaShiftBuildAction created.
-    assertEquals(1, run.getActions(MetaShiftBuildAction.class).size());
+    assertEquals(1, run.getActions(BuildAction.class).size());
 
-    MetaShiftBuildAction action = run.getAction(MetaShiftBuildAction.class);
+    BuildAction action = run.getAction(BuildAction.class);
     assertEquals(run, action.getRun());
 
     // verify RecipeAction created.
@@ -155,9 +156,9 @@ public class MetaShiftPublisherTest {
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
     // verify MetaShiftBuildAction created.
-    assertEquals(1, run.getActions(MetaShiftBuildAction.class).size());
+    assertEquals(1, run.getActions(BuildAction.class).size());
 
-    MetaShiftBuildAction action = run.getAction(MetaShiftBuildAction.class);
+    BuildAction action = run.getAction(BuildAction.class);
     assertEquals(run, action.getRun());
 
     // verify RecipeAction created.
@@ -195,9 +196,9 @@ public class MetaShiftPublisherTest {
     WorkflowRun run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
 
     // verify MetaShiftBuildAction created.
-    assertEquals(1, run.getActions(MetaShiftBuildAction.class).size());
+    assertEquals(1, run.getActions(BuildAction.class).size());
 
-    MetaShiftBuildAction action = run.getAction(MetaShiftBuildAction.class);
+    BuildAction action = run.getAction(BuildAction.class);
     assertEquals(run, action.getRun());
 
     // verify RecipeAction created.

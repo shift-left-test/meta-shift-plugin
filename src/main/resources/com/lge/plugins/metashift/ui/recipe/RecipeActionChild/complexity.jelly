@@ -1,0 +1,41 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metashift">
+  <l:layout title="meta-shift report">
+    <st:adjunct includes="com.lge.plugins.metashift.front"/>
+    <st:include it="${it.run}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <st:bind var="proxy" value="${it}" />
+      <div class="metashift">
+        <div class="page">
+          <h1>Overview</h1>
+          <ms:metrics-stats-header 
+            statistics_class="show_scale percent"
+            scale="${it.scale}"
+            labels='[
+              {"name":"Abnormal", "clazz": "valid-good"},
+              {"name":"Normal", "clazz": "invalid"}
+              ]' />
+          <h1>Details</h1>
+          <complexity-files class="section"
+            page='${it.getUrlParameter("page")}'
+            sort='${it.getUrlParameter("sort")}'
+            select='${it.getUrlParameter("file")}' />
+          <complexity-file-view class="section" complexityTolerance="${it.group.evaluation.tolerance}"
+            filePath='${it.getUrlParameter("file")}'
+            scrollX='${it.getUrlParameter("scrollX")}' scrollY='${it.getUrlParameter("scrollY")}' />
+        </div>
+      </div>
+      <script type="text/javascript">
+      {
+        document.querySelector("complexity-files").setAjaxFunc(
+          proxy.getTableModel
+        )
+        document.querySelector("complexity-file-view").setAjaxFunc(
+          proxy.getFileDetailModel
+        )
+      }
+      </script>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

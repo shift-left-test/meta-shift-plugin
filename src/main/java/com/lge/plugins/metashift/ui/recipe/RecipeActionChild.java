@@ -24,110 +24,47 @@
 
 package com.lge.plugins.metashift.ui.recipe;
 
-import com.lge.plugins.metashift.metrics.Evaluator;
-import com.lge.plugins.metashift.persistence.DataSource;
-import hudson.FilePath;
-import hudson.model.Action;
-import hudson.model.Run;
-import hudson.remoting.VirtualChannel;
-import java.io.IOException;
+import com.lge.plugins.metashift.builders.RecipeGroup;
+import com.lge.plugins.metashift.ui.ActionChildBase;
+import com.lge.plugins.metashift.ui.ActionParentBase;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * Detail view common feature class.
  */
-public abstract class RecipeActionChild implements Action {
+public class RecipeActionChild extends ActionChildBase {
 
-  static final String STORE_KEY_TABLE_MODEL = "TableModel";
-
-  private final RecipeAction parent;
-
-  // used for read recipe file from remote.
-  private final transient VirtualChannel channel;
-  private final transient JSONObject metadata;
-
-  private final String name;
-  private final String url;
-  private final boolean percentScale;
+  private final RecipeGroup recipeGroup;
 
   /**
    * constructor.
    *
    * @param parent parent action
    */
-  public RecipeActionChild(RecipeAction parent, VirtualChannel channel, JSONObject metadata,
+  public RecipeActionChild(ActionParentBase parent, RecipeGroup recipeGroup,
       String name, String url, boolean percentScale) {
-    this.parent = parent;
-    this.channel = channel;
-    this.metadata = metadata;
+    super(parent, name, url, percentScale);
 
-    this.name = name;
-    this.url = url;
-    this.percentScale = percentScale;
+    this.recipeGroup = recipeGroup;
   }
 
-  @Override
-  public String getIconFileName() {
-    return "document.png";
+  public final RecipeGroup getGroup() {
+    return this.recipeGroup;
   }
-
-  @Override
-  public String getDisplayName() {
-    return this.name;
-  }
-
-  @Override
-  public String getUrlName() {
-    return this.url;
-  }
-
-  public RecipeAction getParentAction() {
-    return this.parent;
-  }
-
-  public DataSource getDataSource() {
-    return this.parent.getParentAction().getDataSource();
-  }
-
-  public Run<?, ?> getRun() {
-    return this.parent.getRun();
-  }
-
-  public String getUrlParameter(String paramName) {
-    return Stapler.getCurrentRequest().getParameter(paramName);
-  }
-
-  public abstract Evaluator<?> getEvaluator();
-
-  public abstract JSONArray getDistributionJson();
 
   /**
-   * save code path content to DataSource.
+   * return threshold string.
    */
-  public void saveFileContents(String codePath)
-      throws IOException, InterruptedException {
-    if (this.getDataSource().has(this.parent.getName(), "FILE", codePath)) {
-      return;
-    }
-
-    FilePath file;
-    // if not absolute path, append recipe root.
-    if (codePath.startsWith("/")) {
-      file = new FilePath(this.channel, codePath);
+  public final String getThresholdString() {
+    if (this.percentScale) {
+      return String.format("%d%%",
+          (int) (this.getGroup().getEvaluation().getDouble("threshold") * 100));
     } else {
-      file = new FilePath(new FilePath(this.channel, this.metadata.getString("S")), codePath);
+      return String.format("%.2f",
+          this.getGroup().getEvaluation().getDouble("threshold"));
     }
-
-    String contents = file.readToString();
-
-    this.getDataSource().put(contents, this.parent.getName(), "FILE", codePath);
-  }
-
-  public String readFileContents(String codePath) throws InterruptedException {
-    return this.getDataSource().get(this.parent.getName(), "FILE", codePath);
   }
 
   /**
@@ -136,26 +73,33 @@ public abstract class RecipeActionChild implements Action {
    * @return string
    */
   public String getScale() {
-    Evaluator<?> evaluator = this.getEvaluator();
-    if (evaluator.isAvailable()) {
+    JSONObject evaluator = this.getGroup().getEvaluation();
+    if (evaluator.getBoolean("available")) {
       if (this.percentScale) {
-        return String.format("%d%%", (long) (evaluator.getRatio() * 100));
+        return String.format("%d%%", (long) (evaluator.getDouble("ratio") * 100));
       } else {
-        return String.format("%.2f", evaluator.getRatio());
+        return String.format("%.2f", evaluator.getDouble("ratio"));
       }
     } else {
       return "N/A";
     }
   }
 
-  protected void setTableModelJson(JSONArray model) throws IOException, InterruptedException {
-    this.getDataSource().put(model,
-        this.getParentAction().getName(), this.name, STORE_KEY_TABLE_MODEL);
+  @JavaScriptMethod
+  public JSONArray getTableModel() throws InterruptedException {
+    return this.getGroup().getSummaries();
   }
 
+  /**
+   * return file detail model.
+   */
   @JavaScriptMethod
-  public JSONArray getTableModelJson() throws InterruptedException {
-    return this.getDataSource().get(
-        this.getParentAction().getName(), this.name, STORE_KEY_TABLE_MODEL);
+  public JSONObject getFileDetailModel(String codePath) throws InterruptedException {
+    JSONObject result = new JSONObject();
+
+    result.put("dataList", this.getGroup().getObjects(codePath));
+    result.put("content", this.getGroup().readFile(codePath));
+
+    return result;
   }
 }

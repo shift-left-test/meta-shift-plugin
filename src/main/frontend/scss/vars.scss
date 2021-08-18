@@ -12,17 +12,46 @@ $metrics-simple-view-progress-color: #1f5384;
 $metrics-simple-view-progress-bg-color: #f2f2f2;
 
 $progress-bar-color: #a8c2d9;
+$progress-bar-color-positive: rgb(217, 238, 217);
+$progress-bar-color-negative: rgb(238, 214, 214);
+
+$qualified-pass: rgb(0, 255, 0);
+$qualified-fail: rgb(255, 0, 0);
 
 $test-simple-text-color: #1f5384;
 
-$average-color: #fdb55a;
-$average-outline-color: #fd805a;
+$scale-color: #fdb55a;
+$scale-outline-color: #fd805a;
 
-$scale-color: #818181;
-$scale-outline-color: #333333;
+$threshold-color: #0000ff;
+$threshold-outline-color: #000088;
+
+$average-color: #818181;
+$average-outline-color: #333333;
 
 $na-text-color: #b4b4b4;
 
 $source-block: #dae5ee;
 $source-good: rgb(217, 238, 217);
 $source-bad: rgb(238, 214, 214);
+
+$treemap-colors-legend1: #30cf3a;
+$treemap-colors-legend2: #33a653;
+$treemap-colors-legend3: #306946;
+$treemap-colors-legend4: #575866;
+$treemap-colors-legend5: #6e3d44;
+$treemap-colors-legend6: #b83b40;
+$treemap-colors-legend7: #e83336;
+
+:export {
+  treemapColorsLegend1 : $treemap-colors-legend1;
+  treemapColorsLegend2 : $treemap-colors-legend2;
+  treemapColorsLegend3 : $treemap-colors-legend3;
+  treemapColorsLegend4 : $treemap-colors-legend4;
+  treemapColorsLegend5 : $treemap-colors-legend5;
+  treemapColorsLegend6 : $treemap-colors-legend6;
+  treemapColorsLegend7 : $treemap-colors-legend7;
+
+  qualifiedPassColor : $qualified-pass;
+  qualifiedFailColor : $qualified-fail;
+}

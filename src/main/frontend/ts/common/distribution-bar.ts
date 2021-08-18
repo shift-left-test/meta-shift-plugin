@@ -4,10 +4,8 @@ import {customElement, property} from 'lit/decorators.js';
 /**
  * statistics item.
  */
-class StatisticsItem {
-  label: string;
-  width: number;
-  count: number;
+class LabelInfo {
+  name: string;
   clazz: string;
 }
 
@@ -16,7 +14,8 @@ class StatisticsItem {
  * distribution bar.
  */
 export class DistributionBar extends LitElement {
-  @property() items;
+  @property() distribution;
+  @property() labels;
 
   /**
    * constructor.
@@ -24,7 +23,8 @@ export class DistributionBar extends LitElement {
   constructor() {
     super();
 
-    this.items = '[]';
+    this.distribution = '{}';
+    this.labels = '[]';
   }
 
   /**
@@ -40,19 +40,43 @@ export class DistributionBar extends LitElement {
    * @return {unknown}
    */
   render() : unknown {
-    const itemList = JSON.parse(this.items);
+    const distributionMap = JSON.parse(this.distribution);
+    const labelList = JSON.parse(this.labels);
 
     return html `<div class="test-stats">${
-      itemList.map((item: StatisticsItem) =>
-        html`<div class="rate ${item.clazz}"
-          style="width:${item.width}%"></div>`)
+      labelList.map((label: LabelInfo, i) =>
+        html`<div class="rate ${label.clazz}"
+          style="width:${this.getWidth(i, distributionMap)}%"></div>`)
     }</div>
-    <div class="legend">${itemList.map(
-      (item: StatisticsItem, i) =>
-        html`<div class="label ${item.clazz}">
-          ${item.label} ${item.width}% (${item.count.toLocaleString()})</div>
-          ${i < itemList.length - 1 ?
+    <div class="legend">${labelList.map(
+      (label: LabelInfo, i) =>
+        html`<div class="label ${label.clazz}">
+          ${label.name} ${this.getWidth(i, distributionMap)}% \
+(${this.getCount(i, distributionMap)})</div>
+          ${i < labelList.length - 1 ?
             html`<div class="spacer"></div>` : html``}`)}
     </div>`;
+  }
+
+  /**
+   * @param {number} i
+   * @param {unknown} distributionMap
+   * @return {unknown}
+   */
+  private getWidth(i: number, distributionMap: any) {
+    const distributionNames = ['first', 'second', 'third', 'fourth'];
+    const dist = distributionMap[distributionNames[i]];
+    return Math.floor(dist.ratio * 100);
+  }
+
+  /**
+   *  @param {number} i
+   * @param {unknown} distributionMap
+   * @return {unknown}
+   */
+  private getCount(i: number, distributionMap: any) {
+    const distributionNames = ['first', 'second', 'third', 'fourth'];
+    const dist = distributionMap[distributionNames[i]];
+    return dist.count;
   }
 }

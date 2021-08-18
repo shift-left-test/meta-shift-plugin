@@ -6,11 +6,18 @@ import {customElement, property} from 'lit/decorators.js';
  * tested simple view.
  */
 export class TestedSimpleView extends LitElement {
-  @property() tested
-  @property() recipes
+  @property() testedRecipes
   @property() name
-  // TODO: need to input delta with previous build
   @property() delta
+
+  /**
+   * constructor.
+   */
+  constructor() {
+    super();
+
+    this.testedRecipes = '{}';
+  }
 
   /**
    * create render root.
@@ -27,11 +34,12 @@ export class TestedSimpleView extends LitElement {
   render() : unknown {
     const isSummary = this.classList.contains('summary');
 
+    const tested = JSON.parse(this.testedRecipes);
+
     const diffDirection = this.delta == 0 ? '' :
         (this.delta > 0 ? '▲' : '▼');
 
-    const testRate = this.recipes > 0 ?
-      Math.floor(this.tested / this.recipes * 100) : 0;
+    const testRate = Math.floor(tested.ratio * 100);
 
     return html`<div class="board">
       <div class="metrics-name">
@@ -46,8 +54,8 @@ export class TestedSimpleView extends LitElement {
           (${diffDirection}${Math.floor(Math.abs((this.delta * 100)))}%)
           </div>
           <div class="description">
-            <b>${Number(this.tested).toLocaleString()}</b>
-            out of <b>${Number(this.recipes).toLocaleString()}</b>
+            <b>${Number(tested.numerator).toLocaleString()}</b>
+            out of <b>${Number(tested.denominator).toLocaleString()}</b>
           </div>
           <div><br></div>
           ` :

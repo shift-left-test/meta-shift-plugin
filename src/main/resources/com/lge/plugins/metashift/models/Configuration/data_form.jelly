@@ -27,7 +27,7 @@
     .input {
     display: inline;
     }
-    .limit {
+    .tolerance {
     padding-left: 20px;
     width: 200px;
     display: inline-block;
@@ -44,6 +44,9 @@
     </div>
     <div class="input">
       <b>Threshold</b>
+    </div>
+    <div class="tolerance">
+      <b>Tolerance</b>
     </div>
   </f:entry>
   <f:entry field="PremirrorCache">
@@ -141,7 +144,6 @@
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
         clazz="rate-input" min="0" max="100" />%
     </div>
-    <div class="limit">Minimum Complexity</div>
     <div class="input">
       <f:number field="complexityTolerance"
         value="${it.complexityTolerance}"
@@ -149,6 +151,7 @@
         checkUrl="'descriptorByName/${publisher_class}/checkLimit?value='+escape(this.value)"
         clazz="rate-input" min="0" />
     </div>
+    <div class="description">paths</div>
   </f:entry>
   <f:entry field="Duplication">
     <div class="evaluate">
@@ -165,7 +168,6 @@
         checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
         clazz="rate-input" min="0" max="100" />%
     </div>
-    <div class="limit">Minimum Duplicate Lines</div>
     <div class="input">
       <f:number field="duplicationTolerance"
         value="${it.duplicationTolerance}"
@@ -173,6 +175,7 @@
         checkUrl="'descriptorByName/${publisher_class}/checkLimit?value='+escape(this.value)"
         clazz="rate-input" min="0" />
     </div>
+    <div class="description">duplicate lines</div>
   </f:entry>
   <f:entry field="UnitTest">
     <div class="evaluate">

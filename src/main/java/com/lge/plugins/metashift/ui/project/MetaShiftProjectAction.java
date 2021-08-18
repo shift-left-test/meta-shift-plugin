@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift.ui.project;
 
-import com.lge.plugins.metashift.ui.models.BuildTrendModel;
+import com.lge.plugins.metashift.ui.build.BuildAction;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.ProminentProjectAction;
@@ -70,13 +70,13 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
   /**
    * return last successful build action.
    */
-  public MetaShiftBuildAction getLastResultBuild() {
+  public BuildAction getLastResultBuild() {
     for (AbstractBuild<?, ?> b = project.getLastSuccessfulBuild();
         b != null; b = b.getPreviousNotFailedBuild()) {
       if (b.getResult() == Result.FAILURE) {
         continue;
       }
-      MetaShiftBuildAction r = b.getAction(MetaShiftBuildAction.class);
+      BuildAction r = b.getAction(BuildAction.class);
       if (r != null) {
         return r;
       }
@@ -88,7 +88,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
    * redirect to build action page.
    */
   public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException {
-    MetaShiftBuildAction action = getLastResultBuild();
+    BuildAction action = getLastResultBuild();
     if (action == null) {
       rsp.sendRedirect2("nodata");
     } else {
@@ -111,12 +111,12 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
         continue;
       }
 
-      MetaShiftBuildAction msAction = b.getAction(MetaShiftBuildAction.class);
+      BuildAction msAction = b.getAction(BuildAction.class);
       if (msAction == null) {
         continue;
       }
 
-      if (!model.addData(b.getDisplayName(), msAction.getMetrics())) {
+      if (!model.addData(b.getDisplayName(), msAction.getReport())) {
         break;
       }
     }
