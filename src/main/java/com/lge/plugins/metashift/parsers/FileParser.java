@@ -24,7 +24,7 @@
 
 package com.lge.plugins.metashift.parsers;
 
-import com.lge.plugins.metashift.metrics.CodeSizeEvaluator;
+import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
@@ -91,7 +91,7 @@ public class FileParser {
     }
 
     logger.println("[meta-shift-plugin] Removing recipe data with no source files...");
-    recipes.removeIf(recipe -> new CodeSizeEvaluator().parse(recipe).getLines() == 0);
+    recipes.removeIf(recipe -> new LinesOfCodeCollector().parse(recipe).getLines() == 0);
     logger.printf("[meta-shift-plugin] -> %d recipe data removed.%n",
         directories.size() - recipes.size());
 
