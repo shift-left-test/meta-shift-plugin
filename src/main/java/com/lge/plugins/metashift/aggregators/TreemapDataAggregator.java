@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.aggregators;
 
 import com.lge.plugins.metashift.analysis.Evaluator;
 import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
+import com.lge.plugins.metashift.analysis.RecipeEvaluator;
 import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.NegativeTreemapData;
 import com.lge.plugins.metashift.models.PositiveEvaluation;
@@ -54,9 +55,16 @@ public class TreemapDataAggregator implements Aggregator<TreemapData> {
     this.evaluator = evaluator;
   }
 
+  private double getMax(Recipes recipes) {
+    if (evaluator instanceof RecipeEvaluator) {
+      return 1.0;
+    }
+    return recipes.stream().mapToDouble(o -> evaluator.parse(o).getRatio()).max().orElse(0.0);
+  }
+
   @Override
   public List<TreemapData> parse(Recipes recipes) {
-    double max = recipes.stream().mapToDouble(o -> evaluator.parse(o).getRatio()).max().orElse(0.0);
+    double max = getMax(recipes);
     List<TreemapData> objects = new ArrayList<>();
     recipes.stream()
         .filter(o -> evaluator.parse(o).isAvailable())

@@ -154,8 +154,8 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetTreemap() {
     JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 1, 0.45454545454545453, 2));
-    expected.add(newTreemapData(RECIPE2, 20, 0.6363636363636364, 0));
+    expected.add(newTreemapData(RECIPE1, 1, 0.45454545454545453, 3));
+    expected.add(newTreemapData(RECIPE2, 20, 0.6363636363636364, 2));
     assertEquals(expected, report.getTreemap());
   }
 

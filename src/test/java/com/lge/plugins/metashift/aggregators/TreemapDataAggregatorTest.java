@@ -95,7 +95,7 @@ public class TreemapDataAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
-    assertValues(0, RECIPE1, 1, 0.5, Grade.BEST);
+    assertValues(0, RECIPE1, 1, 0.5, Grade.ORDINARY);
   }
 
   @Test
@@ -116,7 +116,7 @@ public class TreemapDataAggregatorTest {
     recipe2.add(new CodeSizeData(RECIPE2, "b.file", 2, 2, 2));
     recipe2.add(new PremirrorCacheData(RECIPE2, "B", false));
     recipe2.add(new PassedTestData(RECIPE2, "B", "B", "B"));
-    assertValues(0, RECIPE1, 1, 0.5, Grade.BEST);
-    assertValues(1, RECIPE2, 2, 0.5, Grade.BEST);
+    assertValues(0, RECIPE1, 1, 0.5, Grade.ORDINARY);
+    assertValues(1, RECIPE2, 2, 0.5, Grade.ORDINARY);
   }
 }
