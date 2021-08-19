@@ -26,7 +26,6 @@ package com.lge.plugins.metashift.models;
 
 import java.io.Serializable;
 import java.util.DoubleSummaryStatistics;
-import net.sf.json.JSONObject;
 
 /**
  * The SummaryStatistics class.
@@ -132,14 +131,5 @@ public class SummaryStatistics implements Serializable {
    */
   public double getAverage() {
     return average;
-  }
-
-  /**
-   * Returns the object as a JSONObject instance.
-   *
-   * @return a JSONObject instance
-   */
-  public JSONObject toJsonObject() {
-    return JSONObject.fromObject(this);
   }
 }

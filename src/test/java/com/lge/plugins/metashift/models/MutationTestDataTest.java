@@ -27,7 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -107,18 +106,5 @@ public class MutationTestDataTest {
         new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "BOR", "TC"));
     assertHashNotEquals(origin,
         new KilledMutationTestData("A-X-X", "a.file", "C", "f()", 1, "AOR", "TC2"));
-  }
-
-  @Test
-  public void testToJsonObject() {
-    JSONObject object = origin.toJsonObject();
-    assertEquals("A-X-X", object.getString("name"));
-    assertEquals("a.file", object.getString("file"));
-    assertEquals("C", object.getString("mutatedClass"));
-    assertEquals("f()", object.getString("mutatedMethod"));
-    assertEquals(1, object.getLong("line"));
-    assertEquals("AOR", object.getString("mutator"));
-    assertEquals("TC", object.getString("killingTest"));
-    assertEquals("KILLED", object.getString("status"));
   }
 }

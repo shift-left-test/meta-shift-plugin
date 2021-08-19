@@ -27,7 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -70,13 +69,5 @@ public class RecipeSizeDataTest {
     assertHashEquals(origin, same);
     assertHashNotEquals(origin, new RecipeSizeData("A-1.0.0-r0", "b.bb", 10));
     assertHashNotEquals(origin, new RecipeSizeData("B-1.0.0-r0", "b.bb", 10));
-  }
-
-  @Test
-  public void testToJsonObject() {
-    JSONObject object = origin.toJsonObject();
-    assertEquals("A-1.0.0-r0", object.getString("name"));
-    assertEquals("a.bb", object.getString("file"));
-    assertEquals(10, object.getLong("lines"));
   }
 }

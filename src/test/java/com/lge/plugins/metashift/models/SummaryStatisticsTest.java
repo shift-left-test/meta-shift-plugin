@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -78,37 +77,5 @@ public class SummaryStatisticsTest {
     assertEquals(1.0, stats.getMin(), 0.1);
     assertEquals(4.0, stats.getMax(), 0.1);
     assertEquals(2.5, stats.getAverage(), 0.1);
-  }
-
-  @Test
-  public void testJsonObjectOfInitialData() {
-    stats = new SummaryStatistics();
-    JSONObject object = stats.toJsonObject();
-    assertEquals(0, object.getLong("count"));
-    assertEquals(0.0, object.getDouble("sum"), 0.1);
-    assertEquals(0.0, object.getDouble("min"), 0.1);
-    assertEquals(0.0, object.getDouble("max"), 0.1);
-    assertEquals(0.0, object.getDouble("average"), 0.1);
-  }
-
-  @Test
-  public void testJsonObjectOfVoidData() {
-    stats = new SummaryStatistics(new DoubleSummaryStatistics());
-    JSONObject object = stats.toJsonObject();
-    assertEquals(0, object.getLong("count"));
-    assertEquals(0.0, object.getDouble("sum"), 0.1);
-    assertEquals(0.0, object.getDouble("min"), 0.1);
-    assertEquals(0.0, object.getDouble("max"), 0.1);
-    assertEquals(0.0, object.getDouble("average"), 0.1);
-  }
-
-  @Test
-  public void testJsonObjectOfNormalData() {
-    JSONObject object = stats.toJsonObject();
-    assertEquals(4, object.getLong("count"));
-    assertEquals(10.0, object.getDouble("sum"), 0.1);
-    assertEquals(1.0, object.getDouble("min"), 0.1);
-    assertEquals(4.0, object.getDouble("max"), 0.1);
-    assertEquals(2.5, object.getDouble("average"), 0.1);
   }
 }

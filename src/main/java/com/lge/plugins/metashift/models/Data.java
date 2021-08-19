@@ -25,7 +25,6 @@
 package com.lge.plugins.metashift.models;
 
 import java.io.Serializable;
-import net.sf.json.JSONObject;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 
 /**
@@ -85,14 +84,5 @@ public abstract class Data implements Serializable, Comparable<Data> {
    */
   public String getName() {
     return name;
-  }
-
-  /**
-   * Returns the object as a JSONObject instance.
-   *
-   * @return a JSONObject instance
-   */
-  public JSONObject toJsonObject() {
-    return JSONObject.fromObject(this);
   }
 }

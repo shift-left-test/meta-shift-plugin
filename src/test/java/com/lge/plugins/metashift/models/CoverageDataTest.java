@@ -28,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -82,15 +81,5 @@ public class CoverageDataTest {
     assertHashNotEquals(origin, new StatementCoverageData("A-B-C", "b.file", 1, true));
     assertHashNotEquals(origin, new StatementCoverageData("A-B-C", "a.file", 2, true));
     assertHashEquals(origin, new StatementCoverageData("A-B-C", "a.file", 1, false));
-  }
-
-  @Test
-  public void testToJsonObject() {
-    JSONObject object = origin.toJsonObject();
-    assertEquals("A-B-C", object.getString("name"));
-    assertEquals("a.file", object.getString("file"));
-    assertEquals(1, object.getLong("line"));
-    assertTrue(object.getBoolean("covered"));
-    assertEquals("STATEMENT", object.getString("type"));
   }
 }

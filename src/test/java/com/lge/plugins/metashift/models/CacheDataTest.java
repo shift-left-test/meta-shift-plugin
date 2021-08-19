@@ -30,7 +30,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
-import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -88,13 +87,5 @@ public class CacheDataTest {
     objects.add(origin);
     objects.add(same);
     assertEquals(1, objects.size());
-  }
-
-  @Test
-  public void testToJsonObject() {
-    JSONObject object = origin.toJsonObject();
-    assertEquals("A-1.0.0-r0", object.getString("name"));
-    assertEquals("X", object.getString("signature"));
-    assertTrue(object.getBoolean("available"));
   }
 }

@@ -29,7 +29,6 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.util.HashSet;
 import java.util.Set;
-import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -93,11 +92,5 @@ public class RecipeTest {
     assertEquals(3, recipe.objects(CacheData.class).count());
     assertEquals(2, recipe.objects(SharedStateCacheData.class).count());
     assertEquals(3, recipe.objects(TestData.class).count());
-  }
-
-  @Test
-  public void testToJsonObject() {
-    JSONObject object = origin.toJsonObject();
-    assertEquals("A-1.0.0-r0", object.getString("name"));
   }
 }

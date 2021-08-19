@@ -27,7 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -119,19 +118,5 @@ public class CodeViolationDataTest {
         new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "desc", "X", "tool"));
     assertHashNotEquals(origin,
         new MajorCodeViolationData("A-X-X", "a.file", 1, 2, "rule", "msg", "desc", "E", "X"));
-  }
-
-  @Test
-  public void testToJsonObject() {
-    JSONObject object = origin.toJsonObject();
-    assertEquals("A-X-X", object.getString("name"));
-    assertEquals("a.file", object.getString("file"));
-    assertEquals(1, object.getLong("line"));
-    assertEquals(2, object.getLong("column"));
-    assertEquals("rule", object.getString("rule"));
-    assertEquals("msg", object.getString("message"));
-    assertEquals("desc", object.getString("description"));
-    assertEquals("E", object.getString("severity"));
-    assertEquals("tool", object.getString("tool"));
   }
 }

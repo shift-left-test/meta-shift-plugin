@@ -27,7 +27,6 @@ package com.lge.plugins.metashift.models;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import net.sf.json.JSONObject;
 import org.junit.Test;
 
 /**
@@ -78,16 +77,5 @@ public class ComplexityDataTest {
     assertHashNotEquals(origin, new ComplexityData("A-1.0.0-r0", "b.file", "f()", 5, 10, 1));
     assertHashNotEquals(origin, new ComplexityData("A-1.0.0-r0", "a.file", "x()", 5, 10, 1));
     assertHashEquals(origin, new ComplexityData("A-1.0.0-r0", "a.file", "f()", 5, 10, 2));
-  }
-
-  @Test
-  public void testToJsonObject() {
-    JSONObject object = origin.toJsonObject();
-    assertEquals("A-1.0.0-r0", object.getString("name"));
-    assertEquals("a.file", object.getString("file"));
-    assertEquals("f()", object.getString("function"));
-    assertEquals(5, object.getLong("start"));
-    assertEquals(10, object.getLong("end"));
-    assertEquals(1, object.getLong("value"));
   }
 }
