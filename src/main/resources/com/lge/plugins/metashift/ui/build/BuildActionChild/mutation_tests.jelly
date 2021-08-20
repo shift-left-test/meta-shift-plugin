@@ -19,7 +19,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
           <mutation-test-treemap />
           <h1>Details</h1>
           <div class="section">
-            <mutation-test-recipes />
+            <mutation-test-recipes downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.displayName}" />
           </div>
         </div>
       </div>

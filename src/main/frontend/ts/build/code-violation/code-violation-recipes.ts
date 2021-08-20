@@ -25,7 +25,8 @@ export class CodeViolationRecipes extends PagedTable {
       {title: 'Info', field: 'third', widthGrow: 1,
         formatter: this.localeNumberString.bind(this)},
       {title: 'Density', field: 'ratio', widthGrow: 1,
-        formatter: this.floatNumberString.bind(this)},
+        formatter: this.floatNumberString.bind(this),
+        accessorDownload: this.floatNumberCellAccessorDownload.bind(this)},
       {title: 'Qualified', field: 'qualified', width: 120,
         formatter: this.qualifiedCellformatter.bind(this)},
     ];

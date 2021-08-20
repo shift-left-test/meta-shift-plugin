@@ -18,7 +18,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
           <shared-state-cache-treemap />
           <h1>Details</h1>
           <div class="section">
-            <shared-state-cache-recipes />
+            <shared-state-cache-recipes downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.displayName}" />
           </div>
         </div>
       </div>

@@ -20,7 +20,8 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
           <complexity-files class="section"
             page='${it.getUrlParameter("page")}'
             sort='${it.getUrlParameter("sort")}'
-            select='${it.getUrlParameter("file")}' />
+            select='${it.getUrlParameter("file")}' 
+            downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.parent.displayName}-${it.displayName}" />
           <complexity-file-view class="section" complexityTolerance="${it.group.evaluation.tolerance}"
             filePath='${it.getUrlParameter("file")}'
             scrollX='${it.getUrlParameter("scrollX")}' scrollY='${it.getUrlParameter("scrollY")}' />

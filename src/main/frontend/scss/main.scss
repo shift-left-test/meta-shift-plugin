@@ -138,6 +138,15 @@
     width: 100%;
   }
 
+  .table-toolbox {
+    border: 1px solid grey;
+    padding: 5px;
+
+    .export-button {
+      float: right;
+    }
+  }
+
   .tabulator {
     font-family: 'MetashiftCode';
 

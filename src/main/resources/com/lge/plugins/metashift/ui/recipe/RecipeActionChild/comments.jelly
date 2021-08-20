@@ -19,7 +19,8 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
           <h1>Details</h1>
           <comment-files class="section"
             page='${it.getUrlParameter("page")}'
-            sort='${it.getUrlParameter("sort")}' />
+            sort='${it.getUrlParameter("sort")}' 
+            downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.parent.displayName}-${it.displayName}" />
         </div>
       </div>
       <script type="text/javascript">

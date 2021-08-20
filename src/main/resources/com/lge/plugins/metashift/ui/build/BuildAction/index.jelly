@@ -36,7 +36,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
           <build-treemap />
         </div>
         <div class="section">
-          <recipe-list />
+          <recipe-list downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-recipes" />
         </div>
       </div>
       </div>

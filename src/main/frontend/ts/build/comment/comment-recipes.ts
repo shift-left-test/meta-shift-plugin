@@ -27,7 +27,9 @@ export class CommentRecipes extends PagedTable {
           legend: function(value) {
             return Math.floor(value * 100) + '%';
           },
-        }, widthGrow: 1},
+        },
+        accessorDownload: this.progressCellAccessorDownload.bind(this),
+        widthGrow: 1},
       {title: 'Qualified', field: 'qualified', width: 120,
         formatter: this.qualifiedCellformatter.bind(this)},
     ];

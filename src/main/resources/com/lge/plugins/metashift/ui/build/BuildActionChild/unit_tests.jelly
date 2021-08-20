@@ -20,7 +20,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
           <unit-test-treemap />
           <h1>Details</h1>
           <div class="section">
-            <unit-test-recipes />
+            <unit-test-recipes downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.displayName}" />
           </div>
         </div>
       </div>

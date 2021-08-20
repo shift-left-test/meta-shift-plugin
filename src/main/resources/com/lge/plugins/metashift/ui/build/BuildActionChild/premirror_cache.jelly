@@ -18,7 +18,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
           <premirror-cache-treemap />
           <h1>Details</h1>
           <div class="section">
-            <premirror-cache-recipes />
+            <premirror-cache-recipes downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.displayName}" />
           </div>
         </div>
       </div>

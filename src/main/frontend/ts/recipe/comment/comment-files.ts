@@ -19,7 +19,9 @@ export class CommentFiles extends FilesTable {
         formatter: 'progress',
         formatterParams: {min: 0, max: 1, legend: function(value) {
           return Math.floor(value * 100) + '%';
-        }}, width: 200},
+        }},
+        accessorDownload: this.progressCellAccessorDownload.bind(this),
+        width: 200},
       {title: 'Lines', field: 'linesOfCode', width: 100,
         formatter: this.localeNumberString.bind(this)},
       {title: 'Comment Lines', field: 'first', width: 200,

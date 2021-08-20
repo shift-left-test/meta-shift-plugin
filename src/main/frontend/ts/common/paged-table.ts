@@ -1,5 +1,5 @@
 import {html, LitElement} from 'lit';
-import {customElement, query} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import Tabulator from 'tabulator-tables';
 
 @customElement('paged-table')
@@ -8,11 +8,15 @@ import Tabulator from 'tabulator-tables';
  */
 export class PagedTable extends LitElement {
   @query('.paged-table') recipesTable
+  @query('#filter-value') filterValue
+
+  @property() downloadFileName;
 
   protected tabulatorTable: Tabulator;
   protected columns;
   protected index; // 'id' field for the data.
   protected hasRowClick;
+  protected filterColumnIndex;
 
   /**
    * constructor.
@@ -20,8 +24,10 @@ export class PagedTable extends LitElement {
   constructor() {
     super();
 
+    this.downloadFileName = 'data';
     this.hasRowClick = true;
-    this.columns = [];
+    this.columns = [{title: 'test', field: 'test'}];
+    this.filterColumnIndex = 0;
   }
 
   /**
@@ -37,7 +43,18 @@ export class PagedTable extends LitElement {
    * @return {unknown}
    */
   render() : unknown {
-    return html`<div class="paged-table"></div>`;
+    return html`
+    <div class="table-toolbox">
+      <span> 
+        <input id="filter-value" type="text"
+          placeholder="Filter table by '${this.columns[
+      this.filterColumnIndex].title}'"
+        @keyup="${this._updateFilter}" />
+      </span>
+      <button class="export-button" @click="${this._handleDownloadClicked}">
+        Export to CSV</button>
+    </div>
+    <div class="paged-table"></div>`;
   }
 
   /**
@@ -79,6 +96,22 @@ export class PagedTable extends LitElement {
   }
 
   /**
+   * update filter.
+   */
+  _updateFilter() {
+    this.tabulatorTable.setFilter(this.columns[this.filterColumnIndex].field,
+        'like',
+        this.filterValue.value);
+  }
+
+  /**
+   * handle download button click event.
+   */
+  _handleDownloadClicked() {
+    this.tabulatorTable.download('csv', `${this.downloadFileName}.csv`);
+  }
+
+  /**
    * callback table data updated
    */
   onTableUpdated() {
@@ -107,6 +140,15 @@ export class PagedTable extends LitElement {
   }
 
   /**
+   * qualifier downlaodformatter
+   * @param {unknown} value
+   * @return {unknown}
+   */
+  protected floatNumberCellAccessorDownload(value) {
+    return value.toFixed(2);
+  }
+
+  /**
    * qualifier formatter.
    * @param {unknown} cell
    * @return {unknown}
@@ -128,6 +170,19 @@ export class PagedTable extends LitElement {
       `;
     } else {
       return `<div class="progress-bar-legend">N/A</div>`;
+    }
+  }
+
+  /**
+   * qualifier downlaodformatter
+   * @param {unknown} value
+   * @return {unknown}
+   */
+  protected qualifierCellAccessorDownload(value) {
+    if (value.available) {
+      return `${value.ratio.toFixed(2)}`;
+    } else {
+      return `N/A`;
     }
   }
 
@@ -189,6 +244,19 @@ export class PagedTable extends LitElement {
 
   /**
    * percent type qualifier formatter.
+   * @param {unknown} value
+   * @return {unknown}
+   */
+  protected qualifierPercentCellAccessorDownload(value) {
+    if (value.available) {
+      return `${Math.floor(value.ratio * 100)}`;
+    } else {
+      return `N/A`;
+    }
+  }
+
+  /**
+   * percent type qualified formatter.
    * @param {unknown} cell
    * @return {unknown}
    */
@@ -202,6 +270,15 @@ export class PagedTable extends LitElement {
       <i class="fas fa-times"></i>
       </span></div>`;
     }
+  }
+
+  /**
+   * percent type qualifier formatter.
+   * @param {unknown} value
+   * @return {unknown}
+   */
+  protected progressCellAccessorDownload(value) {
+    return Math.floor(value * 100);
   }
 
   /**

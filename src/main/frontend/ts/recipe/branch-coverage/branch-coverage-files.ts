@@ -19,7 +19,9 @@ export class BranchCoverageFiles extends FilesTable {
         formatter: 'progress',
         formatterParams: {min: 0, max: 1, legend: function(value) {
           return Math.floor(value * 100) + '%';
-        }}, width: 200},
+        }},
+        accessorDownload: this.progressCellAccessorDownload.bind(this),
+        width: 200},
     ];
   }
 }

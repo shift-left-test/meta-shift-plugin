@@ -21,7 +21,8 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
           <mutation-test-list class="section"
             page='${it.getUrlParameter("page")}'
             sort='${it.getUrlParameter("sort")}'
-            select='${it.getUrlParameter("file")}' />
+            select='${it.getUrlParameter("file")}' 
+            downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.parent.displayName}-${it.displayName}" />
           <mutation-test-file-view class="section" filePath='${it.getUrlParameter("file")}'
             scrollX='${it.getUrlParameter("scrollX")}' scrollY='${it.getUrlParameter("scrollY")}' />
         </div>

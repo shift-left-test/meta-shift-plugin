@@ -73,6 +73,10 @@ public class ActionChildBase implements Action {
     return this.url;
   }
 
+  public ActionParentBase getParent() {
+    return this.parent;
+  }
+  
   public Run<?, ?> getRun() {
     return this.parent.getRun();
   }
