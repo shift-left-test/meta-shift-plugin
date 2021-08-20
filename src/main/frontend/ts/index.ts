@@ -29,6 +29,8 @@ import {ComplexityFileView}
   from './recipe/complexity/complexity-file-view';
 import {DuplicationFiles}
   from './recipe/duplication/duplication-files';
+import {DuplicationFileView}
+  from './recipe/duplication/duplication-file-view';
 import {UnitTestList}
   from './recipe/unit-test/unit-test-list';
 import {StatementCoverageFiles}
@@ -109,6 +111,7 @@ export {
   ComplexityFiles,
   ComplexityFileView,
   DuplicationFiles,
+  DuplicationFileView,
   BuildTreemap,
   RecipeList,
   BuildTrendChart,

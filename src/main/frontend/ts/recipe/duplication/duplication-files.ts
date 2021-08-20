@@ -20,6 +20,5 @@ export class DuplicationFiles extends FilesTable {
       {title: 'DuplicatedLines', field: 'first', width: 200,
         formatter: this.localeNumberString.bind(this)},
     ];
-    this.hasRowClick = false;
   }
 }
