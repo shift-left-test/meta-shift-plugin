@@ -77,6 +77,6 @@ export class DistributionBar extends LitElement {
   private getCount(i: number, distributionMap: any) {
     const distributionNames = ['first', 'second', 'third', 'fourth'];
     const dist = distributionMap[distributionNames[i]];
-    return dist.count;
+    return dist.count.toLocaleString();
   }
 }
