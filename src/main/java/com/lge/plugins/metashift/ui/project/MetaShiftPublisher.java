@@ -236,6 +236,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       run.addAction(buildAction);
 
       BuildStatusResolver buildStatus = new BuildStatusResolver(configuration);
+      buildStatus.parse(recipes);
       Result buildResult = buildStatus.getCombined();
 
       Result runResult = run.getResult() == null ? Result.SUCCESS : run.getResult();
