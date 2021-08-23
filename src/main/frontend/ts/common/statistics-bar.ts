@@ -34,8 +34,10 @@ export class StatisticsBar extends LitElement {
   render() : unknown {
     const stats = JSON.parse(this.statistics);
     const evaluator = JSON.parse(this.evaluation);
+
     const isPercent = this.classList.contains('percent');
     const showScale = this.classList.contains('show_scale');
+    const isSimple = this.classList.contains('simple');
 
     const low = isPercent ? Math.floor(stats.min * 100) + '%' :
       Number(stats.min).toFixed(2);
@@ -44,24 +46,24 @@ export class StatisticsBar extends LitElement {
     const high = isPercent ? Math.floor(stats.max * 100) + '%' :
       Number(stats.max).toFixed(2);
 
+    const graphMax = Math.max(stats.max, evaluator.threshold);
+
     const rangeOffset = isPercent ? Math.floor(stats.min * 100) :
-      stats.min * 100 / stats.max;
-    const rangewidth = isPercent ?
+      stats.min * 100 / graphMax;
+    const rangeWidth = isPercent ?
       Math.floor(stats.max * 100) - Math.floor(stats.min * 100) :
-      (stats.max - stats.min) * 100 / stats.max;
+      (stats.max - stats.min) * 100 / graphMax;
     const avgPosition = isPercent ? Math.floor(stats.average * 100) :
-      stats.average * 100 / stats.max;
+      stats.average * 100 / graphMax;
     const scalePosition = isPercent ? Math.floor(evaluator.ratio * 100) :
-      evaluator.ratio * 100 / stats.max;
+      evaluator.ratio * 100 / graphMax;
 
     const thresholdPosition = isPercent ?
       Math.floor(evaluator.threshold * 100) :
-      evaluator.threshold * 100 / stats.max;
-
-    const isSimple = this.classList.contains('simple');
+      evaluator.threshold * 100 / graphMax;
 
     return html`<div class="metrics-stats">
-      <div class="range" style="width:${rangewidth}%; left: ${rangeOffset}%">
+      <div class="range" style="width:${rangeWidth}%; left: ${rangeOffset}%">
       </div>
       <div class="pointer threshold" style="left: ${thresholdPosition}%">
         <i class="pointer-text fas fa-caret-up"></i>
