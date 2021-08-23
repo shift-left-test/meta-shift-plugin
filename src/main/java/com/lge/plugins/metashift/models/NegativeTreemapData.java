@@ -41,11 +41,12 @@ public class NegativeTreemapData extends TreemapData {
    *
    * @param name        of the data
    * @param linesOfCode the number of lines
+   * @param min         of the data
    * @param max         of the data
    * @param value       of the data
    */
-  public NegativeTreemapData(String name, long linesOfCode, double max, double value) {
-    super(name, linesOfCode, max, value);
+  public NegativeTreemapData(String name, long linesOfCode, double min, double max, double value) {
+    super(name, linesOfCode, min, max, value);
   }
 
   @Override

@@ -42,11 +42,12 @@ public class PositiveTreemapData extends TreemapData {
    *
    * @param name        of the data
    * @param linesOfCode number of lines
+   * @param min         of the dat
    * @param max         of the data
    * @param value       of the data
    */
-  public PositiveTreemapData(String name, long linesOfCode, double max, double value) {
-    super(name, linesOfCode, max, value);
+  public PositiveTreemapData(String name, long linesOfCode, double min, double max, double value) {
+    super(name, linesOfCode, min, max, value);
   }
 
   @Override

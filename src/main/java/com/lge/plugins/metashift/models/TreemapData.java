@@ -51,6 +51,7 @@ public abstract class TreemapData implements Serializable {
 
   private final String name;
   private final long linesOfCode;
+  private final double min;
   private final double max;
   private final double value;
 
@@ -59,12 +60,14 @@ public abstract class TreemapData implements Serializable {
    *
    * @param name        of the data
    * @param linesOfCode the number of lines
+   * @param min         of the data
    * @param max         of the data
    * @param value       of the data
    */
-  public TreemapData(String name, long linesOfCode, double max, double value) {
+  public TreemapData(String name, long linesOfCode, double min, double max, double value) {
     this.name = name;
     this.linesOfCode = linesOfCode;
+    this.min = min;
     this.max = max;
     this.value = Math.max(0.0, value);
   }
@@ -105,10 +108,13 @@ public abstract class TreemapData implements Serializable {
    */
   public int getGrade() {
     List<Grade> grades = getGrades();
-    double slot = max / (double) grades.size();
+    double slot = (max - min) / (double) (grades.size() - 1);
     double ratio = getValue();
-    for (int i = 0; i < grades.size(); i++) {
-      if (slot * i <= ratio && ratio <= slot * (i + 1)) {
+    if (ratio == 0.0 || ratio < min) {
+      return grades.get(0).ordinal();
+    }
+    for (int i = 1; i < grades.size() - 1; i++) {
+      if (min + (slot * (i - 1)) <= ratio && ratio < min + (slot * i)) {
         return grades.get(i).ordinal();
       }
     }

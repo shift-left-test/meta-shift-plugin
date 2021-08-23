@@ -68,6 +68,6 @@ public class RecipeEvaluator implements Evaluator {
         .map(o -> o.parse(s)).collect(Collectors.toList());
     long denominator = evaluations.stream().filter(Evaluation::isAvailable).count();
     long numerator = evaluations.stream().filter(Evaluation::isQualified).count();
-    return new PositiveEvaluation(denominator > 0, denominator, numerator, 0.0);
+    return new PositiveEvaluation(denominator > 0, denominator, numerator, 1.0);
   }
 }

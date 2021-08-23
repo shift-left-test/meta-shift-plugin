@@ -26,7 +26,6 @@ package com.lge.plugins.metashift.aggregators;
 
 import com.lge.plugins.metashift.analysis.Evaluator;
 import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
-import com.lge.plugins.metashift.analysis.RecipeEvaluator;
 import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.NegativeTreemapData;
 import com.lge.plugins.metashift.models.PositiveEvaluation;
@@ -55,16 +54,9 @@ public class TreemapDataAggregator implements Aggregator<TreemapData> {
     this.evaluator = evaluator;
   }
 
-  private double getMax(Recipes recipes) {
-    if (evaluator instanceof RecipeEvaluator) {
-      return 1.0;
-    }
-    return recipes.stream().mapToDouble(o -> evaluator.parse(o).getRatio()).max().orElse(0.0);
-  }
-
   @Override
   public List<TreemapData> parse(Recipes recipes) {
-    double max = getMax(recipes);
+    double max = recipes.stream().mapToDouble(o -> evaluator.parse(o).getRatio()).max().orElse(0.0);
     List<TreemapData> objects = new ArrayList<>();
     recipes.stream()
         .filter(o -> evaluator.parse(o).isAvailable())
@@ -75,11 +67,12 @@ public class TreemapDataAggregator implements Aggregator<TreemapData> {
   private TreemapData newTreeMapData(Recipe recipe, double max) {
     long linesOfCode = new LinesOfCodeCollector().parse(recipe).getLines();
     Evaluation evaluation = evaluator.parse(recipe);
-    double ratio = evaluator.parse(recipe).getRatio();
+    double threshold = evaluation.getThreshold();
+    double ratio = evaluation.getRatio();
     if (evaluation instanceof PositiveEvaluation) {
-      return new PositiveTreemapData(recipe.getName(), linesOfCode, max, ratio);
+      return new PositiveTreemapData(recipe.getName(), linesOfCode, 0, threshold, ratio);
     } else {
-      return new NegativeTreemapData(recipe.getName(), linesOfCode, max, ratio);
+      return new NegativeTreemapData(recipe.getName(), linesOfCode, threshold, max, ratio);
     }
   }
 }
