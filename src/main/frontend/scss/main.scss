@@ -107,15 +107,15 @@
   }
 
   .bg-na {
-    background-color: #303030;
+    background-color: $invalid-color;
   }
 
   .bg-pass {
-    background-color: #1ea01e;
+    background-color: $valid-good-color;
   }
 
   .bg-fail {
-    background-color: #9e1e1e;
+    background-color: $valid-bad-color;
   }
 
   .bg-error {
@@ -123,15 +123,15 @@
   }
 
   .bg-major {
-    background-color: red;
+    background-color: $valid-bad-color;
   }
 
   .bg-minor {
-    background-color: orange;
+    background-color: $valid-error-color;
   }
 
   .bg-info {
-    background-color: gray;
+    background-color: $invalid-color;
   }
 
   .files-table {
@@ -368,11 +368,11 @@ metrics-simple-view {
       font-size: 20px;
 
       .fa-check-circle {
-        color: green;
+        color: $valid-good-color;
       }
 
       .fa-times-circle {
-        color: red;
+        color: $valid-bad-color;
       }
 
       .fa-minus-circle {
@@ -682,7 +682,7 @@ test-rate {
     display: inline-block;
   }
   .good {
-    color: rgb(10, 150, 10);
+    color: $valid-good-color;
   }
   .bad {
     color: $valid-bad-color;

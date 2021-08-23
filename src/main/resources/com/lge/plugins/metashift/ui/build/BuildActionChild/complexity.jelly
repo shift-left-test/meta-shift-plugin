@@ -12,7 +12,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
           <ms:metrics-stats-header
             statistics_class="percent"
             labels='[
-              {"name":"Abnormal", "clazz": "valid-good"},
+              {"name":"Abnormal", "clazz": "valid-bad"},
               {"name":"Normal", "clazz": "invalid"}
             ]' />
           <complexity-treemap />

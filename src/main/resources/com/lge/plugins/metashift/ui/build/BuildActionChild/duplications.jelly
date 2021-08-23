@@ -12,7 +12,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
           <ms:metrics-stats-header
             statistics_class="percent"
             labels='[
-              {"name":"Duplicated", "clazz": "valid-good"},
+              {"name":"Duplicated", "clazz": "valid-bad"},
               {"name":"Unique", "clazz": "invalid"}
             ]' />
           <duplication-treemap />
