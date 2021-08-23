@@ -51,10 +51,11 @@ public class DuplicationEvaluator implements Evaluator {
 
   @Override
   public Evaluation parse(Streamable s) {
+    DuplicationCalculator calculator = new DuplicationCalculator(configuration).parse(s);
     boolean available = s.contains(CodeSizeData.class) && s.contains(DuplicationData.class);
-    long denominator = s.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum();
+    long denominator = calculator.getLines();
     long tolerance = configuration.getDuplicationTolerance();
-    long numerator = new DuplicationCalculator(configuration).parse(s);
+    long numerator = calculator.getDuplicateLines();
     double threshold = (double) configuration.getDuplicationThreshold() / 100.0;
     return new NegativeEvaluation(available, denominator, numerator, threshold, tolerance);
   }

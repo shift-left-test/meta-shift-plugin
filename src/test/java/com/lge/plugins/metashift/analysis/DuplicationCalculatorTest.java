@@ -26,6 +26,7 @@ package com.lge.plugins.metashift.analysis;
 
 import static org.junit.Assert.assertEquals;
 
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Recipe;
@@ -63,70 +64,86 @@ public class DuplicationCalculatorTest {
     recipes.add(recipe2);
   }
 
-  private void assertSize(Streamable s, long size) {
-    assertEquals(size, calculator.parse(s).longValue());
+  private void assertSize(Streamable s, long lines, long duplicateLines) {
+    assertEquals(lines, calculator.parse(s).getLines());
+    assertEquals(duplicateLines, calculator.parse(s).getDuplicateLines());
   }
 
   @Test
   public void testParseRecipesWithIndependentLinesBelowTolerance() {
+    recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 1));
+    recipe2.add(new CodeSizeData(RECIPE2, FILE1, 50, 1, 1));
     recipe2.add(new DuplicationData(RECIPE2, FILE1, 50, 49, 50));
-    assertSize(recipes, 0);
+    assertSize(recipes, 100, 0);
   }
 
   @Test
   public void testParseRecipesWithIndependentLines() {
+    recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 20));
+    recipe2.add(new CodeSizeData(RECIPE2, FILE1, 50, 1, 1));
     recipe2.add(new DuplicationData(RECIPE2, FILE1, 50, 30, 50));
-    assertSize(recipes, 40);
+    assertSize(recipes, 100, 40);
   }
 
   @Test
   public void testParseRecipesWithOverlappedLines() {
+    recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 30));
+    recipe2.add(new CodeSizeData(RECIPE2, FILE1, 50, 1, 1));
     recipe2.add(new DuplicationData(RECIPE2, FILE1, 50, 20, 50));
-    assertSize(recipes, 60);
+    assertSize(recipes, 100, 60);
   }
 
   @Test
   public void testParseFileWithIndependentLinesBelowTolerance() {
+    recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 49, 50));
-    assertSize(recipe1, 0);
+    assertSize(recipe1, 50, 0);
   }
 
   @Test
   public void testParseFileWithIndependentLines() {
+    recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 20));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 30, 50));
-    assertSize(recipe1, 40);
+    assertSize(recipe1, 50, 40);
   }
 
   @Test
   public void testParseFileWithOverlappedLines() {
+    recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 30));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 20, 50));
-    assertSize(recipe1, 50);
+    assertSize(recipe1, 50, 50);
   }
 
   @Test
   public void testParseFilesWithIndependentLinesBelowTolerance() {
+    recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 1));
+    recipe1.add(new CodeSizeData(RECIPE1, FILE2, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE2, 50, 49, 50));
-    assertSize(recipe1, 0);
+    assertSize(recipe1, 100, 0);
   }
 
   @Test
   public void testParseFilesWithIndependentLines() {
+    recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 20));
+    recipe1.add(new CodeSizeData(RECIPE1, FILE2, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE2, 50, 30, 50));
-    assertSize(recipe1, 40);
+    assertSize(recipe1, 100, 40);
   }
 
   @Test
   public void testParseFilesWithOverlappedLines() {
+    recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 30));
+    recipe1.add(new CodeSizeData(RECIPE1, FILE2, 50, 1, 1));
     recipe1.add(new DuplicationData(RECIPE1, FILE2, 50, 20, 50));
-    assertSize(recipe1, 60);
+    assertSize(recipe1, 100, 60);
   }
 }

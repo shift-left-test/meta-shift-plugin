@@ -24,6 +24,7 @@
 
 package com.lge.plugins.metashift.analysis;
 
+import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Streamable;
@@ -38,9 +39,11 @@ import java.util.stream.Collectors;
  *
  * @author Sung Gon Kim
  */
-public class DuplicationCalculator implements Collector<Streamable, Long> {
+public class DuplicationCalculator implements Collector<Streamable, DuplicationCalculator> {
 
   private final Configuration configuration;
+  private long lines;
+  private long duplicateLines;
 
   /**
    * Default constructor.
@@ -49,6 +52,8 @@ public class DuplicationCalculator implements Collector<Streamable, Long> {
    */
   public DuplicationCalculator(Configuration configuration) {
     this.configuration = configuration;
+    this.lines = 0;
+    this.duplicateLines = 0;
   }
 
   private long calculateDuplicateLines(List<DuplicationData> objects) {
@@ -67,11 +72,40 @@ public class DuplicationCalculator implements Collector<Streamable, Long> {
   }
 
   @Override
-  public Long parse(Streamable s) {
+  public DuplicationCalculator parse(Streamable s) {
+    lines = s.objects(CodeSizeData.class).mapToLong(CodeSizeData::getLines).sum();
     long tolerance = configuration.getDuplicationTolerance();
     List<DuplicationData> objects = s.objects(DuplicationData.class)
         .filter(o -> o.getDuplicatedLines() >= tolerance)
         .collect(Collectors.toList());
-    return getGroups(objects).stream().mapToLong(this::calculateDuplicateLines).sum();
+    duplicateLines = getGroups(objects).stream().mapToLong(this::calculateDuplicateLines).sum();
+    return this;
+  }
+
+  /**
+   * Returns the calculated lines of code.
+   *
+   * @return the lines of code
+   */
+  public long getLines() {
+    return lines;
+  }
+
+  /**
+   * Returns the calculated duplicate lines of code.
+   *
+   * @return the duplicate lines of code
+   */
+  public long getDuplicateLines() {
+    return duplicateLines;
+  }
+
+  /**
+   * Returns the calculated unique lines of code.
+   *
+   * @return the unique lines of code
+   */
+  public long getUniqueLines() {
+    return getLines() - getDuplicateLines();
   }
 }

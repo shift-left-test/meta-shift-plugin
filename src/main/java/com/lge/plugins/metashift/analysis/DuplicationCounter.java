@@ -26,7 +26,6 @@ package com.lge.plugins.metashift.analysis;
 
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Distribution;
-import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Streamable;
 
 /**
@@ -49,9 +48,7 @@ public class DuplicationCounter implements Counter {
 
   @Override
   public Distribution parse(Streamable s) {
-    long total = s.objects(DuplicationData.class).mapToLong(DuplicationData::getLines).sum();
-    long duplicate = new DuplicationCalculator(configuration).parse(s);
-    long unique = total - duplicate;
-    return new Distribution(duplicate, unique);
+    DuplicationCalculator calculator = new DuplicationCalculator(configuration).parse(s);
+    return new Distribution(calculator.getDuplicateLines(), calculator.getUniqueLines());
   }
 }

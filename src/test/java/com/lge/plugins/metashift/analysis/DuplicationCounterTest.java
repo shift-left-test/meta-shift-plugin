@@ -30,6 +30,7 @@ import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Distribution;
 import com.lge.plugins.metashift.models.DuplicationData;
+import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import org.junit.Before;
@@ -82,14 +83,16 @@ public class DuplicationCounterTest {
 
   @Test
   public void testParseRecipesNoMatchingData() {
-    recipe1.add(new CodeSizeData("A-A-A", "a.file", 1, 1, 1));
+    recipe1.add(new PremirrorCacheData("A-A-A", "X", true));
     assertValues(0, 0);
     assertRatios(0.0, 0.0);
   }
 
   @Test
   public void testParseSingleRecipe() {
+    recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new CodeSizeData("A-A-A", "b.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 1));
     assertValues(10, 10);
     assertRatios(0.5, 0.5);
@@ -98,7 +101,9 @@ public class DuplicationCounterTest {
   @Test
   public void testParseSingleRecipeWithLowTolerance() {
     configuration.setDuplicationTolerance(0);
+    recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new CodeSizeData("A-A-A", "b.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 1));
     assertValues(11, 9);
     assertRatios(0.55, 0.45);
@@ -107,7 +112,9 @@ public class DuplicationCounterTest {
   @Test
   public void testParseSingleRecipeWithHighTolerance() {
     configuration.setDuplicationTolerance(100);
+    recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new CodeSizeData("A-A-A", "b.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 1));
     assertValues(0, 20);
     assertRatios(0.0, 1.0);
@@ -115,9 +122,13 @@ public class DuplicationCounterTest {
 
   @Test
   public void testParseMultipleRecipes() {
+    recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new CodeSizeData("A-A-A", "b.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 1));
+    recipe2.add(new CodeSizeData("B-B-B", "a.file", 10, 1, 1));
     recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 0, 10));
+    recipe2.add(new CodeSizeData("B-B-B", "b.file", 10, 1, 1));
     recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 0, 1));
     assertValues(20, 20);
     assertRatios(0.5, 0.5);
@@ -126,9 +137,13 @@ public class DuplicationCounterTest {
   @Test
   public void testParseMultipleRecipesWithLowTolerance() {
     configuration.setDuplicationTolerance(0);
+    recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new CodeSizeData("A-A-A", "b.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 1));
+    recipe2.add(new CodeSizeData("B-B-B", "a.file", 10, 1, 1));
     recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 0, 10));
+    recipe2.add(new CodeSizeData("B-B-B", "b.file", 10, 1, 1));
     recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 0, 1));
     assertValues(22, 18);
     assertRatios(0.55, 0.45);
@@ -137,9 +152,13 @@ public class DuplicationCounterTest {
   @Test
   public void testParseMultipleRecipesWithHighTolerance() {
     configuration.setDuplicationTolerance(100);
+    recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "a.file", 10, 0, 10));
+    recipe1.add(new CodeSizeData("A-A-A", "b.file", 10, 1, 1));
     recipe1.add(new DuplicationData("A-A-A", "b.file", 10, 0, 1));
+    recipe2.add(new CodeSizeData("B-B-B", "a.file", 10, 1, 1));
     recipe2.add(new DuplicationData("B-B-B", "a.file", 10, 0, 10));
+    recipe2.add(new CodeSizeData("B-B-B", "b.file", 10, 1, 1));
     recipe2.add(new DuplicationData("B-B-B", "b.file", 10, 0, 1));
     assertValues(0, 40);
     assertRatios(0.0, 1.0);
