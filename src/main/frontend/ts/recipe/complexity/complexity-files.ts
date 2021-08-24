@@ -15,9 +15,9 @@ export class ComplexityFiles extends FilesTable {
 
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'name', widthGrow: 1},
-      {title: 'Normal', field: 'second', width: 100,
-        formatter: this.localeNumberString.bind(this)},
       {title: 'Abnormal', field: 'first', width: 100,
+        formatter: this.localeNumberString.bind(this)},
+      {title: 'Normal', field: 'second', width: 100,
         formatter: this.localeNumberString.bind(this)},
     ];
   }
