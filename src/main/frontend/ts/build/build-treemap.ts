@@ -28,21 +28,18 @@ export class BuildTreemap extends RecipeTreemap {
 
   /**
    * return qualified string.
-   * @param {unknown}qualified
    * @param {string} key
+   * @param {unknown} evaluation
    * @return {string}
    */
-  private generateQualifiedTooltipString(qualified, key) {
-    if (qualified != undefined) {
-      return `<div><div class="tooltip-qualified-key">${key}:</div>
-      <div class="tooltip-qualified-value ${qualified ? 'good' : 'bad'}">
-        ${qualified ? 'PASS' : 'FAIL'}</div>
-      </div>`;
-    } else {
-      return `<div><div class="tooltip-qualified-key">${key}:</div>
-      <div class="tooltip-qualified-value">N/A</div>
-      </div>`;
-    }
+  private generateQualifiedTooltipString(key, evaluation) {
+    return `<div>
+      <div class="tooltip-qualified-key">${key}:</div>
+      ${evaluation.available ?
+        `<div class="tooltip-qualified-value ${evaluation.qualified ?
+        'good' : 'bad'}">${evaluation.qualified ? 'PASS' : 'FAIL'}</div>` :
+        `<div class="tooltip-qualified-value">N/A</div>`}
+    </div>`;
   }
 
   /**
@@ -51,41 +48,35 @@ export class BuildTreemap extends RecipeTreemap {
    * @return {string}
    */
   private qualifiedTooltip(tooltipInfo) {
-    let tooltip = '';
-    // build performance
-    tooltip += '<div class="tooltip-column">';
-    tooltip += '<div class="tooltip-section">Build Performance</div>';
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.premirrorCache.qualified, 'Premirror Cache');
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.sharedStateCache.qualified, 'Shared State Cache');
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.recipeViolations.qualified, 'Recipe Violations');
-    tooltip += '</div>';
-
-    tooltip += '<div class="tooltip-column-gap"></div>';
-
-    // code quality
-    tooltip += '<div class="tooltip-column">';
-    tooltip += '<div class="tooltip-section">Code Quality</div>';
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.comments.qualified, 'Comments');
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.codeViolations.qualified, 'Code Violations');
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.complexity.qualified, 'Complexity');
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.duplications.qualified, 'Duplications');
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.unitTests.qualified, 'Unit Tests');
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.statementCoverage.qualified, 'Statement Coverage');
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.branchCoverage.qualified, 'Branch Coverage');
-    tooltip += this.generateQualifiedTooltipString(
-        tooltipInfo.mutationTests.qualified, 'Mutation Tests');
-    tooltip += '</div>';
-
-    return tooltip;
+    return `
+    <div class="tooltip-column">
+      <div class="tooltip-section">Build Performance</div>
+      ${this.generateQualifiedTooltipString('Premirror Cache',
+      tooltipInfo.premirrorCache)}
+      ${this.generateQualifiedTooltipString('Shared State Cache',
+      tooltipInfo.sharedStateCache)}
+      ${this.generateQualifiedTooltipString('Recipe Violations',
+      tooltipInfo.recipeViolations)}
+      </div>
+    <div class="tooltip-column-gap"></div>
+    <div class="tooltip-column">
+      <div class="tooltip-section">Code Quality</div>
+      ${this.generateQualifiedTooltipString('Comments',
+      tooltipInfo.comments)}
+      ${this.generateQualifiedTooltipString('Code Violations',
+      tooltipInfo.codeViolations)}
+      ${this.generateQualifiedTooltipString('Complexity',
+      tooltipInfo.complexity)}
+      ${this.generateQualifiedTooltipString('Duplications',
+      tooltipInfo.duplications)}
+      ${this.generateQualifiedTooltipString('Unit Tests',
+      tooltipInfo.unitTests)}
+      ${this.generateQualifiedTooltipString('Statement Coverage',
+      tooltipInfo.statementCoverage)}
+      ${this.generateQualifiedTooltipString('Branch Coverage',
+      tooltipInfo.branchCoverage)}
+      ${this.generateQualifiedTooltipString('Mutation Tests',
+      tooltipInfo.mutationTests)}
+    </div>`;
   }
 }
