@@ -27,8 +27,12 @@ suite('complexity-files', () => {
       responseJSON: [
         {
           name: 'test',
-          second: 10,
+          linesOfCode: 100,
+          total: 20,
           first: 20,
+          second: 10,
+          ratio: 0.5,
+          qualified: true,
         },
       ],
     };

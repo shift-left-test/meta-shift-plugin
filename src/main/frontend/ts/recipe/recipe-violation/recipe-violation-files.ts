@@ -15,12 +15,21 @@ export class RecipeViolationFiles extends FilesTable {
 
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'name', widthGrow: 1},
-      {title: 'Major', field: 'first', width: 100,
+      {title: 'Lines of Code', field: 'linesOfCode', width: 200,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Minor', field: 'second', width: 100,
+      {title: 'Issues', field: 'total', width: 120,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Info', field: 'third', width: 100,
+      {title: 'Major', field: 'first', width: 120,
         formatter: this.localeNumberString.bind(this)},
+      {title: 'Minor', field: 'second', width: 120,
+        formatter: this.localeNumberString.bind(this)},
+      {title: 'Info', field: 'third', width: 120,
+        formatter: this.localeNumberString.bind(this)},
+      {title: 'Density', field: 'ratio', width: 100,
+        formatter: this.floatNumberString.bind(this),
+        accessorDownload: this.floatNumberCellAccessorDownload.bind(this)},
+      {title: 'Qualified', field: 'qualified', width: 120,
+        formatter: this.qualifiedCellformatter.bind(this)},
     ];
   }
 }

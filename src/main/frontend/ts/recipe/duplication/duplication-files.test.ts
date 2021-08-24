@@ -29,6 +29,9 @@ suite('duplication-files', () => {
           name: 'test',
           linesOfCode: 100,
           first: 50,
+          second: 60,
+          ratio: 0.5,
+          qualified: true,
         },
       ],
     };

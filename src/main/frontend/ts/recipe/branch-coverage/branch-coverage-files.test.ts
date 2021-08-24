@@ -27,7 +27,12 @@ suite('branch-coverage-files', () => {
       responseJSON: [
         {
           name: 'test',
+          linesOfCode: 100,
+          total: 10,
+          first: 1,
+          second: 2,
           ratio: 0.5,
+          qualified: true,
         },
       ],
     };

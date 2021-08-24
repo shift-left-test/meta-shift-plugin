@@ -15,11 +15,11 @@ export class UnitTestList extends FilesTable {
     super();
 
     this.columns = [ // Define Table Columns
-      {title: 'suite', field: 'suite', widthGrow: 1},
-      {title: 'name', field: 'test', widthGrow: 1},
-      {title: 'status', field: 'status', width: 100,
+      {title: 'Suite', field: 'suite', widthGrow: 1},
+      {title: 'Name', field: 'test', widthGrow: 1},
+      {title: 'Status', field: 'status', width: 100,
         formatter: this._statusCellFormatter.bind(this)},
-      {title: 'message', field: 'message', widthGrow: 2},
+      {title: 'Message', field: 'message', widthGrow: 2},
     ];
     this.defalutSortColumn = 'status';
     this.hasRowClick = false;

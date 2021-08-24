@@ -37,14 +37,9 @@ suite('shared-state-cache-list', () => {
     });
 
     await elementUpdated(el);
-    let elChild = el.querySelector(
+    const elChild = el.querySelector(
         'div.tabulator-cell[tabulator-field="signature"]');
     assert.equal(elChild.textContent, 'test',
-        elChild.outerHTML);
-
-    elChild = el.querySelector(
-        'div.tabulator-cell[tabulator-field="available"]');
-    assert.equal(elChild.textContent, 'true',
         elChild.outerHTML);
   });
 });

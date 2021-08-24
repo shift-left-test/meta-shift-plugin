@@ -15,7 +15,8 @@ export class SharedStateCacheList extends FilesTable {
 
     this.columns = [ // Define Table Columns
       {title: 'Signature', field: 'signature', widthGrow: 1},
-      {title: 'Available', field: 'available', width: 100},
+      {title: 'Available', field: 'available', width: 120,
+        formatter: this.qualifiedCellformatter.bind(this)},
     ];
     this.defalutSortColumn = 'signature';
     this.hasRowClick = false;

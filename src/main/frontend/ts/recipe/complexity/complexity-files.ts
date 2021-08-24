@@ -1,6 +1,6 @@
 import {customElement} from 'lit/decorators.js';
-
 import {FilesTable} from '../files-table';
+import variables from '../../../scss/vars.scss';
 
 @customElement('complexity-files')
 /**
@@ -15,10 +15,25 @@ export class ComplexityFiles extends FilesTable {
 
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'name', widthGrow: 1},
-      {title: 'Abnormal', field: 'first', width: 100,
+      {title: 'Lines of Code', field: 'linesOfCode', width: 200,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Normal', field: 'second', width: 100,
+      {title: 'Functions', field: 'total', width: 120,
         formatter: this.localeNumberString.bind(this)},
+      {title: 'Abnormal', field: 'first', width: 120,
+        formatter: this.localeNumberString.bind(this)},
+      {title: 'Normal', field: 'second', width: 120,
+        formatter: this.localeNumberString.bind(this)},
+      {title: 'Ratio', field: 'ratio',
+        formatter: 'progress',
+        formatterParams: {min: 0, max: 1, color: [variables.qualifiedFailColor],
+          legend: function(value) {
+            return Math.floor(value * 100) + '%';
+          },
+        },
+        accessorDownload: this.progressCellAccessorDownload.bind(this),
+        width: 200},
+      {title: 'Qualified', field: 'qualified', width: 120,
+        formatter: this.qualifiedCellformatter.bind(this)},
     ];
   }
 }

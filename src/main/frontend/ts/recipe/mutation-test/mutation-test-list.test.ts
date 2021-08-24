@@ -27,9 +27,13 @@ suite('mutation-test-list', () => {
       responseJSON: [
         {
           name: 'test',
+          linesOfCode: 100,
+          total: 10,
           first: 3,
           second: 2,
           third: 1,
+          ratio: 0.5,
+          qualified: true,
         },
       ],
     };

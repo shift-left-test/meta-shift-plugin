@@ -15,13 +15,13 @@ export class ComplexityRecipes extends PagedTable {
 
     this.columns = [
       {title: 'Recipe', field: 'name', widthGrow: 1},
-      {title: 'Lines of Code', field: 'linesOfCode', widthGrow: 1,
+      {title: 'Lines of Code', field: 'linesOfCode', width: 200,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Functions', field: 'total', widthGrow: 1,
+      {title: 'Functions', field: 'total', width: 120,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Abnormal', field: 'first', widthGrow: 1,
+      {title: 'Abnormal', field: 'first', width: 120,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Normal', field: 'second', widthGrow: 1,
+      {title: 'Normal', field: 'second', width: 120,
         formatter: this.localeNumberString.bind(this)},
       {title: 'Ratio', field: 'ratio',
         formatter: 'progress',
@@ -31,7 +31,7 @@ export class ComplexityRecipes extends PagedTable {
           },
         },
         accessorDownload: this.progressCellAccessorDownload.bind(this),
-        widthGrow: 1},
+        width: 200},
       {title: 'Qualified', field: 'qualified', width: 120,
         formatter: this.qualifiedCellformatter.bind(this)},
     ];

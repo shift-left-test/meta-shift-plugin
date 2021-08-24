@@ -27,9 +27,11 @@ suite('comment-files', () => {
       responseJSON: [
         {
           name: 'test',
-          ratio: 0.1,
           linesOfCode: 20,
           first: 2,
+          second: 3,
+          ratio: 0.1,
+          qualified: true,
         },
       ],
     };

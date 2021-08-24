@@ -15,13 +15,13 @@ export class SharedStateCacheRecipes extends PagedTable {
 
     this.columns = [
       {title: 'Recipe', field: 'name', widthGrow: 1},
-      {title: 'Lines of Code', field: 'linesOfCode', widthGrow: 1,
+      {title: 'Lines of Code', field: 'linesOfCode', width: 200,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Requests', field: 'total', widthGrow: 1,
+      {title: 'Requests', field: 'total', width: 120,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Hits', field: 'first', widthGrow: 1,
+      {title: 'Hits', field: 'first', width: 120,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Misses', field: 'second', widthGrow: 1,
+      {title: 'Misses', field: 'second', width: 120,
         formatter: this.localeNumberString.bind(this)},
       {title: 'Ratio', field: 'ratio',
         formatter: 'progress',
@@ -31,7 +31,7 @@ export class SharedStateCacheRecipes extends PagedTable {
           },
         },
         accessorDownload: this.progressCellAccessorDownload.bind(this),
-        widthGrow: 1},
+        width: 200},
       {title: 'Qualified', field: 'qualified', width: 120,
         formatter: this.qualifiedCellformatter.bind(this)},
     ];
