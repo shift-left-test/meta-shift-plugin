@@ -48,6 +48,8 @@ import java.util.stream.Collectors;
 public class ComplexityDataSummaryAggregator
     extends DataSummaryAggregator implements RecipeAggregator<DataSummary> {
 
+  private final int tolerance;
+
   /**
    * Default constructor.
    *
@@ -55,6 +57,7 @@ public class ComplexityDataSummaryAggregator
    */
   public ComplexityDataSummaryAggregator(Configuration configuration) {
     super(configuration);
+    tolerance = configuration.getComplexityTolerance();
   }
 
   @Override
@@ -78,11 +81,14 @@ public class ComplexityDataSummaryAggregator
     List<CodeSizeData> files = recipe.objects(CodeSizeData.class).collect(Collectors.toList());
     for (CodeSizeData file : files) {
       DataList dataList = new DataList();
-      dataList.add(file);
       dataList.addAll(recipe.objects(ComplexityData.class)
           .filter(o -> o.getFile().equals(file.getFile()))
+          .filter(o -> o.getValue() >= tolerance)
           .collect(Collectors.toList()));
-      recipes.add(new Recipe(file.getFile(), dataList));
+      if (!dataList.isEmpty()) {
+        dataList.add(file);
+        recipes.add(new Recipe(file.getFile(), dataList));
+      }
     }
     return parse(recipes);
   }

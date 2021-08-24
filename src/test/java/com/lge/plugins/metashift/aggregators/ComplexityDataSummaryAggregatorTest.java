@@ -112,7 +112,7 @@ public class ComplexityDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 0, 0));
     recipe1.add(new ComplexityData(RECIPE1, "a.file", "func1", 1, 1, 1));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 1, 0, 1, 0.0, true);
+    assertEquals(0, summaries.size());
   }
 
   @Test
@@ -122,7 +122,7 @@ public class ComplexityDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "b.file", 10, 0, 0));
     recipe1.add(new ComplexityData(RECIPE1, "b.file", "func2", 1, 1, 100));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 1, 0, 1, 0.0, true);
+    assertEquals(1, summaries.size());
     assertValues("b.file", 10, 1, 0, 1.0, false);
   }
 }
