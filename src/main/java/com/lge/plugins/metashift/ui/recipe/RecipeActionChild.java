@@ -55,6 +55,13 @@ public class RecipeActionChild extends ActionChildBase {
   }
 
   /**
+   * return evaluation available.
+   */
+  public boolean isAvailable() {
+    return this.getGroup().getEvaluation().getBoolean("available");
+  }
+
+  /**
    * return threshold string.
    */
   public final String getThresholdString() {

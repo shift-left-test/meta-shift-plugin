@@ -54,6 +54,11 @@ public class BuildActionChild extends ActionChildBase {
     return this.projectGroup;
   }
 
+  @Override
+  public boolean isAvailable() {
+    return this.getGroup().getEvaluation().getBoolean("available");
+  }
+
   /**
    * return threshold string.
    *

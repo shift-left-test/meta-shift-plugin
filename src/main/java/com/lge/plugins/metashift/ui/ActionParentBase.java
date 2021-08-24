@@ -51,7 +51,7 @@ public abstract class ActionParentBase extends Actionable {
   public abstract Run<?, ?> getRun();
 
   private void addActionToMenu(ContextMenu menu, ActionChildBase action) {
-    if (action != null) {
+    if (action != null && action.isAvailable()) {
       String base = Functions.getIconFilePath(action);
       String icon = Stapler.getCurrentRequest().getContextPath()
           + (base.startsWith("images/") ? Functions.getResourcePath() : "")

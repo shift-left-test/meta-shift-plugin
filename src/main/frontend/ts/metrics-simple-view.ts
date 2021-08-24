@@ -145,6 +145,9 @@ export class MetricsSimpleView extends LitElement {
    * handle click event.
    */
   _handleClick() : void {
-    window.location.href = this.url;
+    const evaluator = JSON.parse(this.evaluation);
+    if (evaluator.available) {
+      window.location.href = this.url;
+    }
   }
 }

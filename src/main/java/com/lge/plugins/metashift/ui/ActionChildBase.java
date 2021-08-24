@@ -35,7 +35,7 @@ import org.kohsuke.stapler.StaplerResponse;
 /**
  * action child class.
  */
-public class ActionChildBase implements Action {
+public abstract class ActionChildBase implements Action {
 
   private final ActionParentBase parent;
 
@@ -94,4 +94,6 @@ public class ActionChildBase implements Action {
       req.getView(this, this.url + ".jelly").forward(req, res);
     }
   }
+
+  public abstract boolean isAvailable();
 }
