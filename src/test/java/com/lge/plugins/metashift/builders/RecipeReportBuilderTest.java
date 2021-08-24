@@ -233,12 +233,10 @@ public class RecipeReportBuilderTest {
     assertEquals(newStatistics(0.47619047619047616), group.getStatistics());
     assertEquals(newDistribution(10, 11, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.0, summaries.get(0).getDouble("ratio"), 0.01);
-    assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
+    assertEquals(1, summaries.size());
+    assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
     assertEquals(0, group.getObjects(FILE1).size());
-    assertEquals(1, group.getObjects(FILE2).size());
     assertFalse(group.readFile(FILE1).isEmpty());
-    assertFalse(group.readFile(FILE2).isEmpty());
   }
 
   @Test

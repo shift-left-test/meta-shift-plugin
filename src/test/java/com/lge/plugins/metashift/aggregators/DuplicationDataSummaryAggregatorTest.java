@@ -123,7 +123,7 @@ public class DuplicationDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "b.file", 100, 0, 0));
     recipe1.add(new DuplicationData(RECIPE1, "b.file", 100, 0, 0));
     summaries = aggregator.parse(recipe1);
+    assertEquals(1, summaries.size());
     assertValues("a.file", 100, 100, 0, 1.0, false);
-    assertValues("b.file", 100, 0, 100, 0.0, true);
   }
 }
