@@ -19,7 +19,8 @@ export class UnitTestList extends FilesTable {
       {title: 'Name', field: 'test', widthGrow: 1},
       {title: 'Status', field: 'status', width: 100,
         formatter: this._statusCellFormatter.bind(this)},
-      {title: 'Message', field: 'message', widthGrow: 2},
+      {title: 'Message', field: 'message', widthGrow: 2,
+        formatter: 'textarea'},
     ];
     this.defalutSortColumn = 'status';
     this.hasRowClick = false;
