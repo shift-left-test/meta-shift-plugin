@@ -397,12 +397,7 @@ metrics-simple-view {
     margin-top: 2px;
     width: 100%;
     height: 10px;
-    background-color: $metrics-simple-view-progress-bg-color;
     position: relative;
-    .progress-bar {
-      height: 10px;
-      background-color: $metrics-simple-view-progress-color;
-    }
 
     .progress-tooltip {
       visibility: hidden;

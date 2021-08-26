@@ -1,5 +1,5 @@
-$valid-good-color: #30cf3a;
-$valid-bad-color: #e83336;
+$valid-good-color: #8cc04f;
+$valid-bad-color: #d54c53;
 $valid-error-color: #fdb55a;
 $invalid-color: #818181;
 $empty-color: rgb(233, 233, 233);
@@ -8,15 +8,12 @@ $major-color: $valid-bad-color;
 $minor-color: $valid-error-color;
 $info-color: $invalid-color;
 
-$metrics-simple-view-progress-color: #1f5384;
-$metrics-simple-view-progress-bg-color: #f2f2f2;
-
 $progress-bar-color: #a8c2d9;
 $progress-bar-color-positive: rgb(217, 238, 217);
 $progress-bar-color-negative: rgb(238, 214, 214);
 
-$qualified-pass: #30cf3a;
-$qualified-fail: #e83336;
+$qualified-pass: #8cc04f;
+$qualified-fail: #d54c53;
 
 $test-simple-text-color: #1f5384;
 
