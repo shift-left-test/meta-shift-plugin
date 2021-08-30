@@ -83,4 +83,15 @@ public class ExecutorServiceUtils {
       throw new RuntimeException("Unknown exception: " + cause.getMessage(), cause);
     }
   }
+
+  /**
+   * Invokes the task.
+   *
+   * @param task to invoke
+   * @throws IOException          if failed to operate with files
+   * @throws InterruptedException if an interruption occurs
+   */
+  public static void invoke(Callable<Void> task) throws IOException, InterruptedException {
+    invokeAll(task);
+  }
 }

@@ -273,8 +273,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     try {
       Recipes recipes = new FileParser(listener.getLogger()).parse(reportPath);
 
-      ExecutorServiceUtils
-          .invokeAll(publishReport(run, reportPath, listener, configuration, recipes));
+      ExecutorServiceUtils.invoke(publishReport(run, reportPath, listener, configuration, recipes));
 
       Instant finished = Instant.now();
       logger.printf("[meta-shift-plugin] Finished at %s%n", finished.toString());
