@@ -70,7 +70,7 @@ public class TreemapDataAggregator implements Aggregator<TreemapData> {
     double threshold = evaluation.getThreshold();
     double ratio = evaluation.getRatio();
     if (evaluation instanceof PositiveEvaluation) {
-      return new PositiveTreemapData(recipe.getName(), linesOfCode, 0, threshold, ratio);
+      return new PositiveTreemapData(recipe.getName(), linesOfCode, threshold, ratio);
     } else {
       return new NegativeTreemapData(recipe.getName(), linesOfCode, threshold, max, ratio);
     }

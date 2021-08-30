@@ -37,13 +37,13 @@ import org.junit.Test;
  */
 public class TreemapDataTest {
 
-  private static final double MAX = 7.0;
+  private static final double MAX = 6.0;
 
   private TreemapData object;
 
   @Before
   public void setUp() {
-    object = new PositiveTreemapData("A-B-C", 123, 0.0, 1.0, 1.0);
+    object = new PositiveTreemapData("A-B-C", 123, 1.0, 1.0);
   }
 
   private void assertValues(TreemapData o, String name, long linesOfCode, double value,
@@ -55,7 +55,7 @@ public class TreemapDataTest {
   }
 
   private void assertPositiveGrade(double value, Grade grade) {
-    TreemapData o = new PositiveTreemapData("", 0, 0.0, MAX, value);
+    TreemapData o = new PositiveTreemapData("", 0, MAX, value);
     assertEquals(grade.ordinal(), o.getGrade());
   }
 
@@ -71,7 +71,7 @@ public class TreemapDataTest {
 
   @Test
   public void testCreateObjectWithNegativeValue() {
-    object = new PositiveTreemapData("X-X-X", 456, 0.0, 1.0, -100.0);
+    object = new PositiveTreemapData("X-X-X", 456, 1.0, -100.0);
     assertValues(object, "X-X-X", 456, 0.0, Grade.WORST);
   }
 

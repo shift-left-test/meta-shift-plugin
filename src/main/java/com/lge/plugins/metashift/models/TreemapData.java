@@ -25,7 +25,6 @@
 package com.lge.plugins.metashift.models;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * TreemapData class.
@@ -51,8 +50,6 @@ public abstract class TreemapData implements Serializable {
 
   private final String name;
   private final long linesOfCode;
-  private final double min;
-  private final double max;
   private final double value;
 
   /**
@@ -60,15 +57,10 @@ public abstract class TreemapData implements Serializable {
    *
    * @param name        of the data
    * @param linesOfCode the number of lines
-   * @param min         of the data
-   * @param max         of the data
-   * @param value       of the data
    */
-  public TreemapData(String name, long linesOfCode, double min, double max, double value) {
+  public TreemapData(String name, long linesOfCode, double value) {
     this.name = name;
     this.linesOfCode = linesOfCode;
-    this.min = min;
-    this.max = max;
     this.value = Math.max(0.0, value);
   }
 
@@ -99,25 +91,10 @@ public abstract class TreemapData implements Serializable {
     return value;
   }
 
-  protected abstract List<Grade> getGrades();
-
   /**
    * Returns the grade of the data.
    *
    * @return grade
    */
-  public int getGrade() {
-    List<Grade> grades = getGrades();
-    double slot = (max - min) / (double) (grades.size() - 1);
-    double ratio = getValue();
-    if (ratio == 0.0 || ratio < min) {
-      return grades.get(0).ordinal();
-    }
-    for (int i = 1; i < grades.size() - 1; i++) {
-      if (min + (slot * (i - 1)) <= ratio && ratio < min + (slot * i)) {
-        return grades.get(i).ordinal();
-      }
-    }
-    return grades.get(grades.size() - 1).ordinal();
-  }
+  public abstract int getGrade();
 }
