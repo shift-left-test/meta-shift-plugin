@@ -58,6 +58,7 @@ public class NegativeTreemapData extends TreemapData {
     return Arrays.asList(Grade.values());
   }
 
+  @Override
   public int getGrade() {
     List<Grade> grades = getGrades();
     double slot = (max - min) / (double) (grades.size() - 1);

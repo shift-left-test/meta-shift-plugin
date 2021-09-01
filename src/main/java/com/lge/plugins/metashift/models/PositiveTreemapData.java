@@ -58,6 +58,7 @@ public class PositiveTreemapData extends TreemapData {
     return grades;
   }
 
+  @Override
   public int getGrade() {
     List<Grade> grades = getGrades();
     double slot = max / (double) (grades.size() - 1);
