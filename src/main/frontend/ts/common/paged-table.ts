@@ -243,19 +243,6 @@ export class PagedTable extends LitElement {
   }
 
   /**
-   * percent type qualifier formatter.
-   * @param {unknown} value
-   * @return {unknown}
-   */
-  protected qualifierPercentCellAccessorDownload(value) {
-    if (value.available) {
-      return `${Math.floor(value.ratio * 100)}`;
-    } else {
-      return `N/A`;
-    }
-  }
-
-  /**
    * percent type qualified formatter.
    * @param {unknown} cell
    * @return {unknown}
@@ -278,7 +265,7 @@ export class PagedTable extends LitElement {
    * @return {unknown}
    */
   protected progressCellAccessorDownload(value) {
-    return Math.floor(value * 100);
+    return value.toFixed(2);
   }
 
   /**
