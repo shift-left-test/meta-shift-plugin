@@ -1,6 +1,7 @@
 import {html, LitElement} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import Tabulator from 'tabulator-tables';
+import {Utils} from '../common/utils';
 
 @customElement('paged-table')
 /**
@@ -136,7 +137,7 @@ export class PagedTable extends LitElement {
    */
   protected floatNumberString(cell: any) : unknown {
     return `<div class="locale-number">
-      ${cell.getValue().toFixed(2)}</div>`;
+      ${Utils.toFixedFloor(cell.getValue())}</div>`;
   }
 
   /**
@@ -145,7 +146,7 @@ export class PagedTable extends LitElement {
    * @return {unknown}
    */
   protected floatNumberCellAccessorDownload(value) {
-    return value.toFixed(2);
+    return Utils.toFixedFloor(value);
   }
 
   /**
@@ -165,7 +166,7 @@ export class PagedTable extends LitElement {
     if (available) {
       return `
       <div class="progress-bar-legend">
-          ${ratio.toFixed(2)}
+          ${Utils.toFixedFloor(ratio)}
       </div>
       `;
     } else {
@@ -180,7 +181,7 @@ export class PagedTable extends LitElement {
    */
   protected qualifierCellAccessorDownload(value) {
     if (value.available) {
-      return `${value.ratio.toFixed(2)}`;
+      return `${Utils.toFixedFloor(value.ratio)}`;
     } else {
       return `N/A`;
     }
@@ -265,7 +266,7 @@ export class PagedTable extends LitElement {
    * @return {unknown}
    */
   protected progressCellAccessorDownload(value) {
-    return value.toFixed(2);
+    return Utils.toFixedFloor(value);
   }
 
   /**

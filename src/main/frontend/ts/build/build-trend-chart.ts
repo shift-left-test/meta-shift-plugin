@@ -1,5 +1,6 @@
 import {html, LitElement} from 'lit';
 import {customElement} from 'lit/decorators.js';
+import {Utils} from '../common/utils';
 
 import * as echarts from 'echarts';
 import {ECharts} from 'echarts';
@@ -52,7 +53,7 @@ export class BuildTrendChart extends LitElement {
         if (yaxisindex == 0) {
           item.data = data.map((x) => x == null ? x : Math.floor(x));
         } else {
-          item.data = data.map((x) => x == null ? x : x.toFixed(2));
+          item.data = data.map((x) => x == null ? x : Utils.toFixedFloor(x));
         }
       }
       const option = {

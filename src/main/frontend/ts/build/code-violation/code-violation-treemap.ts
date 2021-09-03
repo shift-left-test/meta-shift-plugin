@@ -1,5 +1,6 @@
 import {customElement} from 'lit/decorators.js';
 import {RecipeTreemap} from '../../common/recipe-treemap';
+import {Utils} from '../../common/utils';
 
 @customElement('code-violation-treemap')
 /**
@@ -56,7 +57,7 @@ export class CodeViolationTreemap extends RecipeTreemap {
             <div>
               <div class="tooltip-qualified-key">Density:</div>
               <div class="tooltip-qualified-value">
-                ${tooltipInfo.ratio.toFixed(2)}
+                ${Utils.toFixedFloor(tooltipInfo.ratio)}
               </div>
             </div>
           <div>`;

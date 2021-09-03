@@ -1,5 +1,6 @@
 import {html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
+import {Utils} from './common/utils';
 
 @customElement('metrics-simple-view')
 /**
@@ -52,7 +53,7 @@ export class MetricsSimpleView extends LitElement {
 
     const diffThresholdHtml = evaluator.available ?
       (isPercent ? html`(${diffThresholdPrefix}${diffThreshold}%)` :
-      html`(${diffThresholdPrefix}${Number(diffThreshold).toFixed(2)})`) :
+      html`(${diffThresholdPrefix}${Utils.toFixedFloor(diffThreshold)})`) :
       html`(N/A)`;
 
     return html`<div class="board">
@@ -64,7 +65,7 @@ export class MetricsSimpleView extends LitElement {
         ${evaluator.available ?
         (isPercent ?
           html`${Math.floor(evaluator.ratio * 100)}%`:
-          html`${Number(evaluator.ratio).toFixed(2)}`):
+          html`${Utils.toFixedFloor(evaluator.ratio)}`):
         html`N/A`}
       </div>
       ${this.delta ?
@@ -73,7 +74,7 @@ export class MetricsSimpleView extends LitElement {
           ${evaluator.available ?
             html`(${diffDirection}${isPercent ?
               html`${Math.floor(Math.abs(this.delta * 100))}%`:
-              html`${Number(Math.abs(this.delta)).toFixed(2)}`})` :
+              html`${Utils.toFixedFloor(Math.abs(this.delta))}`})` :
             html`(N/A)`
           }
           </div>` :
@@ -87,7 +88,7 @@ export class MetricsSimpleView extends LitElement {
           <div class="description ${textClass}">
             Threshold: ${isPercent ?
               html`${Math.floor(evaluator.threshold * 100)}%` :
-              html`${evaluator.threshold.toFixed(2)}`}
+              html`${Utils.toFixedFloor(evaluator.threshold)}`}
             ${diffThresholdHtml}${evaluator.tolerance ?
               html`, ${evaluator.tolerance}` :
               html``}
@@ -108,11 +109,11 @@ export class MetricsSimpleView extends LitElement {
     if (this.statistics) {
       const stats = JSON.parse(this.statistics);
       const low = stats.percent ? Math.floor(stats.min * 100) + '%' :
-        Number(stats.min).toFixed(2);
+        Utils.toFixedFloor(stats.min);
       const avg = stats.percent ? Math.floor(stats.average * 100) + '%' :
-        Number(stats.average).toFixed(2);
+        Utils.toFixedFloor(stats.average);
       const high = stats.percent ? Math.floor(stats.max * 100) + '%' :
-        Number(stats.max).toFixed(2);
+        Utils.toFixedFloor(stats.max);
 
       return html`
         <div class="progress">

@@ -1,5 +1,6 @@
 import {html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
+import {Utils} from '../common/utils';
 
 @customElement('statistics-bar')
 /**
@@ -40,11 +41,11 @@ export class StatisticsBar extends LitElement {
     const isSimple = this.classList.contains('simple');
 
     const low = isPercent ? Math.floor(stats.min * 100) + '%' :
-      Number(stats.min).toFixed(2);
+      Utils.toFixedFloor(stats.min);
     const avg = isPercent ? Math.floor(stats.average * 100) + '%' :
-      Number(stats.average).toFixed(2);
+      Utils.toFixedFloor(stats.average);
     const high = isPercent ? Math.floor(stats.max * 100) + '%' :
-      Number(stats.max).toFixed(2);
+      Utils.toFixedFloor(stats.max);
 
     const graphMax = Math.max(stats.max, evaluator.threshold);
 
