@@ -30,7 +30,11 @@ access localhost:9000/jenkins
     $ ./node/npm run serve
 
 
-## LICENSE
+## How to use
 
-Licensed under MIT, see [LICENSE](LICENSE.md)
+Please refer to the [wiki link](http://mod.lge.com/hub/yocto/meta-shift-plugin/-/wikis/home) for more information.
 
+
+## License
+
+This project source code is available under MIT license. See [LICENSE](LICENSE.md).
