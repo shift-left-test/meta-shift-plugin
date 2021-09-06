@@ -32,6 +32,7 @@ import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class RecipeSizeParser extends Parser {
       List<RecipeSizeData> objects = new ArrayList<>(array.size());
 
       for (Any o : array) {
-        String file = o.toString("file");
+        String file = Paths.get(o.toString("file")).normalize().toString();
         if (isHidden(file)) {
           continue;
         }
