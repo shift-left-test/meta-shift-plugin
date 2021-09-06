@@ -96,17 +96,18 @@ export class MetricsSimpleView extends LitElement {
           ` :
         html``}
     </div>
-    ${this.renderStatistics(isPercent, showScale)}`;
+    ${this.renderStatistics(evaluator.available, isPercent, showScale)}`;
   }
 
   /**
    * render statistics.
+   * @param {boolena} available
    * @param {boolean} isPercent
    * @param {boolean} showScale
    * @return {unknown}
    */
-  renderStatistics(isPercent: boolean, showScale: boolean) {
-    if (this.statistics) {
+  renderStatistics(available: boolean, isPercent: boolean, showScale: boolean) {
+    if (available && this.statistics) {
       const stats = JSON.parse(this.statistics);
       const low = stats.percent ? Math.floor(stats.min * 100) + '%' :
         Utils.toFixedFloor(stats.min);
@@ -136,7 +137,9 @@ export class MetricsSimpleView extends LitElement {
    * first updated.
    */
   firstUpdated() : void {
-    if (this.url !== undefined) {
+    const evaluator = JSON.parse(this.evaluation);
+
+    if (evaluator.available && this.url !== undefined) {
       this.classList.add('has-url');
       this.addEventListener('click', this._handleClick);
     }

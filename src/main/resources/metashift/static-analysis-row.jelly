@@ -1,22 +1,22 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <metrics-simple-view name="Comments" class="link percent ${metrics_class}"
+  <metrics-simple-view name="Comments" class="percent ${metrics_class}"
     url="comments"
     evaluation="${it.report.comments.evaluation}"
     delta="${it.commentsDelta}"
     statistics="${it.report.comments.statistics}" />
-  <metrics-simple-view name="Code Violations" class="link ${metrics_class}"
+  <metrics-simple-view name="Code Violations" class="${metrics_class}"
     url="code_violations"
     evaluation="${it.report.codeViolations.evaluation}"
     delta="${it.codeViolationsDelta}"
     statistics="${it.report.codeViolations.statistics}" />
-  <metrics-simple-view name="Complexity" class="link percent ${metrics_class}"
+  <metrics-simple-view name="Complexity" class="percent ${metrics_class}"
     url="complexity"
     evaluation="${it.report.complexity.evaluation}"
     delta="${it.complexityDelta}"
     statistics="${it.report.complexity.statistics}" />
-  <metrics-simple-view name="Duplications" class="link percent ${metrics_class}"
+  <metrics-simple-view name="Duplications" class="percent ${metrics_class}"
     url="duplications"
     evaluation="${it.report.duplications.evaluation}"
     delta="${it.duplicationsDelta}"
