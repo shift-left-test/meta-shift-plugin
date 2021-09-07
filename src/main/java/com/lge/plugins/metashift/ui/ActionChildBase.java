@@ -96,4 +96,15 @@ public abstract class ActionChildBase implements Action {
   }
 
   public abstract boolean isAvailable();
+
+  /**
+   * return formatted string(precision 2).
+   */
+  protected String getFormattedValue(double value) {
+    if (this.percentScale) {
+      return String.format("%d%%", (int) (value * 100));
+    } else {
+      return String.format("%.2f", Math.floor(value * 100) / 100);
+    }
+  }
 }

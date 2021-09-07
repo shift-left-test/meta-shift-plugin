@@ -65,13 +65,7 @@ public class BuildActionChild extends ActionChildBase {
    * @return threshold string
    */
   public final String getThresholdString() {
-    if (this.percentScale) {
-      return String.format("%d%%",
-          (int) (this.getGroup().getEvaluation().getDouble("threshold") * 100));
-    } else {
-      return String.format("%.2f",
-          this.getGroup().getEvaluation().getDouble("threshold"));
-    }
+    return this.getFormattedValue(this.getGroup().getEvaluation().getDouble("threshold"));
   }
 
   /**

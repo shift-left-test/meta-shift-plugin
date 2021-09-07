@@ -65,13 +65,7 @@ public class RecipeActionChild extends ActionChildBase {
    * return threshold string.
    */
   public final String getThresholdString() {
-    if (this.percentScale) {
-      return String.format("%d%%",
-          (int) (this.getGroup().getEvaluation().getDouble("threshold") * 100));
-    } else {
-      return String.format("%.2f",
-          this.getGroup().getEvaluation().getDouble("threshold"));
-    }
+    return this.getFormattedValue(this.getGroup().getEvaluation().getDouble("threshold"));
   }
 
   /**
@@ -82,11 +76,7 @@ public class RecipeActionChild extends ActionChildBase {
   public String getScale() {
     JSONObject evaluator = this.getGroup().getEvaluation();
     if (evaluator.getBoolean("available")) {
-      if (this.percentScale) {
-        return String.format("%d%%", (long) (evaluator.getDouble("ratio") * 100));
-      } else {
-        return String.format("%.2f", evaluator.getDouble("ratio"));
-      }
+      return this.getFormattedValue(evaluator.getDouble("ratio"));
     } else {
       return "N/A";
     }
