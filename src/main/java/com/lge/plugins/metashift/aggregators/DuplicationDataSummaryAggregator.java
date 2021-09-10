@@ -83,9 +83,9 @@ public class DuplicationDataSummaryAggregator
       DataList dataList = new DataList();
       dataList.addAll(recipe.objects(DuplicationData.class)
           .filter(o -> o.getFile().equals(file.getFile()))
-          .filter(o -> o.getDuplicatedLines() >= tolerance)
           .collect(Collectors.toList()));
-      if (!dataList.isEmpty()) {
+      if (dataList.objects(DuplicationData.class)
+          .anyMatch(o -> o.getDuplicatedLines() >= tolerance)) {
         dataList.add(file);
         recipes.add(new Recipe(file.getFile(), dataList));
       }

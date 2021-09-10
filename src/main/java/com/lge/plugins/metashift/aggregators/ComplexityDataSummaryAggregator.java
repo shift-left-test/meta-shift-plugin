@@ -83,9 +83,8 @@ public class ComplexityDataSummaryAggregator
       DataList dataList = new DataList();
       dataList.addAll(recipe.objects(ComplexityData.class)
           .filter(o -> o.getFile().equals(file.getFile()))
-          .filter(o -> o.getValue() >= tolerance)
           .collect(Collectors.toList()));
-      if (!dataList.isEmpty()) {
+      if (dataList.objects(ComplexityData.class).anyMatch(o -> o.getValue() >= tolerance)) {
         dataList.add(file);
         recipes.add(new Recipe(file.getFile(), dataList));
       }
