@@ -44,42 +44,12 @@ public class JsonUtils {
   /**
    * Represents the null json object.
    */
-  public static final JSONObject EMPTY = new JSONObject();
-
-  /**
-   * Represents the null json object.
-   */
-  public static final Any EMPTY2 = JsonIterator.deserialize("{}");
+  public static final Any EMPTY = JsonIterator.deserialize("{}");
 
   /**
    * Represents the cache object.
    */
-  private static final LruCache<String, JSONObject> objects = new LruCache<>();
-
-  /**
-   * Represents the cache object.
-   */
-  private static final LruCache<String, Any> objects2 = new LruCache<>();
-
-  /**
-   * Create a JSONObject using the given file.
-   *
-   * @param file to a json file
-   * @return a JSON object
-   * @deprecated replaced by createObject2, due to the slow performance
-   */
-  @Deprecated
-  public static synchronized JSONObject createObject(final FilePath file)
-      throws IOException, InterruptedException {
-    if (file == null) {
-      return JsonUtils.EMPTY;
-    }
-    String checksum = file.digest();
-    if (!objects.containsKey(checksum)) {
-      objects.put(checksum, JSONObject.fromObject(file.readToString()));
-    }
-    return objects.get(checksum);
-  }
+  private static final LruCache<String, Any> objects = new LruCache<>();
 
   /**
    * Creates a Json object using the given file.
@@ -89,20 +59,20 @@ public class JsonUtils {
    * @throws IOException          if a file IO fails
    * @throws InterruptedException if an interruption occurs
    */
-  public static synchronized Any createObject2(final FilePath file)
+  public static synchronized Any createObject(final FilePath file)
       throws IOException, InterruptedException {
     if (file == null) {
-      return JsonUtils.EMPTY2;
+      return JsonUtils.EMPTY;
     }
     String checksum = file.digest();
-    if (!objects2.containsKey(checksum)) {
+    if (!objects.containsKey(checksum)) {
       try {
-        objects2.put(checksum, JsonIterator.deserialize(file.readToString()));
+        objects.put(checksum, JsonIterator.deserialize(file.readToString()));
       } catch (IOException e) {
         throw new JSONException(e);
       }
     }
-    return objects2.get(checksum);
+    return objects.get(checksum);
   }
 
   /**

@@ -65,9 +65,18 @@ public class EvaluationTest {
   }
 
   @Test
-  public void testCopyConstructor() {
+  public void testCopyConstructorForPositiveEvaluation() {
     Evaluation object = new PositiveEvaluation(positiveQualified);
     assertStatus(object, true, true);
+    assertEquals(0.66, object.getRatio(), 0.01);
+    assertEquals(0.50, object.getThreshold(), 0.01);
+    assertEquals(0, object.getTolerance());
+  }
+
+  @Test
+  public void testCopyConstructorForNegativeEvaluation() {
+    Evaluation object = new NegativeEvaluation(negativeUnqualified);
+    assertStatus(object, true, false);
     assertEquals(0.66, object.getRatio(), 0.01);
     assertEquals(0.50, object.getThreshold(), 0.01);
     assertEquals(0, object.getTolerance());

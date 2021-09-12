@@ -70,15 +70,6 @@ public class DataList implements Streamable, Serializable {
   }
 
   /**
-   * Tests if the list is empty.
-   *
-   * @return true if the list is empty, false otherwise
-   */
-  public boolean isEmpty() {
-    return objects.isEmpty();
-  }
-
-  /**
    * Adds the given object to the list.
    *
    * @param object to add

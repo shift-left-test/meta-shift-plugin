@@ -70,7 +70,7 @@ public class FakeCacheReportTest {
     File file = FileUtils.getFile(report, fakeRecipe.getName(), "checkcache", "caches.json");
     assertTrue(file.exists());
 
-    Any object = JsonUtils.createObject2(new FilePath(file));
+    Any object = JsonUtils.createObject(new FilePath(file));
     Any premirror = object.get("Premirror");
     assertEquals(3, premirror.get("Summary").toLong("Wanted"));
     assertEquals(1, premirror.get("Summary").toLong("Found"));

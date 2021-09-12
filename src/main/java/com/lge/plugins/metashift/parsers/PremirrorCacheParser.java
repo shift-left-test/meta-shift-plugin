@@ -60,7 +60,7 @@ public class PremirrorCacheParser extends Parser {
   public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("checkcache").child("caches.json");
     try {
-      Any json = JsonUtils.createObject2(report);
+      Any json = JsonUtils.createObject(report);
       List<Any> found = json.get("Premirror", "Found").asList();
       List<Any> missed = json.get("Premirror", "Missed").asList();
       List<PremirrorCacheData> objects = new ArrayList<>(found.size() + missed.size());

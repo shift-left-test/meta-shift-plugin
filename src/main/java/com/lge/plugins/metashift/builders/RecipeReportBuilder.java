@@ -158,7 +158,7 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
       return null;
     }
     try {
-      Any metadata = JsonUtils.createObject2(path.child(recipe).child("metadata.json"));
+      Any metadata = JsonUtils.createObject(path.child(recipe).child("metadata.json"));
       FilePath filePath = getFilePath(path, metadata.toString("S"), file);
       put(Metric.NONE, Data.FILE, recipe, file, filePath.readToString());
     } catch (NoSuchFileException ignored) {

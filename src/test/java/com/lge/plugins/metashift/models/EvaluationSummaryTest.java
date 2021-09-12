@@ -25,6 +25,7 @@
 package com.lge.plugins.metashift.models;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
 
@@ -40,6 +41,14 @@ public class EvaluationSummaryTest {
   private Evaluation newEvaluation(boolean available, long denominator, long numerator,
       double threshold) {
     return new PositiveEvaluation(available, denominator, numerator, threshold);
+  }
+
+  private void assertHashEquals(Object expected, Object actual) {
+    assertEquals(expected.hashCode(), actual.hashCode());
+  }
+
+  private void assertHashNotEquals(Object expected, Object actual) {
+    assertNotEquals(expected.hashCode(), actual.hashCode());
   }
 
   @Test
@@ -71,5 +80,41 @@ public class EvaluationSummaryTest {
     assertEquals(0.8, summary.getStatementCoverage().getRatio(), 0.01);
     assertEquals(0.9, summary.getBranchCoverage().getRatio(), 0.01);
     assertEquals(1.0, summary.getMutationTests().getRatio(), 0.01);
+  }
+
+  @Test
+  public void testEquality() {
+    LinesOfCode LOC = new LinesOfCode(1, 2, 3, 4, 5);
+    LinesOfCode LOC2 = new LinesOfCode(5, 4, 3, 2, 1);
+    Evaluation E = newEvaluation(true, 10, 1, 0.5);
+    Evaluation X = newEvaluation(false, 1, 2, 0.5);
+    EvaluationSummary origin = new EvaluationSummary(RECIPE, LOC, E, E, E, E, E, E, E, E, E, E, E);
+    EvaluationSummary same = new EvaluationSummary(RECIPE, LOC, E, E, E, E, E, E, E, E, E, E, E);
+
+    assertNotEquals(origin, null);
+    assertNotEquals(origin, new Object());
+    assertEquals(origin, origin);
+    assertEquals(origin, same);
+    assertNotEquals(origin, new EvaluationSummary("B-X-X", LOC, E, E, E, E, E, E, E, E, E, E, E));
+    assertEquals(origin, new EvaluationSummary(RECIPE, LOC2, E, E, E, E, E, E, E, E, E, E, E));
+    assertEquals(origin, new EvaluationSummary(RECIPE, LOC, X, X, X, X, X, X, X, X, X, X, X));
+  }
+
+  @Test
+  public void testHashCode() {
+    LinesOfCode LOC = new LinesOfCode(1, 2, 3, 4, 5);
+    LinesOfCode LOC2 = new LinesOfCode(5, 4, 3, 2, 1);
+    Evaluation E = newEvaluation(true, 10, 1, 0.5);
+    Evaluation X = newEvaluation(false, 1, 2, 0.5);
+    EvaluationSummary origin = new EvaluationSummary(RECIPE, LOC, E, E, E, E, E, E, E, E, E, E, E);
+    EvaluationSummary same = new EvaluationSummary(RECIPE, LOC, E, E, E, E, E, E, E, E, E, E, E);
+
+    assertHashNotEquals(origin, new Object());
+    assertHashEquals(origin, origin);
+    assertHashEquals(origin, same);
+    assertHashNotEquals(origin,
+        new EvaluationSummary("B-X-X", LOC, E, E, E, E, E, E, E, E, E, E, E));
+    assertHashEquals(origin, new EvaluationSummary(RECIPE, LOC2, E, E, E, E, E, E, E, E, E, E, E));
+    assertHashEquals(origin, new EvaluationSummary(RECIPE, LOC, X, X, X, X, X, X, X, X, X, X, X));
   }
 }

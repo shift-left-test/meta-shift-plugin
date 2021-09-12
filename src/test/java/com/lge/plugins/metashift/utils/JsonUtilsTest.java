@@ -59,17 +59,17 @@ public class JsonUtilsTest {
 
   @Test
   public void testCreateWithNullFile() throws IOException, InterruptedException {
-    assertEquals(JsonUtils.EMPTY2, JsonUtils.createObject2(null));
+    assertEquals(JsonUtils.EMPTY, JsonUtils.createObject(null));
   }
 
   @Test(expected = IOException.class)
   public void testCreateWithUnknownPath() throws IOException, InterruptedException {
-    JsonUtils.createObject2(new FilePath(utils.getPath("path-to-unknown")));
+    JsonUtils.createObject(new FilePath(utils.getPath("path-to-unknown")));
   }
 
   @Test(expected = IOException.class)
   public void testCreateWithNoneFile() throws IOException, InterruptedException {
-    JsonUtils.createObject2(new FilePath(utils.createDirectory("directory")));
+    JsonUtils.createObject(new FilePath(utils.createDirectory("directory")));
   }
 
   @Test
@@ -77,8 +77,8 @@ public class JsonUtilsTest {
     builder.append("{ }");
     File file = utils.createFile("test.json");
     utils.writeLines(builder, file);
-    assertSame(JsonUtils.createObject2(new FilePath(file)),
-        JsonUtils.createObject2(new FilePath(file)));
+    assertSame(JsonUtils.createObject(new FilePath(file)),
+        JsonUtils.createObject(new FilePath(file)));
   }
 
   @Test
@@ -86,7 +86,7 @@ public class JsonUtilsTest {
     builder.append("{ \"message\": \"test\" }");
     File file = utils.createFile("test.json");
     utils.writeLines(builder, file);
-    assertEquals("test", JsonUtils.createObject2(new FilePath(file)).toString("message"));
+    assertEquals("test", JsonUtils.createObject(new FilePath(file)).toString("message"));
   }
 
   @Test
@@ -97,8 +97,8 @@ public class JsonUtilsTest {
     File file2 = utils.createFile("test2.json");
     utils.writeLines(builder, file2);
 
-    assertSame(JsonUtils.createObject2(new FilePath(file1)),
-        JsonUtils.createObject2(new FilePath(file2)));
+    assertSame(JsonUtils.createObject(new FilePath(file1)),
+        JsonUtils.createObject(new FilePath(file2)));
   }
 
   @Test
@@ -113,8 +113,8 @@ public class JsonUtilsTest {
     File file2 = utils.createFile("test2.json");
     utils.writeLines(builder, file2);
 
-    assertNotSame(JsonUtils.createObject2(new FilePath(file1)),
-        JsonUtils.createObject2(new FilePath(file2)));
+    assertNotSame(JsonUtils.createObject(new FilePath(file1)),
+        JsonUtils.createObject(new FilePath(file2)));
   }
 
   @Test

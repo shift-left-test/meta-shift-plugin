@@ -71,7 +71,7 @@ public class FakeCodeReportTest {
     File file = FileUtils.getFile(report, fakeRecipe.getName(), "checkcode", "sage_report.json");
     assertTrue(file.exists());
 
-    Any object = JsonUtils.createObject2(new FilePath(file));
+    Any object = JsonUtils.createObject(new FilePath(file));
     assertEquals(3, object.get("complexity").asList().size());
     assertEquals(1, object.get("size").asList().size());
     assertEquals(6, object.get("violations").asList().size());

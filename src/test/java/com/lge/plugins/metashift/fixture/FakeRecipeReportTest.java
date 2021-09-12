@@ -72,7 +72,7 @@ public class FakeRecipeReportTest {
     assertTrue(file.exists());
 
     List<FakeScript> scripts = fakeRecipe.getScripts();
-    Any object = JsonUtils.createObject2(new FilePath(file));
+    Any object = JsonUtils.createObject(new FilePath(file));
 
     Any first = object.get("lines_of_code").asList().get(0);
     File aFile = FileUtils.getFile(fakeRecipe.getSourcePath(), scripts.get(0).getFilename());
@@ -93,7 +93,7 @@ public class FakeRecipeReportTest {
         "checkrecipe", "recipe_violations.json");
     assertTrue(file.exists());
 
-    Any object = JsonUtils.createObject2(new FilePath(file));
+    Any object = JsonUtils.createObject(new FilePath(file));
     assertEquals(12, object.get("issues").asList().size());
   }
 }

@@ -84,7 +84,7 @@ public class DuplicationParser extends Parser {
   public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
-      Any json = JsonUtils.createObject2(report);
+      Any json = JsonUtils.createObject(report);
       List<Any> sizes = json.get("size").asList();
       List<Any> duplications = json.get("duplications").asList();
       Set<DuplicationData> objects = new HashSet<>();

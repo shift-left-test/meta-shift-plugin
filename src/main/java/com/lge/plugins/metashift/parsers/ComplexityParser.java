@@ -60,7 +60,7 @@ public class ComplexityParser extends Parser {
   public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
-      Any json = JsonUtils.createObject2(report);
+      Any json = JsonUtils.createObject(report);
       List<Any> array = json.get("complexity").asList();
       List<ComplexityData> objects = new ArrayList<>(array.size());
 

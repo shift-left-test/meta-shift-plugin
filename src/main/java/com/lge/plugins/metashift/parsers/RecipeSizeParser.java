@@ -61,7 +61,7 @@ public class RecipeSizeParser extends Parser {
   public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("checkrecipe").child("files.json");
     try {
-      Any json = JsonUtils.createObject2(report);
+      Any json = JsonUtils.createObject(report);
       List<Any> array = json.get("lines_of_code").asList();
       List<RecipeSizeData> objects = new ArrayList<>(array.size());
 
