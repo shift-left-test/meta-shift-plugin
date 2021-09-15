@@ -8,12 +8,12 @@ $major-color: $valid-bad-color;
 $minor-color: $valid-error-color;
 $info-color: $invalid-color;
 
-$progress-bar-color: #a8c2d9;
-$progress-bar-color-positive: rgb(217, 238, 217);
-$progress-bar-color-negative: rgb(238, 214, 214);
-
 $qualified-pass: #8cc04f;
 $qualified-fail: #d54c53;
+
+$progress-bar-color: #a8c2d9;
+$progress-bar-color-positive: $qualified-pass;
+$progress-bar-color-negative: $qualified-fail;
 
 $test-simple-text-color: #1f5384;
 

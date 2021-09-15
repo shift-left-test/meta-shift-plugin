@@ -25,7 +25,7 @@ export class ComplexityRecipes extends PagedTable {
         formatter: this.localeNumberString.bind(this)},
       {title: 'Ratio', field: 'ratio',
         formatter: 'progress',
-        formatterParams: {min: 0, max: 1, color: [variables.qualifiedFailColor],
+        formatterParams: {min: 0, max: 1, color: variables.qualifiedFailColor,
           legend: function(value) {
             return Math.floor(value * 100) + '%';
           },

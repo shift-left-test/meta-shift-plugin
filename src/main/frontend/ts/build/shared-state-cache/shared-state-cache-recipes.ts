@@ -25,7 +25,7 @@ export class SharedStateCacheRecipes extends PagedTable {
         formatter: this.localeNumberString.bind(this)},
       {title: 'Ratio', field: 'ratio',
         formatter: 'progress',
-        formatterParams: {min: 0, max: 1, color: [variables.qualifiedPassColor],
+        formatterParams: {min: 0, max: 1, color: variables.qualifiedPassColor,
           legend: function(value) {
             return Math.floor(value * 100) + '%';
           },
