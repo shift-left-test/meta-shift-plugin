@@ -249,15 +249,10 @@ export class PagedTable extends LitElement {
    * @return {unknown}
    */
   protected qualifiedCellformatter(cell) {
-    if (cell.getValue()) {
-      return `<div class="qualified-check"><span class="qualified-pass">
-      <i class="fas fa-check"></i>
-      </span></div>`;
-    } else {
-      return `<div class="qualified-check"><span class="qualified-fail">
-      <i class="fas fa-times"></i>
-      </span></div>`;
-    }
+    return `<div class="icon">
+      <i class="fas ${cell.getValue() ? 'fa-check-circle' : 'fa-times-circle'}">
+      </i>
+      </div>`;
   }
 
   /**

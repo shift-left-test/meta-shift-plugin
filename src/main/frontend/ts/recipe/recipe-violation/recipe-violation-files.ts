@@ -1,6 +1,6 @@
 import {customElement} from 'lit/decorators.js';
-
 import {FilesTable} from '../files-table';
+import {Constants} from '../../common/utils';
 
 @customElement('recipe-violation-files')
 /**
@@ -15,7 +15,8 @@ export class RecipeViolationFiles extends FilesTable {
 
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'name', widthGrow: 1},
-      {title: 'Lines of Code', field: 'linesOfCode', width: 200,
+      {title: 'Lines of Code', field: 'linesOfCode',
+        width: Constants.LinesOfCodeWidth,
         formatter: this.localeNumberString.bind(this)},
       {title: 'Issues', field: 'total', width: 120,
         formatter: this.localeNumberString.bind(this)},

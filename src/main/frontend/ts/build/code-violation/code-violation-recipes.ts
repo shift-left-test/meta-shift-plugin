@@ -1,5 +1,6 @@
 import {customElement} from 'lit/decorators.js';
 import {PagedTable} from '../../common/paged-table';
+import {Constants} from '../../common/utils';
 
 @customElement('code-violation-recipes')
 /**
@@ -14,20 +15,27 @@ export class CodeViolationRecipes extends PagedTable {
 
     this.columns = [
       {title: 'Recipe', field: 'name', widthGrow: 1},
-      {title: 'Lines of Code', field: 'linesOfCode', width: 200,
+      {title: 'Lines of Code', field: 'linesOfCode',
+        width: Constants.LinesOfCodeWidth,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Issues', field: 'total', width: 120,
+      {title: 'Issues', field: 'total',
+        width: Constants.IssueCountWidth,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Major', field: 'first', width: 120,
+      {title: 'Major', field: 'first',
+        width: Constants.IssueCountWidth,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Minor', field: 'second', width: 120,
+      {title: 'Minor', field: 'second',
+        width: Constants.IssueCountWidth,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Info', field: 'third', width: 120,
+      {title: 'Info', field: 'third',
+        width: Constants.IssueCountWidth,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Density', field: 'ratio', width: 100,
+      {title: 'Density', field: 'ratio',
+        width: Constants.RatioWidth,
         formatter: this.floatNumberString.bind(this),
         accessorDownload: this.floatNumberCellAccessorDownload.bind(this)},
-      {title: 'Qualified', field: 'qualified', width: 120,
+      {title: 'Qualified', field: 'qualified',
+        width: Constants.QualifiedWidth,
         formatter: this.qualifiedCellformatter.bind(this)},
     ];
   }

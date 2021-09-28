@@ -1,5 +1,6 @@
 import {customElement} from 'lit/decorators.js';
 import {FilesTable} from '../files-table';
+import {Constants} from '../../common/utils';
 import variables from '../../../scss/vars.scss';
 
 @customElement('statement-coverage-files')
@@ -15,7 +16,8 @@ export class StatementCoverageFiles extends FilesTable {
 
     this.columns = [ // Define Table Columns
       {title: 'File', field: 'name', widthGrow: 1},
-      {title: 'Lines of Code', field: 'linesOfCode', width: 200,
+      {title: 'Lines of Code', field: 'linesOfCode',
+        width: Constants.LinesOfCodeWidth,
         formatter: this.localeNumberString.bind(this)},
       {title: 'Statements', field: 'total', width: 120,
         formatter: this.localeNumberString.bind(this)},

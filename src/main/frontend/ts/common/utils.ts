@@ -14,4 +14,14 @@ class Utils {
   }
 }
 
-export {Utils};
+/**
+ * constant values.
+ */
+class Constants {
+  static LinesOfCodeWidth = 150;
+  static IssueCountWidth = 100;
+  static RatioWidth = 150;
+  static QualifiedWidth = 110;
+}
+
+export {Utils, Constants};

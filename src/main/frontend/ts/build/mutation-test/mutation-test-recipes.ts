@@ -1,5 +1,6 @@
 import {customElement} from 'lit/decorators.js';
 import {PagedTable} from '../../common/paged-table';
+import {Constants} from '../../common/utils';
 import variables from '../../../scss/vars.scss';
 
 @customElement('mutation-test-recipes')
@@ -15,26 +16,32 @@ export class MutationTestRecipes extends PagedTable {
 
     this.columns = [
       {title: 'Recipe', field: 'name', widthGrow: 1},
-      {title: 'Lines of Code', field: 'linesOfCode', width: 200,
+      {title: 'Lines of Code', field: 'linesOfCode',
+        width: Constants.LinesOfCodeWidth,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Tests', field: 'total', width: 120,
+      {title: 'Tests', field: 'total',
+        width: Constants.IssueCountWidth,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Killed', field: 'first', width: 120,
+      {title: 'Killed', field: 'first',
+        width: Constants.IssueCountWidth,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Survived', field: 'second', width: 120,
+      {title: 'Survived', field: 'second',
+        width: Constants.IssueCountWidth + 10,
         formatter: this.localeNumberString.bind(this)},
-      {title: 'Skipped', field: 'third', width: 120,
+      {title: 'Skipped', field: 'third',
+        width: Constants.IssueCountWidth,
         formatter: this.localeNumberString.bind(this)},
       {title: 'Ratio', field: 'ratio',
+        width: Constants.RatioWidth,
         formatter: 'progress',
         formatterParams: {min: 0, max: 1, color: variables.qualifiedPassColor,
           legend: function(value) {
             return Math.floor(value * 100) + '%';
           },
         },
-        accessorDownload: this.progressCellAccessorDownload.bind(this),
-        width: 200},
-      {title: 'Qualified', field: 'qualified', width: 120,
+        accessorDownload: this.progressCellAccessorDownload.bind(this)},
+      {title: 'Qualified', field: 'qualified',
+        width: Constants.QualifiedWidth,
         formatter: this.qualifiedCellformatter.bind(this)},
     ];
   }
