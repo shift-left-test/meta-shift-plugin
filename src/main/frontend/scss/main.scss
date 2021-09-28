@@ -35,6 +35,59 @@
   font-style: normal;
 }
 
+.summary-icon {
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+}
+
+.summary {
+  .column {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    width: 250px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
+
+  .column-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .icon {
+    display: inline-block;
+    font-size: 1.0rem;
+
+    .fa-check-circle {
+      color: $valid-good-color;
+    }
+
+    .fa-times-circle {
+      color: $valid-bad-color;
+    }
+
+    .fa-minus-circle {
+      color: black;
+    }
+  }
+}
+
+summary-code-size {
+  margin-left: 10px;
+}
+
+summary-metrics-simple-view {
+  position: relative;
+
+  .metrics-row {
+    vertical-align: middle;
+    font-size: 1.0rem;
+  }
+}
+
 .metashift {
   font-family: 'MetaShift';
   
@@ -72,6 +125,24 @@
     width: 50%;
     display: inline-block;
     position: relative;
+    vertical-align: top;
+  }
+
+  .icon {
+    display: inline-block;
+    font-size: 20px;
+
+    .fa-check-circle {
+      color: $valid-good-color;
+    }
+
+    .fa-times-circle {
+      color: $valid-bad-color;
+    }
+
+    .fa-minus-circle {
+      color: black;
+    }
   }
 
   .metrics-threshold {
@@ -306,7 +377,8 @@ code-size {
     margin: 2px;
     text-align: center;
     width: 200px;
-    padding: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     background-color: rgb(247, 247, 239);
   }
 
@@ -324,12 +396,6 @@ code-size {
   .size-diff {
     font-size: 20px;
     font-weight: normal;
-  }
-}
-
-code-size.summary {
-  .size-item {
-    width: 190px;
   }
 }
 
@@ -361,23 +427,9 @@ metrics-simple-view {
     display: inline-block;
 
     .icon {
-      display: inline-block;
       position: absolute;
       right: 6px;
       top: 3px;
-      font-size: 20px;
-
-      .fa-check-circle {
-        color: $valid-good-color;
-      }
-
-      .fa-times-circle {
-        color: $valid-bad-color;
-      }
-
-      .fa-minus-circle {
-        color: black;
-      }
     }
   }
 
@@ -424,17 +476,6 @@ metrics-simple-view {
 
 metrics-simple-view.has-url {
   cursor: pointer;
-}
-
-metrics-simple-view.summary {
-  width: 190px;
-
-  .ico {
-    padding: 0px 20px 5px 10px;
-  }
-  .title {
-    padding-top: 2px;
-  }
 }
 
 /*

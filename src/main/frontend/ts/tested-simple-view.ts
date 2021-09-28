@@ -32,8 +32,6 @@ export class TestedSimpleView extends LitElement {
    * @return {unknown}
    */
   render() : unknown {
-    const isSummary = this.classList.contains('summary');
-
     const tested = JSON.parse(this.testedRecipes);
 
     const diffDirection = this.delta == 0 ? '' :
@@ -48,18 +46,14 @@ export class TestedSimpleView extends LitElement {
       <div class="size-number">
        ${testRate}%
       </div>
-      ${!isSummary ?
-        html`
-          <div class="size-diff">
-          (${diffDirection}${Math.floor(Math.abs((this.delta * 100)))}%)
-          </div>
-          <div class="description">
-            <b>${Number(tested.numerator).toLocaleString()}</b>
-            out of <b>${Number(tested.denominator).toLocaleString()}</b>
-          </div>
-          <div><br></div>
-          ` :
-        html``}
+      <div class="size-diff">
+      (${diffDirection}${Math.floor(Math.abs((this.delta * 100)))}%)
+      </div>
+      <div class="description">
+        <b>${Number(tested.numerator).toLocaleString()}</b>
+        out of <b>${Number(tested.denominator).toLocaleString()}</b>
+      </div>
+      <div><br></div>
     </div>
     `;
   }

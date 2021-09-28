@@ -36,7 +36,6 @@ export class MetricsSimpleView extends LitElement {
   render() : unknown {
     const evaluator = JSON.parse(this.evaluation);
     const isPercent = this.classList.contains('percent');
-    const isSummary = this.classList.contains('summary');
     const showScale = this.classList.contains('show_scale');
 
     const diffDirection = !evaluator.available || this.delta == 0 ? null :
@@ -79,22 +78,18 @@ export class MetricsSimpleView extends LitElement {
           }
           </div>` :
         html``}
-      ${!isSummary ?
-        html`
-          <div class="description ${textClass}">
-            <b>${Number(evaluator.numerator).toLocaleString()}</b>
-            out of <b>${Number(evaluator.denominator).toLocaleString()}</b>
-          </div>
-          <div class="description ${textClass}">
-            Threshold: ${isPercent ?
-              html`${Math.floor(evaluator.threshold * 100)}%` :
-              html`${Utils.toFixedFloor(evaluator.threshold)}`}
-            ${diffThresholdHtml}${evaluator.tolerance ?
-              html`, ${evaluator.tolerance}` :
-              html``}
-          </div>
-          ` :
-        html``}
+      <div class="description ${textClass}">
+        <b>${Number(evaluator.numerator).toLocaleString()}</b>
+        out of <b>${Number(evaluator.denominator).toLocaleString()}</b>
+      </div>
+      <div class="description ${textClass}">
+        Threshold: ${isPercent ?
+          html`${Math.floor(evaluator.threshold * 100)}%` :
+          html`${Utils.toFixedFloor(evaluator.threshold)}`}
+        ${diffThresholdHtml}${evaluator.tolerance ?
+          html`, ${evaluator.tolerance}` :
+          html``}
+      </div>
     </div>
     ${this.renderStatistics(evaluator.available, isPercent, showScale)}`;
   }

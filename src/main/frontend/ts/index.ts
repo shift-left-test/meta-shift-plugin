@@ -90,6 +90,8 @@ import {UnitTestRecipes}
   from './build/unit-test/unit-test-recipes';
 import {UnitTestTreemap}
   from './build/unit-test/unit-test-treemap';
+import {SummaryCodeSize} from './summary-code-size';
+import {SummaryMetricsSimpleView} from './summary-metrics-simple-view';
 
 import 'tabulator-tables/src/scss/tabulator.scss';
 import '../scss/main.scss';
@@ -147,4 +149,7 @@ export {
   StatementCoverageTreemap,
   UnitTestRecipes,
   UnitTestTreemap,
+
+  SummaryCodeSize,
+  SummaryMetricsSimpleView,
 };
