@@ -81,18 +81,18 @@ public class DuplicationCalculatorTest {
   @Test
   public void testParseRecipesWithIndependentLines() {
     recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
-    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 20));
+    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 1, 20));
     recipe2.add(new CodeSizeData(RECIPE2, FILE1, 50, 1, 1));
-    recipe2.add(new DuplicationData(RECIPE2, FILE1, 50, 30, 50));
+    recipe2.add(new DuplicationData(RECIPE2, FILE1, 50, 31, 50));
     assertSize(recipes, 100, 40);
   }
 
   @Test
   public void testParseRecipesWithOverlappedLines() {
     recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
-    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 30));
+    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 1, 30));
     recipe2.add(new CodeSizeData(RECIPE2, FILE1, 50, 1, 1));
-    recipe2.add(new DuplicationData(RECIPE2, FILE1, 50, 20, 50));
+    recipe2.add(new DuplicationData(RECIPE2, FILE1, 50, 21, 50));
     assertSize(recipes, 100, 60);
   }
 
@@ -107,16 +107,16 @@ public class DuplicationCalculatorTest {
   @Test
   public void testParseFileWithIndependentLines() {
     recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
-    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 20));
-    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 30, 50));
+    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 1, 20));
+    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 31, 50));
     assertSize(recipe1, 50, 40);
   }
 
   @Test
   public void testParseFileWithOverlappedLines() {
     recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
-    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 30));
-    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 20, 50));
+    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 1, 30));
+    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 21, 50));
     assertSize(recipe1, 50, 50);
   }
 
@@ -132,18 +132,18 @@ public class DuplicationCalculatorTest {
   @Test
   public void testParseFilesWithIndependentLines() {
     recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
-    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 20));
+    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 1, 20));
     recipe1.add(new CodeSizeData(RECIPE1, FILE2, 50, 1, 1));
-    recipe1.add(new DuplicationData(RECIPE1, FILE2, 50, 30, 50));
+    recipe1.add(new DuplicationData(RECIPE1, FILE2, 50, 31, 50));
     assertSize(recipe1, 100, 40);
   }
 
   @Test
   public void testParseFilesWithOverlappedLines() {
     recipe1.add(new CodeSizeData(RECIPE1, FILE1, 50, 1, 1));
-    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 0, 30));
+    recipe1.add(new DuplicationData(RECIPE1, FILE1, 50, 1, 30));
     recipe1.add(new CodeSizeData(RECIPE1, FILE2, 50, 1, 1));
-    recipe1.add(new DuplicationData(RECIPE1, FILE2, 50, 20, 50));
+    recipe1.add(new DuplicationData(RECIPE1, FILE2, 50, 21, 50));
     assertSize(recipe1, 100, 60);
   }
 }

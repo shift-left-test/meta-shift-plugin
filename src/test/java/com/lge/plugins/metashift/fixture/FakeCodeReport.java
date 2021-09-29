@@ -73,7 +73,7 @@ public class FakeCodeReport implements FakeReport {
     JSONObject o = new JSONObject();
     o.put("file", file);
     o.put("start", start);
-    o.put("end", start + length);
+    o.put("end", start + length - 1);
     return o;
   }
 
@@ -140,7 +140,6 @@ public class FakeCodeReport implements FakeReport {
 
   @Override
   public void toFile(File directory) throws IOException {
-    List<String> lines = new ArrayList<>();
     File file = FileUtils.getFile(directory, recipe.getName(), "checkcode", "sage_report.json");
     JSONObject object = new JSONObject();
     object.put("version", "0.4.0");

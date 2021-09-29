@@ -58,7 +58,7 @@ public class DuplicationCalculator implements Collector<Streamable, DuplicationC
 
   private long calculateDuplicateLines(List<DuplicationData> objects) {
     BitSet marks = new BitSet();
-    objects.forEach(o -> marks.set((int) o.getStart(), (int) o.getEnd()));
+    objects.forEach(o -> marks.set((int) o.getStart(), (int) (o.getEnd() + 1)));
     return marks.cardinality();
   }
 

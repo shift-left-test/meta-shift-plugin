@@ -87,7 +87,7 @@ public class DuplicationDataSummaryAggregatorTest {
   @Test
   public void testParseSingleRecipe() {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 100, 0, 0));
-    recipe1.add(new DuplicationData(RECIPE1, "a.file", 100, 0, 100));
+    recipe1.add(new DuplicationData(RECIPE1, "a.file", 100, 1, 100));
     summaries = aggregator.parse(recipes);
     assertValues(RECIPE1, 100, 100, 0, 1.0, false);
   }
@@ -95,9 +95,9 @@ public class DuplicationDataSummaryAggregatorTest {
   @Test
   public void testParseMultipleRecipes() {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 100, 0, 0));
-    recipe1.add(new DuplicationData(RECIPE1, "a.file", 100, 0, 100));
+    recipe1.add(new DuplicationData(RECIPE1, "a.file", 100, 1, 100));
     recipe2.add(new CodeSizeData(RECIPE2, "b.file", 100, 0, 0));
-    recipe2.add(new DuplicationData(RECIPE2, "b.file", 100, 0, 0));
+    recipe2.add(new DuplicationData(RECIPE2, "b.file", 100, 1, 1));
     summaries = aggregator.parse(recipes);
     assertValues(RECIPE1, 100, 100, 0, 1.0, false);
     assertValues(RECIPE2, 100, 0, 100, 0.0, true);
@@ -111,7 +111,7 @@ public class DuplicationDataSummaryAggregatorTest {
   @Test
   public void testParseRecipeWithSingleData() {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 100, 0, 0));
-    recipe1.add(new DuplicationData(RECIPE1, "a.file", 100, 0, 100));
+    recipe1.add(new DuplicationData(RECIPE1, "a.file", 100, 1, 100));
     summaries = aggregator.parse(recipe1);
     assertValues("a.file", 100, 100, 0, 1.0, false);
   }
@@ -119,9 +119,9 @@ public class DuplicationDataSummaryAggregatorTest {
   @Test
   public void testParseRecipeWithMultipleData() {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 100, 0, 0));
-    recipe1.add(new DuplicationData(RECIPE1, "a.file", 100, 0, 100));
+    recipe1.add(new DuplicationData(RECIPE1, "a.file", 100, 1, 100));
     recipe1.add(new CodeSizeData(RECIPE1, "b.file", 100, 0, 0));
-    recipe1.add(new DuplicationData(RECIPE1, "b.file", 100, 0, 0));
+    recipe1.add(new DuplicationData(RECIPE1, "b.file", 100, 1, 1));
     summaries = aggregator.parse(recipe1);
     assertEquals(1, summaries.size());
     assertValues("a.file", 100, 100, 0, 1.0, false);
