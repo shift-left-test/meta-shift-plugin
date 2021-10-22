@@ -1,7 +1,7 @@
 {
   "name": "meta-shift-frontend",
   "version": "1.0.0",
-  "description": "[![Build Status](http://10.178.85.91:8080/buildStatus/icon?job=meta-shift-plugin%2Fmaster)](http://10.178.85.91:8080/job/meta-shift-plugin/job/master/)",
+  "description": "The frontend of the meta-shift plugin",
   "main": "index.js",
   "scripts": {
     "build": "webpack",
