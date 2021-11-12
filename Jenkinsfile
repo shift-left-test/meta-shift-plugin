@@ -7,27 +7,27 @@ pipeline {
     stages {
         stage("Javadoc") {
             steps {
-                sh "mvn -s ${env.WORKSPACE}/settings.xml javadoc:javadoc"
+                sh "mvn javadoc:javadoc"
             }
         }
         stage("StaticAnalysis") {
             steps {
-                sh "mvn -s ${env.WORKSPACE}/settings.xml checkstyle:checkstyle pmd:pmd pmd:cpd spotbugs:spotbugs"
+                sh "mvn checkstyle:checkstyle pmd:pmd pmd:cpd spotbugs:spotbugs"
             }
         }
         stage("Test") {
             steps {
-                sh "HOME=${env.WORKSPACE}/home mvn -s ${env.WORKSPACE}/settings.xml verify"
+                sh "HOME=${env.WORKSPACE}/home mvn verify"
             }
         }
         stage("Coverage") {
             steps {
-                sh "mvn -s ${env.WORKSPACE}/settings.xml jacoco:report"
+                sh "mvn jacoco:report"
             }
         }
         stage("MutationTest") {
             steps {
-                sh "mvn -s ${env.WORKSPACE}/settings.xml org.pitest:pitest-maven:mutationCoverage"
+                sh "mvn org.pitest:pitest-maven:mutationCoverage"
             }
         }
     }
