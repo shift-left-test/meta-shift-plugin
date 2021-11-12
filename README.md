@@ -30,7 +30,7 @@ access localhost:9000/jenkins
 
 ## How to use
 
-Please refer to the [wiki link](http://mod.lge.com/hub/yocto/meta-shift-plugin/-/wikis/home) for more information.
+Please refer to the wiki page for more information.
 
 
 ## License
