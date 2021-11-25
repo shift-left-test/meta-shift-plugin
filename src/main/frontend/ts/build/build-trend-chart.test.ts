@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2021 LG Electronics Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
 import {fixture, html, assert} from '@open-wc/testing';
 import {BuildTrendChart} from './build-trend-chart';
 

@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2021 LG Electronics Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
 import {customElement} from 'lit/decorators.js';
 import {PagedTable} from '../common/paged-table';
 

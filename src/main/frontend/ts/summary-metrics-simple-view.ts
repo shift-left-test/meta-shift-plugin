@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2021 LG Electronics Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
 import {html, LitElement} from 'lit';
 import {customElement, property} from 'lit-element';
 import {Utils} from './common/utils';
@@ -42,7 +47,7 @@ export class SummaryMetricsSimpleView extends LitElement {
     return html`
     <div class="metrics-row">
       <span class="icon"><i class="fas ${iconClass}"></i></span>
-      ${this.name} : 
+      ${this.name} :
       <b>${evaluator.available ?
         (isPercent ?
           html`${Math.floor(evaluator.ratio * 100)}%`:

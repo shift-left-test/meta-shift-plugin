@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2021 LG Electronics Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
 import {elementUpdated, fixture, html} from '@open-wc/testing';
 import {CodeViolationFileView} from './code-violation-file-view';
 
@@ -48,4 +53,3 @@ suite('code-violation-file-view', () => {
         'test message');
   });
 });
-

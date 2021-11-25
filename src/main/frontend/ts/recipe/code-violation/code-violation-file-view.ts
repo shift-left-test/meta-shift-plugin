@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2021 LG Electronics Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
 import {html} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
@@ -24,7 +29,7 @@ export class CodeViolationFileView extends FileDetail {
             ${data.level}</span>
             <span>${data.rule}</span>
           </div>
-          <div>tool: ${data.tool} - 
+          <div>tool: ${data.tool} -
             <span class="severity">severity: ${data.severity}</span>
           </div>
           <div><b>${data.message}</b></div>

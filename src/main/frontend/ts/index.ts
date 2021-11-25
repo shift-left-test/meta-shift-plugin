@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2021 LG Electronics Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
 import {CodeSize} from './code-size';
 import {MetricsSimpleView} from './metrics-simple-view';
 import {TestedSimpleView} from './tested-simple-view';

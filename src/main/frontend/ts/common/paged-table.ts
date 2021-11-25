@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2021 LG Electronics Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
 import {html, LitElement} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import Tabulator from 'tabulator-tables';
@@ -46,7 +51,7 @@ export class PagedTable extends LitElement {
   render() : unknown {
     return html`
     <div class="table-toolbox">
-      <span> 
+      <span>
         <input id="filter-value" type="text"
           placeholder="Filter table by '${this.columns[
       this.filterColumnIndex].title}'"
