@@ -134,13 +134,14 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     }
   }
 
-  private Void writeFile(String recipe, String file) throws IOException, InterruptedException {
+  private Void writeFile(String recipe, String file, String basedir)
+      throws IOException, InterruptedException {
     if (dataSource.has(Scope.RECIPE.name(), Metric.NONE.name(), Data.FILE.name(), recipe, file)) {
       return null;
     }
     try {
       Any metadata = JsonUtils.createObject(path.child(recipe).child("metadata.json"));
-      FilePath filePath = getFilePath(path, metadata.toString("S"), file);
+      FilePath filePath = getFilePath(path, metadata.toString(basedir), file);
       put(Metric.NONE, Data.FILE, recipe, file, filePath.readToString());
     } catch (NoSuchFileException ignored) {
       // ignored
@@ -152,7 +153,8 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
       throws IOException, InterruptedException {
     for (Entry<String, List<T>> entry : group.entrySet()) {
       put(metric, Data.OBJECTS, recipe, entry.getKey(), JSONArray.fromObject(entry.getValue()));
-      writeFile(recipe, entry.getKey());
+      String basedir = (metric == Metric.RECIPE_VIOLATIONS) ? "PWD" : "S";
+      writeFile(recipe, entry.getKey(), basedir);
     }
     return null;
   }
