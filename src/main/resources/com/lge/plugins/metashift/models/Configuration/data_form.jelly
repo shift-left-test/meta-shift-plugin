@@ -33,7 +33,7 @@
     display: inline-block;
     }
   </style>
-  <f:entry title="Configuration" field="configuration">
+  <f:entry title="Adequacy Criteria" field="configuration">
     <div class="evaluate-header"><b>Unstable</b>
     </div>
     <div class="title">
