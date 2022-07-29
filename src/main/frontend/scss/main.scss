@@ -90,29 +90,32 @@ summary-metrics-simple-view {
 
 .metashift {
   font-family: 'MetaShift';
-  
+
   .page {
     margin-right: 100px;
   }
 
-  h1 {
-    margin-top: 30px;
+  .h1 {
+      margin-top: 20px;
+      margin-bottom: 5px;
+      font-size: 1.5rem;
+      font-weight: bolder;
   }
-  
-  h2 {
-    margin-top: 30px;
-    margin-left: 30px;
+
+  .h2 {
+      margin-top: 10px;
+      margin-bottom: 5px;
+      margin-left: 30px;
+      font-size: 1.3rem;
+      font-weight: bold;
   }
-  
-  h3 {
-    margin-top: 20px;
-    margin-left: 40px;
-  }
-  
-  h4 {
-    margin-top: 10px;
-    margin-left: 30px;
-    font-size: 20px;
+
+  .h3 {
+      margin-top: 10px;
+      margin-bottom: 5px;
+      margin-left: 40px;
+      font-size: 1.2rem;
+      font-weight: bold;
   }
 
   .section {
@@ -153,12 +156,12 @@ summary-metrics-simple-view {
   }
   // recipe metrics detail page scale value
   .metrics-scale {
-    font-size: 40px;
+    font-size: 30px;
     display: inline-block;
     font-weight: normal;
     position: absolute;
     right: 0%;
-    top: 25px;
+    top: 5px;
   }
 
   .metashift-code {
@@ -260,7 +263,7 @@ summary-metrics-simple-view {
         line-height: 20px;
       }
     }
-    
+
     .tabulator-col-content {
       background-color: black;
       color: white;
@@ -445,7 +448,7 @@ metrics-simple-view {
       text-align: center;
       padding: 5px 0;
       border-radius: 3px;
- 
+
       position: absolute;
       left: 20px;
       top: 10px;
@@ -532,10 +535,10 @@ distribution-bar {
     @extend .rate;
     background-color: $info-color;
   }
-  
+
   .legend {
     display: flex;
-    font-size: 24px;
+    font-size: 20px;
     width: 100%;
 
     .label {
@@ -550,27 +553,27 @@ distribution-bar {
     .valid-good {
       color: $valid-good-color;
     }
-  
+
     .valid-bad {
       color: $valid-bad-color;
     }
-  
+
     .valid-error {
       color: $valid-error-color;
     }
-  
+
     .invalid {
       color: $invalid-color;
     }
-  
+
     .major {
       color: $major-color;
     }
-  
+
     .minor {
       color: $minor-color;
     }
-  
+
     .informational {
       color: $info-color;
     }

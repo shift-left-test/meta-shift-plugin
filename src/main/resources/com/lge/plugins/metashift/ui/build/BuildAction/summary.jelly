@@ -24,7 +24,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
             evaluation="${it.report.recipeViolations.evaluation}" />
         </div>
         <div class="column">
-          <div class="column-title">Code Quality</div>
+          <div class="column-title">Static Analysis</div>
           <summary-metrics-simple-view name="Comments" class="percent"
             evaluation="${it.report.comments.evaluation}" />
           <summary-metrics-simple-view name="Code Violations"
@@ -33,6 +33,9 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
             evaluation="${it.report.complexity.evaluation}" />
           <summary-metrics-simple-view name="Duplications" class="percent"
             evaluation="${it.report.duplications.evaluation}" />
+        </div>
+        <div class="column">
+          <div class="column-title">Dynamic Testing</div>
           <summary-metrics-simple-view name="Unit Tests" class="percent"
             evaluation="${it.report.unitTests.evaluation}" />
           <summary-metrics-simple-view name="Statement Coverage" class="percent"

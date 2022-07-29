@@ -65,7 +65,7 @@ export class BuildTreemap extends RecipeTreemap {
       </div>
     <div class="tooltip-column-gap"></div>
     <div class="tooltip-column">
-      <div class="tooltip-section">Code Quality</div>
+      <div class="tooltip-section">Static Analysis</div>
       ${this.generateQualifiedTooltipString('Comments',
       tooltipInfo.comments)}
       ${this.generateQualifiedTooltipString('Code Violations',
@@ -74,6 +74,10 @@ export class BuildTreemap extends RecipeTreemap {
       tooltipInfo.complexity)}
       ${this.generateQualifiedTooltipString('Duplications',
       tooltipInfo.duplications)}
+      </div>
+    <div class="tooltip-column-gap"></div>
+    <div class="tooltip-column">
+      <div class="tooltip-section">Dynamic Testing</div>
       ${this.generateQualifiedTooltipString('Unit Tests',
       tooltipInfo.unitTests)}
       ${this.generateQualifiedTooltipString('Statement Coverage',

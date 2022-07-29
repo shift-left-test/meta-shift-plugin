@@ -8,7 +8,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
       <st:bind var="proxy" value="${it}" />
       <div class="metashift">
         <div class="page">
-          <h1>Overview</h1>
+          <div class="h1">Overview</div>
           <ms:metrics-stats-header 
             statistics_class="show_scale percent"
             scale="${it.scale}"
@@ -16,7 +16,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
               {"name":"Comments", "clazz": "valid-good"},
               {"name":"Code", "clazz": "invalid"}
               ]' />
-          <h1>Details</h1>
+          <div class="h1">Details</div>
           <comment-files class="section"
             page='${it.getUrlParameter("page")}'
             sort='${it.getUrlParameter("sort")}' 

@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metashift">
   <l:layout title="meta-shift report">
     <st:adjunct includes="com.lge.plugins.metashift.front"/>
@@ -7,23 +7,22 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
     <l:main-panel>
       <div class="metashift">
       <div class="page">
-        <h1>Overview</h1>
-        <h2>Lines of Code</h2>
+        <div class="h1">Overview</div>
+        <div class="h2">Lines of Code</div>
         <div class="section">
           <code-size
             codeSize="${it.codeSizeJson}"
             codeSizeDelta="${it.codeSizeDeltaJson}" />
         </div>
-        <h2>Build Performance</h2>
+        <div class="h2">Build Performance</div>
         <div class="section">
           <ms:build-performance-row metrics_class="show_scale" />
         </div>
-        <h2>Code Quality</h2>
-        <h3>Static Analysis</h3>
+        <div class="h2">Static Analysis</div>
         <div class="section">
           <ms:static-analysis-row metrics_class="show_scale" />
         </div>
-        <h3>Dynamic Testing</h3>
+        <div class="h2">Dynamic Testing</div>
         <div class="section">
           <ms:dynamic-testing-row metrics_class="show_scale" />
         </div>

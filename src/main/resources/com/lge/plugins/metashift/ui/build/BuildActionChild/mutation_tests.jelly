@@ -8,7 +8,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
       <st:bind var="proxy" value="${it}" />
       <div class="metashift">
         <div class="page">
-          <h1>Overview</h1>
+          <div class="h1">Overview</div>
           <ms:metrics-stats-header
             statistics_class="percent"
             labels='[
@@ -17,7 +17,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
               {"name":"Skipped", "clazz": "invalid"}
             ]' />
           <mutation-test-treemap />
-          <h1>Details</h1>
+          <div class="h1">Details</div>
           <div class="section">
             <mutation-test-recipes downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.displayName}" />
           </div>

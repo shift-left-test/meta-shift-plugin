@@ -8,7 +8,7 @@
     <l:main-panel>
       <div class="metashift">
         <div class="page">
-          <h2>Page Not Found</h2>
+          <div class="h2">Page Not Found</div>
           <p>The meta-shift report you were looking for could not be found. It might have been
             removed, or did not exist in the first place.
           </p>

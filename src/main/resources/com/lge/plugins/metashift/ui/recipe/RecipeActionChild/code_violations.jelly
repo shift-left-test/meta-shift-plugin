@@ -8,7 +8,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
       <st:bind var="proxy" value="${it}" />
       <div class="metashift">
         <div class="page">
-          <h1>Overview</h1>
+          <div class="h1">Overview</div>
           <ms:metrics-stats-header 
             statistics_class="show_scale float"
             scale="${it.scale}"
@@ -17,7 +17,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
               {"name":"Minor", "clazz": "minor"},
               {"name":"Info", "clazz": "informational"}
               ]' />
-          <h1>Details</h1>
+          <div class="h1">Details</div>
           <code-violation-files class="section"
             page='${it.getUrlParameter("page")}'
             sort='${it.getUrlParameter("sort")}'
