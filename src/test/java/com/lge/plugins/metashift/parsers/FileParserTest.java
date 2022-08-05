@@ -137,7 +137,7 @@ public class FileParserTest {
     assertEquals(6, recipes.objects(RecipeViolationData.class).count());
     assertEquals(6, recipes.objects(MutationTestData.class).count());
     assertEquals(10, recipes.objects(TestData.class).count());
-    assertEquals(3, recipes.objects(StatementCoverageData.class).count());
+    assertEquals(5, recipes.objects(StatementCoverageData.class).count());
     assertEquals(3, recipes.objects(BranchCoverageData.class).count());
     assertEquals(3, recipes.objects(ComplexityData.class).count());
     assertEquals(6, recipes.objects(CodeViolationData.class).count());
@@ -176,7 +176,7 @@ public class FileParserTest {
     assertEquals(12, recipes.objects(RecipeViolationData.class).count());
     assertEquals(12, recipes.objects(MutationTestData.class).count());
     assertEquals(20, recipes.objects(TestData.class).count());
-    assertEquals(6, recipes.objects(StatementCoverageData.class).count());
+    assertEquals(10, recipes.objects(StatementCoverageData.class).count());
     assertEquals(6, recipes.objects(BranchCoverageData.class).count());
     assertEquals(6, recipes.objects(ComplexityData.class).count());
     assertEquals(12, recipes.objects(CodeViolationData.class).count());

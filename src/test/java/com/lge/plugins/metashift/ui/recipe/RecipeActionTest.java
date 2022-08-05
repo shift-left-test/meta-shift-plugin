@@ -108,7 +108,7 @@ public class RecipeActionTest {
     assertValues(recipeReport.getCodeViolations().getEvaluation(), false, true, 0.1, 10, 6, 0.6);
     assertValues(recipeReport.getComments().getEvaluation(), true, true, 0.2, 10, 5, 0.5);
     assertValues(recipeReport.getComplexity().getEvaluation(), false, true, 0.1, 11, 5, 0.45);
-    assertValues(recipeReport.getStatementCoverage().getEvaluation(), false, true, 0.8, 3, 1, 0.33);
+    assertValues(recipeReport.getStatementCoverage().getEvaluation(), false, true, 0.8, 5, 2, 0.4);
     assertValues(recipeReport.getBranchCoverage().getEvaluation(), true, true, 0.4, 7, 3, 0.42);
     assertValues(recipeReport.getDuplications().getEvaluation(), true, true, 0.1, 10, 0, 0.0);
     assertValues(recipeReport.getMutationTests().getEvaluation(), false, true, 0.85, 6, 1, 0.16);
@@ -161,9 +161,9 @@ public class RecipeActionTest {
     assertEquals(0.0, sharedStateCacheStatistics.getDouble("max"), 0.01);
 
     JSONObject statementCoverageStatistics = recipeReport.getStatementCoverage().getStatistics();
-    assertEquals(0.33, statementCoverageStatistics.getDouble("average"), 0.01);
-    assertEquals(0.33, statementCoverageStatistics.getDouble("min"), 0.01);
-    assertEquals(0.33, statementCoverageStatistics.getDouble("max"), 0.01);
+    assertEquals(0.4, statementCoverageStatistics.getDouble("average"), 0.01);
+    assertEquals(0.4, statementCoverageStatistics.getDouble("min"), 0.01);
+    assertEquals(0.4, statementCoverageStatistics.getDouble("max"), 0.01);
 
     JSONObject testStatistics = recipeReport.getUnitTests().getStatistics();
     assertEquals(0.1, testStatistics.getDouble("average"), 0.01);

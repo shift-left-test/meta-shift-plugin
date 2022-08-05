@@ -209,11 +209,12 @@ public class CoverageParserTest {
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     parse(directory);
-    assertDataList(true, 4);
+    assertDataList(true, 5);
     assertValues(0, "D-1.0.0-r0", "a.cpp", 1, 0, true);
     assertValues(1, "D-1.0.0-r0", "a.cpp", 10, 0, false);
     assertValues(2, "D-1.0.0-r0", "a.cpp", 30, 0, true);
-    assertValues(3, "D-1.0.0-r0", "a.cpp", 30, 1, false);
+    assertValues(3, "D-1.0.0-r0", "a.cpp", 30, 0, true);
+    assertValues(4, "D-1.0.0-r0", "a.cpp", 30, 1, false);
   }
 
   @Test
@@ -264,10 +265,11 @@ public class CoverageParserTest {
         .append("</classes>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     parse(directory);
-    assertDataList(true, 4);
+    assertDataList(true, 5);
     assertValues(0, "E-1.0.0-r0", "a.cpp", 1, 0, true);
     assertValues(1, "E-1.0.0-r0", "a.cpp", 10, 0, false);
     assertValues(2, "E-1.0.0-r0", "b.cpp", 30, 0, true);
-    assertValues(3, "E-1.0.0-r0", "b.cpp", 30, 1, false);
+    assertValues(3, "E-1.0.0-r0", "b.cpp", 30, 0, true);
+    assertValues(4, "E-1.0.0-r0", "b.cpp", 30, 1, false);
   }
 }

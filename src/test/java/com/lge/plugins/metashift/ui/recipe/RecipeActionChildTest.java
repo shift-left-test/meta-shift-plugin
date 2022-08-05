@@ -162,7 +162,7 @@ public class RecipeActionChildTest {
         .findFirst().orElse(null);
     assertNotNull(statementCoverageAction);
     assertEquals("Statement Coverage", statementCoverageAction.getDisplayName());
-    assertEquals("33%", statementCoverageAction.getScale());
+    assertEquals("40%", statementCoverageAction.getScale());
     assertEquals(recipeAction.getReport().getStatementCoverage(), statementCoverageAction.getGroup());
     assertEquals("80%", statementCoverageAction.getThresholdString());
     assertEquals(recipeAction.getReport().getStatementCoverage().getSummaries(),

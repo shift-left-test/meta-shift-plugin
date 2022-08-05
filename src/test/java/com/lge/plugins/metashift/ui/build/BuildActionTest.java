@@ -151,7 +151,7 @@ public class BuildActionTest {
     assertValues(projectReport.getCodeViolations().getEvaluation(), false, true, 0.1, 10, 6, 0.6);
     assertValues(projectReport.getComments().getEvaluation(), true, true, 0.2, 10, 5, 0.5);
     assertValues(projectReport.getComplexity().getEvaluation(), false, true, 0.1, 11, 5, 0.45);
-    assertValues(projectReport.getStatementCoverage().getEvaluation(), false, true, 0.8, 3, 1, 0.33);
+    assertValues(projectReport.getStatementCoverage().getEvaluation(), false, true, 0.8, 5, 2, 0.4);
     assertValues(projectReport.getBranchCoverage().getEvaluation(), true, true, 0.4, 7, 3, 0.42);
     assertValues(projectReport.getDuplications().getEvaluation(), true, true, 0.1, 10, 0, 0.0);
     assertValues(projectReport.getMutationTests().getEvaluation(), false, true, 0.85, 6, 1, 0.16);
@@ -179,7 +179,7 @@ public class BuildActionTest {
     assertNull(buildAction.getPreviousBuildAction());
     assertEquals(1.0, buildAction.getTestedRecipesDelta(), 0);
     assertCodeSizeDelta(buildAction, 1, 0, 0, 1, 10);
-    assertMetricDelta(buildAction, 0.0, 0.0, 0.6, 0.5, 0.45, 0.33, 0.42, 0.0, 0.16, 0.6, 0.1);
+    assertMetricDelta(buildAction, 0.0, 0.0, 0.6, 0.5, 0.45, 0.4, 0.42, 0.0, 0.16, 0.6, 0.1);
 
     // second build and check diff.
     FreeStyleBuild run2 = jenkins.buildAndAssertStatus(Result.SUCCESS, project);

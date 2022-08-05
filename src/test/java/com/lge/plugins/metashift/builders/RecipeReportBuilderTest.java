@@ -78,7 +78,7 @@ public class RecipeReportBuilderTest {
             .setCodeViolations(1, 1, 1)
             .setComplexity(10, 1, 0)
             .setTests(1, 1, 1, 1)
-            .setStatementCoverage(1, 1)
+            .setStatementCoverage(2, 1)
             .setBranchCoverage(1, 1)
             .setMutationTests(1, 1, 1))
         .add(script2.setIssues(2, 2, 2))
@@ -232,14 +232,14 @@ public class RecipeReportBuilderTest {
   @Test
   public void testGetStatementCoverage() {
     RecipeGroup group = report.getStatementCoverage();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.25), group.getStatistics());
-    assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
+    assertEquals(newEvaluation(true, 8, 3, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
+    assertEquals(newStatistics(0.375), group.getStatistics());
+    assertEquals(newDistribution(3, 5, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
+    assertEquals(0.6, summaries.get(0).getDouble("ratio"), 0.01);
     assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
-    assertEquals(2, group.getObjects(FILE1).size());
-    assertEquals(2, group.getObjects(FILE2).size());
+    assertEquals(5, group.getObjects(FILE1).size());
+    assertEquals(3, group.getObjects(FILE2).size());
     assertFalse(group.readFile(FILE1).isEmpty());
     assertFalse(group.readFile(FILE2).isEmpty());
   }

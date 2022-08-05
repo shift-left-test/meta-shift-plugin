@@ -80,9 +80,8 @@ public class CoverageParser extends Parser {
       long lineNumber = Long.parseLong(line.getAttribute("number", "0"));
       boolean covered = Long.parseLong(line.getAttribute("hits", "0")) > 0;
       TagList conditions = line.getChildNodes("cond");
-      if (conditions.isEmpty()) {
-        list.add(new StatementCoverageData(recipe, filename, lineNumber, covered));
-      } else {
+      list.add(new StatementCoverageData(recipe, filename, lineNumber, covered));
+      if (!conditions.isEmpty()) {
         for (Tag condition : conditions) {
           long index = Long.parseLong(condition.getAttribute("branch_number", "0"));
           covered = Long.parseLong(condition.getAttribute("hit", "0")) > 0;
