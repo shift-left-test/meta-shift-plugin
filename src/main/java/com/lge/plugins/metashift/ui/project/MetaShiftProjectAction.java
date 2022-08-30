@@ -40,7 +40,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
 
   @Override
   public String getUrlName() {
-    return "meta-shift-dashboard";
+    return "meta-shift-report";
   }
 
   @Override
@@ -49,7 +49,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
   }
 
   /**
-   * return last successful build action.
+   * Return last successful build action.
    */
   public BuildAction getLastResultBuild() {
     for (AbstractBuild<?, ?> b = project.getLastSuccessfulBuild();
@@ -66,14 +66,31 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
   }
 
   /**
+   * Return the last successful build number.
+   */
+  public Integer getLastResultBuildNumber() {
+    for (AbstractBuild<?, ?> b = project.getLastSuccessfulBuild();
+        b != null; b = b.getPreviousNotFailedBuild()) {
+      if (b.getResult() == Result.FAILURE) {
+        continue;
+      }
+      BuildAction r = b.getAction(BuildAction.class);
+      if (r != null) {
+        return b.getNumber();
+      }
+    }
+    return null;
+  }
+
+  /**
    * redirect to build action page.
    */
   public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException {
-    BuildAction action = getLastResultBuild();
-    if (action == null) {
+    Integer buildNumber = getLastResultBuildNumber();
+    if (buildNumber == null) {
       rsp.sendRedirect2("nodata");
     } else {
-      rsp.sendRedirect2("../../../" + action.getRun().getUrl() + action.getUrlName() + "/");
+      rsp.sendRedirect2("../" + buildNumber + "/meta-shift-report");
     }
   }
 
