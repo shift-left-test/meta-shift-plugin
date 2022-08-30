@@ -56,7 +56,7 @@
         default="${descriptor.configuration.premirrorCacheAsUnstable}"/>
     </div>
     <div class="title">Premirror Cache</div>
-    <div class="description">is less than or equal to</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="premirrorCacheThreshold"
         value="${it.premirrorCacheThreshold}"
@@ -72,7 +72,7 @@
         default="${descriptor.configuration.sharedStateCacheAsUnstable}"/>
     </div>
     <div class="title">Shared State Cache</div>
-    <div class="description">is less than or equal to</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="sharedStateCacheThreshold"
         value="${it.sharedStateCacheThreshold}"
@@ -88,7 +88,7 @@
         default="${descriptor.configuration.recipeViolationsAsUnstable}"/>
     </div>
     <div class="title">Recipe Violations</div>
-    <div class="description">is greater than or equal to</div>
+    <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="recipeViolationThreshold"
         value="${it.recipeViolationThreshold}"
@@ -104,7 +104,7 @@
         default="${descriptor.configuration.commentsAsUnstable}"/>
     </div>
     <div class="title">Comments</div>
-    <div class="description">is less than or equal to</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="commentThreshold"
         value="${it.commentThreshold}"
@@ -120,7 +120,7 @@
         default="${descriptor.configuration.codeViolationsAsUnstable}"/>
     </div>
     <div class="title">Code Violations</div>
-    <div class="description">is greater than or equal to</div>
+    <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="codeViolationThreshold"
         value="${it.codeViolationThreshold}"
@@ -136,7 +136,7 @@
         default="${descriptor.configuration.complexityAsUnstable}"/>
     </div>
     <div class="title">Complexity</div>
-    <div class="description">is greater than or equal to</div>
+    <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="complexityThreshold"
         value="${it.complexityThreshold}"
@@ -160,7 +160,7 @@
         default="${descriptor.configuration.duplicationsAsUnstable}"/>
     </div>
     <div class="title">Duplications</div>
-    <div class="description">is greater than or equal to</div>
+    <div class="description">is less than or equal to</div>
     <div class="input">
       <f:number field="duplicationThreshold"
         value="${it.duplicationThreshold}"
@@ -184,7 +184,7 @@
         default="${descriptor.configuration.testAsUnstable}"/>
     </div>
     <div class="title">Unit Tests</div>
-    <div class="description">is less than or equal to</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="testThreshold"
         value="${it.testThreshold}"
@@ -200,7 +200,7 @@
         default="${descriptor.configuration.statementCoverageAsUnstable}"/>
     </div>
     <div class="title">Statement Coverage</div>
-    <div class="description">is less than or equal to</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="statementCoverageThreshold"
         value="${it.statementCoverageThreshold}"
@@ -216,7 +216,7 @@
         default="${descriptor.configuration.branchCoverageAsUnstable}"/>
     </div>
     <div class="title">Branch Coverage</div>
-    <div class="description">is less than or equal to</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="branchCoverageThreshold"
         value="${it.branchCoverageThreshold}"
@@ -232,7 +232,7 @@
         default="${descriptor.configuration.mutationTestAsUnstable}"/>
     </div>
     <div class="title">Mutation Tests</div>
-    <div class="description">is less than or equal to</div>
+    <div class="description">is greater than or equal to</div>
     <div class="input">
       <f:number field="mutationTestThreshold"
         value="${it.mutationTestThreshold}"
