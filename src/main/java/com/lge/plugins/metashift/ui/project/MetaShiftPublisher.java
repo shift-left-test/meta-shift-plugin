@@ -264,7 +264,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
       logger.println("[meta-shift-plugin] Done.");
     } catch (IllegalArgumentException | IOException e) {
-      throw new AbortException(e.getMessage());
+      e.printStackTrace(logger);
+      throw new AbortException(e.toString());
     } catch (InterruptedException ignored) {
       run.setResult(Result.ABORTED);
     }

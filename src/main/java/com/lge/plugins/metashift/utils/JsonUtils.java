@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * JsonUtils class.
@@ -48,7 +49,8 @@ public class JsonUtils {
     String checksum = file.digest();
     if (!objects.containsKey(checksum)) {
       try {
-        objects.put(checksum, JsonIterator.deserialize(file.readToString()));
+        String data = IOUtils.toString(file.read(), StandardCharsets.UTF_8);
+        objects.put(checksum, JsonIterator.deserialize(data));
       } catch (IOException e) {
         throw new JSONException(e);
       }

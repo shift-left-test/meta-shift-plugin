@@ -67,6 +67,7 @@ import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,7 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.IOUtils;
 
 /**
  * RecipeReportBuilder class.
@@ -142,7 +144,8 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     try {
       Any metadata = JsonUtils.createObject(path.child(recipe).child("metadata.json"));
       FilePath filePath = getFilePath(path, metadata.toString(basedir), file);
-      put(Metric.NONE, Data.FILE, recipe, file, filePath.readToString());
+      String data = IOUtils.toString(filePath.read(), StandardCharsets.UTF_8);
+      put(Metric.NONE, Data.FILE, recipe, file, data);
     } catch (NoSuchFileException ignored) {
       // ignored
     }

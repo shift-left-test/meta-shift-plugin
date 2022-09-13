@@ -9,6 +9,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,49 +23,15 @@ import org.junit.rules.TemporaryFolder;
  */
 public class DigestUtilsTest {
 
-  @Rule
-  public final TemporaryFolder folder = new TemporaryFolder();
-  private TemporaryFileUtils utils;
-
-  @Before
-  public void setUp() {
-    utils = new TemporaryFileUtils(folder);
-  }
-
-  @Test(expected = IOException.class)
-  public void testSha1WithUnknownPath() throws IOException {
-    DigestUtils.sha1(utils.getPath("path-to-unknown"));
+  @Test
+  public void testSha1() {
+    assertEquals("aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d",
+        DigestUtils.sha1("hello".getBytes(StandardCharsets.UTF_8)));
   }
 
   @Test
-  public void testSha1WithUnknownPathAndDefaultValue() {
-    assertEquals("X", DigestUtils.sha1(utils.getPath("path-to-unknown"), "X"));
-  }
-
-  @Test(expected = IOException.class)
-  public void testSha1WithDirectory() throws IOException {
-    DigestUtils.sha1(utils.createDirectory("directory"));
-  }
-
-  @Test
-  public void testSha1WithDirectoryAndDefaultValue() throws IOException {
-    assertEquals("X", DigestUtils.sha1(utils.createDirectory("directory"), "X"));
-  }
-
-  @Test
-  public void testEmptyFile() throws IOException {
-    File directory = utils.createDirectory("directory");
-    File file = utils.writeLines(new StringBuilder(), directory, "a.file");
-    assertEquals("da39a3ee5e6b4b0d3255bfef95601890afd80709", DigestUtils.sha1(file));
-  }
-
-  @Test
-  public void testSha1OfEmptyString() {
-    assertEquals("da39a3ee5e6b4b0d3255bfef95601890afd80709", DigestUtils.sha1(""));
-  }
-
-  @Test
-  public void testSha1OfEmptyStringWithDefaultValue() {
-    assertEquals("da39a3ee5e6b4b0d3255bfef95601890afd80709", DigestUtils.sha1("", "X"));
+  public void testSha1WithNonUTF8() {
+    assertEquals("be69aca983a3e5541dd6905472962a32712c0567",
+        DigestUtils.sha1("ĥȅŀḷở".getBytes(StandardCharsets.UTF_8)));
   }
 }
