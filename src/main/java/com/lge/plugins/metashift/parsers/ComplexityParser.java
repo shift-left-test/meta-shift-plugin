@@ -42,6 +42,9 @@ public class ComplexityParser extends Parser {
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       Any json = JsonUtils.createObject(report);
+      if (!json.keys().contains("complexity")) {
+        return;
+      }
       List<Any> array = json.get("complexity").asList();
       List<ComplexityData> objects = new ArrayList<>(array.size());
 

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A parsers class for the CommentData objects.
@@ -42,22 +43,39 @@ public class CommentParser extends Parser {
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       Any json = JsonUtils.createObject(report);
-      List<Any> array = json.get("size").asList();
-      List<CommentData> objects = new ArrayList<>(array.size());
-
-      for (Any o : array) {
-        String file = o.toString("file");
-        if (isHidden(file)) {
-          continue;
-        }
-        objects.add(new CommentData(
-            path.getName(),
-            file,
-            o.toLong("total_lines"),
-            o.toLong("comment_lines")));
+      if (!json.keys().contains("size")) {
+        return;
       }
-      dataList.addAll(objects);
-      dataList.add(CommentData.class);
+      List<Any> array = json.get("size").asList();
+      List<Any> filtered = array.stream()
+          .filter(o -> !isHidden(o.toString("file")))
+          .filter(o -> o.keys().contains("total_lines") && o.keys().contains("comment_lines"))
+          .collect(Collectors.toList());
+      if (!filtered.isEmpty()) {
+        List<CommentData> objects = new ArrayList<>(array.size());
+        for (Any o : filtered) {
+          objects.add(new CommentData(
+              path.getName(),
+              o.toString("file"),
+              o.toLong("total_lines"),
+              o.toLong("comment_lines")));
+        }
+        dataList.addAll(objects);
+        dataList.add(CommentData.class);
+      }
+//      for (Any o : array) {
+//        String file = o.toString("file");
+//        if (isHidden(file)) {
+//          continue;
+//        }
+//        objects.add(new CommentData(
+//            path.getName(),
+//            file,
+//            o.toLong("total_lines"),
+//            o.toLong("comment_lines")));
+//      }
+//      dataList.addAll(objects);
+//      dataList.add(CommentData.class);
     } catch (JsonException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {

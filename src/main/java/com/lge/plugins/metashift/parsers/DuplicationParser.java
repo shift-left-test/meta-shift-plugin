@@ -66,6 +66,9 @@ public class DuplicationParser extends Parser {
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       Any json = JsonUtils.createObject(report);
+      if (!json.keys().contains("size") || !json.keys().contains("duplications")) {
+        return;
+      }
       List<Any> sizes = json.get("size").asList();
       List<Any> duplications = json.get("duplications").asList();
       Set<DuplicationData> objects = new HashSet<>();

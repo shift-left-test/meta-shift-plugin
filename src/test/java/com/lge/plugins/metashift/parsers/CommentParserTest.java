@@ -87,16 +87,25 @@ public class CommentParserTest {
   }
 
   @Test
+  public void testCreateWithEmptyFile() throws Exception {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("{ }");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    parse(directory);
+    assertDataList(false, 0);
+  }
+
+  @Test
   public void testCreateWithEmptyData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder.append("{ 'size': [ ] }");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-    assertDataList(true, 0);
+    assertDataList(false, 0);
   }
 
   @Test
-  public void testCreateWithInsufficientData() throws Exception {
+  public void testCreateWithNoTotalLines() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
         .append("{")
@@ -106,7 +115,24 @@ public class CommentParserTest {
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-    assertDataList(true, 1);
+    assertDataList(false, 0);
+  }
+
+  @Test
+  public void testCreateWithNoCommentLines() throws Exception {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    builder
+        .append("{")
+        .append("  'size': [")
+        .append("    {")
+        .append("      'file': 'a.file',")
+        .append("      'total_lines': 20")
+        .append("    }")
+        .append("  ]")
+        .append("}");
+    utils.writeLines(builder, directory, "checkcode", "sage_report.json");
+    parse(directory);
+    assertDataList(false, 0);
   }
 
   @Test
@@ -128,7 +154,7 @@ public class CommentParserTest {
         .append("}");
     utils.writeLines(builder, directory, "checkcode", "sage_report.json");
     parse(directory);
-    assertDataList(true, 0);
+    assertDataList(false, 0);
   }
 
   @Test

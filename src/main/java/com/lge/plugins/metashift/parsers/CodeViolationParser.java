@@ -45,9 +45,11 @@ public class CodeViolationParser extends Parser {
     FilePath report = path.child("checkcode").child("sage_report.json");
     try {
       Any json = JsonUtils.createObject(report);
+      if (!json.keys().contains("violations")) {
+        return;
+      }
       List<Any> array = json.get("violations").asList();
       List<CodeViolationData> objects = new ArrayList<>(array.size());
-
       for (Any o : array) {
         String file = o.toString("file");
         if (isHidden(file)) {
