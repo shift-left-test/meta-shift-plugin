@@ -109,6 +109,15 @@ public class CoverageParserTest {
   }
 
   @Test
+  public void testCreateWithEmptyDataOfAnotherFilename() throws Exception {
+    File directory = utils.createDirectory("report", "B-1.0.0-r0");
+    builder.append("<classes> </classes>");
+    utils.writeLines(builder, directory, "coverage", "cobertura-coverage.xml");
+    parse(directory);
+    assertDataList(true, 0);
+  }
+
+  @Test
   public void testCreateWithInsufficientLineData() throws Exception {
     File directory = utils.createDirectory("report", "B-1.0.0-r0");
     builder
@@ -198,12 +207,7 @@ public class CoverageParserTest {
         .append("    <lines>")
         .append("      <line branch='false' hits='1' number='1'/>")
         .append("      <line branch='false' hits='0' number='10'/>")
-        .append("      <line branch='true' hits='1' number='30' condition-coverage='50% (1/2)'>")
-        .append("        <conds>")
-        .append("          <cond block_number='0' branch_number='0' hit='1'/>")
-        .append("          <cond block_number='0' branch_number='1' hit='0'/>")
-        .append("        </conds>")
-        .append("      </line>")
+        .append("      <line branch='true' hits='1' number='30' condition-coverage='50% (1/2)'/>")
         .append("    </lines>")
         .append("  </class>")
         .append("</classes>");
@@ -254,12 +258,7 @@ public class CoverageParserTest {
         .append("      </method>")
         .append("    </methods>")
         .append("    <lines>")
-        .append("      <line branch='true' hits='1' number='30' condition-coverage='50% (1/2)'>")
-        .append("        <conds>")
-        .append("          <cond block_number='0' branch_number='0' hit='1'/>")
-        .append("          <cond block_number='0' branch_number='1' hit='0'/>")
-        .append("        </conds>")
-        .append("      </line>")
+        .append("      <line branch='true' hits='1' number='30' condition-coverage='50% (1/2)'/>")
         .append("    </lines>")
         .append("  </class>")
         .append("</classes>");

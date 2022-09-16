@@ -58,6 +58,6 @@ public class FakeCoverageReportTest {
 
     List<String> lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
     assertExists(lines, "<line branch=\"false\"", 3);
-    assertExists(lines, "<cond block_number=\"0\"", 7);
+    assertExists(lines, "<line branch=\"true\"", 2);
   }
 }

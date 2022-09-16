@@ -37,38 +37,26 @@ public class FakeCoverageReport implements FakeReport {
     return lines;
   }
 
-  private List<String> createBranchCoverageCovered(FakeSource source, long index) {
-    List<String> lines = new ArrayList<>();
-    if (source.getBranchCoverageCovered() == 0) {
-      return lines;
+  private String createBranchCoverageCovered(FakeSource source, long index) {
+    long covered = source.getBranchCoverageCovered();
+    if (covered == 0) {
+      return "";
     }
-    long branch_number = 0;
-    lines.add(String.format("<line branch=\"true\" hits=\"1\" number=\"%d\">", index));
-    lines.add("<conds>");
-    for (long i = 0; i < source.getBranchCoverageCovered(); i++) {
-      lines.add(String.format("<cond block_number=\"0\" branch_number=\"%d\" hit=\"1\"/>",
-          branch_number++));
-    }
-    lines.add("</conds>");
-    lines.add("</line>");
-    return lines;
+    return String.format("<line branch=\"true\" hits=\"1\" number=\"%d\" condition-coverage=\"100%% (%d/%d)\"/>",
+        index,
+        covered,
+        covered);
   }
 
-  private List<String> createBranchCoverageMissed(FakeSource source, long index) {
-    List<String> lines = new ArrayList<>();
-    if (source.getBranchCoverageMissed() == 0) {
-      return lines;
+  private String createBranchCoverageMissed(FakeSource source, long index) {
+    long missed = source.getBranchCoverageMissed();
+    if (missed == 0) {
+      return "";
     }
-    long branch_number = 0;
-    lines.add(String.format("<line branch=\"true\" hits=\"0\" number=\"%d\">", index));
-    lines.add("<conds>");
-    for (long i = 0; i < source.getBranchCoverageMissed(); i++) {
-      lines.add(String.format("<cond block_number=\"0\" branch_number=\"%d\" hit=\"0\"/>",
-          branch_number++));
-    }
-    lines.add("</conds>");
-    lines.add("</line>");
-    return lines;
+    return String.format("<line branch=\"true\" hits=\"0\" number=\"%d\" condition-coverage=\"0%% (%d/%d)\"/>",
+        index,
+        0,
+        missed);
   }
 
   private List<String> createLineTags(FakeSource source) {
@@ -81,8 +69,8 @@ public class FakeCoverageReport implements FakeReport {
     for (long i = 0; i < source.getStatementCoverageMissed(); i++) {
       lines.add(String.format("<line branch=\"false\" hits=\"0\" number=\"%d\"/>", ++index));
     }
-    lines.addAll(createBranchCoverageCovered(source, ++index));
-    lines.addAll(createBranchCoverageMissed(source, ++index));
+    lines.add(createBranchCoverageCovered(source, ++index));
+    lines.add(createBranchCoverageMissed(source, ++index));
     lines.add("</lines>");
     return lines;
   }

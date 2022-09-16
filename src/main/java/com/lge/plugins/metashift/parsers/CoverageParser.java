@@ -11,12 +11,13 @@ import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.utils.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.utils.xml.Tag;
-import com.lge.plugins.metashift.utils.xml.TagList;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
@@ -44,6 +45,9 @@ public class CoverageParser extends Parser {
   @Override
   public void parse() throws IOException, InterruptedException {
     FilePath report = path.child("coverage").child("coverage.xml");
+    if (!report.exists()) {
+      report = path.child("coverage").child("cobertura-coverage.xml");
+    }
     try {
       SimpleXmlParser parser = new SimpleXmlParser(report);
       List<CoverageData> objects = new ArrayList<>();
@@ -79,13 +83,23 @@ public class CoverageParser extends Parser {
     try {
       long lineNumber = Long.parseLong(line.getAttribute("number", "0"));
       boolean covered = Long.parseLong(line.getAttribute("hits", "0")) > 0;
-      TagList conditions = line.getChildNodes("cond");
       list.add(new StatementCoverageData(recipe, filename, lineNumber, covered));
-      if (!conditions.isEmpty()) {
-        for (Tag condition : conditions) {
-          long index = Long.parseLong(condition.getAttribute("branch_number", "0"));
-          covered = Long.parseLong(condition.getAttribute("hit", "0")) > 0;
-          list.add(new BranchCoverageData(recipe, filename, lineNumber, index, covered));
+
+      if (line.hasAttribute("condition-coverage")) {
+        Pattern pattern = Pattern.compile("(\\d+)/(\\d+)");
+        Matcher matcher = pattern.matcher(line.getAttribute("condition-coverage"));
+        if (matcher.find()) {
+          int coveredBranches = Integer.parseInt(matcher.group(1));
+          int totalBranches = Integer.parseInt(matcher.group(2));
+          int index = 0;
+          // Create covered branch coverage data
+          for (; index < coveredBranches; index++) {
+            list.add(new BranchCoverageData(recipe, filename, lineNumber, index, true));
+          }
+          // Create uncovered branch coverage data
+          for (; index < totalBranches; index++) {
+            list.add(new BranchCoverageData(recipe, filename, lineNumber, index, false));
+          }
         }
       }
     } catch (NullPointerException | NumberFormatException ignored) {
