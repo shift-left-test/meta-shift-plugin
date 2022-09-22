@@ -37,19 +37,19 @@ export class StatementCoverageTreemap extends RecipeTreemap {
             <div>
               <div class="tooltip-qualified-key">Statements:</div>
               <div class="tooltip-qualified-value">
-                ${tooltipInfo.first.toLocaleString()}
+                ${tooltipInfo.total.toLocaleString()}
               </div>
             </div>
             <div>
               <div class="tooltip-qualified-key">Covered:</div>
               <div class="tooltip-qualified-value">
-                ${tooltipInfo.second.toLocaleString()}
+                ${tooltipInfo.first.toLocaleString()}
               </div>
             </div>
             <div>
               <div class="tooltip-qualified-key">Uncovered:</div>
               <div class="tooltip-qualified-value">
-                ${tooltipInfo.third.toLocaleString()}
+                ${tooltipInfo.second.toLocaleString()}
               </div>
             </div>
             <div>
