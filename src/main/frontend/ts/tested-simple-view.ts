@@ -51,9 +51,12 @@ export class TestedSimpleView extends LitElement {
       <div class="size-number">
        ${testRate}%
       </div>
-      <div class="size-diff">
-      (${diffDirection}${Math.floor(Math.abs((this.delta * 100)))}%)
-      </div>
+      ${Number.isNaN(this.delta) || this.delta === undefined ?
+          html`` :
+          html`
+          <div class="size-diff">
+          (${diffDirection}${Math.floor(Math.abs((this.delta * 100)))}%)
+          </div>`}
       <div class="description">
         <b>${Number(tested.numerator).toLocaleString()}</b>
         out of <b>${Number(tested.denominator).toLocaleString()}</b>
