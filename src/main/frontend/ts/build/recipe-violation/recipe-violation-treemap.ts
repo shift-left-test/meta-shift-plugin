@@ -36,6 +36,12 @@ export class RecipeViolationTreemap extends RecipeTreemap {
           ${info.name}</div>
           <div class="tooltip-body">
             <div>
+              <div class="tooltip-qualified-key">Lines of Code:</div>
+              <div class="tooltip-qualified-value">
+                ${tooltipInfo.linesOfCode.toLocaleString()}
+              </div>
+            </div>
+            <div>
               <div class="tooltip-qualified-key">Issues:</div>
               <div class="tooltip-qualified-value">
                 ${tooltipInfo.total.toLocaleString()}
