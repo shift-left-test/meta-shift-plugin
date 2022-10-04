@@ -143,7 +143,7 @@ public class TestParserTest {
         .append("  </testsuite>")
         .append("  <testsuite name='B'>")
         .append("    <testcase name='test2'>")
-        .append("      <failure message='failure'/>")
+        .append("      <failure message='failure'><![CDATA[failure]]></failure>")
         .append("    </testcase>")
         .append("  </testsuite>")
         .append("  <testsuite name='C'>")
@@ -153,7 +153,7 @@ public class TestParserTest {
         .append("  </testsuite>")
         .append("  <testsuite name='D'>")
         .append("    <testcase name='test4'>")
-        .append("      <skipped message='skipped'/>")
+        .append("      <skipped><![CDATA[skipped]]></skipped>")
         .append("    </testcase>")
         .append("  </testsuite>")
         .append("</testsuites>");
@@ -182,7 +182,7 @@ public class TestParserTest {
         .append("<testsuites>")
         .append("  <testsuite name='B'>")
         .append("    <testcase name='test2'>")
-        .append("      <failure message='failure'/>")
+        .append("      <failure message='failure'><![CDATA[failure]]></failure>")
         .append("    </testcase>")
         .append("  </testsuite>")
         .append("</testsuites>");
@@ -202,7 +202,7 @@ public class TestParserTest {
         .append("<testsuites>")
         .append("  <testsuite name='D'>")
         .append("    <testcase name='test4'>")
-        .append("      <skipped message='skipped'/>")
+        .append("      <skipped><![CDATA[skipped]]></skipped>")
         .append("    </testcase>")
         .append("  </testsuite>")
         .append("</testsuites>");

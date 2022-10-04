@@ -42,7 +42,8 @@ public class FakeCoverageReport implements FakeReport {
     if (covered == 0) {
       return "";
     }
-    return String.format("<line branch=\"true\" hits=\"1\" number=\"%d\" condition-coverage=\"100%% (%d/%d)\"/>",
+    return String.format(
+        "<line branch=\"true\" hits=\"1\" number=\"%d\" condition-coverage=\"100%% (%d/%d)\"/>",
         index,
         covered,
         covered);
@@ -53,7 +54,8 @@ public class FakeCoverageReport implements FakeReport {
     if (missed == 0) {
       return "";
     }
-    return String.format("<line branch=\"true\" hits=\"0\" number=\"%d\" condition-coverage=\"0%% (%d/%d)\"/>",
+    return String.format(
+        "<line branch=\"true\" hits=\"0\" number=\"%d\" condition-coverage=\"0%% (%d/%d)\"/>",
         index,
         0,
         missed);

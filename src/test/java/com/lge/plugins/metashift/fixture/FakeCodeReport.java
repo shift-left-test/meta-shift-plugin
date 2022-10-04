@@ -8,8 +8,6 @@ package com.lge.plugins.metashift.fixture;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;

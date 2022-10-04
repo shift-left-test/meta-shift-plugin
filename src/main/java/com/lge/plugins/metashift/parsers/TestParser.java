@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -100,7 +101,9 @@ public class TestParser extends Parser {
       final Tag testcase) throws SAXException {
     String name = testcase.getAttribute("name");
     for (Tag tag : testcase.getChildNodes()) {
-      String message = tag.getAttribute("message");
+      String message = tag.getAttribute("message", tag.getTextContent());
+      message = StringUtils.removeStart(message, "<![CDATA[");
+      message = StringUtils.removeEnd(message, "]]>");
       String status = tag.getTagName();
       switch (status.toLowerCase()) {
         case "failure":

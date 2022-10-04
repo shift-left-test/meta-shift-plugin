@@ -43,7 +43,7 @@ public class FakeTestReport implements FakeReport {
     report.add(String.format("<testsuite name=\"%s.Test\" tests=\"1\" >", recipe.getName()));
     report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\">",
         FakeRandom.nextString(), recipe.getName()));
-    report.add("<failure message=\"failure_message\">failure details</failure>");
+    report.add("<failure message=\"failure_message\"><![CDATA[failure details]]></failure>");
     report.add("</testcase>");
     report.add("</testsuite>");
     report.add("</testsuites>");
@@ -57,7 +57,7 @@ public class FakeTestReport implements FakeReport {
     report.add(String.format("<testsuite name=\"%s.Test\" tests=\"1\" >", recipe.getName()));
     report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\">",
         FakeRandom.nextString(), recipe.getName()));
-    report.add("<error message=\"error_message\">error details</error>");
+    report.add("<error message=\"error_message\"/>");
     report.add("</testcase>");
     report.add("</testsuite>");
     report.add("</testsuites>");
@@ -71,7 +71,7 @@ public class FakeTestReport implements FakeReport {
     report.add(String.format("<testsuite name=\"%s.Test\" tests=\"1\" >", recipe.getName()));
     report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\">",
         FakeRandom.nextString(), recipe.getName()));
-    report.add("<skipped message=\"skipped_message\">skipped details</skipped>");
+    report.add("<skipped><![CDATA[skipped details]]></skipped>");
     report.add("</testcase>");
     report.add("</testsuite>");
     report.add("</testsuites>");
