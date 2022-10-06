@@ -233,6 +233,13 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
       throws InterruptedException, IOException {
     PrintStream logger = listener.getLogger();
+
+    Result buildResult = run.getResult();
+    if (buildResult != null && buildResult.isWorseThan(Result.SUCCESS)) {
+      logger.println("[meta-shift-plugin] Skipping the report as build was not SUCCESS.");
+      return;
+    }
+
     logger.println("[meta-shift-plugin] Scanning for the meta-shift report...");
 
     Instant started = Instant.now();
