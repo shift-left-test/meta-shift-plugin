@@ -49,9 +49,9 @@ public abstract class ActionParentBase extends Actionable {
       throws Exception {
     ContextMenu menu = new ContextMenu();
 
-    final MenuItem headerBuildPerformance = new MenuItem().withDisplayName("Build Performance");
-    headerBuildPerformance.header = true;
-    menu.add(headerBuildPerformance);
+    final MenuItem headerBuildSystem = new MenuItem().withDisplayName("Build System");
+    headerBuildSystem.header = true;
+    menu.add(headerBuildSystem);
     this.addActionToMenu(menu, this.childActionPremirrorCache);
     this.addActionToMenu(menu, this.childActionSharedStateCache);
     this.addActionToMenu(menu, this.childActionRecipeViolations);

@@ -14,7 +14,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
             codeSize="${it.codeSizeJson}"
             codeSizeDelta="${it.codeSizeDeltaJson}" />
         </div>
-        <div class="h2">Build Performance</div>
+        <div class="h2">Build System</div>
         <div class="section">
           <ms:build-performance-row metrics_class="show_scale" />
         </div>

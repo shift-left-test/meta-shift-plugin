@@ -15,7 +15,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
       </div>
       <div class="summary">
         <div class="column">
-          <div class="column-title">Build Performance</div>
+          <div class="column-title">Build System</div>
           <summary-metrics-simple-view name="Premirror Cache" class="percent"
             evaluation="${it.report.premirrorCache.evaluation}" />
           <summary-metrics-simple-view name="Shared State Cache" class="percent"

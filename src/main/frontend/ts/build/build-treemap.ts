@@ -55,7 +55,7 @@ export class BuildTreemap extends RecipeTreemap {
   private qualifiedTooltip(tooltipInfo) {
     return `
     <div class="tooltip-column">
-      <div class="tooltip-section">Build Performance</div>
+      <div class="tooltip-section">Build System</div>
       ${this.generateQualifiedTooltipString('Premirror Cache',
       tooltipInfo.premirrorCache)}
       ${this.generateQualifiedTooltipString('Shared State Cache',
