@@ -63,19 +63,6 @@ public class CommentParser extends Parser {
         dataList.addAll(objects);
         dataList.add(CommentData.class);
       }
-//      for (Any o : array) {
-//        String file = o.toString("file");
-//        if (isHidden(file)) {
-//          continue;
-//        }
-//        objects.add(new CommentData(
-//            path.getName(),
-//            file,
-//            o.toLong("total_lines"),
-//            o.toLong("comment_lines")));
-//      }
-//      dataList.addAll(objects);
-//      dataList.add(CommentData.class);
     } catch (JsonException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
     } catch (NoSuchFileException ignored) {
