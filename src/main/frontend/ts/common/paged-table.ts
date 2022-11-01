@@ -73,7 +73,6 @@ export class PagedTable extends LitElement {
       pagination: 'local',
       paginationSize: 10,
       paginationSizeSelector: [10, 50, 100, 500],
-      paginationCounter: 'rows',
       layout: 'fitColumns',
       columns: this.columns,
       tooltipsHeader: true,
