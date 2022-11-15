@@ -4,6 +4,9 @@ pipeline {
             image "cart.lge.com/swte/jenkins-dev:latest"
         }
     }
+    options {
+        disableConcurrentBuilds()
+    }
     stages {
         stage("Javadoc") {
             steps {
