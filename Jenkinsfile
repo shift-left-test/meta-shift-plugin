@@ -15,7 +15,7 @@ pipeline {
         }
         stage("StaticAnalysis") {
             steps {
-                sh "mvn checkstyle:checkstyle pmd:pmd pmd:cpd spotbugs:spotbugs"
+                sh "mvn checkstyle:checkstyle jxr:jxr pmd:pmd pmd:cpd spotbugs:spotbugs"
             }
         }
         stage("Test") {
