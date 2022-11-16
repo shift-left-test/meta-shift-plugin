@@ -19,7 +19,6 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractProject;
-import hudson.model.Action;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -155,7 +154,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       try {
         int threshold = Integer.parseInt(thresholdStr);
 
-        if (threshold < 0 || threshold > 100) {
+        if (threshold < 0 || 100 < threshold) {
           return FormValidation.error("Value must be a value between 0 and 100.");
         }
         return FormValidation.ok();
@@ -276,10 +275,5 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     } catch (InterruptedException ignored) {
       run.setResult(Result.ABORTED);
     }
-  }
-
-  @Override
-  public Action getProjectAction(AbstractProject<?, ?> project) {
-    return new MetaShiftProjectAction(project);
   }
 }

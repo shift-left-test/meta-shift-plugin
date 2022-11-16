@@ -6,10 +6,11 @@
 package com.lge.plugins.metashift.ui.project;
 
 import com.lge.plugins.metashift.ui.build.BuildAction;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Result;
+import hudson.model.Run;
+import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
+import io.jenkins.plugins.echarts.AsyncTrendChart;
 import java.io.IOException;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
@@ -19,17 +20,18 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 /**
  * The project action class.
  */
-public class MetaShiftProjectAction implements ProminentProjectAction {
+public class MetaShiftProjectAction implements ProminentProjectAction, AsyncTrendChart,
+    AsyncConfigurableTrendChart {
 
   static final int MAX_TREND_CHART_SERIES = 20;
 
-  private final AbstractProject<?, ?> project;
+  private final Run<?, ?> project;
 
-  public MetaShiftProjectAction(AbstractProject<?, ?> project) {
+  public MetaShiftProjectAction(Run<?, ?> project) {
     this.project = project;
   }
 
-  public AbstractProject<?, ?> getProject() {
+  public Run<?, ?> getProject() {
     return project;
   }
 
@@ -52,7 +54,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
    * Return last successful build action.
    */
   public BuildAction getLastResultBuild() {
-    for (AbstractBuild<?, ?> b = project.getLastSuccessfulBuild();
+    for (Run<?, ?> b = project.getParent().getLastSuccessfulBuild();
         b != null; b = b.getPreviousNotFailedBuild()) {
       if (b.getResult() == Result.FAILURE) {
         continue;
@@ -69,7 +71,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
    * Return the last successful build number.
    */
   public Integer getLastResultBuildNumber() {
-    for (AbstractBuild<?, ?> b = project.getLastSuccessfulBuild();
+    for (Run<?, ?> b = project.getParent().getLastSuccessfulBuild();
         b != null; b = b.getPreviousNotFailedBuild()) {
       if (b.getResult() == Result.FAILURE) {
         continue;
@@ -103,7 +105,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
   public JSONObject getTrendChartModel() {
     BuildTrendModel model = new BuildTrendModel(MAX_TREND_CHART_SERIES);
 
-    for (AbstractBuild<?, ?> b = project.getLastSuccessfulBuild();
+    for (Run<?, ?> b = project.getParent().getLastSuccessfulBuild();
         b != null; b = b.getPreviousNotFailedBuild()) {
       if (b.getResult() == Result.FAILURE) {
         continue;
@@ -120,5 +122,20 @@ public class MetaShiftProjectAction implements ProminentProjectAction {
     }
 
     return model.toJsonObject();
+  }
+
+  @Override
+  public String getConfigurableBuildTrendModel(String configuration) {
+    return getTrendChartModel().toString();
+  }
+
+  @Override
+  public String getBuildTrendModel() {
+    return getTrendChartModel().toString();
+  }
+
+  @Override
+  public boolean isTrendVisible() {
+    return true;
   }
 }

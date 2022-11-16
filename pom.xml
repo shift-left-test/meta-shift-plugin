@@ -16,7 +16,7 @@
   <properties>
     <revision>0.4.0</revision>
     <changelist>-SNAPSHOT</changelist>
-    <jenkins.version>2.263</jenkins.version>
+    <jenkins.version>2.263.1</jenkins.version>
     <java.level>8</java.level>
     <gitHubRepo>shift-left-test/${project.artifactId}-plugin</gitHubRepo>
   </properties>
@@ -34,11 +34,40 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>structs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>echarts-api</artifactId>
+      <version>5.2.1-2</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>font-awesome-api</artifactId>
+      <version>5.15.4-1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>jquery3-api</artifactId>
+      <version>3.6.0-2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>jackson2-api</artifactId>
+      <version>2.12.4</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>snakeyaml-api</artifactId>
+      <version>1.29.1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+      <version>2.5.0</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>

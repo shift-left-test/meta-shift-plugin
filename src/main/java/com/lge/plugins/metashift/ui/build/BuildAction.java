@@ -13,6 +13,7 @@ import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.ActionParentBase;
+import com.lge.plugins.metashift.ui.project.MetaShiftProjectAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import hudson.FilePath;
 import hudson.Functions;
@@ -21,12 +22,15 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import jenkins.model.RunAction2;
+import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.Stapler;
@@ -39,7 +43,7 @@ import org.kohsuke.stapler.export.ExportedBean;
  * The main post build action class.
  */
 @ExportedBean
-public class BuildAction extends ActionParentBase implements RunAction2 {
+public class BuildAction extends ActionParentBase implements LastBuildAction, RunAction2 {
 
   private transient Run<?, ?> run;
   private transient List<RecipeAction> recipeActions;
@@ -342,5 +346,10 @@ public class BuildAction extends ActionParentBase implements RunAction2 {
 
   public double getTestDelta() {
     return getRatioDelta(ProjectReport::getUnitTests);
+  }
+
+  @Override
+  public Collection<? extends Action> getProjectActions() {
+    return Collections.singleton(new MetaShiftProjectAction(run));
   }
 }
