@@ -25,7 +25,30 @@ export class UnitTestList extends FilesTable {
       {title: 'Status', field: 'status', width: 100,
         formatter: this._statusCellFormatter.bind(this)},
       {title: 'Message', field: 'message', widthGrow: 2,
-        formatter: 'textarea'},
+        formatter: function(cell, formatterParams, onRendered) {
+          cell.getElement().style.whiteSpace = 'pre-wrap';
+          let value = cell.getValue();
+          if (value) {
+            const entityMap = {
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              '\'': '&#39;',
+              '/': '&#x2F;',
+              '`': '&#x60;',
+              '=': '&#x3D;',
+            };
+            value = String(value).replace(/[&<>"'`=/]/g, function(s) {
+              return entityMap[s];
+            });
+            if (value.length > 300) {
+              value = value.substring(0, 300) + '...';
+            }
+          }
+          return (value) ? value : '$nbsp;';
+        },
+      },
     ];
     this.defalutSortColumn = 'status';
     this.hasRowClick = false;
