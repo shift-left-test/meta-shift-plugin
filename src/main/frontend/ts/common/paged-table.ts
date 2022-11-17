@@ -68,6 +68,11 @@ export class PagedTable extends LitElement {
    */
   firstUpdated() : void {
     this.tabulatorTable = new Tabulator(this.recipesTable, {
+      persistenceMode: 'local',
+      persistenceID: 'table',
+      persistence: {
+        page: true,
+      },
       selectable: this.hasRowClick,
       rowClick: this.hasRowClick ? this._handleRowClicked.bind(this) : null,
       pagination: 'local',
