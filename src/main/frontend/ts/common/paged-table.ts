@@ -77,7 +77,7 @@ export class PagedTable extends LitElement {
       rowClick: this.hasRowClick ? this._handleRowClicked.bind(this) : null,
       pagination: 'local',
       paginationSize: 10,
-      paginationSizeSelector: [10, 50, 100, 500],
+      paginationSizeSelector: [10, 25, 50, 100],
       layout: 'fitColumns',
       columns: this.columns,
       tooltipsHeader: true,
