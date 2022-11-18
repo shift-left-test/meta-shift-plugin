@@ -120,7 +120,8 @@ export class PagedTable extends LitElement {
    * handle download button click event.
    */
   _handleDownloadClicked() {
-    this.tabulatorTable.download('csv', `${this.downloadFileName}.csv`);
+    this.tabulatorTable.download('csv', `${this.downloadFileName}.csv`,
+        {bom: true});
   }
 
   /**
