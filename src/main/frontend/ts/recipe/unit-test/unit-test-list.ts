@@ -25,7 +25,7 @@ export class UnitTestList extends FilesTable {
       {title: 'Status', field: 'status', width: 100,
         formatter: this._statusCellFormatter.bind(this)},
       {title: 'Message', field: 'message', widthGrow: 2,
-        formatter: function(cell, formatterParams, onRendered) {
+        formatter: function(cell) {
           cell.getElement().style.whiteSpace = 'pre-wrap';
           let value = cell.getValue();
           if (value) {
