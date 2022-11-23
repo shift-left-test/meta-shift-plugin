@@ -7,6 +7,7 @@ import {html, LitElement} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import Tabulator from 'tabulator-tables';
 import {Utils} from '../common/utils';
+import * as XLSX from 'xlsx';
 
 @customElement('paged-table')
 /**
@@ -58,7 +59,7 @@ export class PagedTable extends LitElement {
         @keyup="${this._updateFilter}" />
       </span>
       <button class="export-button" @click="${this._handleDownloadClicked}">
-        Export to CSV</button>
+        Export to Excel</button>
     </div>
     <div class="paged-table"></div>`;
   }
@@ -120,8 +121,9 @@ export class PagedTable extends LitElement {
    * handle download button click event.
    */
   _handleDownloadClicked() {
-    this.tabulatorTable.download('csv', `${this.downloadFileName}.csv`,
-        {bom: true});
+    (window as any).XLSX = XLSX;
+    this.tabulatorTable.download('xlsx', `${this.downloadFileName}.xlsx`,
+        {sheetName: 'Report'});
   }
 
   /**
