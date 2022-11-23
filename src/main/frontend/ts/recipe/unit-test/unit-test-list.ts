@@ -46,7 +46,7 @@ export class UnitTestList extends FilesTable {
               value = value.substring(0, 300) + '...';
             }
           }
-          return (value) ? value : '$nbsp;';
+          return (value) ? value : '&nbsp;';
         },
       },
     ];
