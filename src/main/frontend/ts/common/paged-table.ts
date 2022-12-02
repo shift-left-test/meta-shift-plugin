@@ -122,8 +122,15 @@ export class PagedTable extends LitElement {
    */
   _handleDownloadClicked() {
     (window as any).XLSX = XLSX;
-    this.tabulatorTable.download('xlsx', `${this.downloadFileName}.xlsx`,
-        {sheetName: 'Report'});
+    this.tabulatorTable.download('xlsx', `${this.downloadFileName}.xlsx`, {
+      documentProcessing: function(workbook) {
+        workbook.Props = {
+          Comments: window.location.href,
+          CreatedDate: new Date(),
+        };
+        return workbook;
+      },
+    });
   }
 
   /**
