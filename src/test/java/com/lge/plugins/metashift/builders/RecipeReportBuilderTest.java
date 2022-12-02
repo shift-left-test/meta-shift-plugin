@@ -39,7 +39,7 @@ import org.junit.rules.TemporaryFolder;
  */
 public class RecipeReportBuilderTest {
 
-  private static final String RECIPE = "A-A-A";
+  private static final String RECIPE = "AAA";
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -70,7 +70,7 @@ public class RecipeReportBuilderTest {
     FakeSource source2 = new FakeSource(20, 10, 10, 10);
 
     FakeReportBuilder fakeReportBuilder = new FakeReportBuilder();
-    fakeReportBuilder.add(new FakeRecipe(source, RECIPE)
+    fakeReportBuilder.add(new FakeRecipe(source, RECIPE + "-1.0.0-r0")
         .setPremirror(1, 3)
         .setSharedState(1, 3)
         .add(script1.setIssues(1, 1, 1))

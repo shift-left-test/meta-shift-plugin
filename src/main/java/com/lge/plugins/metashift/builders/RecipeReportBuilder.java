@@ -72,6 +72,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
@@ -141,8 +142,13 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     if (dataSource.has(Scope.RECIPE.name(), Metric.NONE.name(), Data.FILE.name(), recipe, file)) {
       return null;
     }
+    Optional<FilePath> directory = path.listDirectories().stream()
+        .filter(o -> o.getName().startsWith(recipe)).findFirst();
+    if (!directory.isPresent() || !directory.get().isDirectory()) {
+      return null;
+    }
     try {
-      Any metadata = JsonUtils.createObject(path.child(recipe).child("metadata.json"));
+      Any metadata = JsonUtils.createObject(directory.get().child("metadata.json"));
       FilePath filePath = getFilePath(path, metadata.toString(basedir), file);
       String data = IOUtils.toString(filePath.read(), StandardCharsets.UTF_8);
       put(Metric.NONE, Data.FILE, recipe, file, data);

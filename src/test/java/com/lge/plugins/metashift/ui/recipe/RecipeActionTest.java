@@ -15,10 +15,10 @@ import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
+import com.lge.plugins.metashift.utils.NamingUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
-
 import java.io.File;
 import java.util.List;
 import net.sf.json.JSONObject;
@@ -98,7 +98,7 @@ public class RecipeActionTest {
 
     RecipeAction recipeAction = recipeActions.get(0);
 
-    assertEquals(fakeRecipe.getName(), recipeAction.getDisplayName());
+    assertEquals(NamingUtils.getRecipe(fakeRecipe.getName()), recipeAction.getDisplayName());
 
     assertCodeSizeDelta(recipeAction, 0, 0, 1, 10);
 

@@ -212,8 +212,9 @@ public class FileParserTest {
 
   @Test
   public void testInitWithComplexName() throws IOException, InterruptedException {
-    String expected = "A.B.C.qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X-r+1.0-X";
-    builder.add(new FakeRecipe(source, expected).add(new FakeSource(1, 1, 1, 1)));
+    String fullName = "A.B.C.qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X-r+1.0-X";
+    String expected = "A.B.C.qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X";
+    builder.add(new FakeRecipe(source, fullName).add(new FakeSource(1, 1, 1, 1)));
     builder.toFile(report);
     recipes = new FileParser().parse(new FilePath(report));
     assertEquals(1, recipes.size());

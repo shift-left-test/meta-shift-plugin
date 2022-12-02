@@ -16,7 +16,7 @@ import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
-
+import com.lge.plugins.metashift.utils.NamingUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -130,10 +130,8 @@ public class BuildActionTest {
 
     JSONArray recipeTableModel = buildAction.getRecipesTableModel();
 
-    assertArrayEquals(new String[]{
-        fakeRecipe.getName(),
-    }, recipeTableModel.stream().map(o ->
-        ((JSONObject) o).getString("name")).toArray());
+    assertArrayEquals(new String[]{NamingUtils.getRecipe(fakeRecipe.getName()),},
+        recipeTableModel.stream().map(o -> ((JSONObject) o).getString("name")).toArray());
 
     assertEquals(1, buildAction.getTestedRecipes());
 

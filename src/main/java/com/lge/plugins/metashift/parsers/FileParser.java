@@ -10,13 +10,12 @@ import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
+import com.lge.plugins.metashift.utils.NamingUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.io.output.NullPrintStream;
 
@@ -98,10 +97,7 @@ public class FileParser {
       throw new IllegalArgumentException("Not a directory: " + path);
     }
     String name = path.getName();
-    String regexp = "^(?<recipe>[\\w-.+]+)-(?<version>[\\w-.+]+)-(?<revision>[\\w-.+]+)$";
-    Pattern pattern = Pattern.compile(regexp);
-    Matcher matcher = pattern.matcher(name);
-    if (!matcher.matches()) {
+    if (!NamingUtils.isValid(name)) {
       throw new IllegalArgumentException("Invalid recipe name: " + name);
     }
     DataList dataList = new DataList();
@@ -119,6 +115,6 @@ public class FileParser {
         new SharedStateCacheParser(path, dataList),
         new TestParser(path, dataList)
     );
-    return new Recipe(name, dataList);
+    return new Recipe(NamingUtils.getRecipe(name), dataList);
   }
 }

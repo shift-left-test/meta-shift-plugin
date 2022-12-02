@@ -16,18 +16,16 @@ import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
+import hudson.FilePath;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import hudson.FilePath;
 
 /**
  * Unit test for the BuildTrendModel class.
@@ -72,8 +70,8 @@ public class BuildTrendModelTest {
     BuildTrendModel model = new BuildTrendModel(0);
 
     assertEquals(Arrays.asList("PremirrorCache", "SharedStateCache", "RecipeViolation",
-        "Comment", "CodeViolation", "Complexity", "Duplication",
-        "Test", "StatementCoverage", "BranchCoverage", "Mutation"),
+            "Comment", "CodeViolation", "Complexity", "Duplication",
+            "Test", "StatementCoverage", "BranchCoverage", "Mutation"),
         model.getLegend());
 
     assertEquals(Collections.emptyList(), model.getBuilds());

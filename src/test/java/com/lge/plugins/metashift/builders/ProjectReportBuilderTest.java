@@ -37,8 +37,8 @@ import org.junit.rules.TemporaryFolder;
  */
 public class ProjectReportBuilderTest {
 
-  private static final String RECIPE1 = "A-A-A";
-  private static final String RECIPE2 = "B-B-B";
+  private static final String RECIPE1 = "AAA";
+  private static final String RECIPE2 = "BBB";
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
@@ -57,7 +57,7 @@ public class ProjectReportBuilderTest {
 
   private void createReports(File source, File report) throws IOException {
     FakeReportBuilder fakeReportBuilder = new FakeReportBuilder();
-    fakeReportBuilder.add(new FakeRecipe(source, RECIPE1)
+    fakeReportBuilder.add(new FakeRecipe(source, RECIPE1 + "-1.0.0-r0")
         .setPremirror(1, 1)
         .setSharedState(1, 1)
         .add(new FakeScript(1).setIssues(1, 1, 1))
@@ -68,7 +68,7 @@ public class ProjectReportBuilderTest {
             .setStatementCoverage(2, 1)
             .setBranchCoverage(1, 1)
             .setMutationTests(1, 1, 1)));
-    fakeReportBuilder.add(new FakeRecipe(source, RECIPE2)
+    fakeReportBuilder.add(new FakeRecipe(source, RECIPE2 + "-1.0.0-r0")
         .setPremirror(0, 2)
         .setSharedState(0, 2)
         .add(new FakeScript(20).setIssues(2, 2, 2))
