@@ -5,7 +5,7 @@ pipeline {
         }
     }
     options {
-        disableConcurrentBuilds()
+        disableConcurrentBuilds(abortPrevious: true)
     }
     stages {
         stage("Javadoc") {
