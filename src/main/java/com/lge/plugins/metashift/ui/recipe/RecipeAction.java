@@ -5,6 +5,7 @@
 
 package com.lge.plugins.metashift.ui.recipe;
 
+import com.lge.plugins.metashift.builders.RecipeGroup;
 import com.lge.plugins.metashift.builders.RecipeReport;
 import com.lge.plugins.metashift.builders.RecipeReportBuilder;
 import com.lge.plugins.metashift.models.Configuration;
@@ -18,6 +19,7 @@ import hudson.model.Run;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -161,4 +163,57 @@ public class RecipeAction extends ActionParentBase implements Action {
     return delta;
   }
 
+  private double getRatioDelta(Function<RecipeReport, RecipeGroup> mapper) {
+    RecipeGroup previous = Optional.ofNullable(getPreviousReport()).map(mapper).orElse(null);
+    RecipeGroup current = mapper.apply(getReport());
+    if (current == null) {
+      return 0;
+    }
+    return (previous != null) ? current.getEvaluation().getDouble("ratio")
+        - previous.getEvaluation().getDouble("ratio") : current.getEvaluation().getDouble("ratio");
+  }
+
+  public double getPremirrorCacheDelta() {
+    return getRatioDelta(RecipeReport::getPremirrorCache);
+  }
+
+  public double getSharedStateCacheDelta() {
+    return getRatioDelta(RecipeReport::getSharedStateCache);
+  }
+
+  public double getCodeViolationsDelta() {
+    return getRatioDelta(RecipeReport::getCodeViolations);
+  }
+
+  public double getCommentsDelta() {
+    return getRatioDelta(RecipeReport::getComments);
+  }
+
+  public double getComplexityDelta() {
+    return getRatioDelta(RecipeReport::getComplexity);
+  }
+
+  public double getStatementCoverageDelta() {
+    return getRatioDelta(RecipeReport::getStatementCoverage);
+  }
+
+  public double getBranchCoverageDelta() {
+    return getRatioDelta(RecipeReport::getBranchCoverage);
+  }
+
+  public double getDuplicationsDelta() {
+    return getRatioDelta(RecipeReport::getDuplications);
+  }
+
+  public double getMutationTestDelta() {
+    return getRatioDelta(RecipeReport::getMutationTests);
+  }
+
+  public double getRecipeViolationsDelta() {
+    return getRatioDelta(RecipeReport::getRecipeViolations);
+  }
+
+  public double getTestDelta() {
+    return getRatioDelta(RecipeReport::getUnitTests);
+  }
 }
