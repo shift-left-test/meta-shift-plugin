@@ -21,7 +21,7 @@
     "@codemirror/legacy-modes": "^0.18.1",
     "@codemirror/stream-parser": "^0.18.2",
     "@fortawesome/fontawesome-free": "^5.15.4",
-    "echarts": "5.0.2",
+    "echarts": "5.2.1",
     "lit": "^2.0.0-rc.2",
     "split.js": "^1.6.4",
     "tabulator-tables": "^4.9.3",
