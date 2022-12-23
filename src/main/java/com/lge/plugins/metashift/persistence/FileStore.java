@@ -126,7 +126,7 @@ public class FileStore implements Serializable {
    */
   public synchronized void put(final String key, final byte[] value) throws IOException {
     JSONObject indices = createObject(referer);
-    String checksum = DigestUtils.sha1Hex(value);
+    String checksum = DigestUtils.sha256Hex(value);
     File file = FileUtils.getFile(objects, checksum.substring(0, 2), checksum.substring(2));
     if (!file.exists()) {
       FileUtils.forceMkdirParent(file);
