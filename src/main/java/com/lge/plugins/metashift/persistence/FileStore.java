@@ -5,21 +5,20 @@
 
 package com.lge.plugins.metashift.persistence;
 
-import com.lge.plugins.metashift.utils.DigestUtils;
 import hudson.FilePath;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -96,7 +95,7 @@ public class FileStore implements Serializable {
    * @throws IOException if failed to operate with the file
    */
   private JSONObject createObject(final File path) throws IOException {
-    InputStream is = new BufferedInputStream(new FileInputStream(path));
+    InputStream is = new BufferedInputStream(Files.newInputStream(path.toPath()));
     return JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
   }
 
@@ -110,7 +109,8 @@ public class FileStore implements Serializable {
     try {
       JSONObject indices = createObject(referer);
       File file = new File(objects, indices.getString(key));
-      GZIPInputStream gis = new GZIPInputStream(new BufferedInputStream(new FileInputStream(file)));
+      GZIPInputStream gis = new GZIPInputStream(new BufferedInputStream(
+          Files.newInputStream(file.toPath())));
       return IOUtils.toByteArray(gis);
     } catch (IOException | JSONException ignored) {
       return null;
@@ -126,12 +126,12 @@ public class FileStore implements Serializable {
    */
   public synchronized void put(final String key, final byte[] value) throws IOException {
     JSONObject indices = createObject(referer);
-    String checksum = DigestUtils.sha1(value);
+    String checksum = DigestUtils.sha1Hex(value);
     File file = FileUtils.getFile(objects, checksum.substring(0, 2), checksum.substring(2));
     if (!file.exists()) {
       FileUtils.forceMkdirParent(file);
       try (GZIPOutputStream gos = new GZIPOutputStream(
-          new BufferedOutputStream(new FileOutputStream(file)))) {
+          new BufferedOutputStream(Files.newOutputStream(file.toPath())))) {
         IOUtils.write(value, gos);
       }
     }
