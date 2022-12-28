@@ -35,7 +35,7 @@ public class NamingUtils {
    * Return the recipe name.
    *
    * @param name of a recipe
-   * @return name of the recipe, or empty string if the name does not comply the naming convention
+   * @return name of the recipe, or empty string if it does not comply the naming convention
    */
   public static String getRecipe(String name) {
     Matcher matcher = parse(name);
@@ -46,8 +46,7 @@ public class NamingUtils {
    * Return the recipe version.
    *
    * @param name of a recipe
-   * @return version of the recipe, or empty string if the name does not comply the naming
-   * convention
+   * @return version of the recipe, or empty string if it does not comply the naming convention
    */
   public static String getVersion(String name) {
     Matcher matcher = parse(name);
@@ -58,8 +57,7 @@ public class NamingUtils {
    * Return the recipe revision.
    *
    * @param name of a recipe
-   * @return revision of the recipe, or empty string if the name does not comply the naming
-   * convention
+   * @return revision of the recipe, or empty string if it does not comply the naming convention
    */
   public static String getRevision(String name) {
     Matcher matcher = parse(name);
