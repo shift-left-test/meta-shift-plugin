@@ -323,6 +323,22 @@ summary-metrics-simple-view {
       background: $duplicate-5;
     }
 
+    .mutationKilled {
+      background: $source-good;
+    }
+
+    .mutationSurvived {
+      background: $source-bad;
+    }
+
+    .mutationSkipped {
+      background: $source-skip;
+    }
+
+    .mutationMixed {
+      background: $source-mix;
+    }
+
     .gutter {
       background-color: #eee;
       background-repeat: no-repeat;

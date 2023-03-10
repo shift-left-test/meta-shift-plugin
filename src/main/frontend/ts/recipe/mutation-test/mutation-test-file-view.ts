@@ -5,6 +5,8 @@
 
 import {html} from 'lit';
 import {customElement} from 'lit/decorators.js';
+import {EditorView, Decoration} from '@codemirror/view';
+import {RangeSet, RangeSetBuilder} from '@codemirror/rangeset';
 
 import {FileDetail} from '../file-detail';
 
@@ -52,5 +54,53 @@ export class MutationTestFileView extends FileDetail {
       default:
         return 'bg-na';
     }
+  }
+
+  /**
+   * source decorations.
+   * @param {unknown} view
+   * @return {unknown}
+   */
+  getSourceDecorations(view: EditorView) : RangeSet<Decoration> {
+    const mutationKilledBlock = Decoration.line({
+      attributes: {class: 'mutationKilled'},
+    });
+    const mutationSurvivedBlock = Decoration.line({
+      attributes: {class: 'mutationSurvived'},
+    });
+    const mutationSkippedBlock = Decoration.line({
+      attributes: {class: 'mutationSkipped'},
+    });
+    const mutationMixedBlock = Decoration.line({
+      attributes: {class: 'mutationMixed'},
+    });
+    const builder = new RangeSetBuilder<Decoration>();
+    for (const {from, to} of view.visibleRanges) {
+      for (let pos = from; pos <= to;) {
+        const line = view.state.doc.lineAt(pos);
+        pos = line.to + 1;
+        const mutantsInLine = this.dataList.filter((data) =>
+          data.line == line.number);
+        if (!mutantsInLine.length) {
+          continue;
+        }
+        const uniqueStatus = new Set(mutantsInLine.map((mutant) =>
+          mutant.status));
+        if (uniqueStatus.size > 1) {
+          builder.add(line.from, line.from, mutationMixedBlock);
+          continue;
+        }
+        const status = uniqueStatus.keys().next().value;
+        if (status === 'KILLED') {
+          builder.add(line.from, line.from, mutationKilledBlock);
+        } else if (status === 'SURVIVED') {
+          builder.add(line.from, line.from, mutationSurvivedBlock);
+        } else {
+          builder.add(line.from, line.from, mutationSkippedBlock);
+        }
+      }
+    }
+
+    return builder.finish();
   }
 }
