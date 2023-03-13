@@ -335,8 +335,12 @@ summary-metrics-simple-view {
       background: $source-skip;
     }
 
-    .mutationMixed {
-      background: $source-mix;
+    .mutationMixedWithSurvived {
+      background: $source-weak-bad;
+    }
+
+    .mutationMixedWithoutSurvived {
+      background: $source-weak-good;
     }
 
     .gutter {

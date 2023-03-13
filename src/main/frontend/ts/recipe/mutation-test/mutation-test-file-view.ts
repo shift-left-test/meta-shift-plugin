@@ -71,8 +71,11 @@ export class MutationTestFileView extends FileDetail {
     const mutationSkippedBlock = Decoration.line({
       attributes: {class: 'mutationSkipped'},
     });
-    const mutationMixedBlock = Decoration.line({
-      attributes: {class: 'mutationMixed'},
+    const mutationMixedWithSurvivedBlock = Decoration.line({
+      attributes: {class: 'mutationMixedWithSurvived'},
+    });
+    const mutationMixedWithoutSurvivedBlock = Decoration.line({
+      attributes: {class: 'mutationMixedWithoutSurvived'},
     });
     const builder = new RangeSetBuilder<Decoration>();
     for (const {from, to} of view.visibleRanges) {
@@ -86,14 +89,13 @@ export class MutationTestFileView extends FileDetail {
         }
         const uniqueStatus = new Set(mutantsInLine.map((mutant) =>
           mutant.status));
-        if (uniqueStatus.size > 1) {
-          builder.add(line.from, line.from, mutationMixedBlock);
-          continue;
-        }
-        const status = uniqueStatus.keys().next().value;
-        if (status === 'KILLED') {
+        if (uniqueStatus.size > 1 && uniqueStatus.has('SURVIVED')) {
+          builder.add(line.from, line.from, mutationMixedWithSurvivedBlock);
+        } else if (uniqueStatus.size > 1) {
+          builder.add(line.from, line.from, mutationMixedWithoutSurvivedBlock);
+        } else if (uniqueStatus.has('KILLED')) {
           builder.add(line.from, line.from, mutationKilledBlock);
-        } else if (status === 'SURVIVED') {
+        } else if (uniqueStatus.has('SURVIVED')) {
           builder.add(line.from, line.from, mutationSurvivedBlock);
         } else {
           builder.add(line.from, line.from, mutationSkippedBlock);
