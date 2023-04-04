@@ -292,7 +292,16 @@ export class PagedTable extends LitElement {
    * @return {unknown}
    */
   protected qualifierSorter(a, b) {
-    return a.ratio - b.ratio;
+    if (a.available && b.available) {
+      return a.ratio - b.ratio;
+    }
+    if (a.available) {
+      return 1;
+    }
+    if (b.available) {
+      return -1;
+    }
+    return 0;
   }
 
   /**
