@@ -11,7 +11,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
         <a href="meta-shift-report">meta-shift report</a>
       </div>
       <div>
-        <summary-code-size codeSize="${it.report.linesOfCode}" testedRecipes="${it.report.testedRecipes}"/>
+        <summary-code-size codeSize="${it.report.linesOfCode}"/>
       </div>
       <div class="summary">
         <div class="column">

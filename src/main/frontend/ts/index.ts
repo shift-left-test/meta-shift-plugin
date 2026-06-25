@@ -5,8 +5,6 @@
 
 import {CodeSize} from './code-size';
 import {MetricsSimpleView} from './metrics-simple-view';
-import {TestedSimpleView} from './tested-simple-view';
-
 import {BuildTreemap} from './build/build-treemap';
 import {RecipeList} from './build/recipe-list';
 import {BuildTrendChart} from './build/build-trend-chart';
@@ -107,7 +105,6 @@ import '@fortawesome/fontawesome-free/js/all';
 export {
   CodeSize,
   MetricsSimpleView,
-  TestedSimpleView,
   PremirrorCacheList,
   SharedStateCacheList,
   RecipeViolationFiles,

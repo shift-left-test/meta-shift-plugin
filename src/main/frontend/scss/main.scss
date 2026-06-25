@@ -494,20 +494,6 @@ metrics-simple-view.has-url:hover {
 }
 */
 
-tested-simple-view {
-  @extend metrics-simple-view;
-
-  background-color: rgb(238, 238, 238);
-
-  .size-number {
-    color: rgb(0, 0, 158);
-  }
-
-  .metrics-name {
-    padding-left: 0px;
-  }
-}
-
 distribution-bar {
   .test-stats {
     width: 100%;

@@ -44,7 +44,6 @@ import com.lge.plugins.metashift.analysis.SharedStateCacheEvaluator;
 import com.lge.plugins.metashift.analysis.StatementCoverageCounter;
 import com.lge.plugins.metashift.analysis.StatementCoverageEvaluator;
 import com.lge.plugins.metashift.analysis.StatisticsCollector;
-import com.lge.plugins.metashift.analysis.TestedRecipeEvaluator;
 import com.lge.plugins.metashift.analysis.UnitTestCounter;
 import com.lge.plugins.metashift.analysis.UnitTestEvaluator;
 import com.lge.plugins.metashift.builders.Constants.Data;
@@ -199,12 +198,6 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
     return null;
   }
 
-  private Void addTestedRecipes(Recipes recipes) throws IOException {
-    Evaluation evaluation = new TestedRecipeEvaluator().parse(recipes);
-    put(Metric.TESTED_RECIPES, Data.EVALUATION, JSONObject.fromObject(evaluation));
-    return null;
-  }
-
   private Void addUnitTests(Recipes recipes) throws IOException {
     add(Metric.UNIT_TESTS,
         new UnitTestEvaluator(configuration),
@@ -272,7 +265,6 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
         newTask(this::addCodeViolations, recipes),
         newTask(this::addComplexity, recipes),
         newTask(this::addDuplications, recipes),
-        newTask(this::addTestedRecipes, recipes),
         newTask(this::addUnitTests, recipes),
         newTask(this::addStatementCoverage, recipes),
         newTask(this::addBranchCoverage, recipes),

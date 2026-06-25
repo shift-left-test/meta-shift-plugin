@@ -50,15 +50,6 @@ public class ProjectReport extends Report<ProjectGroup> {
   }
 
   /**
-   * Returns the tested recipe evaluation result.
-   *
-   * @return evaluation result
-   */
-  public JSONObject getTestedRecipes() {
-    return getOrDefault(Metric.TESTED_RECIPES, Data.EVALUATION, new JSONObject());
-  }
-
-  /**
    * Returns the treemap objects.
    *
    * @return treemap objects

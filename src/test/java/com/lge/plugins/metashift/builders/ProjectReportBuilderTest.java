@@ -128,11 +128,6 @@ public class ProjectReportBuilderTest {
   }
 
   @Test
-  public void testGetTestedRecipes() {
-    assertEquals(newEvaluation(false, 2, 2, false, 0.0, 0, "POSITIVE"), report.getTestedRecipes());
-  }
-
-  @Test
   public void testGetTreemap() {
     JSONArray expected = new JSONArray();
     expected.add(newTreemapData(RECIPE1, 12, 0.45454545454545453, 4));

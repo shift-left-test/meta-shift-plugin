@@ -133,8 +133,6 @@ public class BuildActionTest {
     assertArrayEquals(new String[]{NamingUtils.getRecipe(fakeRecipe.getName()),},
         recipeTableModel.stream().map(o -> ((JSONObject) o).getString("name")).toArray());
 
-    assertEquals(1, buildAction.getTestedRecipes());
-
     JSONObject codeSizeJson = buildAction.getCodeSizeJson();
     System.out.println(codeSizeJson);
     assertEquals(1, codeSizeJson.getInt("recipes"));
@@ -175,7 +173,6 @@ public class BuildActionTest {
     BuildAction buildAction = run.getAction(BuildAction.class);
 
     assertNull(buildAction.getPreviousBuildAction());
-    assertEquals(1.0, buildAction.getTestedRecipesDelta(), 0);
     assertCodeSizeDelta(buildAction, 1, 0, 0, 1, 10);
     assertMetricDelta(buildAction, 0.0, 0.0, 0.6, 0.5, 0.45, 0.4, 0.42, 0.0, 0.16, 0.6, 0.1);
 
@@ -184,7 +181,6 @@ public class BuildActionTest {
     BuildAction buildAction2 = run2.getAction(BuildAction.class);
 
     assertNotNull(buildAction2.getPreviousBuildAction());
-    assertEquals(0.0, buildAction2.getTestedRecipesDelta(), 0);
     assertCodeSizeDelta(buildAction2, 0, 0, 0, 0, 0);
     assertMetricDelta(buildAction2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
   }

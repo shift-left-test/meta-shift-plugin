@@ -12,7 +12,6 @@ import {customElement, property} from 'lit/decorators.js';
  */
 export class SummaryCodeSize extends LitElement {
   @property() codeSize
-  @property() testedRecipes
 
   /**
    * constructor.
@@ -37,11 +36,9 @@ export class SummaryCodeSize extends LitElement {
    */
   render() : unknown {
     const codeSizeJson = JSON.parse(this.codeSize);
-    const testedRecipesJson = JSON.parse(this.testedRecipes);
 
     return html`
-    <b>Recipes</b>: ${codeSizeJson.recipes.toLocaleString()}  \
-    (<b>Tested</b>: ${testedRecipesJson.numerator.toLocaleString()}) &nbsp;
+    <b>Recipes</b>: ${codeSizeJson.recipes.toLocaleString()}  &nbsp;
     <b>Lines</b>: ${codeSizeJson.lines.toLocaleString()}  &nbsp;
     <b>Functions</b>: ${codeSizeJson.functions.toLocaleString()}  &nbsp;
     <b>Classes</b>: ${codeSizeJson.classes.toLocaleString()}  &nbsp;

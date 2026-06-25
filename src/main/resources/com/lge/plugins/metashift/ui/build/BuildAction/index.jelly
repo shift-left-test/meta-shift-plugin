@@ -25,9 +25,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
         </div>
         <div class="h2">Dynamic Testing</div>
         <div class="section">
-          <tested-simple-view name="Tested Recipes"
-            testedRecipes="${it.report.testedRecipes}"
-            delta="${it.testedRecipesDelta}" />
           <ms:dynamic-testing-row />
         </div>
         <div class="h1">Recipes</div>

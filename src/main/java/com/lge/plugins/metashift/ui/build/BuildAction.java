@@ -215,15 +215,6 @@ public class BuildAction extends ActionParentBase implements LastBuildAction, Ru
     return this.getReport().getSummaries();
   }
 
-  /**
-   * return recipe count which has available test.
-   *
-   * @return tested recipe count
-   */
-  public long getTestedRecipes() {
-    return this.projectReport.getTestedRecipes().getLong("numerator");
-  }
-
   private transient BuildAction previousAction;
 
   /**
@@ -255,16 +246,6 @@ public class BuildAction extends ActionParentBase implements LastBuildAction, Ru
     } else {
       return null;
     }
-  }
-
-  /**
-   * return tested recipe rate change.
-   */
-  public double getTestedRecipesDelta() {
-    BuildAction previous = getPreviousBuildAction();
-    double previousRatio = (previous == null) ? 0 :
-        previous.getReport().getTestedRecipes().getDouble("ratio");
-    return getReport().getTestedRecipes().getDouble("ratio") - previousRatio;
   }
 
   public JSONObject getCodeSizeJson() {
