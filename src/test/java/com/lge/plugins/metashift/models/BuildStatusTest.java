@@ -25,37 +25,28 @@ public class BuildStatusTest {
     status = new Configuration();
   }
 
-  private void assertValues(boolean premirrorCache, boolean sharedStateCache,
-      boolean codeViolations, boolean comments, boolean complexity, boolean statementCoverage,
-      boolean branchCoverage, boolean duplications, boolean mutationTest, boolean recipeViolations,
-      boolean test) {
-    assertEquals(premirrorCache, status.isPremirrorCacheAsUnstable());
-    assertEquals(sharedStateCache, status.isSharedStateCacheAsUnstable());
-    assertEquals(codeViolations, status.isCodeViolationsAsUnstable());
-    assertEquals(comments, status.isCommentsAsUnstable());
-    assertEquals(complexity, status.isComplexityAsUnstable());
+  private void assertValues(boolean test, boolean statementCoverage,
+      boolean branchCoverage, boolean mutationTest) {
+    assertEquals(test, status.isTestAsUnstable());
     assertEquals(statementCoverage, status.isStatementCoverageAsUnstable());
     assertEquals(branchCoverage, status.isBranchCoverageAsUnstable());
-    assertEquals(duplications, status.isDuplicationsAsUnstable());
     assertEquals(mutationTest, status.isMutationTestAsUnstable());
-    assertEquals(recipeViolations, status.isRecipeViolationsAsUnstable());
-    assertEquals(test, status.isTestAsUnstable());
   }
 
   @Test
   public void testDefaultStatus() {
-    assertValues(false, false, false, false, false, false, false, false, false, false, false);
+    assertValues(false, false, false, false);
   }
 
   @Test
   public void setBuildStatusAsFalse() {
     status = ConfigurationUtils.of(50, 5, false);
-    assertValues(false, false, false, false, false, false, false, false, false, false, false);
+    assertValues(false, false, false, false);
   }
 
   @Test
   public void setBuildStatusAsTrue() {
     status = ConfigurationUtils.of(50, 5, true);
-    assertValues(true, true, true, true, true, true, true, true, true, true, true);
+    assertValues(true, true, true, true);
   }
 }
