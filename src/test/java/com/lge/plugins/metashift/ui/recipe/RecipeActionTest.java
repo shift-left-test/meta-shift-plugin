@@ -7,6 +7,7 @@ package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.builders.RecipeReport;
 import com.lge.plugins.metashift.fixture.FakeRecipe;
@@ -67,13 +68,9 @@ public class RecipeActionTest {
     assertEquals(ratio, object.getDouble("ratio"), 0.01);
   }
 
-  private void assertCodeSizeDelta(RecipeAction action, int functions, int classes, int files,
-      int lines) {
+  private void assertCodeSizeDeltaEmpty(RecipeAction action) {
     JSONObject object = action.getCodeSizeDeltaJson();
-    assertEquals(functions, object.getInt("functions"));
-    assertEquals(classes, object.getInt("classes"));
-    assertEquals(files, object.getInt("files"));
-    assertEquals(lines, object.getInt("lines"));
+    assertTrue(object.isEmpty());
   }
 
   @Test
@@ -100,7 +97,7 @@ public class RecipeActionTest {
 
     assertEquals(NamingUtils.getRecipe(fakeRecipe.getName()), recipeAction.getDisplayName());
 
-    assertCodeSizeDelta(recipeAction, 0, 0, 1, 10);
+    assertCodeSizeDeltaEmpty(recipeAction);
 
     RecipeReport recipeReport = recipeAction.getReport();
     assertValues(recipeReport.getPremirrorCache().getEvaluation(), false, true, 0.8, 0, 0, 0);
@@ -191,6 +188,6 @@ public class RecipeActionTest {
 
     BuildAction buildAction = run2.getAction(BuildAction.class);
     RecipeAction recipeAction = buildAction.getAction(RecipeAction.class);
-    assertCodeSizeDelta(recipeAction, 0, 0, 0, 0);
+    assertCodeSizeDeltaEmpty(recipeAction);
   }
 }

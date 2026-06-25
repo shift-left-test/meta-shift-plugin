@@ -19,7 +19,7 @@ suite('mutation-test-file-view', () => {
       <mutation-test-file-view filePath='test'></mutation-test-file-view>
     `)) as MutationTestFileView;
 
-    assert.isNotNull(el.querySelector('div#editor-panel'),
+    assert.isNotNull(el.querySelector('div#data-list-panel'),
         el.outerHTML);
   });
 });

@@ -62,7 +62,6 @@ public class FakeReportBuilderTest {
 
     File root = FileUtils.getFile(report, recipe.getName());
     assertTrue(root.exists());
-    assertTrue(FileUtils.getFile(root, "metadata.json").exists());
     assertTrue(FileUtils.getFile(root, "checkcache", "caches.json").exists());
     assertTrue(FileUtils.getFile(root, "checkcode", "sage_report.json").exists());
     assertTrue(FileUtils.getFile(root, "checkrecipe", "files.json").exists());

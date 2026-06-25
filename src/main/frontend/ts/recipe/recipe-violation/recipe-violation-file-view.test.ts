@@ -19,7 +19,7 @@ suite('recipe-violation-file-view', () => {
       <recipe-violation-file-view filePath='test'></recipe-violation-file-view>
     `)) as RecipeViolationFileView;
 
-    assert.isNotNull(el.querySelector('div#editor-panel'),
+    assert.isNotNull(el.querySelector('div#data-list-panel'),
         el.outerHTML);
   });
 });

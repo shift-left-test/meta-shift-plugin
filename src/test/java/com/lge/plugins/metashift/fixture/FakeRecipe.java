@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.io.FileUtils;
 
 /**
  * FakeRecipe class.
@@ -97,12 +98,12 @@ public class FakeRecipe implements FakeReport {
 
   @Override
   public void toFile(File directory) throws IOException {
+    FileUtils.forceMkdir(new File(directory, getName()));
     for (FakeSource source : sources) {
       source.toFile();
     }
     for (FakeScript script : scripts) {
       script.toFile();
     }
-    new FakeMetadata(this).toFile(directory);
   }
 }

@@ -19,7 +19,7 @@ suite('complexity-file-view', () => {
       <complexity-file-view filePath='test'></complexity-file-view>
     `)) as ComplexityFileView;
 
-    assert.isNotNull(el.querySelector('div#editor-panel'),
+    assert.isNotNull(el.querySelector('div#data-list-panel'),
         el.outerHTML);
   });
 });

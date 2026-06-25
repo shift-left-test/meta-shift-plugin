@@ -6,7 +6,6 @@
 package com.lge.plugins.metashift.builders;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
@@ -14,7 +13,6 @@ import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Distribution;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.parsers.FileParser;
@@ -129,8 +127,7 @@ public class RecipeReportBuilderTest {
 
   @Test
   public void testGetLinesOfCode() {
-    LinesOfCode linesOfCode = new LinesOfCode(21, 0, 0, 2, 1);
-    assertEquals(JSONObject.fromObject(linesOfCode), report.getLinesOfCode());
+    assertEquals(new JSONObject(), report.getLinesOfCode());
   }
 
   @Test
@@ -162,8 +159,6 @@ public class RecipeReportBuilderTest {
     assertEquals(0.3, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(3, group.getObjects(RECIPE1).size());
     assertEquals(6, group.getObjects(RECIPE2).size());
-    assertFalse(group.readFile(RECIPE1).isEmpty());
-    assertFalse(group.readFile(RECIPE2).isEmpty());
   }
 
   @Test
@@ -188,8 +183,6 @@ public class RecipeReportBuilderTest {
     assertEquals(0.3, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(3, group.getObjects(FILE1).size());
     assertEquals(6, group.getObjects(FILE2).size());
-    assertFalse(group.readFile(FILE1).isEmpty());
-    assertFalse(group.readFile(FILE2).isEmpty());
   }
 
   @Test
@@ -203,8 +196,6 @@ public class RecipeReportBuilderTest {
     assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(1, group.getObjects(FILE1).size());
     assertEquals(10, group.getObjects(FILE2).size());
-    assertFalse(group.readFile(FILE1).isEmpty());
-    assertFalse(group.readFile(FILE2).isEmpty());
   }
 
   @Test
@@ -217,7 +208,6 @@ public class RecipeReportBuilderTest {
     assertEquals(1, summaries.size());
     assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
     assertEquals(0, group.getObjects(FILE1).size());
-    assertFalse(group.readFile(FILE1).isEmpty());
   }
 
   @Test
@@ -240,8 +230,6 @@ public class RecipeReportBuilderTest {
     assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(5, group.getObjects(FILE1).size());
     assertEquals(3, group.getObjects(FILE2).size());
-    assertFalse(group.readFile(FILE1).isEmpty());
-    assertFalse(group.readFile(FILE2).isEmpty());
   }
 
   @Test
@@ -255,8 +243,6 @@ public class RecipeReportBuilderTest {
     assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(2, group.getObjects(FILE1).size());
     assertEquals(2, group.getObjects(FILE2).size());
-    assertFalse(group.readFile(FILE1).isEmpty());
-    assertFalse(group.readFile(FILE2).isEmpty());
   }
 
   @Test
@@ -271,7 +257,5 @@ public class RecipeReportBuilderTest {
     assertEquals(1.0, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(3, group.getObjects(FILE1).size());
     assertEquals(2, group.getObjects(FILE2).size());
-    assertFalse(group.readFile(FILE1).isEmpty());
-    assertFalse(group.readFile(FILE2).isEmpty());
   }
 }

@@ -5,7 +5,6 @@
 
 package com.lge.plugins.metashift.builders;
 
-import com.jsoniter.any.Any;
 import com.lge.plugins.metashift.aggregators.BranchCoverageDataSummaryAggregator;
 import com.lge.plugins.metashift.aggregators.CodeViolationDataSummaryAggregator;
 import com.lge.plugins.metashift.aggregators.CommentDataSummaryAggregator;
@@ -30,7 +29,6 @@ import com.lge.plugins.metashift.analysis.Counter;
 import com.lge.plugins.metashift.analysis.DuplicationCounter;
 import com.lge.plugins.metashift.analysis.DuplicationEvaluator;
 import com.lge.plugins.metashift.analysis.Evaluator;
-import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
 import com.lge.plugins.metashift.analysis.MutationTestCounter;
 import com.lge.plugins.metashift.analysis.MutationTestEvaluator;
 import com.lge.plugins.metashift.analysis.PremirrorCacheCounter;
@@ -54,7 +52,6 @@ import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.Distribution;
 import com.lge.plugins.metashift.models.DuplicationData;
 import com.lge.plugins.metashift.models.Evaluation;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeViolationData;
@@ -63,21 +60,15 @@ import com.lge.plugins.metashift.models.ViolationData;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils.Function;
-import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.IOUtils;
 
 /**
  * RecipeReportBuilder class.
@@ -123,47 +114,10 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     put(metric, Data.SUMMARIES, recipe.getName(), JSONArray.fromObject(summaries));
   }
 
-  private Void addLinesOfCode(Recipe recipe) throws IOException {
-    LinesOfCode linesOfCode = new LinesOfCodeCollector().parse(recipe);
-    put(Metric.NONE, Data.LINES_OF_CODE, recipe.getName(), JSONObject.fromObject(linesOfCode));
-    return null;
-  }
-
-  private FilePath getFilePath(FilePath base, String prefix, String file) {
-    if (new File(file).isAbsolute()) {
-      return new FilePath(base.getChannel(), file);
-    } else {
-      return new FilePath(new FilePath(base.getChannel(), prefix), file);
-    }
-  }
-
-  private Void writeFile(String recipe, String file, String basedir)
-      throws IOException, InterruptedException {
-    if (dataSource.has(Scope.RECIPE.name(), Metric.NONE.name(), Data.FILE.name(), recipe, file)) {
-      return null;
-    }
-    Optional<FilePath> directory = path.listDirectories().stream()
-        .filter(o -> o.getName().startsWith(recipe)).findFirst();
-    if (!directory.isPresent() || !directory.get().isDirectory()) {
-      return null;
-    }
-    try {
-      Any metadata = JsonUtils.createObject(directory.get().child("metadata.json"));
-      FilePath filePath = getFilePath(path, metadata.toString(basedir), file);
-      String data = IOUtils.toString(filePath.read(), StandardCharsets.UTF_8);
-      put(Metric.NONE, Data.FILE, recipe, file, data);
-    } catch (NoSuchFileException ignored) {
-      // ignored
-    }
-    return null;
-  }
-
   private <T> Void addObjects(Metric metric, String recipe, Map<String, List<T>> group)
-      throws IOException, InterruptedException {
+      throws IOException {
     for (Entry<String, List<T>> entry : group.entrySet()) {
       put(metric, Data.OBJECTS, recipe, entry.getKey(), JSONArray.fromObject(entry.getValue()));
-      String basedir = (metric == Metric.RECIPE_VIOLATIONS) ? "PWD" : "S";
-      writeFile(recipe, entry.getKey(), basedir);
     }
     return null;
   }
@@ -304,7 +258,6 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
   @Override
   public RecipeReport parse(Recipe recipe) throws IOException, InterruptedException {
     ExecutorServiceUtils.invokeAll(
-        newTask(this::addLinesOfCode, recipe),
         newTask(this::addPremirrorCache, recipe),
         newTask(this::addSharedStateCache, recipe),
         newTask(this::addRecipeViolations, recipe),

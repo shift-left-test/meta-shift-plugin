@@ -147,11 +147,14 @@ public class RecipeAction extends ActionParentBase implements Action {
    * @return CodeSizeDelta object
    */
   public JSONObject getCodeSizeDeltaJson() {
+    JSONObject current = getReport().getLinesOfCode();
+    if (current.isEmpty()) {
+      return new JSONObject();
+    }
     JSONObject previous =
         Optional.ofNullable(getPreviousReport())
             .map(RecipeReport::getLinesOfCode).orElse(null);
-    JSONObject current = getReport().getLinesOfCode();
-    if (previous == null) {
+    if (previous == null || previous.isEmpty()) {
       return current.discard("recipes");
     }
     JSONObject delta = new JSONObject();

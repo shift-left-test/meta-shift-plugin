@@ -20,7 +20,7 @@ suite('statement-coverage-file-view', () => {
       </statement-coverage-file-view>
     `)) as StatementCoverageFileView;
 
-    assert.isNotNull(el.querySelector('div#editor-panel'),
+    assert.isNotNull(el.querySelector('div#data-list-panel'),
         el.outerHTML);
   });
 });

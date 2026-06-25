@@ -19,7 +19,7 @@ suite('file-detail', () => {
         <file-detail filePath='test'></file-detail>`
     )) as FileDetail;
 
-    assert.isNotNull(el.querySelector('#editor-panel'),
+    assert.isNotNull(el.querySelector('#data-list-panel'),
         el.outerHTML);
   });
 });
