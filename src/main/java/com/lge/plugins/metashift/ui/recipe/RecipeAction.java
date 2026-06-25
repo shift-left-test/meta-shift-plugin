@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import net.sf.json.JSONObject;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -135,35 +134,6 @@ public class RecipeAction extends ActionParentBase implements Action {
       }
     }
     return null;
-  }
-
-  public JSONObject getCodeSizeJson() {
-    return this.getReport().getLinesOfCode().discard("recipes");
-  }
-
-  /**
-   * Returns the delta between the previous and current builds.
-   *
-   * @return CodeSizeDelta object
-   */
-  public JSONObject getCodeSizeDeltaJson() {
-    JSONObject current = getReport().getLinesOfCode();
-    if (current.isEmpty()) {
-      return new JSONObject();
-    }
-    JSONObject previous =
-        Optional.ofNullable(getPreviousReport())
-            .map(RecipeReport::getLinesOfCode).orElse(null);
-    if (previous == null || previous.isEmpty()) {
-      return current.discard("recipes");
-    }
-    JSONObject delta = new JSONObject();
-    delta.put("lines", current.getLong("lines") - previous.getLong("lines"));
-    delta.put("functions", current.getLong("functions") - previous.getLong("functions"));
-    delta.put("classes", current.getLong("classes") - previous.getLong("classes"));
-    delta.put("files", current.getLong("files") - previous.getLong("files"));
-
-    return delta;
   }
 
   private double getRatioDelta(Function<RecipeReport, RecipeGroup> mapper) {

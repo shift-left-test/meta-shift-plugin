@@ -11,7 +11,6 @@ import com.lge.plugins.metashift.builders.Constants.Scope;
 import com.lge.plugins.metashift.persistence.DataSource;
 import java.util.Optional;
 import java.util.stream.Stream;
-import net.sf.json.JSONObject;
 
 /**
  * RecipeReport class.
@@ -42,12 +41,4 @@ public class RecipeReport extends Report<RecipeGroup> {
     return Optional.ofNullable(o).orElse(defaultValue);
   }
 
-  /**
-   * Returns the lines of code.
-   *
-   * @return the lines of code
-   */
-  public JSONObject getLinesOfCode() {
-    return getOrDefault(Metric.NONE, Data.LINES_OF_CODE, new JSONObject());
-  }
 }

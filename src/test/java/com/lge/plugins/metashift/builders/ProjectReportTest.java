@@ -44,7 +44,6 @@ public class ProjectReportTest {
 
   @Test
   public void testInitialStatus() {
-    assertEquals(new JSONObject(), report.getLinesOfCode());
     assertEquals(new JSONArray(), report.getTreemap());
     assertEquals(new JSONArray(), report.getSummaries());
   }

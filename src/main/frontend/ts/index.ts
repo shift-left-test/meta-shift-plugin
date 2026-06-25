@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import {CodeSize} from './code-size';
 import {MetricsSimpleView} from './metrics-simple-view';
 import {BuildTreemap} from './build/build-treemap';
 import {RecipeList} from './build/recipe-list';
@@ -93,7 +92,6 @@ import {UnitTestRecipes}
   from './build/unit-test/unit-test-recipes';
 import {UnitTestTreemap}
   from './build/unit-test/unit-test-treemap';
-import {SummaryCodeSize} from './summary-code-size';
 import {SummaryMetricsSimpleView} from './summary-metrics-simple-view';
 
 import 'tabulator-tables/src/scss/tabulator.scss';
@@ -103,7 +101,6 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all';
 
 export {
-  CodeSize,
   MetricsSimpleView,
   PremirrorCacheList,
   SharedStateCacheList,
@@ -152,6 +149,5 @@ export {
   UnitTestRecipes,
   UnitTestTreemap,
 
-  SummaryCodeSize,
   SummaryMetricsSimpleView,
 };

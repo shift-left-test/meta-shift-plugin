@@ -41,15 +41,6 @@ public class ProjectReport extends Report<ProjectGroup> {
   }
 
   /**
-   * Returns the lines of code.
-   *
-   * @return the lines of code
-   */
-  public JSONObject getLinesOfCode() {
-    return getOrDefault(Metric.NONE, Data.LINES_OF_CODE, new JSONObject());
-  }
-
-  /**
    * Returns the treemap objects.
    *
    * @return treemap objects

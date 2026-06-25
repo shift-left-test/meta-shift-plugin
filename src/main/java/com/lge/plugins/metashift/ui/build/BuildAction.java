@@ -248,32 +248,6 @@ public class BuildAction extends ActionParentBase implements LastBuildAction, Ru
     }
   }
 
-  public JSONObject getCodeSizeJson() {
-    return this.getReport().getLinesOfCode();
-  }
-
-  /**
-   * Returns the delta between the previous and current builds.
-   *
-   * @return CodeSizeDelta object
-   */
-  public JSONObject getCodeSizeDeltaJson() {
-    JSONObject previous =
-        Optional.ofNullable(getPreviousReport()).map(ProjectReport::getLinesOfCode).orElse(null);
-    JSONObject current = getReport().getLinesOfCode();
-    if (previous == null) {
-      return current;
-    }
-    JSONObject delta = new JSONObject();
-    delta.put("lines", current.getLong("lines") - previous.getLong("lines"));
-    delta.put("functions", current.getLong("functions") - previous.getLong("functions"));
-    delta.put("classes", current.getLong("classes") - previous.getLong("classes"));
-    delta.put("files", current.getLong("files") - previous.getLong("files"));
-    delta.put("recipes", current.getLong("recipes") - previous.getLong("recipes"));
-
-    return delta;
-  }
-
   private double getRatioDelta(Function<ProjectReport, ProjectGroup> mapper) {
     ProjectGroup previous = Optional.ofNullable(getPreviousReport()).map(mapper).orElse(null);
     ProjectGroup current = mapper.apply(getReport());

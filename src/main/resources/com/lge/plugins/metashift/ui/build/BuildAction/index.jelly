@@ -9,12 +9,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
       <div class="metashift">
       <div class="page">
         <div class="h1">Overview</div>
-        <div class="h2">Lines of Code</div>
-        <div class="section">
-          <code-size
-            codeSize="${it.codeSizeJson}"
-            codeSizeDelta="${it.codeSizeDeltaJson}" />
-        </div>
         <div class="h2">Build System</div>
         <div class="section">
           <ms:build-performance-row />

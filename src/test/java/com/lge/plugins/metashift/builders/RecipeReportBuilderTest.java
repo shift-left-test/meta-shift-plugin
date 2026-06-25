@@ -126,11 +126,6 @@ public class RecipeReportBuilderTest {
   }
 
   @Test
-  public void testGetLinesOfCode() {
-    assertEquals(new JSONObject(), report.getLinesOfCode());
-  }
-
-  @Test
   public void testGetPremirrorCache() {
     RecipeGroup group = report.getPremirrorCache();
     assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());

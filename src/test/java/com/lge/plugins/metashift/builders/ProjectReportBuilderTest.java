@@ -13,7 +13,6 @@ import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Distribution;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.parsers.FileParser;
 import com.lge.plugins.metashift.persistence.DataSource;
@@ -119,12 +118,6 @@ public class ProjectReportBuilderTest {
 
   private List<JSONObject> toList(JSONArray array) {
     return array.stream().map(o -> (JSONObject) o).collect(Collectors.toList());
-  }
-
-  @Test
-  public void testGetLinesOfCode() {
-    LinesOfCode linesOfCode = new LinesOfCode(21, 0, 0, 2, 2);
-    assertEquals(JSONObject.fromObject(linesOfCode), report.getLinesOfCode());
   }
 
   @Test

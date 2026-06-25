@@ -73,16 +73,6 @@ public class BuildActionTest {
     assertEquals(ratio, object.getDouble("ratio"), 0.01);
   }
 
-  private void assertCodeSizeDelta(BuildAction action, int recipes, int functions,
-      int classes, int files, int lines) {
-    JSONObject object = action.getCodeSizeDeltaJson();
-    assertEquals(recipes, object.getInt("recipes"));
-    assertEquals(functions, object.getInt("functions"));
-    assertEquals(classes, object.getInt("classes"));
-    assertEquals(files, object.getInt("files"));
-    assertEquals(lines, object.getInt("lines"));
-  }
-
   private void assertMetricDelta(BuildAction action, double premirrorCache,
       double sharedStateCache, double codeViolations, double comments, double complexity,
       double statementCoverage, double branchCoverage, double duplications, double mutationTest,
@@ -133,14 +123,6 @@ public class BuildActionTest {
     assertArrayEquals(new String[]{NamingUtils.getRecipe(fakeRecipe.getName()),},
         recipeTableModel.stream().map(o -> ((JSONObject) o).getString("name")).toArray());
 
-    JSONObject codeSizeJson = buildAction.getCodeSizeJson();
-    System.out.println(codeSizeJson);
-    assertEquals(1, codeSizeJson.getInt("recipes"));
-    assertEquals(0, codeSizeJson.getInt("functions"));
-    assertEquals(0, codeSizeJson.getInt("classes"));
-    assertEquals(1, codeSizeJson.getInt("files"));
-    assertEquals(10, codeSizeJson.getInt("lines"));
-
     ProjectReport projectReport = buildAction.getReport();
     assertValues(projectReport.getPremirrorCache().getEvaluation(), false, true, 0.8, 0, 0, 0);
     assertValues(projectReport.getSharedStateCache().getEvaluation(), false, true, 0.8, 0, 0, 0);
@@ -173,7 +155,6 @@ public class BuildActionTest {
     BuildAction buildAction = run.getAction(BuildAction.class);
 
     assertNull(buildAction.getPreviousBuildAction());
-    assertCodeSizeDelta(buildAction, 1, 0, 0, 1, 10);
     assertMetricDelta(buildAction, 0.0, 0.0, 0.6, 0.5, 0.45, 0.4, 0.42, 0.0, 0.16, 0.6, 0.1);
 
     // second build and check diff.
@@ -181,7 +162,6 @@ public class BuildActionTest {
     BuildAction buildAction2 = run2.getAction(BuildAction.class);
 
     assertNotNull(buildAction2.getPreviousBuildAction());
-    assertCodeSizeDelta(buildAction2, 0, 0, 0, 0, 0);
     assertMetricDelta(buildAction2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
   }
 }

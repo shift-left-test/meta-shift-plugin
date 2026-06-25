@@ -31,7 +31,6 @@ import com.lge.plugins.metashift.analysis.Counter;
 import com.lge.plugins.metashift.analysis.DuplicationCounter;
 import com.lge.plugins.metashift.analysis.DuplicationEvaluator;
 import com.lge.plugins.metashift.analysis.Evaluator;
-import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
 import com.lge.plugins.metashift.analysis.MutationTestCounter;
 import com.lge.plugins.metashift.analysis.MutationTestEvaluator;
 import com.lge.plugins.metashift.analysis.PremirrorCacheCounter;
@@ -55,7 +54,6 @@ import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.Distribution;
 import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.EvaluationSummary;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
@@ -127,12 +125,6 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
       default:
         return r -> 1L;
     }
-  }
-
-  private Void addLinesOfCode(Recipes recipes) throws IOException {
-    LinesOfCode linesOfCode = new LinesOfCodeCollector().parse(recipes);
-    put(Metric.NONE, Data.LINES_OF_CODE, JSONObject.fromObject(linesOfCode));
-    return null;
   }
 
   private Void addPremirrorCache(Recipes recipes) throws IOException {
@@ -257,7 +249,6 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
   @Override
   public ProjectReport parse(Recipes recipes) throws IOException, InterruptedException {
     ExecutorServiceUtils.invokeAll(
-        newTask(this::addLinesOfCode, recipes),
         newTask(this::addPremirrorCache, recipes),
         newTask(this::addSharedStateCache, recipes),
         newTask(this::addRecipeViolations, recipes),

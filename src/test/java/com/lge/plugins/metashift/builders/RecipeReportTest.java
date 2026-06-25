@@ -44,11 +44,6 @@ public class RecipeReportTest {
   }
 
   @Test
-  public void testInitialStatus() {
-    assertEquals(new JSONObject(), report.getLinesOfCode());
-  }
-
-  @Test
   public void testInitialStatusOfMetrics() {
     assertValues(report.getPremirrorCache());
     assertValues(report.getSharedStateCache());

@@ -6,8 +6,6 @@
 package com.lge.plugins.metashift.ui.recipe;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.builders.RecipeReport;
 import com.lge.plugins.metashift.fixture.FakeRecipe;
@@ -68,11 +66,6 @@ public class RecipeActionTest {
     assertEquals(ratio, object.getDouble("ratio"), 0.01);
   }
 
-  private void assertCodeSizeDeltaEmpty(RecipeAction action) {
-    JSONObject object = action.getCodeSizeDeltaJson();
-    assertTrue(object.isEmpty());
-  }
-
   @Test
   public void testCreate() throws Exception {
     fakeRecipe
@@ -96,8 +89,6 @@ public class RecipeActionTest {
     RecipeAction recipeAction = recipeActions.get(0);
 
     assertEquals(NamingUtils.getRecipe(fakeRecipe.getName()), recipeAction.getDisplayName());
-
-    assertCodeSizeDeltaEmpty(recipeAction);
 
     RecipeReport recipeReport = recipeAction.getReport();
     assertValues(recipeReport.getPremirrorCache().getEvaluation(), false, true, 0.8, 0, 0, 0);
@@ -168,26 +159,4 @@ public class RecipeActionTest {
     assertEquals(0.1, testStatistics.getDouble("max"), 0.01);
   }
 
-  @Test
-  public void testDelta() throws Exception {
-    fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
-        .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
-            .setTests(1, 2, 3, 4)
-            .setStatementCoverage(1, 2)
-            .setBranchCoverage(3, 4)
-            .setMutationTests(1, 2, 3));
-    builder.add(fakeRecipe);
-    builder.toFile(report);
-
-    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
-    assertNotNull(run);
-    FreeStyleBuild run2 = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
-
-    BuildAction buildAction = run2.getAction(BuildAction.class);
-    RecipeAction recipeAction = buildAction.getAction(RecipeAction.class);
-    assertCodeSizeDeltaEmpty(recipeAction);
-  }
 }

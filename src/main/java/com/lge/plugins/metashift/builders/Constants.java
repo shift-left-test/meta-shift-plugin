@@ -42,7 +42,6 @@ public class Constants {
    * Represents data types.
    */
   enum Data {
-    LINES_OF_CODE,
     EVALUATION,
     STATISTICS,
     DISTRIBUTION,
