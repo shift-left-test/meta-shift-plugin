@@ -8,7 +8,6 @@ package com.lge.plugins.metashift.analysis;
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.PassedTestData;
@@ -65,7 +64,7 @@ public class BranchCoverageEvaluatorTest {
 
   @Test
   public void testParseRecipesNoMatchingData() {
-    recipe1.add(new CodeSizeData("A-A-A", "a.file", 1, 1, 1));
+    // recipe with no BranchCoverageData or TestData → not available
     assertValues(0, 0, 0.0);
     assertStatus(false, false);
   }

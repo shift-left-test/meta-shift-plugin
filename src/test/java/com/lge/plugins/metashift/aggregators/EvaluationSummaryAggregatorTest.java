@@ -7,13 +7,13 @@ package com.lge.plugins.metashift.aggregators;
 
 import static org.junit.Assert.assertEquals;
 
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.EvaluationSummary;
-import com.lge.plugins.metashift.models.PremirrorCacheData;
+import com.lge.plugins.metashift.models.FailedTestData;
+import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
-import com.lge.plugins.metashift.models.SharedStateCacheData;
+import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.utils.ConfigurationUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +45,10 @@ public class EvaluationSummaryAggregatorTest {
     summaries = new ArrayList<>();
   }
 
-  private void assertValues(int index, long linesOfCode, double premirrorCache,
-      double sharedStateCache) {
+  private void assertValues(int index, double unitTests, double statementCoverage) {
     summaries = aggregator.parse(recipes);
-    assertEquals(linesOfCode, summaries.get(index).getLinesOfCode());
-    assertEquals(premirrorCache, summaries.get(index).getPremirrorCache().getRatio(), 0.01);
-    assertEquals(sharedStateCache, summaries.get(index).getSharedStateCache().getRatio(), 0.01);
+    assertEquals(unitTests, summaries.get(index).getUnitTests().getRatio(), 0.01);
+    assertEquals(statementCoverage, summaries.get(index).getStatementCoverage().getRatio(), 0.01);
   }
 
   @Test
@@ -60,21 +58,18 @@ public class EvaluationSummaryAggregatorTest {
 
   @Test
   public void testParseSingleRecipe() {
-    recipe1.add(new CodeSizeData("A-A-A", "a.file", 1, 1, 1));
-    recipe1.add(new PremirrorCacheData("A-A-A", "A", false));
-    recipe1.add(new SharedStateCacheData("A-A-A", "B", true));
-    assertValues(0, 1, 0.0, 1.0);
+    recipe1.add(new PassedTestData("A-A-A", "A", "A", "A"));
+    recipe1.add(new StatementCoverageData("A-A-A", "a.file", 1, false));
+    assertValues(0, 1.0, 0.0);
   }
 
   @Test
   public void testParseMultipleRecipes() {
-    recipe1.add(new CodeSizeData("A-A-A", "a.file", 1, 1, 1));
-    recipe1.add(new PremirrorCacheData("A-A-A", "A", false));
-    recipe1.add(new SharedStateCacheData("A-A-A", "B", true));
-    recipe2.add(new CodeSizeData("B-B-B", "b.file", 2, 2, 2));
-    recipe2.add(new PremirrorCacheData("B-B-B", "C", true));
-    recipe2.add(new SharedStateCacheData("B-B-B", "D", false));
-    assertValues(0, 1, 0.0, 1.0);
-    assertValues(1, 2, 1.0, 0.0);
+    recipe1.add(new PassedTestData("A-A-A", "A", "A", "A"));
+    recipe1.add(new StatementCoverageData("A-A-A", "a.file", 1, false));
+    recipe2.add(new FailedTestData("B-B-B", "B", "B", "B"));
+    recipe2.add(new StatementCoverageData("B-B-B", "b.file", 1, true));
+    assertValues(0, 1.0, 0.0);
+    assertValues(1, 0.0, 1.0);
   }
 }

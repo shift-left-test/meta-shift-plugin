@@ -35,41 +35,6 @@ public abstract class Report<T> implements Aggregate<T>, Serializable {
   }
 
   @Override
-  public T getPremirrorCache() {
-    return groups.get(Metric.PREMIRROR_CACHE);
-  }
-
-  @Override
-  public T getSharedStateCache() {
-    return groups.get(Metric.SHARED_STATE_CACHE);
-  }
-
-  @Override
-  public T getRecipeViolations() {
-    return groups.get(Metric.RECIPE_VIOLATIONS);
-  }
-
-  @Override
-  public T getComments() {
-    return groups.get(Metric.COMMENTS);
-  }
-
-  @Override
-  public T getCodeViolations() {
-    return groups.get(Metric.CODE_VIOLATIONS);
-  }
-
-  @Override
-  public T getComplexity() {
-    return groups.get(Metric.COMPLEXITY);
-  }
-
-  @Override
-  public T getDuplications() {
-    return groups.get(Metric.DUPLICATIONS);
-  }
-
-  @Override
   public T getUnitTests() {
     return groups.get(Metric.UNIT_TESTS);
   }

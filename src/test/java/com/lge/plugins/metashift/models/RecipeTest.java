@@ -64,14 +64,9 @@ public class RecipeTest {
   @Test
   public void testAddMultipleObjects() {
     Recipe recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new SharedStateCacheData("A-1.0.0-r0", "X", true));
-    recipe.add(new SharedStateCacheData("B-1.0.0-r0", "Y", false));
-    recipe.add(new PremirrorCacheData("C-1.0.0-r0", "X", true));
     recipe.add(new PassedTestData("A-1.0.0-r0", "a.suite", "a.tc", "msg"));
     recipe.add(new FailedTestData("B-1.0.0-r0", "b.suite", "b.tc", "msg"));
     recipe.add(new SkippedTestData("C-1.0.0-r0", "c.suite", "c.tc", "msg"));
-    assertEquals(3, recipe.objects(CacheData.class).count());
-    assertEquals(2, recipe.objects(SharedStateCacheData.class).count());
     assertEquals(3, recipe.objects(TestData.class).count());
   }
 }

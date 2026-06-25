@@ -109,7 +109,7 @@ public class MetaShiftPublisherTest {
 
     // verify RecipeActionChild created.
     List<RecipeActionChild> children = recipeAction.getActions(RecipeActionChild.class);
-    assertEquals(11, children.size());
+    assertEquals(4, children.size());
     assertEquals(run, children.get(0).getRun());
     assertEquals("document.png", children.get(0).getIconFileName());
   }
@@ -149,7 +149,7 @@ public class MetaShiftPublisherTest {
 
     // verify RecipeActionChild created.
     List<RecipeActionChild> children = recipeAction.getActions(RecipeActionChild.class);
-    assertEquals(11, children.size());
+    assertEquals(4, children.size());
     assertEquals(run, children.get(0).getRun());
     assertEquals("document.png", children.get(0).getIconFileName());
   }
@@ -189,7 +189,7 @@ public class MetaShiftPublisherTest {
 
     // verify RecipeActionChild created.
     List<RecipeActionChild> children = recipeAction.getActions(RecipeActionChild.class);
-    assertEquals(11, children.size());
+    assertEquals(4, children.size());
     assertEquals(run, children.get(0).getRun());
     assertEquals("document.png", children.get(0).getIconFileName());
   }

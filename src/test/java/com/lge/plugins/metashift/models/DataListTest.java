@@ -34,52 +34,49 @@ public class DataListTest {
 
   @Test
   public void testAddSingleData() {
-    dataList.add(new CodeSizeData("A-B-C", "a.file", 10, 1, 1));
+    dataList.add(new PassedTestData("A-B-C", "suite", "test", "msg"));
     assertEquals(1, dataList.size());
-    assertTrue(dataList.contains(CodeSizeData.class));
+    assertTrue(dataList.contains(PassedTestData.class));
   }
 
   @Test
   public void testAddMultipleData() {
-    dataList.add(new CodeSizeData("A-B-C", "a.file", 10, 1, 1));
-    dataList.add(new PremirrorCacheData("A-B-C", "A:B", true));
+    dataList.add(new PassedTestData("A-B-C", "suite", "test", "msg"));
+    dataList.add(new StatementCoverageData("A-B-C", "a.file", 1, true));
     assertEquals(2, dataList.size());
-    assertTrue(dataList.contains(CodeSizeData.class));
-    assertTrue(dataList.contains(PremirrorCacheData.class));
+    assertTrue(dataList.contains(PassedTestData.class));
+    assertTrue(dataList.contains(StatementCoverageData.class));
   }
 
   @Test
   public void testContainsWithInheritedData() {
-    dataList.add(new MajorCodeViolationData("A-B-C", "a.file", 1, 1, "r", "m", "d", "e", "t"));
-    assertTrue(dataList.contains(MajorCodeViolationData.class));
-    assertTrue(dataList.contains(CodeViolationData.class));
-    assertTrue(dataList.contains(ViolationData.class));
+    dataList.add(new KilledMutationTestData("A-B-C", "a.file", "X", "X", 1, "X", "X"));
+    assertTrue(dataList.contains(KilledMutationTestData.class));
+    assertTrue(dataList.contains(MutationTestData.class));
   }
 
   @Test
   public void testObjects() {
-    dataList.add(new MajorCodeViolationData("A-B-C", "a.file", 1, 1, "r", "m", "d", "e", "t"));
-    dataList.add(new InfoCodeViolationData("A-B-C", "b.file", 1, 1, "r", "m", "d", "i", "t"));
-    dataList.add(new MajorRecipeViolationData("A-B-C", "a.file", 1, "r", "d", "e"));
-    dataList.add(new CodeSizeData("A-B-C", "a.file", 10, 1, 1));
-    assertEquals(1, dataList.objects(MajorCodeViolationData.class).count());
-    assertEquals(2, dataList.objects(CodeViolationData.class).count());
-    assertEquals(3, dataList.objects(ViolationData.class).count());
+    dataList.add(new KilledMutationTestData("A-B-C", "a.file", "X", "X", 1, "X", "X"));
+    dataList.add(new SurvivedMutationTestData("A-B-C", "b.file", "X", "X", 2, "X", "X"));
+    dataList.add(new SkippedMutationTestData("A-B-C", "c.file", "X", "X", 3, "X", "X"));
+    dataList.add(new PassedTestData("A-B-C", "suite", "test", "msg"));
+    assertEquals(1, dataList.objects(KilledMutationTestData.class).count());
+    assertEquals(3, dataList.objects(MutationTestData.class).count());
     assertEquals(4, dataList.objects(Data.class).count());
   }
 
   @Test
   public void testAddAllMultipleObjects() {
     List<Data> objects = Arrays.asList(
-        new MajorCodeViolationData("A-B-C", "a.file", 1, 1, "r", "m", "d", "e", "t"),
-        new InfoCodeViolationData("A-B-C", "b.file", 1, 1, "r", "m", "d", "i", "t"),
-        new MajorRecipeViolationData("A-B-C", "a.file", 1, "r", "d", "e"),
-        new CodeSizeData("A-B-C", "a.file", 10, 1, 1)
+        new KilledMutationTestData("A-B-C", "a.file", "X", "X", 1, "X", "X"),
+        new SurvivedMutationTestData("A-B-C", "b.file", "X", "X", 2, "X", "X"),
+        new SkippedMutationTestData("A-B-C", "c.file", "X", "X", 3, "X", "X"),
+        new PassedTestData("A-B-C", "suite", "test", "msg")
     );
     dataList.addAll(objects);
-    assertEquals(1, dataList.objects(MajorCodeViolationData.class).count());
-    assertEquals(2, dataList.objects(CodeViolationData.class).count());
-    assertEquals(3, dataList.objects(ViolationData.class).count());
+    assertEquals(1, dataList.objects(KilledMutationTestData.class).count());
+    assertEquals(3, dataList.objects(MutationTestData.class).count());
     assertEquals(4, dataList.objects(Data.class).count());
   }
 }

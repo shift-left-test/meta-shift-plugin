@@ -51,8 +51,6 @@ public class RecipeActionChildTest {
     fakeRecipe
         .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
             .setBranchCoverage(3, 4)
@@ -66,89 +64,6 @@ public class RecipeActionChildTest {
     RecipeAction recipeAction = buildAction.getAction(RecipeAction.class);
 
     List<RecipeActionChild> children = recipeAction.getActions(RecipeActionChild.class);
-
-    // premirror_cache
-    RecipeActionChild premirrorCacheAction = children.stream()
-        .filter(o -> o.getUrlName() == "premirror_cache")
-        .findFirst().orElse(null);
-    assertNotNull(premirrorCacheAction);
-    assertEquals("Premirror Cache", premirrorCacheAction.getDisplayName());
-    assertEquals("0%", premirrorCacheAction.getScale());
-    assertEquals(recipeAction.getReport().getPremirrorCache(), premirrorCacheAction.getGroup());
-    assertEquals("80%", premirrorCacheAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getPremirrorCache().getSummaries(),
-        premirrorCacheAction.getTableModel());
-
-    // shared_state_cache
-    RecipeActionChild sharedStateCacheAction = children.stream()
-        .filter(o -> o.getUrlName() == "shared_state_cache")
-        .findFirst().orElse(null);
-    assertNotNull(sharedStateCacheAction);
-    assertEquals("Shared State Cache", sharedStateCacheAction.getDisplayName());
-    assertEquals("0%", sharedStateCacheAction.getScale());
-    assertEquals(recipeAction.getReport().getSharedStateCache(), sharedStateCacheAction.getGroup());
-    assertEquals("80%", sharedStateCacheAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getSharedStateCache().getSummaries(),
-        sharedStateCacheAction.getTableModel());
-
-    // recipe_violations
-    RecipeActionChild recipeViolationsAction = children.stream()
-        .filter(o -> o.getUrlName() == "recipe_violations")
-        .findFirst().orElse(null);
-    assertNotNull(recipeViolationsAction);
-    assertEquals("Recipe Violations", recipeViolationsAction.getDisplayName());
-    assertEquals("0.60", recipeViolationsAction.getScale());
-    assertEquals(recipeAction.getReport().getRecipeViolations(), recipeViolationsAction.getGroup());
-    assertEquals("0.10", recipeViolationsAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getRecipeViolations().getSummaries(),
-        recipeViolationsAction.getTableModel());
-
-    // comments
-    RecipeActionChild commentsAction = children.stream().filter(o -> o.getUrlName() == "comments")
-        .findFirst().orElse(null);
-    assertNotNull(commentsAction);
-    assertEquals("Comments", commentsAction.getDisplayName());
-    assertEquals("50%", commentsAction.getScale());
-    assertEquals(recipeAction.getReport().getComments(), commentsAction.getGroup());
-    assertEquals("20%", commentsAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getComments().getSummaries(),
-        commentsAction.getTableModel());
-
-    // code_violations
-    RecipeActionChild codeViolationsAction = children.stream()
-        .filter(o -> o.getUrlName() == "code_violations")
-        .findFirst().orElse(null);
-    assertNotNull(codeViolationsAction);
-    assertEquals("Code Violations", codeViolationsAction.getDisplayName());
-    assertEquals("0.60", codeViolationsAction.getScale());
-    assertEquals(recipeAction.getReport().getCodeViolations(), codeViolationsAction.getGroup());
-    assertEquals("0.10", codeViolationsAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getCodeViolations().getSummaries(),
-        codeViolationsAction.getTableModel());
-
-    // complexity
-    RecipeActionChild complexityAction = children.stream()
-        .filter(o -> o.getUrlName() == "complexity")
-        .findFirst().orElse(null);
-    assertNotNull(complexityAction);
-    assertEquals("Complexity", complexityAction.getDisplayName());
-    assertEquals("45%", complexityAction.getScale());
-    assertEquals(recipeAction.getReport().getComplexity(), complexityAction.getGroup());
-    assertEquals("10%", complexityAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getComplexity().getSummaries(),
-        complexityAction.getTableModel());
-
-    // duplications
-    RecipeActionChild duplicationsAction = children.stream()
-        .filter(o -> o.getUrlName() == "duplications")
-        .findFirst().orElse(null);
-    assertNotNull(duplicationsAction);
-    assertEquals("Duplications", duplicationsAction.getDisplayName());
-    assertEquals("0%", duplicationsAction.getScale());
-    assertEquals(recipeAction.getReport().getDuplications(), duplicationsAction.getGroup());
-    assertEquals("10%", duplicationsAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getDuplications().getSummaries(),
-        duplicationsAction.getTableModel());
 
     // unit_tests
     RecipeActionChild unitTestsAction = children.stream()

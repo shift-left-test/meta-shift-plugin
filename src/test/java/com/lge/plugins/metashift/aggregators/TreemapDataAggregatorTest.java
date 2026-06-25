@@ -10,8 +10,8 @@ import static org.junit.Assert.assertEquals;
 import com.lge.plugins.metashift.analysis.RecipeEvaluator;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.FailedTestData;
+import com.lge.plugins.metashift.models.KilledMutationTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
-import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.StatementCoverageData;
@@ -68,41 +68,51 @@ public class TreemapDataAggregatorTest {
 
   @Test
   public void testParseSingleRecipeWithSingleMetric() {
+    // UnitTestEvaluator: available=true, qualified=true (1 passed / 1 total = 100% >= 50%)
+    // RecipeEvaluator: denominator=1, numerator=1, ratio=1.0 → BEST
     recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, true));
-    recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
+    recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
     assertValues(0, RECIPE1, 1, 1.0, Grade.BEST);
   }
 
   @Test
   public void testParseSingleRecipeWithMultipleMetrics() {
+    // UnitTestEvaluator: available=true, qualified=true (1 passed / 1 total = 100% >= 50%)
+    // StatementCoverageEvaluator: available=true (has TestData + StatementCoverageData), qualified=true
+    // MutationTestEvaluator: available=true, qualified=true (1 killed / 1 total = 100% >= 5%)
+    // RecipeEvaluator: denominator=3, numerator=3, ratio=1.0 → BEST
     recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, true));
-    recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
-    recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
-    assertValues(0, RECIPE1, 1, 0.6666666666666666, Grade.GOOD);
+    recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
+    recipe1.add(new KilledMutationTestData(RECIPE1, "a.file", "X", "X", 1, "X", "X"));
+    assertValues(0, RECIPE1, 1, 1.0, Grade.BEST);
   }
 
   @Test
   public void testParseMultipleRecipesWithSingleMetric() {
+    // recipe1: UnitTest available+qualified → ratio=1.0
     recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, true));
-    recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
+    recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
+    // recipe2: UnitTest available+not-qualified (failed only) → ratio=0.0
     recipe2.add(new StatementCoverageData(RECIPE2, "b.file", 1, false));
     recipe2.add(new StatementCoverageData(RECIPE2, "b.file", 2, false));
-    recipe2.add(new PremirrorCacheData(RECIPE2, "B", false));
+    recipe2.add(new FailedTestData(RECIPE2, "B", "B", "B"));
+    // max=1.0 (from recipe1). recipe1→BEST, recipe2→WORST
     assertValues(0, RECIPE1, 1, 1.0, Grade.BEST);
     assertValues(1, RECIPE2, 2, 0.0, Grade.WORST);
   }
 
   @Test
   public void testParseMultipleRecipesWithMultipleMetrics() {
+    // recipe1: UnitTest available+qualified, StatementCoverage available+qualified → 2/2=1.0
     recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, true));
-    recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
-    recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
+    recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
+    // recipe2: UnitTest available+not-qualified (0/1), StatementCoverage available+not-qualified → 0/2=0.0
     recipe2.add(new StatementCoverageData(RECIPE2, "b.file", 1, false));
     recipe2.add(new StatementCoverageData(RECIPE2, "b.file", 2, false));
-    recipe2.add(new PremirrorCacheData(RECIPE2, "B", false));
-    recipe2.add(new PassedTestData(RECIPE2, "B", "B", "B"));
-    assertValues(0, RECIPE1, 1, 0.6666666666666666, Grade.GOOD);
-    assertValues(1, RECIPE2, 2, 0.3333333333333333, Grade.BAD);
+    recipe2.add(new FailedTestData(RECIPE2, "B", "B", "B"));
+    // max=1.0. recipe1→BEST, recipe2→WORST
+    assertValues(0, RECIPE1, 1, 1.0, Grade.BEST);
+    assertValues(1, RECIPE2, 2, 0.0, Grade.WORST);
   }
 
   @Test
@@ -112,7 +122,7 @@ public class TreemapDataAggregatorTest {
     for (int i = 0; i < 10; i++) {
       recipe1.add(new StatementCoverageData(RECIPE1, "a.file", i + 1, true));
     }
-    recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
+    recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
     assertValues(0, RECIPE1, 10, 1.0, Grade.BEST);
   }
 }

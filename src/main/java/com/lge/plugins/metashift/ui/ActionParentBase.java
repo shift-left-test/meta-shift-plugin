@@ -17,13 +17,6 @@ import org.kohsuke.stapler.StaplerResponse;
  */
 public abstract class ActionParentBase extends Actionable {
 
-  protected ActionChildBase childActionPremirrorCache;
-  protected ActionChildBase childActionSharedStateCache;
-  protected ActionChildBase childActionRecipeViolations;
-  protected ActionChildBase childActionComments;
-  protected ActionChildBase childActionCodeViolations;
-  protected ActionChildBase childActionComplexity;
-  protected ActionChildBase childActionDuplications;
   protected ActionChildBase childActionUnitTests;
   protected ActionChildBase childActionStatementCoverage;
   protected ActionChildBase childActionBranchCoverage;
@@ -49,19 +42,9 @@ public abstract class ActionParentBase extends Actionable {
       throws Exception {
     ContextMenu menu = new ContextMenu();
 
-    final MenuItem headerBuildSystem = new MenuItem().withDisplayName("Build System");
-    headerBuildSystem.header = true;
-    menu.add(headerBuildSystem);
-    this.addActionToMenu(menu, this.childActionPremirrorCache);
-    this.addActionToMenu(menu, this.childActionSharedStateCache);
-    this.addActionToMenu(menu, this.childActionRecipeViolations);
     final MenuItem headerCodeQuality = new MenuItem().withDisplayName("Code Quality");
     headerCodeQuality.header = true;
     menu.add(headerCodeQuality);
-    this.addActionToMenu(menu, this.childActionComments);
-    this.addActionToMenu(menu, this.childActionCodeViolations);
-    this.addActionToMenu(menu, this.childActionComplexity);
-    this.addActionToMenu(menu, this.childActionDuplications);
     this.addActionToMenu(menu, this.childActionUnitTests);
     this.addActionToMenu(menu, this.childActionStatementCoverage);
     this.addActionToMenu(menu, this.childActionBranchCoverage);

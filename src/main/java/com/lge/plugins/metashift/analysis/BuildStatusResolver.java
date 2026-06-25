@@ -49,118 +49,6 @@ public class BuildStatusResolver implements Aggregate<Result>, Collector<Recipes
   }
 
   @Override
-  public Result getPremirrorCache() {
-    return status.get(Type.PREMIRROR_CACHE);
-  }
-
-  /**
-   * Sets the build status.
-   *
-   * @param recipes to parses
-   */
-  private void setPremirrorCache(Recipes recipes) {
-    status.put(Type.PREMIRROR_CACHE,
-        toResult(configuration.isPremirrorCacheAsUnstable(),
-            new PremirrorCacheEvaluator(configuration).parse(recipes)));
-  }
-
-  @Override
-  public Result getSharedStateCache() {
-    return status.get(Type.SHARED_STATE_CACHE);
-  }
-
-  /**
-   * Sets the build status.
-   *
-   * @param recipes to parses
-   */
-  private void setSharedStateCache(Recipes recipes) {
-    status.put(Type.SHARED_STATE_CACHE,
-        toResult(configuration.isSharedStateCacheAsUnstable(),
-            new SharedStateCacheEvaluator(configuration).parse(recipes)));
-  }
-
-  @Override
-  public Result getRecipeViolations() {
-    return status.get(Type.RECIPE_VIOLATIONS);
-  }
-
-  /**
-   * Sets the build status.
-   *
-   * @param recipes to parses
-   */
-  private void setRecipeViolations(Recipes recipes) {
-    status.put(Type.RECIPE_VIOLATIONS,
-        toResult(configuration.isRecipeViolationsAsUnstable(),
-            new RecipeViolationEvaluator(configuration).parse(recipes)));
-  }
-
-  @Override
-  public Result getComments() {
-    return status.get(Type.COMMENTS);
-  }
-
-  /**
-   * Sets the build status.
-   *
-   * @param recipes to parses
-   */
-  private void setComments(Recipes recipes) {
-    status.put(Type.COMMENTS,
-        toResult(configuration.isCommentsAsUnstable(),
-            new CommentEvaluator(configuration).parse(recipes)));
-  }
-
-  @Override
-  public Result getCodeViolations() {
-    return status.get(Type.CODE_VIOLATIONS);
-  }
-
-  /**
-   * Sets the build status.
-   *
-   * @param recipes to parses
-   */
-  private void setCodeViolations(Recipes recipes) {
-    status.put(Type.CODE_VIOLATIONS,
-        toResult(configuration.isCodeViolationsAsUnstable(),
-            new CodeViolationEvaluator(configuration).parse(recipes)));
-  }
-
-  @Override
-  public Result getComplexity() {
-    return status.get(Type.COMPLEXITY);
-  }
-
-  /**
-   * Sets the build status.
-   *
-   * @param recipes to parses
-   */
-  private void setComplexity(Recipes recipes) {
-    status.put(Type.COMPLEXITY,
-        toResult(configuration.isComplexityAsUnstable(),
-            new ComplexityEvaluator(configuration).parse(recipes)));
-  }
-
-  @Override
-  public Result getDuplications() {
-    return status.get(Type.DUPLICATIONS);
-  }
-
-  /**
-   * Sets the build status.
-   *
-   * @param recipes to parses
-   */
-  private void setDuplications(Recipes recipes) {
-    status.put(Type.DUPLICATIONS,
-        toResult(configuration.isDuplicationsAsUnstable(),
-            new DuplicationEvaluator(configuration).parse(recipes)));
-  }
-
-  @Override
   public Result getUnitTests() {
     return status.get(Type.UNIT_TESTS);
   }
@@ -235,13 +123,6 @@ public class BuildStatusResolver implements Aggregate<Result>, Collector<Recipes
 
   @Override
   public Void parse(Recipes recipes) {
-    setPremirrorCache(recipes);
-    setSharedStateCache(recipes);
-    setRecipeViolations(recipes);
-    setComments(recipes);
-    setCodeViolations(recipes);
-    setComplexity(recipes);
-    setDuplications(recipes);
     setUnitTests(recipes);
     setStatementCoverage(recipes);
     setBranchCoverage(recipes);

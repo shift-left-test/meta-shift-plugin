@@ -7,39 +7,18 @@ package com.lge.plugins.metashift.builders;
 
 import com.lge.plugins.metashift.aggregators.Aggregator;
 import com.lge.plugins.metashift.aggregators.BranchCoverageDataSummaryAggregator;
-import com.lge.plugins.metashift.aggregators.CodeViolationDataSummaryAggregator;
-import com.lge.plugins.metashift.aggregators.CommentDataSummaryAggregator;
-import com.lge.plugins.metashift.aggregators.ComplexityDataSummaryAggregator;
-import com.lge.plugins.metashift.aggregators.DuplicationDataSummaryAggregator;
 import com.lge.plugins.metashift.aggregators.EvaluationSummaryAggregator;
 import com.lge.plugins.metashift.aggregators.MutationTestDataSummaryAggregator;
-import com.lge.plugins.metashift.aggregators.PremirrorCacheDataSummaryAggregator;
-import com.lge.plugins.metashift.aggregators.RecipeViolationDataSummaryAggregator;
-import com.lge.plugins.metashift.aggregators.SharedStateCacheDataSummaryAggregator;
 import com.lge.plugins.metashift.aggregators.StatementCoverageDataSummaryAggregator;
 import com.lge.plugins.metashift.aggregators.TreemapDataAggregator;
 import com.lge.plugins.metashift.aggregators.UnitTestDataSummaryAggregator;
 import com.lge.plugins.metashift.analysis.BranchCoverageCounter;
 import com.lge.plugins.metashift.analysis.BranchCoverageEvaluator;
-import com.lge.plugins.metashift.analysis.CodeViolationCounter;
-import com.lge.plugins.metashift.analysis.CodeViolationEvaluator;
-import com.lge.plugins.metashift.analysis.CommentCounter;
-import com.lge.plugins.metashift.analysis.CommentEvaluator;
-import com.lge.plugins.metashift.analysis.ComplexityCounter;
-import com.lge.plugins.metashift.analysis.ComplexityEvaluator;
 import com.lge.plugins.metashift.analysis.Counter;
-import com.lge.plugins.metashift.analysis.DuplicationCounter;
-import com.lge.plugins.metashift.analysis.DuplicationEvaluator;
 import com.lge.plugins.metashift.analysis.Evaluator;
 import com.lge.plugins.metashift.analysis.MutationTestCounter;
 import com.lge.plugins.metashift.analysis.MutationTestEvaluator;
-import com.lge.plugins.metashift.analysis.PremirrorCacheCounter;
-import com.lge.plugins.metashift.analysis.PremirrorCacheEvaluator;
 import com.lge.plugins.metashift.analysis.RecipeEvaluator;
-import com.lge.plugins.metashift.analysis.RecipeViolationCounter;
-import com.lge.plugins.metashift.analysis.RecipeViolationEvaluator;
-import com.lge.plugins.metashift.analysis.SharedStateCacheCounter;
-import com.lge.plugins.metashift.analysis.SharedStateCacheEvaluator;
 import com.lge.plugins.metashift.analysis.StatementCoverageCounter;
 import com.lge.plugins.metashift.analysis.StatementCoverageEvaluator;
 import com.lge.plugins.metashift.analysis.StatisticsCollector;
@@ -127,69 +106,6 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
     }
   }
 
-  private Void addPremirrorCache(Recipes recipes) throws IOException {
-    add(Metric.PREMIRROR_CACHE,
-        new PremirrorCacheEvaluator(configuration),
-        new PremirrorCacheCounter(),
-        new PremirrorCacheDataSummaryAggregator(configuration),
-        recipes);
-    return null;
-  }
-
-  private Void addSharedStateCache(Recipes recipes) throws IOException {
-    add(Metric.SHARED_STATE_CACHE,
-        new SharedStateCacheEvaluator(configuration),
-        new SharedStateCacheCounter(),
-        new SharedStateCacheDataSummaryAggregator(configuration),
-        recipes);
-    return null;
-  }
-
-  private Void addRecipeViolations(Recipes recipes) throws IOException {
-    add(Metric.RECIPE_VIOLATIONS,
-        new RecipeViolationEvaluator(configuration),
-        new RecipeViolationCounter(),
-        new RecipeViolationDataSummaryAggregator(configuration),
-        recipes);
-    return null;
-  }
-
-  private Void addComments(Recipes recipes) throws IOException {
-    add(Metric.COMMENTS,
-        new CommentEvaluator(configuration),
-        new CommentCounter(),
-        new CommentDataSummaryAggregator(configuration),
-        recipes);
-    return null;
-  }
-
-  private Void addCodeViolations(Recipes recipes) throws IOException {
-    add(Metric.CODE_VIOLATIONS,
-        new CodeViolationEvaluator(configuration),
-        new CodeViolationCounter(),
-        new CodeViolationDataSummaryAggregator(configuration),
-        recipes);
-    return null;
-  }
-
-  private Void addComplexity(Recipes recipes) throws IOException {
-    add(Metric.COMPLEXITY,
-        new ComplexityEvaluator(configuration),
-        new ComplexityCounter(configuration),
-        new ComplexityDataSummaryAggregator(configuration),
-        recipes);
-    return null;
-  }
-
-  private Void addDuplications(Recipes recipes) throws IOException {
-    add(Metric.DUPLICATIONS,
-        new DuplicationEvaluator(configuration),
-        new DuplicationCounter(configuration),
-        new DuplicationDataSummaryAggregator(configuration),
-        recipes);
-    return null;
-  }
-
   private Void addUnitTests(Recipes recipes) throws IOException {
     add(Metric.UNIT_TESTS,
         new UnitTestEvaluator(configuration),
@@ -249,13 +165,6 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
   @Override
   public ProjectReport parse(Recipes recipes) throws IOException, InterruptedException {
     ExecutorServiceUtils.invokeAll(
-        newTask(this::addPremirrorCache, recipes),
-        newTask(this::addSharedStateCache, recipes),
-        newTask(this::addRecipeViolations, recipes),
-        newTask(this::addComments, recipes),
-        newTask(this::addCodeViolations, recipes),
-        newTask(this::addComplexity, recipes),
-        newTask(this::addDuplications, recipes),
         newTask(this::addUnitTests, recipes),
         newTask(this::addStatementCoverage, recipes),
         newTask(this::addBranchCoverage, recipes),

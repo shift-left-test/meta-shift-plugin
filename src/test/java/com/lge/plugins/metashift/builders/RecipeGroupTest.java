@@ -32,7 +32,7 @@ public class RecipeGroupTest {
   @Before
   public void setUp() throws IOException, InterruptedException {
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
-    group = new RecipeGroup(dataSource, Metric.PREMIRROR_CACHE, "A-A-A");
+    group = new RecipeGroup(dataSource, Metric.UNIT_TESTS, "A-A-A");
   }
 
   @Test

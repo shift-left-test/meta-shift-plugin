@@ -43,26 +43,24 @@ public class ParserTest {
   private void prepareReportWith(String path) {
     builder = new StringBuilder();
     builder
-        .append("{")
-        .append("  'size': [")
-        .append("    {")
-        .append(String.format("      'file': '%s',", path))
-        .append("      'total_lines': 1,")
-        .append("      'code_lines': 1,")
-        .append("      'comment_lines': 1,")
-        .append("      'duplicated_lines': 1,")
-        .append("      'functions': 1,")
-        .append("      'classes': 1")
-        .append("    }")
-        .append("  ]")
-        .append("}");
-    utils.writeLines(builder, report, "checkcode", "sage_report.json");
+        .append("<mutations>")
+        .append("  <mutation detected='true'>")
+        .append(String.format("    <sourceFile>file</sourceFile>"))
+        .append(String.format("    <sourceFilePath>%s</sourceFilePath>", path))
+        .append("    <mutatedClass>A</mutatedClass>")
+        .append("    <mutatedMethod>func</mutatedMethod>")
+        .append("    <lineNumber>1</lineNumber>")
+        .append("    <mutator>AOR</mutator>")
+        .append("    <killingTest>test</killingTest>")
+        .append("  </mutation>")
+        .append("</mutations>");
+    utils.writeLines(builder, report, "checktest", "mutations.xml");
   }
 
   private void assertDataListSize(int size)
       throws IOException, InterruptedException {
     dataList = new DataList();
-    ExecutorServiceUtils.invokeAll(new CodeSizeParser(new FilePath(report), dataList));
+    ExecutorServiceUtils.invokeAll(new MutationTestParser(new FilePath(report), dataList));
     assertEquals(size, dataList.size());
   }
 

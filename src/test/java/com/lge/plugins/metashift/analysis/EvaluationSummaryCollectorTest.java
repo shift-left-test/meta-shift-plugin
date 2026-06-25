@@ -7,13 +7,13 @@ package com.lge.plugins.metashift.analysis;
 
 import static org.junit.Assert.assertEquals;
 
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.EvaluationSummary;
-import com.lge.plugins.metashift.models.PremirrorCacheData;
+import com.lge.plugins.metashift.models.FailedTestData;
+import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
-import com.lge.plugins.metashift.models.SharedStateCacheData;
+import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.utils.ConfigurationUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,70 +45,64 @@ public class EvaluationSummaryCollectorTest {
     recipes.add(recipe2);
   }
 
-  private void assertPremirrorCache(EvaluationSummary o, boolean available, double ratio,
+  private void assertUnitTests(EvaluationSummary o, boolean available, double ratio,
       boolean qualified) {
-    assertEquals(available, o.getPremirrorCache().isAvailable());
-    assertEquals(ratio, o.getPremirrorCache().getRatio(), 0.01);
-    assertEquals(qualified, o.getPremirrorCache().isQualified());
+    assertEquals(available, o.getUnitTests().isAvailable());
+    assertEquals(ratio, o.getUnitTests().getRatio(), 0.01);
+    assertEquals(qualified, o.getUnitTests().isQualified());
   }
 
-  private void assertSharedStateCache(EvaluationSummary o, boolean available, double ratio,
+  private void assertStatementCoverage(EvaluationSummary o, boolean available, double ratio,
       boolean qualified) {
-    assertEquals(available, o.getSharedStateCache().isAvailable());
-    assertEquals(ratio, o.getSharedStateCache().getRatio(), 0.01);
-    assertEquals(qualified, o.getSharedStateCache().isQualified());
+    assertEquals(available, o.getStatementCoverage().isAvailable());
+    assertEquals(ratio, o.getStatementCoverage().getRatio(), 0.01);
+    assertEquals(qualified, o.getStatementCoverage().isQualified());
   }
 
   @Test
   public void testParseEmptyRecipes() {
     summary = collector.parse(recipes);
-    assertPremirrorCache(summary, false, 0.0, false);
-    assertSharedStateCache(summary, false, 0.0, false);
+    assertUnitTests(summary, false, 0.0, false);
+    assertStatementCoverage(summary, false, 0.0, false);
   }
 
   @Test
   public void testParseSingleRecipe() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
-    recipe1.add(new PremirrorCacheData(RECIPE1, "A", false));
-    recipe1.add(new SharedStateCacheData(RECIPE1, "B", false));
+    recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
+    recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, false));
     summary = collector.parse(recipes);
-    assertPremirrorCache(summary, true, 0.0, false);
-    assertSharedStateCache(summary, true, 0.0, false);
+    assertUnitTests(summary, true, 1.0, true);
+    assertStatementCoverage(summary, true, 0.0, false);
   }
 
   @Test
   public void testParseMultipleRecipes() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
-    recipe1.add(new PremirrorCacheData(RECIPE1, "A", false));
-    recipe1.add(new SharedStateCacheData(RECIPE1, "B", false));
-    recipe2.add(new CodeSizeData(RECIPE2, "b.file", 2, 2, 2));
-    recipe2.add(new PremirrorCacheData(RECIPE2, "C", true));
-    recipe2.add(new SharedStateCacheData(RECIPE2, "D", true));
+    recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
+    recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, false));
+    recipe2.add(new FailedTestData(RECIPE2, "B", "B", "B"));
+    recipe2.add(new StatementCoverageData(RECIPE2, "b.file", 1, true));
     summary = collector.parse(recipes);
-    assertPremirrorCache(summary, true, 0.5, true);
-    assertSharedStateCache(summary, true, 0.5, true);
+    assertUnitTests(summary, true, 0.5, true);
+    assertStatementCoverage(summary, true, 0.5, true);
   }
 
   @Test
   public void testParseRecipeWithSingleData() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
-    recipe1.add(new PremirrorCacheData(RECIPE1, "A", false));
-    recipe1.add(new SharedStateCacheData(RECIPE1, "B", false));
+    recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
+    recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, false));
     summary = collector.parse(recipe1);
-    assertPremirrorCache(summary, true, 0.0, false);
-    assertSharedStateCache(summary, true, 0.0, false);
+    assertUnitTests(summary, true, 1.0, true);
+    assertStatementCoverage(summary, true, 0.0, false);
   }
 
   @Test
   public void testParseRecipeWithMultipleData() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
-    recipe1.add(new PremirrorCacheData(RECIPE1, "A", false));
-    recipe1.add(new SharedStateCacheData(RECIPE1, "B", false));
-    recipe1.add(new CodeSizeData(RECIPE1, "b.file", 2, 2, 2));
-    recipe1.add(new PremirrorCacheData(RECIPE1, "C", true));
-    recipe1.add(new SharedStateCacheData(RECIPE1, "D", true));
+    recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
+    recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, false));
+    recipe1.add(new FailedTestData(RECIPE1, "B", "B", "B"));
+    recipe1.add(new StatementCoverageData(RECIPE1, "b.file", 1, true));
     summary = collector.parse(recipe1);
-    assertPremirrorCache(summary, true, 0.5, true);
-    assertSharedStateCache(summary, true, 0.5, true);
+    assertUnitTests(summary, true, 0.5, true);
+    assertStatementCoverage(summary, true, 0.5, true);
   }
 }

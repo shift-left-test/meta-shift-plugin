@@ -45,13 +45,6 @@ public class RecipeReportTest {
 
   @Test
   public void testInitialStatusOfMetrics() {
-    assertValues(report.getPremirrorCache());
-    assertValues(report.getSharedStateCache());
-    assertValues(report.getRecipeViolations());
-    assertValues(report.getComments());
-    assertValues(report.getCodeViolations());
-    assertValues(report.getComplexity());
-    assertValues(report.getDuplications());
     assertValues(report.getUnitTests());
     assertValues(report.getStatementCoverage());
     assertValues(report.getBranchCoverage());

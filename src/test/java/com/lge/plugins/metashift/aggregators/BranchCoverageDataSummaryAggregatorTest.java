@@ -8,7 +8,6 @@ package com.lge.plugins.metashift.aggregators;
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.BranchCoverageData;
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.FailedTestData;
@@ -67,7 +66,6 @@ public class BranchCoverageDataSummaryAggregatorTest {
 
   @Test
   public void testParseWithNoTestData() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new BranchCoverageData(RECIPE1, "a.file", 1, 1, true));
     summaries = aggregator.parse(recipes);
     assertEquals(0, summaries.size());
@@ -75,7 +73,6 @@ public class BranchCoverageDataSummaryAggregatorTest {
 
   @Test
   public void testParseSingleRecipe() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new BranchCoverageData(RECIPE1, "a.file", 1, 1, false));
     summaries = aggregator.parse(recipes);
@@ -84,10 +81,8 @@ public class BranchCoverageDataSummaryAggregatorTest {
 
   @Test
   public void testParseMultipleRecipes() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new BranchCoverageData(RECIPE1, "a.file", 1, 1, false));
-    recipe2.add(new CodeSizeData(RECIPE2, "b.file", 2, 2, 2));
     recipe2.add(new PassedTestData(RECIPE2, "B", "B", "B"));
     recipe2.add(new BranchCoverageData(RECIPE2, "b.file", 2, 2, true));
     summaries = aggregator.parse(recipes);
@@ -102,7 +97,6 @@ public class BranchCoverageDataSummaryAggregatorTest {
 
   @Test
   public void testParseRecipeWithSingleData() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new BranchCoverageData(RECIPE1, "a.file", 1, 1, false));
     summaries = aggregator.parse(recipe1);
@@ -111,10 +105,8 @@ public class BranchCoverageDataSummaryAggregatorTest {
 
   @Test
   public void testParseRecipeWithMultipleData() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new BranchCoverageData(RECIPE1, "a.file", 1, 1, false));
-    recipe1.add(new CodeSizeData(RECIPE1, "b.file", 2, 2, 2));
     recipe1.add(new PassedTestData(RECIPE1, "B", "B", "B"));
     recipe1.add(new BranchCoverageData(RECIPE1, "b.file", 2, 2, true));
     summaries = aggregator.parse(recipe1);

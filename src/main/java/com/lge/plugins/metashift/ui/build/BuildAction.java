@@ -72,36 +72,15 @@ public class BuildAction extends ActionParentBase implements LastBuildAction, Ru
       this.addAction(recipeAction);
     }
 
-    this.addAction(this.childActionSharedStateCache = new BuildActionChild(
-        this, this.getReport().getSharedStateCache(),
-        "Shared State Cache", "shared_state_cache", true));
-    this.addAction(this.childActionPremirrorCache = new BuildActionChild(
-        this, this.getReport().getPremirrorCache(),
-        "Premirror Cache", "premirror_cache", true));
-    this.addAction(this.childActionCodeViolations = new BuildActionChild(
-        this, this.getReport().getCodeViolations(),
-        "Code Violations", "code_violations", false));
-    this.addAction(this.childActionComments = new BuildActionChild(
-        this, this.getReport().getComments(),
-        "Comments", "comments", true));
-    this.addAction(this.childActionComplexity = new BuildActionChild(
-        this, this.getReport().getComplexity(),
-        "Complexity", "complexity", true));
     this.addAction(this.childActionStatementCoverage = new BuildActionChild(
         this, this.getReport().getStatementCoverage(),
         "Statement Coverage", "statement_coverage", true));
     this.addAction(this.childActionBranchCoverage = new BuildActionChild(
         this, this.getReport().getBranchCoverage(),
         "Branch Coverage", "branch_coverage", true));
-    this.addAction(this.childActionDuplications = new BuildActionChild(
-        this, this.getReport().getDuplications(),
-        "Duplications", "duplications", true));
     this.addAction(this.childActionMutationTests = new BuildActionChild(
         this, this.getReport().getMutationTests(),
         "Mutation Tests", "mutation_tests", true));
-    this.addAction(this.childActionRecipeViolations = new BuildActionChild(
-        this, this.getReport().getRecipeViolations(),
-        "Recipe Violations", "recipe_violations", false));
     this.addAction(this.childActionUnitTests = new BuildActionChild(
         this, this.getReport().getUnitTests(),
         "Unit Tests", "unit_tests", true));
@@ -259,26 +238,6 @@ public class BuildAction extends ActionParentBase implements LastBuildAction, Ru
   }
 
   // ratio delta
-  public double getPremirrorCacheDelta() {
-    return getRatioDelta(ProjectReport::getPremirrorCache);
-  }
-
-  public double getSharedStateCacheDelta() {
-    return getRatioDelta(ProjectReport::getSharedStateCache);
-  }
-
-  public double getCodeViolationsDelta() {
-    return getRatioDelta(ProjectReport::getCodeViolations);
-  }
-
-  public double getCommentsDelta() {
-    return getRatioDelta(ProjectReport::getComments);
-  }
-
-  public double getComplexityDelta() {
-    return getRatioDelta(ProjectReport::getComplexity);
-  }
-
   public double getStatementCoverageDelta() {
     return getRatioDelta(ProjectReport::getStatementCoverage);
   }
@@ -287,16 +246,8 @@ public class BuildAction extends ActionParentBase implements LastBuildAction, Ru
     return getRatioDelta(ProjectReport::getBranchCoverage);
   }
 
-  public double getDuplicationsDelta() {
-    return getRatioDelta(ProjectReport::getDuplications);
-  }
-
   public double getMutationTestDelta() {
     return getRatioDelta(ProjectReport::getMutationTests);
-  }
-
-  public double getRecipeViolationsDelta() {
-    return getRatioDelta(ProjectReport::getRecipeViolations);
   }
 
   public double getTestDelta() {

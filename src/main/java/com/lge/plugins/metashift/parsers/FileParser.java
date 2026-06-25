@@ -107,17 +107,8 @@ public class FileParser {
     }
     DataList dataList = new DataList();
     ExecutorServiceUtils.invokeAll(
-        new CodeSizeParser(path, dataList),
-        new CodeViolationParser(path, dataList),
-        new CommentParser(path, dataList),
-        new ComplexityParser(path, dataList),
         new CoverageParser(path, dataList),
-        new DuplicationParser(path, dataList),
         new MutationTestParser(path, dataList),
-        new PremirrorCacheParser(path, dataList),
-        new RecipeSizeParser(path, dataList),
-        new RecipeViolationParser(path, dataList),
-        new SharedStateCacheParser(path, dataList),
         new TestParser(path, dataList)
     );
     return new Recipe(NamingUtils.getRecipe(name), dataList);

@@ -32,7 +32,7 @@ public class ProjectGroupTest {
   @Before
   public void setUp() throws IOException, InterruptedException {
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
-    group = new ProjectGroup(dataSource, Metric.PREMIRROR_CACHE);
+    group = new ProjectGroup(dataSource, Metric.UNIT_TESTS);
   }
 
   @Test

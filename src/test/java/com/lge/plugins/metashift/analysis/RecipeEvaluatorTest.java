@@ -7,16 +7,16 @@ package com.lge.plugins.metashift.analysis;
 
 import static org.junit.Assert.assertEquals;
 
-import com.lge.plugins.metashift.models.CodeSizeData;
-import com.lge.plugins.metashift.models.CommentData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.FailedTestData;
+import com.lge.plugins.metashift.models.KilledMutationTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.PositiveEvaluation;
-import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.models.StatementCoverageData;
+import com.lge.plugins.metashift.models.SurvivedMutationTestData;
 import com.lge.plugins.metashift.utils.ConfigurationUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,23 +60,25 @@ public class RecipeEvaluatorTest {
 
   @Test
   public void testParseSingleRecipe() {
-    recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe1.add(new PremirrorCacheData("A-A-A", "A", false));
-    recipe1.add(new CommentData("A-A-A", "a.file", 10, 1));
+    // UnitTestEvaluator: available=true, qualified=true (1/1 = 100% >= 50%)
     recipe1.add(new PassedTestData("A-A-A", "A", "A", "A"));
-    assertValues(3, 1, 0.33);
+    // StatementCoverageEvaluator: available=true, qualified=false (0/1 = 0% < 50%)
+    recipe1.add(new StatementCoverageData("A-A-A", "a.file", 1, false));
+    // denominator=2 (UnitTests available, StatementCoverage available), numerator=1 (UnitTests qualified)
+    assertValues(2, 1, 0.5);
   }
 
   @Test
   public void testParseMultipleRecipes() {
-    recipe1.add(new CodeSizeData("A-A-A", "a.file", 10, 1, 1));
-    recipe1.add(new PremirrorCacheData("A-A-A", "A", false));
-    recipe1.add(new CommentData("A-A-A", "a.file", 10, 1));
+    // recipe1: UnitTests available+qualified (1/2=50%>=50%), StatementCoverage available+qualified (1/1=100%)
     recipe1.add(new PassedTestData("A-A-A", "A", "A", "A"));
-    recipe2.add(new CodeSizeData("B-B-B", "b.file", 10, 1, 1));
-    recipe2.add(new CommentData("B-B-B", "a.file", 10, 10));
-    recipe2.add(new PremirrorCacheData("B-B-B", "B", true));
+    recipe1.add(new StatementCoverageData("A-A-A", "a.file", 1, true));
+    // recipe2: UnitTests(same aggregated pool), MutationTests available+qualified (1/1=100%)
     recipe2.add(new FailedTestData("B-B-B", "B", "B", "B"));
+    recipe2.add(new KilledMutationTestData("B-B-B", "b.file", "X", "X", 1, "X", "X"));
+    // total: UnitTests(1/2=50%->qualified), StatementCoverage(1/1->qualified), MutationTests(1/1->qualified)
+    // BranchCoverage: not available
+    // denominator=3, numerator=3, ratio=1.0
     assertValues(3, 3, 1.0);
   }
 }

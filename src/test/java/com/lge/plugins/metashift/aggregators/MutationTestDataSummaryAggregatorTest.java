@@ -7,7 +7,6 @@ package com.lge.plugins.metashift.aggregators;
 
 import static org.junit.Assert.assertEquals;
 
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.KilledMutationTestData;
@@ -68,7 +67,6 @@ public class MutationTestDataSummaryAggregatorTest {
 
   @Test
   public void testParseSingleRecipe() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new KilledMutationTestData(RECIPE1, "a.file", "X", "X", 1, "X", "X"));
     summaries = aggregator.parse(recipes);
     assertValues(RECIPE1, 1, 0, 0, 1.0, true);
@@ -76,9 +74,7 @@ public class MutationTestDataSummaryAggregatorTest {
 
   @Test
   public void testParseMultipleRecipes() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new KilledMutationTestData(RECIPE1, "a.file", "X", "X", 1, "X", "X"));
-    recipe2.add(new CodeSizeData(RECIPE2, "b.file", 2, 2, 2));
     recipe2.add(new SurvivedMutationTestData(RECIPE2, "b.file", "X", "X", 2, "X", "X"));
     recipe2.add(new SkippedMutationTestData(RECIPE2, "b.file", "X", "X", 2, "X", "X"));
     summaries = aggregator.parse(recipes);
@@ -88,7 +84,6 @@ public class MutationTestDataSummaryAggregatorTest {
 
   @Test
   public void testParseRecipeWithSingleData() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new KilledMutationTestData(RECIPE1, "a.file", "X", "X", 1, "X", "X"));
     summaries = aggregator.parse(recipe1);
     assertValues("a.file", 1, 0, 0, 1.0, true);
@@ -96,9 +91,7 @@ public class MutationTestDataSummaryAggregatorTest {
 
   @Test
   public void testParseRecipeWithMultipleData() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new KilledMutationTestData(RECIPE1, "a.file", "X", "X", 1, "X", "X"));
-    recipe1.add(new CodeSizeData(RECIPE1, "b.file", 2, 2, 2));
     recipe1.add(new SurvivedMutationTestData(RECIPE1, "b.file", "X", "X", 2, "X", "X"));
     recipe1.add(new SkippedMutationTestData(RECIPE1, "b.file", "X", "X", 2, "X", "X"));
     summaries = aggregator.parse(recipe1);

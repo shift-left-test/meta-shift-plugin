@@ -102,14 +102,6 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
 
   private static final long serialVersionUID = -3037651377691916500L;
 
-  private final long linesOfCode;
-  private final Group premirrorCache;
-  private final Group sharedStateCache;
-  private final Group recipeViolations;
-  private final Group comments;
-  private final Group codeViolations;
-  private final Group complexity;
-  private final Group duplications;
   private final Group unitTests;
   private final Group statementCoverage;
   private final Group branchCoverage;
@@ -119,33 +111,15 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
    * Default constructor.
    *
    * @param name              of the data
-   * @param linesOfCode       value
-   * @param premirrorCache    value
-   * @param sharedStateCache  value
-   * @param recipeViolations  value
-   * @param comments          value
-   * @param codeViolations    value
-   * @param complexity        value
-   * @param duplications      value
    * @param unitTests         value
    * @param statementCoverage value
    * @param branchCoverage    value
    * @param mutationTests     value
    */
-  public EvaluationSummary(String name, LinesOfCode linesOfCode, Evaluation premirrorCache,
-      Evaluation sharedStateCache, Evaluation recipeViolations, Evaluation comments,
-      Evaluation codeViolations, Evaluation complexity, Evaluation duplications,
+  public EvaluationSummary(String name,
       Evaluation unitTests, Evaluation statementCoverage, Evaluation branchCoverage,
       Evaluation mutationTests) {
     super(name);
-    this.linesOfCode = linesOfCode.getLines();
-    this.premirrorCache = Group.of(premirrorCache);
-    this.sharedStateCache = Group.of(sharedStateCache);
-    this.recipeViolations = Group.of(recipeViolations);
-    this.comments = Group.of(comments);
-    this.codeViolations = Group.of(codeViolations);
-    this.complexity = Group.of(complexity);
-    this.duplications = Group.of(duplications);
     this.unitTests = Group.of(unitTests);
     this.statementCoverage = Group.of(statementCoverage);
     this.branchCoverage = Group.of(branchCoverage);
@@ -175,50 +149,6 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
         .append(getClass())
         .append(getName())
         .toHashCode();
-  }
-
-  /**
-   * Returns the lines of code.
-   *
-   * @return the lines of code
-   */
-  public long getLinesOfCode() {
-    return linesOfCode;
-  }
-
-  @Override
-  public Group getPremirrorCache() {
-    return premirrorCache;
-  }
-
-  @Override
-  public Group getSharedStateCache() {
-    return sharedStateCache;
-  }
-
-  @Override
-  public Group getRecipeViolations() {
-    return recipeViolations;
-  }
-
-  @Override
-  public Group getComments() {
-    return comments;
-  }
-
-  @Override
-  public Group getCodeViolations() {
-    return codeViolations;
-  }
-
-  @Override
-  public Group getComplexity() {
-    return complexity;
-  }
-
-  @Override
-  public Group getDuplications() {
-    return duplications;
   }
 
   @Override

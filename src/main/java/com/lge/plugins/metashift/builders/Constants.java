@@ -25,13 +25,6 @@ public class Constants {
    */
   enum Metric {
     NONE,
-    PREMIRROR_CACHE,
-    SHARED_STATE_CACHE,
-    RECIPE_VIOLATIONS,
-    COMMENTS,
-    CODE_VIOLATIONS,
-    COMPLEXITY,
-    DUPLICATIONS,
     UNIT_TESTS,
     STATEMENT_COVERAGE,
     BRANCH_COVERAGE,

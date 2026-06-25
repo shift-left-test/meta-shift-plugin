@@ -94,20 +94,6 @@ public class BuildTrendModel {
     this.seriesList = new ArrayList<>();
 
     this.seriesList.add(new BuildTrendSeries(
-        "PremirrorCache", "line", true, ProjectReport::getPremirrorCache));
-    this.seriesList.add(new BuildTrendSeries(
-        "SharedStateCache", "line", true, ProjectReport::getSharedStateCache));
-    this.seriesList.add(new BuildTrendSeries(
-        "RecipeViolation", "line", false, ProjectReport::getRecipeViolations));
-    this.seriesList.add(new BuildTrendSeries(
-        "Comment", "line", true, ProjectReport::getComments));
-    this.seriesList.add(new BuildTrendSeries(
-        "CodeViolation", "line", false, ProjectReport::getCodeViolations));
-    this.seriesList.add(new BuildTrendSeries(
-        "Complexity", "line", true, ProjectReport::getComplexity));
-    this.seriesList.add(new BuildTrendSeries(
-        "Duplication", "line", true, ProjectReport::getDuplications));
-    this.seriesList.add(new BuildTrendSeries(
         "Test", "line", true, ProjectReport::getUnitTests));
     this.seriesList.add(new BuildTrendSeries(
         "StatementCoverage", "line", true, ProjectReport::getStatementCoverage));

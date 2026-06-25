@@ -123,119 +123,14 @@ public class ProjectReportBuilderTest {
   @Test
   public void testGetTreemap() {
     JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 12, 0.45454545454545453, 4));
-    expected.add(newTreemapData(RECIPE2, 7, 0.6363636363636364, 3));
+    expected.add(newTreemapData(RECIPE1, 12, 0.5, 3));
+    expected.add(newTreemapData(RECIPE2, 7, 0.5, 3));
     assertEquals(expected, report.getTreemap());
   }
 
   @Test
   public void testGetSummaries() {
     assertEquals(2, report.getSummaries().size());
-  }
-
-  @Test
-  public void testGetPremirrorCache() {
-    ProjectGroup group = report.getPremirrorCache();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0, 0.25, 0.5), group.getStatistics());
-    assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 1, 0.5, 0));
-    expected.add(newTreemapData(RECIPE2, 1, 0.0, 6));
-    assertEquals(expected, group.getTreemap());
-    List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
-    assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
-  }
-
-  @Test
-  public void testGetSharedStateCache() {
-    ProjectGroup group = report.getSharedStateCache();
-    assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.0, 0.25, 0.5), group.getStatistics());
-    assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 1, 0.5, 0));
-    expected.add(newTreemapData(RECIPE2, 1, 0.0, 6));
-    assertEquals(expected, group.getTreemap());
-    List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
-    assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
-  }
-
-  @Test
-  public void testGetRecipeViolations() {
-    ProjectGroup group = report.getRecipeViolations();
-    assertEquals(newEvaluation(true, 21, 9, true, 0.5, 0, "NEGATIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.3, 1.65, 3.0), group.getStatistics());
-    assertEquals(newDistribution(3, 3, 3, 0), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 1, 3.0, 6));
-    expected.add(newTreemapData(RECIPE2, 1, 0.3, 0));
-    assertEquals(expected, group.getTreemap());
-    List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(3.0, summaries.get(0).getDouble("ratio"), 0.01);
-    assertEquals(0.3, summaries.get(1).getDouble("ratio"), 0.01);
-  }
-
-  @Test
-  public void testGetComments() {
-    ProjectGroup group = report.getComments();
-    assertEquals(newEvaluation(true, 21, 10, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.0, 0.25, 0.5), group.getStatistics());
-    assertEquals(newDistribution(10, 11, 0, 0), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 1, 0.0, 6));
-    expected.add(newTreemapData(RECIPE2, 1, 0.5, 0));
-    assertEquals(expected, group.getTreemap());
-    List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.0, summaries.get(0).getDouble("ratio"), 0.01);
-    assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
-  }
-
-  @Test
-  public void testGetCodeViolations() {
-    ProjectGroup group = report.getCodeViolations();
-    assertEquals(newEvaluation(true, 21, 9, true, 0.5, 0, "NEGATIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.3, 1.65, 3.0), group.getStatistics());
-    assertEquals(newDistribution(3, 3, 3, 0), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 1, 3.0, 6));
-    expected.add(newTreemapData(RECIPE2, 1, 0.3, 0));
-    assertEquals(expected, group.getTreemap());
-    List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(3.0, summaries.get(0).getDouble("ratio"), 0.01);
-    assertEquals(0.3, summaries.get(1).getDouble("ratio"), 0.01);
-  }
-
-  @Test
-  public void testGetComplexity() {
-    ProjectGroup group = report.getComplexity();
-    assertEquals(newEvaluation(true, 21, 11, false, 0.5, 5, "NEGATIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.5, 0.75, 1.0), group.getStatistics());
-    assertEquals(newDistribution(11, 10, 0, 0), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 1, 1.0, 6));
-    expected.add(newTreemapData(RECIPE2, 1, 0.5, 0));
-    assertEquals(expected, group.getTreemap());
-    List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(1.0, summaries.get(0).getDouble("ratio"), 0.01);
-    assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
-  }
-
-  @Test
-  public void testGetDuplications() {
-    ProjectGroup group = report.getDuplications();
-    assertEquals(newEvaluation(true, 21, 10, true, 0.5, 5, "NEGATIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.0, 0.25, 0.5), group.getStatistics());
-    assertEquals(newDistribution(10, 11, 0, 0), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 1, 0.0, 0));
-    expected.add(newTreemapData(RECIPE2, 1, 0.5, 0));
-    assertEquals(expected, group.getTreemap());
-    List<JSONObject> summaries = toList(group.getSummaries());
-    assertEquals(0.0, summaries.get(0).getDouble("ratio"), 0.01);
-    assertEquals(0.5, summaries.get(1).getDouble("ratio"), 0.01);
   }
 
   @Test

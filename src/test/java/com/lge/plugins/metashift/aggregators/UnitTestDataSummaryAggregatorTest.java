@@ -7,7 +7,6 @@ package com.lge.plugins.metashift.aggregators;
 
 import static org.junit.Assert.assertEquals;
 
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.ErrorTestData;
@@ -82,7 +81,6 @@ public class UnitTestDataSummaryAggregatorTest {
 
   @Test
   public void testParseSingleRecipe() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new FailedTestData(RECIPE1, "B", "B", "B"));
     assertValues(RECIPE1, 1, 1, 0, 0, 0.5, true);
@@ -90,10 +88,8 @@ public class UnitTestDataSummaryAggregatorTest {
 
   @Test
   public void testParseMultipleRecipes() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new FailedTestData(RECIPE1, "B", "B", "B"));
-    recipe2.add(new CodeSizeData(RECIPE2, "b.file", 2, 2, 2));
     recipe2.add(new ErrorTestData(RECIPE2, "C", "C", "C"));
     recipe2.add(new SkippedTestData(RECIPE2, "D", "D", "D"));
     assertValues(RECIPE1, 1, 1, 0, 0, 0.5, true);
@@ -102,7 +98,6 @@ public class UnitTestDataSummaryAggregatorTest {
 
   @Test
   public void testParseRecipeWithSingleData() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new FailedTestData(RECIPE1, "B", "B", "B"));
     assertValues(0, "A", "A", "A", "PASSED");
@@ -111,7 +106,6 @@ public class UnitTestDataSummaryAggregatorTest {
 
   @Test
   public void testParseRecipeWithMultipleData() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new FailedTestData(RECIPE1, "B", "B", "B"));
     recipe1.add(new ErrorTestData(RECIPE1, "C", "C", "C"));

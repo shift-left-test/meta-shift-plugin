@@ -7,7 +7,6 @@ package com.lge.plugins.metashift.analysis;
 
 import static org.junit.Assert.assertEquals;
 
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Distribution;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.FailedTestData;
@@ -66,7 +65,7 @@ public class UnitTestCounterTest {
 
   @Test
   public void testParseRecipesNoMatchingData() {
-    recipe1.add(new CodeSizeData("A-A-A", "a.file", 1, 1, 1));
+    // recipe with no TestData → all zeros
     assertValues(0, 0, 0, 0);
     assertRatios(0.0, 0.0, 0.0, 0.0);
   }

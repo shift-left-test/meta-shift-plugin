@@ -48,14 +48,6 @@ public class EvaluationSummaryCollector implements Collector<Recipe, EvaluationS
   private EvaluationSummary createEvaluationSummary(String name, Streamable o) {
     return new EvaluationSummary(
         name,
-        new LinesOfCodeCollector().parse(o),
-        new PremirrorCacheEvaluator(configuration).parse(o),
-        new SharedStateCacheEvaluator(configuration).parse(o),
-        new RecipeViolationEvaluator(configuration).parse(o),
-        new CommentEvaluator(configuration).parse(o),
-        new CodeViolationEvaluator(configuration).parse(o),
-        new ComplexityEvaluator(configuration).parse(o),
-        new DuplicationEvaluator(configuration).parse(o),
         new UnitTestEvaluator(configuration).parse(o),
         new StatementCoverageEvaluator(configuration).parse(o),
         new BranchCoverageEvaluator(configuration).parse(o),

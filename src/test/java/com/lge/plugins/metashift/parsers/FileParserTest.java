@@ -12,15 +12,9 @@ import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.BranchCoverageData;
-import com.lge.plugins.metashift.models.CodeSizeData;
-import com.lge.plugins.metashift.models.CodeViolationData;
-import com.lge.plugins.metashift.models.ComplexityData;
 import com.lge.plugins.metashift.models.MutationTestData;
-import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
-import com.lge.plugins.metashift.models.RecipeViolationData;
 import com.lge.plugins.metashift.models.Recipes;
-import com.lge.plugins.metashift.models.SharedStateCacheData;
 import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
@@ -112,7 +106,7 @@ public class FileParserTest {
 
     recipes = parser.parse(new FilePath(report));
     assertEquals(3, recipes.size());
-    assertEquals(3, recipes.objects(CodeSizeData.class).count());
+    assertEquals(3, recipes.objects(StatementCoverageData.class).count());
   }
 
   @Test
@@ -132,15 +126,10 @@ public class FileParserTest {
 
     recipes = parser.parse(new FilePath(report));
     assertEquals(1, recipes.size());
-    assertEquals(3, recipes.objects(PremirrorCacheData.class).count());
-    assertEquals(7, recipes.objects(SharedStateCacheData.class).count());
-    assertEquals(6, recipes.objects(RecipeViolationData.class).count());
     assertEquals(6, recipes.objects(MutationTestData.class).count());
     assertEquals(10, recipes.objects(TestData.class).count());
     assertEquals(5, recipes.objects(StatementCoverageData.class).count());
     assertEquals(3, recipes.objects(BranchCoverageData.class).count());
-    assertEquals(3, recipes.objects(ComplexityData.class).count());
-    assertEquals(6, recipes.objects(CodeViolationData.class).count());
   }
 
   @Test
@@ -171,15 +160,10 @@ public class FileParserTest {
 
     recipes = parser.parse(new FilePath(report));
     assertEquals(2, recipes.size());
-    assertEquals(6, recipes.objects(PremirrorCacheData.class).count());
-    assertEquals(14, recipes.objects(SharedStateCacheData.class).count());
-    assertEquals(12, recipes.objects(RecipeViolationData.class).count());
     assertEquals(12, recipes.objects(MutationTestData.class).count());
     assertEquals(20, recipes.objects(TestData.class).count());
     assertEquals(10, recipes.objects(StatementCoverageData.class).count());
     assertEquals(6, recipes.objects(BranchCoverageData.class).count());
-    assertEquals(6, recipes.objects(ComplexityData.class).count());
-    assertEquals(12, recipes.objects(CodeViolationData.class).count());
   }
 
   @Test

@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 import com.lge.plugins.metashift.builders.ProjectReport;
 import com.lge.plugins.metashift.builders.ProjectReportBuilder;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.PremirrorCacheData;
+import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
@@ -42,7 +42,7 @@ public class BuildTrendModelTest {
     Configuration config = new Configuration();
     Recipes recipes = new Recipes();
     Recipe recipe = new Recipe("A-1.0.0-r0");
-    recipe.add(new PremirrorCacheData("A-1.0.0-r0", "X", false));
+    recipe.add(new PassedTestData("A-1.0.0-r0", "A", "A", "A"));
     recipes.add(recipe);
 
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
@@ -69,21 +69,12 @@ public class BuildTrendModelTest {
   public void testInitData() {
     BuildTrendModel model = new BuildTrendModel(0);
 
-    assertEquals(Arrays.asList("PremirrorCache", "SharedStateCache", "RecipeViolation",
-            "Comment", "CodeViolation", "Complexity", "Duplication",
-            "Test", "StatementCoverage", "BranchCoverage", "Mutation"),
+    assertEquals(Arrays.asList("Test", "StatementCoverage", "BranchCoverage", "Mutation"),
         model.getLegend());
 
     assertEquals(Collections.emptyList(), model.getBuilds());
 
     JSONArray array = new JSONArray();
-    array.add(newJsonObject(newJsonArray(), "PremirrorCache", 0));
-    array.add(newJsonObject(newJsonArray(), "SharedStateCache", 0));
-    array.add(newJsonObject(newJsonArray(), "RecipeViolation", 1));
-    array.add(newJsonObject(newJsonArray(), "Comment", 0));
-    array.add(newJsonObject(newJsonArray(), "CodeViolation", 1));
-    array.add(newJsonObject(newJsonArray(), "Complexity", 0));
-    array.add(newJsonObject(newJsonArray(), "Duplication", 0));
     array.add(newJsonObject(newJsonArray(), "Test", 0));
     array.add(newJsonObject(newJsonArray(), "StatementCoverage", 0));
     array.add(newJsonObject(newJsonArray(), "BranchCoverage", 0));
@@ -99,7 +90,7 @@ public class BuildTrendModelTest {
     model.addData("#1", report);
     assertEquals(Collections.singletonList("#1"), model.getBuilds());
 
-    JSONObject expected1 = newJsonObject(newJsonArray(0), "PremirrorCache", 0);
+    JSONObject expected1 = newJsonObject(newJsonArray(100.0), "Test", 0);
     System.out.println(expected1);
     System.out.println(JSONArray.fromObject(model.getSeries()));
     assertTrue(JSONArray.fromObject(model.getSeries()).contains(expected1));
@@ -107,7 +98,7 @@ public class BuildTrendModelTest {
     model.addData("#2", report);
     assertEquals(Arrays.asList("#2", "#1"), model.getBuilds());
 
-    JSONObject expected2 = newJsonObject(newJsonArray(0, 0), "PremirrorCache", 0);
+    JSONObject expected2 = newJsonObject(newJsonArray(100.0, 100.0), "Test", 0);
     assertTrue(JSONArray.fromObject(model.getSeries()).contains(expected2));
   }
 

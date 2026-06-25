@@ -51,36 +51,15 @@ public class RecipeAction extends ActionParentBase implements Action {
     this.recipeReport = new RecipeReportBuilder(configuration, dataSource, reportRoot)
         .parse(recipe);
 
-    this.addAction(this.childActionSharedStateCache = new RecipeActionChild(
-        this, this.getReport().getSharedStateCache(),
-        "Shared State Cache", "shared_state_cache", true));
-    this.addAction(this.childActionPremirrorCache = new RecipeActionChild(
-        this, this.getReport().getPremirrorCache(),
-        "Premirror Cache", "premirror_cache", true));
-    this.addAction(this.childActionCodeViolations = new RecipeActionChild(
-        this, this.getReport().getCodeViolations(),
-        "Code Violations", "code_violations", false));
-    this.addAction(this.childActionComments = new RecipeActionChild(
-        this, this.getReport().getComments(),
-        "Comments", "comments", true));
-    this.addAction(this.childActionComplexity = new RecipeActionChild(
-        this, this.getReport().getComplexity(),
-        "Complexity", "complexity", true));
     this.addAction(this.childActionStatementCoverage = new RecipeActionChild(
         this, this.getReport().getStatementCoverage(),
         "Statement Coverage", "statement_coverage", true));
     this.addAction(this.childActionBranchCoverage = new RecipeActionChild(
         this, this.getReport().getBranchCoverage(),
         "Branch Coverage", "branch_coverage", true));
-    this.addAction(this.childActionDuplications = new RecipeActionChild(
-        this, this.getReport().getDuplications(),
-        "Duplications", "duplications", true));
     this.addAction(this.childActionMutationTests = new RecipeActionChild(
         this, this.getReport().getMutationTests(),
         "Mutation Tests", "mutation_tests", true));
-    this.addAction(this.childActionRecipeViolations = new RecipeActionChild(
-        this, this.getReport().getRecipeViolations(),
-        "Recipe Violations", "recipe_violations", false));
     this.addAction(this.childActionUnitTests = new RecipeActionChild(
         this, this.getReport().getUnitTests(),
         "Unit Tests", "unit_tests", true));
@@ -146,26 +125,6 @@ public class RecipeAction extends ActionParentBase implements Action {
         - previous.getEvaluation().getDouble("ratio") : current.getEvaluation().getDouble("ratio");
   }
 
-  public double getPremirrorCacheDelta() {
-    return getRatioDelta(RecipeReport::getPremirrorCache);
-  }
-
-  public double getSharedStateCacheDelta() {
-    return getRatioDelta(RecipeReport::getSharedStateCache);
-  }
-
-  public double getCodeViolationsDelta() {
-    return getRatioDelta(RecipeReport::getCodeViolations);
-  }
-
-  public double getCommentsDelta() {
-    return getRatioDelta(RecipeReport::getComments);
-  }
-
-  public double getComplexityDelta() {
-    return getRatioDelta(RecipeReport::getComplexity);
-  }
-
   public double getStatementCoverageDelta() {
     return getRatioDelta(RecipeReport::getStatementCoverage);
   }
@@ -174,16 +133,8 @@ public class RecipeAction extends ActionParentBase implements Action {
     return getRatioDelta(RecipeReport::getBranchCoverage);
   }
 
-  public double getDuplicationsDelta() {
-    return getRatioDelta(RecipeReport::getDuplications);
-  }
-
   public double getMutationTestDelta() {
     return getRatioDelta(RecipeReport::getMutationTests);
-  }
-
-  public double getRecipeViolationsDelta() {
-    return getRatioDelta(RecipeReport::getRecipeViolations);
   }
 
   public double getTestDelta() {

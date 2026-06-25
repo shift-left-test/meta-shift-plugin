@@ -73,20 +73,11 @@ public class BuildActionTest {
     assertEquals(ratio, object.getDouble("ratio"), 0.01);
   }
 
-  private void assertMetricDelta(BuildAction action, double premirrorCache,
-      double sharedStateCache, double codeViolations, double comments, double complexity,
-      double statementCoverage, double branchCoverage, double duplications, double mutationTest,
-      double recipeViolations, double test) {
-    assertEquals(premirrorCache, action.getPremirrorCacheDelta(), 0.01);
-    assertEquals(sharedStateCache, action.getSharedStateCacheDelta(), 0.01);
-    assertEquals(codeViolations, action.getCodeViolationsDelta(), 0.01);
-    assertEquals(comments, action.getCommentsDelta(), 0.01);
-    assertEquals(complexity, action.getComplexityDelta(), 0.01);
+  private void assertMetricDelta(BuildAction action, double statementCoverage,
+      double branchCoverage, double mutationTest, double test) {
     assertEquals(statementCoverage, action.getStatementCoverageDelta(), 0.01);
     assertEquals(branchCoverage, action.getBranchCoverageDelta(), 0.01);
-    assertEquals(duplications, action.getDuplicationsDelta(), 0.01);
     assertEquals(mutationTest, action.getMutationTestDelta(), 0.01);
-    assertEquals(recipeViolations, action.getRecipeViolationsDelta(), 0.01);
     assertEquals(test, action.getTestDelta(), 0.01);
   }
 
@@ -95,8 +86,6 @@ public class BuildActionTest {
     fakeRecipe
         .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
             .setBranchCoverage(3, 4)
@@ -124,16 +113,9 @@ public class BuildActionTest {
         recipeTableModel.stream().map(o -> ((JSONObject) o).getString("name")).toArray());
 
     ProjectReport projectReport = buildAction.getReport();
-    assertValues(projectReport.getPremirrorCache().getEvaluation(), false, true, 0.8, 0, 0, 0);
-    assertValues(projectReport.getSharedStateCache().getEvaluation(), false, true, 0.8, 0, 0, 0);
-    assertValues(projectReport.getCodeViolations().getEvaluation(), false, true, 0.1, 10, 6, 0.6);
-    assertValues(projectReport.getComments().getEvaluation(), true, true, 0.2, 10, 5, 0.5);
-    assertValues(projectReport.getComplexity().getEvaluation(), false, true, 0.1, 11, 5, 0.45);
     assertValues(projectReport.getStatementCoverage().getEvaluation(), false, true, 0.8, 5, 2, 0.4);
     assertValues(projectReport.getBranchCoverage().getEvaluation(), true, true, 0.4, 7, 3, 0.42);
-    assertValues(projectReport.getDuplications().getEvaluation(), true, true, 0.1, 10, 0, 0.0);
     assertValues(projectReport.getMutationTests().getEvaluation(), false, true, 0.85, 6, 1, 0.16);
-    assertValues(projectReport.getRecipeViolations().getEvaluation(), false, true, 0.1, 10, 6, 0.6);
     assertValues(projectReport.getUnitTests().getEvaluation(), false, true, 0.95, 10, 1, 0.1);
   }
 
@@ -142,8 +124,6 @@ public class BuildActionTest {
     fakeRecipe
         .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
             .setBranchCoverage(3, 4)
@@ -155,13 +135,13 @@ public class BuildActionTest {
     BuildAction buildAction = run.getAction(BuildAction.class);
 
     assertNull(buildAction.getPreviousBuildAction());
-    assertMetricDelta(buildAction, 0.0, 0.0, 0.6, 0.5, 0.45, 0.4, 0.42, 0.0, 0.16, 0.6, 0.1);
+    assertMetricDelta(buildAction, 0.4, 0.42, 0.16, 0.1);
 
     // second build and check diff.
     FreeStyleBuild run2 = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
     BuildAction buildAction2 = run2.getAction(BuildAction.class);
 
     assertNotNull(buildAction2.getPreviousBuildAction());
-    assertMetricDelta(buildAction2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    assertMetricDelta(buildAction2, 0.0, 0.0, 0.0, 0.0);
   }
 }

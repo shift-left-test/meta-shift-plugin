@@ -10,7 +10,6 @@ import static org.junit.Assert.assertEquals;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
-import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.Statistics;
@@ -34,7 +33,7 @@ public class StatisticsCollectorTest {
   @Before
   public void setUp() {
     configuration = ConfigurationUtils.of(50, 5, false);
-    collector = new StatisticsCollector(new PremirrorCacheEvaluator(configuration));
+    collector = new StatisticsCollector(new UnitTestEvaluator(configuration));
     recipe1 = new Recipe("A-A-A");
     recipe2 = new Recipe("B-B-B");
     recipes = new Recipes();
@@ -56,25 +55,25 @@ public class StatisticsCollectorTest {
 
   @Test
   public void testParseSingleRecipe() {
-    recipe1.add(new PremirrorCacheData("A-A-A", "A", false));
-    recipe1.add(new PremirrorCacheData("A-A-A", "B", true));
+    recipe1.add(new PassedTestData("A-A-A", "A", "A", "A"));
+    recipe1.add(new FailedTestData("A-A-A", "B", "B", "B"));
     assertValues(0.5, 0.5, 0.5);
   }
 
   @Test
   public void testParseMultipleRecipes() {
-    recipe1.add(new PremirrorCacheData("A-A-A", "A", false));
-    recipe1.add(new PremirrorCacheData("A-A-A", "B", true));
-    recipe2.add(new PremirrorCacheData("B-B-B", "C", true));
-    recipe2.add(new PremirrorCacheData("B-B-B", "D", true));
+    recipe1.add(new PassedTestData("A-A-A", "A", "A", "A"));
+    recipe1.add(new FailedTestData("A-A-A", "B", "B", "B"));
+    recipe2.add(new PassedTestData("B-B-B", "C", "C", "C"));
+    recipe2.add(new PassedTestData("B-B-B", "D", "D", "D"));
     assertValues(0.5, 0.75, 1.0);
   }
 
   @Test
   public void testParseWithAnotherEvaluator() {
-    collector = new StatisticsCollector(new UnitTestEvaluator(configuration));
+    collector = new StatisticsCollector(new StatementCoverageEvaluator(configuration));
     recipe1.add(new FailedTestData("A-A-A", "A", "A", "A"));
     recipe2.add(new PassedTestData("B-B-B", "B", "B", "B"));
-    assertValues(0.0, 0.5, 1.0);
+    assertValues(0.0, 0.0, 0.0);
   }
 }

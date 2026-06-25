@@ -29,13 +29,6 @@ public class RecipeEvaluator implements Evaluator {
    */
   public RecipeEvaluator(Configuration configuration) {
     this.evaluators = Arrays.asList(
-        new PremirrorCacheEvaluator(configuration),
-        new SharedStateCacheEvaluator(configuration),
-        new RecipeViolationEvaluator(configuration),
-        new CommentEvaluator(configuration),
-        new CodeViolationEvaluator(configuration),
-        new ComplexityEvaluator(configuration),
-        new DuplicationEvaluator(configuration),
         new UnitTestEvaluator(configuration),
         new StatementCoverageEvaluator(configuration),
         new BranchCoverageEvaluator(configuration),
