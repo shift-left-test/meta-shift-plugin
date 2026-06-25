@@ -50,14 +50,19 @@ import com.lge.plugins.metashift.analysis.UnitTestEvaluator;
 import com.lge.plugins.metashift.builders.Constants.Data;
 import com.lge.plugins.metashift.builders.Constants.Metric;
 import com.lge.plugins.metashift.builders.Constants.Scope;
+import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.Distribution;
 import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.EvaluationSummary;
 import com.lge.plugins.metashift.models.LinesOfCode;
+import com.lge.plugins.metashift.models.MutationTestData;
+import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.Statistics;
+import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.models.TreemapData;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
@@ -65,6 +70,7 @@ import com.lge.plugins.metashift.utils.ExecutorServiceUtils.Function;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.ToLongFunction;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -102,10 +108,26 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
     put(metric, Data.STATISTICS, JSONObject.fromObject(statistics));
     Distribution distribution = counter.parse(recipes);
     put(metric, Data.DISTRIBUTION, JSONObject.fromObject(distribution));
-    List<TreemapData> treemap = new TreemapDataAggregator(evaluator).parse(recipes);
+    List<TreemapData> treemap =
+        new TreemapDataAggregator(evaluator, sizeFunctionFor(metric)).parse(recipes);
     put(metric, Data.TREEMAP, JSONArray.fromObject(treemap));
     List<DataSummary> summaries = aggregator.parse(recipes);
     put(metric, Data.SUMMARIES, JSONArray.fromObject(summaries));
+  }
+
+  private static ToLongFunction<Recipe> sizeFunctionFor(Metric metric) {
+    switch (metric) {
+      case STATEMENT_COVERAGE:
+        return r -> r.objects(StatementCoverageData.class).count();
+      case BRANCH_COVERAGE:
+        return r -> r.objects(BranchCoverageData.class).count();
+      case UNIT_TESTS:
+        return r -> r.objects(TestData.class).count();
+      case MUTATION_TESTS:
+        return r -> r.objects(MutationTestData.class).count();
+      default:
+        return r -> 1L;
+    }
   }
 
   private Void addLinesOfCode(Recipes recipes) throws IOException {
@@ -221,7 +243,10 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
 
   private Void addTreemap(Recipes recipes) throws IOException {
     Evaluator evaluator = new RecipeEvaluator(configuration);
-    List<TreemapData> objects = new TreemapDataAggregator(evaluator).parse(recipes);
+    List<TreemapData> objects = new TreemapDataAggregator(evaluator,
+        r -> r.objects(StatementCoverageData.class).count()
+            + r.objects(TestData.class).count()
+            + r.objects(MutationTestData.class).count()).parse(recipes);
     put(Metric.NONE, Data.TREEMAP, JSONArray.fromObject(objects));
     return null;
   }

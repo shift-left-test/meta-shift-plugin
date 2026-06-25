@@ -8,13 +8,13 @@ package com.lge.plugins.metashift.aggregators;
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.analysis.RecipeEvaluator;
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.FailedTestData;
 import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.PremirrorCacheData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.models.TreemapData;
 import com.lge.plugins.metashift.models.TreemapData.Grade;
 import com.lge.plugins.metashift.utils.ConfigurationUtils;
@@ -42,7 +42,9 @@ public class TreemapDataAggregatorTest {
   @Before
   public void setUp() {
     Configuration configuration = ConfigurationUtils.of(50, 5, false);
-    aggregator = new TreemapDataAggregator(new RecipeEvaluator(configuration));
+    aggregator = new TreemapDataAggregator(
+        new RecipeEvaluator(configuration),
+        r -> r.objects(StatementCoverageData.class).count());
     objects = new ArrayList<>();
     recipe1 = new Recipe(RECIPE1);
     recipe2 = new Recipe(RECIPE2);
@@ -66,24 +68,25 @@ public class TreemapDataAggregatorTest {
 
   @Test
   public void testParseSingleRecipeWithSingleMetric() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
+    recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, true));
     recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
     assertValues(0, RECIPE1, 1, 1.0, Grade.BEST);
   }
 
   @Test
   public void testParseSingleRecipeWithMultipleMetrics() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
+    recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, true));
     recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
-    assertValues(0, RECIPE1, 1, 0.5, Grade.ORDINARY);
+    assertValues(0, RECIPE1, 1, 0.6666666666666666, Grade.GOOD);
   }
 
   @Test
   public void testParseMultipleRecipesWithSingleMetric() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
+    recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, true));
     recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
-    recipe2.add(new CodeSizeData(RECIPE2, "b.file", 2, 2, 2));
+    recipe2.add(new StatementCoverageData(RECIPE2, "b.file", 1, false));
+    recipe2.add(new StatementCoverageData(RECIPE2, "b.file", 2, false));
     recipe2.add(new PremirrorCacheData(RECIPE2, "B", false));
     assertValues(0, RECIPE1, 1, 1.0, Grade.BEST);
     assertValues(1, RECIPE2, 2, 0.0, Grade.WORST);
@@ -91,13 +94,25 @@ public class TreemapDataAggregatorTest {
 
   @Test
   public void testParseMultipleRecipesWithMultipleMetrics() {
-    recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
+    recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, true));
     recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
-    recipe2.add(new CodeSizeData(RECIPE2, "b.file", 2, 2, 2));
+    recipe2.add(new StatementCoverageData(RECIPE2, "b.file", 1, false));
+    recipe2.add(new StatementCoverageData(RECIPE2, "b.file", 2, false));
     recipe2.add(new PremirrorCacheData(RECIPE2, "B", false));
     recipe2.add(new PassedTestData(RECIPE2, "B", "B", "B"));
-    assertValues(0, RECIPE1, 1, 0.5, Grade.ORDINARY);
-    assertValues(1, RECIPE2, 2, 0.5, Grade.ORDINARY);
+    assertValues(0, RECIPE1, 1, 0.6666666666666666, Grade.GOOD);
+    assertValues(1, RECIPE2, 2, 0.3333333333333333, Grade.BAD);
+  }
+
+  @Test
+  public void testSizeFunctionReflectedInLinesOfCode() {
+    // 크기 함수가 박스 크기(getLinesOfCode)에 반영되는지 확인
+    // StatementCoverageData 10개를 가진 recipe → getLinesOfCode() = 10
+    for (int i = 0; i < 10; i++) {
+      recipe1.add(new StatementCoverageData(RECIPE1, "a.file", i + 1, true));
+    }
+    recipe1.add(new PremirrorCacheData(RECIPE1, "A", true));
+    assertValues(0, RECIPE1, 10, 1.0, Grade.BEST);
   }
 }
