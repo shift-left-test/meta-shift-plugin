@@ -9,7 +9,6 @@ import com.lge.plugins.metashift.analysis.Counter;
 import com.lge.plugins.metashift.analysis.Evaluator;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DataSummary;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import java.util.List;
@@ -34,13 +33,6 @@ public abstract class DataSummaryAggregator implements Aggregator<DataSummary> {
   }
 
   /**
-   * Returns the lines of code object.
-   *
-   * @return lines of code object
-   */
-  protected abstract LinesOfCode getLinesOfCode(Recipe recipe);
-
-  /**
    * Returns the counter object.
    *
    * @param configuration for evaluation
@@ -57,12 +49,8 @@ public abstract class DataSummaryAggregator implements Aggregator<DataSummary> {
   protected abstract Evaluator getEvaluator(Configuration configuration);
 
   private DataSummary newDataSummary(Recipe recipe) {
-    return new DataSummary(
-        recipe.getName(),
-        getLinesOfCode(recipe),
-        getCounter(configuration).parse(recipe),
-        getEvaluator(configuration).parse(recipe)
-    );
+    return new DataSummary(recipe.getName(), getCounter(configuration).parse(recipe),
+        getEvaluator(configuration).parse(recipe));
   }
 
   @Override

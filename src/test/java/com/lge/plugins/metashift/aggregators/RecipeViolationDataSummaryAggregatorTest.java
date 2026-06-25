@@ -49,12 +49,11 @@ public class RecipeViolationDataSummaryAggregatorTest {
     recipes.add(recipe2);
   }
 
-  private void assertValues(String name, long linesOfCode, long major, long minor, long info,
+  private void assertValues(String name, long major, long minor, long info,
       double ratio, boolean qualified) {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode());
     assertEquals(major, summary.getFirst());
     assertEquals(minor, summary.getSecond());
     assertEquals(info, summary.getThird());
@@ -72,7 +71,7 @@ public class RecipeViolationDataSummaryAggregatorTest {
     recipe1.add(new RecipeSizeData(RECIPE1, "a.file", 1));
     recipe1.add(new MajorRecipeViolationData(RECIPE1, "a.file", 1, "X", "X", "X"));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 1, 0, 0, 1.0, false);
+    assertValues(RECIPE1, 1, 0, 0, 1.0, false);
   }
 
   @Test
@@ -83,8 +82,8 @@ public class RecipeViolationDataSummaryAggregatorTest {
     recipe2.add(new MinorRecipeViolationData(RECIPE2, "b.file", 1, "X", "X", "X"));
     recipe2.add(new InfoRecipeViolationData(RECIPE2, "b.file", 1, "X", "X", "X"));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 1, 0, 0, 1.0, false);
-    assertValues(RECIPE2, 10, 0, 1, 1, 0.2, true);
+    assertValues(RECIPE1, 1, 0, 0, 1.0, false);
+    assertValues(RECIPE2, 0, 1, 1, 0.2, true);
   }
 
   @Test
@@ -97,7 +96,7 @@ public class RecipeViolationDataSummaryAggregatorTest {
     recipe1.add(new RecipeSizeData(RECIPE1, "a.file", 1));
     recipe1.add(new MajorRecipeViolationData(RECIPE1, "a.file", 1, "X", "X", "X"));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 1, 1, 0, 0, 1.0, false);
+    assertValues("a.file", 1, 0, 0, 1.0, false);
   }
 
   @Test
@@ -108,7 +107,7 @@ public class RecipeViolationDataSummaryAggregatorTest {
     recipe1.add(new MinorRecipeViolationData(RECIPE1, "b.file", 1, "X", "X", "X"));
     recipe1.add(new InfoRecipeViolationData(RECIPE1, "b.file", 1, "X", "X", "X"));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 1, 1, 0, 0, 1.0, false);
-    assertValues("b.file", 10, 0, 1, 1, 0.2, true);
+    assertValues("a.file", 1, 0, 0, 1.0, false);
+    assertValues("b.file", 0, 1, 1, 0.2, true);
   }
 }

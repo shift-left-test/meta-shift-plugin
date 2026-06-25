@@ -49,13 +49,12 @@ public class PremirrorCacheDataSummaryAggregatorTest {
     recipes.add(recipe2);
   }
 
-  private void assertValues(String name, long linesOfCode, long hits, long misses, double ratio,
+  private void assertValues(String name, long hits, long misses, double ratio,
       boolean qualified) {
     summaries = aggregator.parse(recipes);
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode());
     assertEquals(hits, summary.getFirst());
     assertEquals(misses, summary.getSecond());
     assertEquals(ratio, summary.getRatio(), 0.01);
@@ -77,7 +76,7 @@ public class PremirrorCacheDataSummaryAggregatorTest {
   public void testParseSingleRecipe() {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new PremirrorCacheData(RECIPE1, "A", false));
-    assertValues(RECIPE1, 1, 0, 1, 0.0, false);
+    assertValues(RECIPE1, 0, 1, 0.0, false);
   }
 
   @Test
@@ -87,8 +86,8 @@ public class PremirrorCacheDataSummaryAggregatorTest {
     recipe2.add(new CodeSizeData(RECIPE2, "b.file", 2, 2, 2));
     recipe2.add(new PremirrorCacheData(RECIPE2, "B", true));
     recipe2.add(new PremirrorCacheData(RECIPE2, "C", true));
-    assertValues(RECIPE1, 1, 0, 1, 0.0, false);
-    assertValues(RECIPE2, 2, 2, 0, 1.0, true);
+    assertValues(RECIPE1, 0, 1, 0.0, false);
+    assertValues(RECIPE2, 2, 0, 1.0, true);
   }
 
   @Test

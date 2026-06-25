@@ -53,13 +53,12 @@ public class UnitTestDataSummaryAggregatorTest {
     recipes.add(recipe2);
   }
 
-  private void assertValues(String name, long linesOfCode, long passed, long failed, long error,
+  private void assertValues(String name, long passed, long failed, long error,
       long skipped, double ratio, boolean qualified) {
     summaries = aggregator.parse(recipes);
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode());
     assertEquals(passed, summary.getFirst());
     assertEquals(failed, summary.getSecond());
     assertEquals(error, summary.getThird());
@@ -86,7 +85,7 @@ public class UnitTestDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new FailedTestData(RECIPE1, "B", "B", "B"));
-    assertValues(RECIPE1, 1, 1, 1, 0, 0, 0.5, true);
+    assertValues(RECIPE1, 1, 1, 0, 0, 0.5, true);
   }
 
   @Test
@@ -97,8 +96,8 @@ public class UnitTestDataSummaryAggregatorTest {
     recipe2.add(new CodeSizeData(RECIPE2, "b.file", 2, 2, 2));
     recipe2.add(new ErrorTestData(RECIPE2, "C", "C", "C"));
     recipe2.add(new SkippedTestData(RECIPE2, "D", "D", "D"));
-    assertValues(RECIPE1, 1, 1, 1, 0, 0, 0.5, true);
-    assertValues(RECIPE2, 2, 0, 0, 1, 1, 0.0, false);
+    assertValues(RECIPE1, 1, 1, 0, 0, 0.5, true);
+    assertValues(RECIPE2, 0, 0, 1, 1, 0.0, false);
   }
 
   @Test

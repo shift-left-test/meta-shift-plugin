@@ -47,12 +47,11 @@ public class CommentDataSummaryAggregatorTest {
     recipes.add(recipe2);
   }
 
-  private void assertValues(String name, long linesOfCode, long comments, long others, double ratio,
+  private void assertValues(String name, long comments, long others, double ratio,
       boolean qualified) {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode());
     assertEquals(comments, summary.getFirst());
     assertEquals(others, summary.getSecond());
     assertEquals(ratio, summary.getRatio(), 0.01);
@@ -69,7 +68,7 @@ public class CommentDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 0, 0));
     recipe1.add(new CommentData(RECIPE1, "a.file", 1, 0));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 0, 1, 0.0, false);
+    assertValues(RECIPE1, 0, 1, 0.0, false);
   }
 
   @Test
@@ -79,8 +78,8 @@ public class CommentDataSummaryAggregatorTest {
     recipe2.add(new CodeSizeData(RECIPE2, "b.file", 1, 0, 0));
     recipe2.add(new CommentData(RECIPE2, "b.file", 1, 1));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 0, 1, 0.0, false);
-    assertValues(RECIPE2, 1, 1, 0, 1.0, true);
+    assertValues(RECIPE1, 0, 1, 0.0, false);
+    assertValues(RECIPE2, 1, 0, 1.0, true);
   }
 
   @Test
@@ -93,7 +92,7 @@ public class CommentDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 0, 0));
     recipe1.add(new CommentData(RECIPE1, "a.file", 1, 0));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 1, 0, 1, 0.0, false);
+    assertValues("a.file", 0, 1, 0.0, false);
   }
 
   @Test
@@ -103,7 +102,7 @@ public class CommentDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "b.file", 1, 0, 0));
     recipe1.add(new CommentData(RECIPE1, "b.file", 1, 1));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 1, 0, 1, 0.0, false);
-    assertValues("b.file", 1, 1, 0, 1.0, true);
+    assertValues("a.file", 0, 1, 0.0, false);
+    assertValues("b.file", 1, 0, 1.0, true);
   }
 }

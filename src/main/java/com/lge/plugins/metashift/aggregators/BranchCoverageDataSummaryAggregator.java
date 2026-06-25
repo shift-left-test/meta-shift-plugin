@@ -9,13 +9,10 @@ import com.lge.plugins.metashift.analysis.BranchCoverageCounter;
 import com.lge.plugins.metashift.analysis.BranchCoverageEvaluator;
 import com.lge.plugins.metashift.analysis.Counter;
 import com.lge.plugins.metashift.analysis.Evaluator;
-import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
 import com.lge.plugins.metashift.models.BranchCoverageData;
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.DataSummary;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.TestData;
@@ -40,11 +37,6 @@ public class BranchCoverageDataSummaryAggregator
   }
 
   @Override
-  protected LinesOfCode getLinesOfCode(Recipe recipe) {
-    return new LinesOfCodeCollector().parse(recipe);
-  }
-
-  @Override
   protected Counter getCounter(Configuration configuration) {
     return new BranchCoverageCounter();
   }
@@ -63,9 +55,6 @@ public class BranchCoverageDataSummaryAggregator
         .collect(Collectors.toList());
     for (String file : files) {
       DataList dataList = new DataList();
-      dataList.addAll(recipe.objects(CodeSizeData.class)
-          .filter(o -> o.getFile().equals(file))
-          .collect(Collectors.toList()));
       dataList.addAll(recipe.objects(TestData.class).collect(Collectors.toList()));
       dataList.addAll(recipe.objects(BranchCoverageData.class)
           .filter(o -> o.getFile().equals(file))

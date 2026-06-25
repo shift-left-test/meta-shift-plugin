@@ -7,11 +7,9 @@ package com.lge.plugins.metashift.aggregators;
 
 import com.lge.plugins.metashift.analysis.Counter;
 import com.lge.plugins.metashift.analysis.Evaluator;
-import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
 import com.lge.plugins.metashift.analysis.UnitTestCounter;
 import com.lge.plugins.metashift.analysis.UnitTestEvaluator;
 import com.lge.plugins.metashift.models.Configuration;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.TestData;
 import java.util.List;
@@ -32,11 +30,6 @@ public class UnitTestDataSummaryAggregator
    */
   public UnitTestDataSummaryAggregator(Configuration configuration) {
     super(configuration);
-  }
-
-  @Override
-  protected LinesOfCode getLinesOfCode(Recipe recipe) {
-    return new LinesOfCodeCollector().parse(recipe);
   }
 
   @Override

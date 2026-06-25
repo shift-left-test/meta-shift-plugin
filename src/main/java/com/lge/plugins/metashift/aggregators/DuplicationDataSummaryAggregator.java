@@ -9,13 +9,11 @@ import com.lge.plugins.metashift.analysis.Counter;
 import com.lge.plugins.metashift.analysis.DuplicationCounter;
 import com.lge.plugins.metashift.analysis.DuplicationEvaluator;
 import com.lge.plugins.metashift.analysis.Evaluator;
-import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.DataSummary;
 import com.lge.plugins.metashift.models.DuplicationData;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import java.util.List;
@@ -39,11 +37,6 @@ public class DuplicationDataSummaryAggregator
   public DuplicationDataSummaryAggregator(Configuration configuration) {
     super(configuration);
     tolerance = configuration.getDuplicationTolerance();
-  }
-
-  @Override
-  protected LinesOfCode getLinesOfCode(Recipe recipe) {
-    return new LinesOfCodeCollector().parse(recipe);
   }
 
   @Override

@@ -7,14 +7,11 @@ package com.lge.plugins.metashift.aggregators;
 
 import com.lge.plugins.metashift.analysis.Counter;
 import com.lge.plugins.metashift.analysis.Evaluator;
-import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
 import com.lge.plugins.metashift.analysis.StatementCoverageCounter;
 import com.lge.plugins.metashift.analysis.StatementCoverageEvaluator;
-import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.DataSummary;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.StatementCoverageData;
@@ -40,11 +37,6 @@ public class StatementCoverageDataSummaryAggregator
   }
 
   @Override
-  protected LinesOfCode getLinesOfCode(Recipe recipe) {
-    return new LinesOfCodeCollector().parse(recipe);
-  }
-
-  @Override
   protected Counter getCounter(Configuration configuration) {
     return new StatementCoverageCounter();
   }
@@ -63,9 +55,6 @@ public class StatementCoverageDataSummaryAggregator
         .collect(Collectors.toList());
     for (String file : files) {
       DataList dataList = new DataList();
-      dataList.addAll(recipe.objects(CodeSizeData.class)
-          .filter(o -> o.getFile().equals(file))
-          .collect(Collectors.toList()));
       dataList.addAll(recipe.objects(TestData.class).collect(Collectors.toList()));
       dataList.addAll(recipe.objects(StatementCoverageData.class)
           .filter(o -> o.getFile().equals(file))

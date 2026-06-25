@@ -47,12 +47,11 @@ public class ComplexityDataSummaryAggregatorTest {
     recipes.add(recipe2);
   }
 
-  private void assertValues(String name, long linesOfCode, long abnormal, long normal, double ratio,
+  private void assertValues(String name, long abnormal, long normal, double ratio,
       boolean qualified) {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode());
     assertEquals(abnormal, summary.getFirst());
     assertEquals(normal, summary.getSecond());
     assertEquals(ratio, summary.getRatio(), 0.01);
@@ -69,7 +68,7 @@ public class ComplexityDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 0, 0));
     recipe1.add(new ComplexityData(RECIPE1, "a.file", "func1", 1, 1, 1));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 0, 1, 0.0, true);
+    assertValues(RECIPE1, 0, 1, 0.0, true);
   }
 
   @Test
@@ -79,8 +78,8 @@ public class ComplexityDataSummaryAggregatorTest {
     recipe2.add(new CodeSizeData(RECIPE2, "b.file", 10, 0, 0));
     recipe2.add(new ComplexityData(RECIPE2, "b.file", "func2", 1, 1, 100));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 0, 1, 0.0, true);
-    assertValues(RECIPE2, 10, 1, 0, 1.0, false);
+    assertValues(RECIPE1, 0, 1, 0.0, true);
+    assertValues(RECIPE2, 1, 0, 1.0, false);
   }
 
   @Test
@@ -104,6 +103,6 @@ public class ComplexityDataSummaryAggregatorTest {
     recipe1.add(new ComplexityData(RECIPE1, "b.file", "func2", 1, 1, 100));
     summaries = aggregator.parse(recipe1);
     assertEquals(1, summaries.size());
-    assertValues("b.file", 10, 1, 0, 1.0, false);
+    assertValues("b.file", 1, 0, 1.0, false);
   }
 }

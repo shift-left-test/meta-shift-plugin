@@ -9,13 +9,11 @@ import com.lge.plugins.metashift.analysis.CodeViolationCounter;
 import com.lge.plugins.metashift.analysis.CodeViolationEvaluator;
 import com.lge.plugins.metashift.analysis.Counter;
 import com.lge.plugins.metashift.analysis.Evaluator;
-import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
 import com.lge.plugins.metashift.models.CodeSizeData;
 import com.lge.plugins.metashift.models.CodeViolationData;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.DataSummary;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import java.util.List;
@@ -36,11 +34,6 @@ public class CodeViolationDataSummaryAggregator
    */
   public CodeViolationDataSummaryAggregator(Configuration configuration) {
     super(configuration);
-  }
-
-  @Override
-  protected LinesOfCode getLinesOfCode(Recipe recipe) {
-    return new LinesOfCodeCollector().parse(recipe);
   }
 
   @Override

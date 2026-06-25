@@ -12,7 +12,6 @@ import com.lge.plugins.metashift.analysis.RecipeViolationEvaluator;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.DataSummary;
-import com.lge.plugins.metashift.models.LinesOfCode;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.RecipeSizeData;
 import com.lge.plugins.metashift.models.RecipeViolationData;
@@ -35,12 +34,6 @@ public class RecipeViolationDataSummaryAggregator
    */
   public RecipeViolationDataSummaryAggregator(Configuration configuration) {
     super(configuration);
-  }
-
-  @Override
-  protected LinesOfCode getLinesOfCode(Recipe recipe) {
-    long lines = recipe.objects(RecipeSizeData.class).mapToLong(RecipeSizeData::getLines).sum();
-    return new LinesOfCode(lines, 0, 0, 0, 0);
   }
 
   @Override

@@ -49,12 +49,11 @@ public class MutationTestDataSummaryAggregatorTest {
     recipes.add(recipe2);
   }
 
-  private void assertValues(String name, long linesOfCode, long killed, long survived, long skipped,
+  private void assertValues(String name, long killed, long survived, long skipped,
       double ratio, boolean qualified) {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode());
     assertEquals(killed, summary.getFirst());
     assertEquals(survived, summary.getSecond());
     assertEquals(skipped, summary.getThird());
@@ -72,7 +71,7 @@ public class MutationTestDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new KilledMutationTestData(RECIPE1, "a.file", "X", "X", 1, "X", "X"));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 1, 0, 0, 1.0, true);
+    assertValues(RECIPE1, 1, 0, 0, 1.0, true);
   }
 
   @Test
@@ -83,8 +82,8 @@ public class MutationTestDataSummaryAggregatorTest {
     recipe2.add(new SurvivedMutationTestData(RECIPE2, "b.file", "X", "X", 2, "X", "X"));
     recipe2.add(new SkippedMutationTestData(RECIPE2, "b.file", "X", "X", 2, "X", "X"));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 1, 0, 0, 1.0, true);
-    assertValues(RECIPE2, 2, 0, 1, 1, 0.0, false);
+    assertValues(RECIPE1, 1, 0, 0, 1.0, true);
+    assertValues(RECIPE2, 0, 1, 1, 0.0, false);
   }
 
   @Test
@@ -92,7 +91,7 @@ public class MutationTestDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 1, 1, 1));
     recipe1.add(new KilledMutationTestData(RECIPE1, "a.file", "X", "X", 1, "X", "X"));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 1, 1, 0, 0, 1.0, true);
+    assertValues("a.file", 1, 0, 0, 1.0, true);
   }
 
   @Test
@@ -103,7 +102,7 @@ public class MutationTestDataSummaryAggregatorTest {
     recipe1.add(new SurvivedMutationTestData(RECIPE1, "b.file", "X", "X", 2, "X", "X"));
     recipe1.add(new SkippedMutationTestData(RECIPE1, "b.file", "X", "X", 2, "X", "X"));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 1, 1, 0, 0, 1.0, true);
-    assertValues("b.file", 2, 0, 1, 1, 0.0, false);
+    assertValues("a.file", 1, 0, 0, 1.0, true);
+    assertValues("b.file", 0, 1, 1, 0.0, false);
   }
 }

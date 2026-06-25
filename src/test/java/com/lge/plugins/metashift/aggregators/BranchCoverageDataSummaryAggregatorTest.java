@@ -49,12 +49,11 @@ public class BranchCoverageDataSummaryAggregatorTest {
     recipes.add(recipe2);
   }
 
-  private void assertValues(String name, long linesOfCode, long covered, long uncovered,
+  private void assertValues(String name, long covered, long uncovered,
       double ratio, boolean qualified) {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode());
     assertEquals(covered, summary.getFirst());
     assertEquals(uncovered, summary.getSecond());
     assertEquals(ratio, summary.getRatio(), 0.01);
@@ -80,7 +79,7 @@ public class BranchCoverageDataSummaryAggregatorTest {
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new BranchCoverageData(RECIPE1, "a.file", 1, 1, false));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 0, 1, 0.0, false);
+    assertValues(RECIPE1, 0, 1, 0.0, false);
   }
 
   @Test
@@ -92,8 +91,8 @@ public class BranchCoverageDataSummaryAggregatorTest {
     recipe2.add(new PassedTestData(RECIPE2, "B", "B", "B"));
     recipe2.add(new BranchCoverageData(RECIPE2, "b.file", 2, 2, true));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 1, 0, 1, 0.0, false);
-    assertValues(RECIPE2, 2, 1, 0, 1.0, true);
+    assertValues(RECIPE1, 0, 1, 0.0, false);
+    assertValues(RECIPE2, 1, 0, 1.0, true);
   }
 
   @Test
@@ -107,7 +106,7 @@ public class BranchCoverageDataSummaryAggregatorTest {
     recipe1.add(new FailedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new BranchCoverageData(RECIPE1, "a.file", 1, 1, false));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 1, 0, 1, 0.0, false);
+    assertValues("a.file", 0, 1, 0.0, false);
   }
 
   @Test
@@ -119,7 +118,7 @@ public class BranchCoverageDataSummaryAggregatorTest {
     recipe1.add(new PassedTestData(RECIPE1, "B", "B", "B"));
     recipe1.add(new BranchCoverageData(RECIPE1, "b.file", 2, 2, true));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 1, 0, 1, 0.0, false);
-    assertValues("b.file", 2, 1, 0, 1.0, true);
+    assertValues("a.file", 0, 1, 0.0, false);
+    assertValues("b.file", 1, 0, 1.0, true);
   }
 }

@@ -17,7 +17,6 @@ public class DataSummary extends Data {
 
   private static final long serialVersionUID = 6768623147726489246L;
 
-  private final long linesOfCode;
   private final long first;
   private final long second;
   private final long third;
@@ -29,29 +28,17 @@ public class DataSummary extends Data {
    * Default constructor.
    *
    * @param name         of the data
-   * @param linesOfCode  value
    * @param distribution value
    * @param evaluation   value
    */
-  public DataSummary(String name, LinesOfCode linesOfCode, Distribution distribution,
-      Evaluation evaluation) {
+  public DataSummary(String name, Distribution distribution, Evaluation evaluation) {
     super(name);
-    this.linesOfCode = linesOfCode.getLines();
     this.first = distribution.getFirst().getCount();
     this.second = distribution.getSecond().getCount();
     this.third = distribution.getThird().getCount();
     this.fourth = distribution.getFourth().getCount();
     this.ratio = evaluation.getRatio();
     this.qualified = evaluation.isQualified();
-  }
-
-  /**
-   * Returns the lines of code.
-   *
-   * @return the lines of code
-   */
-  public long getLinesOfCode() {
-    return linesOfCode;
   }
 
   /**

@@ -47,13 +47,11 @@ public class DuplicationDataSummaryAggregatorTest {
     recipes.add(recipe2);
   }
 
-  private void assertValues(String name, long linesOfCode, long duplicate, long unique,
-      double ratio,
+  private void assertValues(String name, long duplicate, long unique, double ratio,
       boolean qualified) {
     DataSummary summary = summaries.stream()
         .filter(o -> o.getName().equals(name)).findFirst()
         .orElseThrow(AssertionError::new);
-    assertEquals(linesOfCode, summary.getLinesOfCode());
     assertEquals(duplicate, summary.getFirst());
     assertEquals(unique, summary.getSecond());
     assertEquals(ratio, summary.getRatio(), 0.01);
@@ -70,7 +68,7 @@ public class DuplicationDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 100, 0, 0));
     recipe1.add(new DuplicationData(RECIPE1, "a.file", 100, 1, 100));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 100, 100, 0, 1.0, false);
+    assertValues(RECIPE1, 100, 0, 1.0, false);
   }
 
   @Test
@@ -80,8 +78,8 @@ public class DuplicationDataSummaryAggregatorTest {
     recipe2.add(new CodeSizeData(RECIPE2, "b.file", 100, 0, 0));
     recipe2.add(new DuplicationData(RECIPE2, "b.file", 100, 1, 1));
     summaries = aggregator.parse(recipes);
-    assertValues(RECIPE1, 100, 100, 0, 1.0, false);
-    assertValues(RECIPE2, 100, 0, 100, 0.0, true);
+    assertValues(RECIPE1, 100, 0, 1.0, false);
+    assertValues(RECIPE2, 0, 100, 0.0, true);
   }
 
   @Test
@@ -94,7 +92,7 @@ public class DuplicationDataSummaryAggregatorTest {
     recipe1.add(new CodeSizeData(RECIPE1, "a.file", 100, 0, 0));
     recipe1.add(new DuplicationData(RECIPE1, "a.file", 100, 1, 100));
     summaries = aggregator.parse(recipe1);
-    assertValues("a.file", 100, 100, 0, 1.0, false);
+    assertValues("a.file", 100, 0, 1.0, false);
   }
 
   @Test
@@ -105,6 +103,6 @@ public class DuplicationDataSummaryAggregatorTest {
     recipe1.add(new DuplicationData(RECIPE1, "b.file", 100, 1, 1));
     summaries = aggregator.parse(recipe1);
     assertEquals(1, summaries.size());
-    assertValues("a.file", 100, 100, 0, 1.0, false);
+    assertValues("a.file", 100, 0, 1.0, false);
   }
 }

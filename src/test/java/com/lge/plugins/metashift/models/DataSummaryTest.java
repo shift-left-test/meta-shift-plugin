@@ -18,17 +18,10 @@ import org.junit.Test;
 public class DataSummaryTest {
 
   private static final String RECIPE = "A-1.0.0-r0";
-  private static final LinesOfCode LINES_OF_CODE = new LinesOfCode(1, 2, 3, 4, 5);
   private static final Distribution DISTRIBUTION = new Distribution(1, 2);
   private static final Evaluation EVALUATION = new PositiveEvaluation(true, 1, 2, 0.5);
-  private static final DataSummary origin = new DataSummary(RECIPE, LINES_OF_CODE, DISTRIBUTION,
-      EVALUATION);
-  private static final DataSummary same = new DataSummary(RECIPE, LINES_OF_CODE, DISTRIBUTION,
-      EVALUATION);
-
-  private void assertLinesOfCode(DataSummary o, long linesOfCode) {
-    assertEquals(linesOfCode, o.getLinesOfCode());
-  }
+  private static final DataSummary origin = new DataSummary(RECIPE, DISTRIBUTION, EVALUATION);
+  private static final DataSummary same = new DataSummary(RECIPE, DISTRIBUTION, EVALUATION);
 
   private void assertDistribution(DataSummary o, long first, long second, long third, long fourth) {
     long total = first + second + third + fourth;
@@ -54,7 +47,6 @@ public class DataSummaryTest {
 
   @Test
   public void testInitData() {
-    assertLinesOfCode(origin, 1);
     assertDistribution(origin, 1, 2, 0, 0);
     assertEvaluation(origin, 2.0, true);
   }
@@ -65,14 +57,10 @@ public class DataSummaryTest {
     assertNotEquals(origin, new Object());
     assertEquals(origin, origin);
     assertEquals(origin, same);
-    assertNotEquals(origin, new DataSummary("B-1.0.0-r0", LINES_OF_CODE, DISTRIBUTION, EVALUATION));
+    assertNotEquals(origin, new DataSummary("B-1.0.0-r0", DISTRIBUTION, EVALUATION));
+    assertEquals(origin, new DataSummary(RECIPE, new Distribution(2, 1), EVALUATION));
     assertEquals(origin,
-        new DataSummary(RECIPE, new LinesOfCode(4, 3, 2, 1, 0), DISTRIBUTION, EVALUATION));
-    assertEquals(origin,
-        new DataSummary(RECIPE, LINES_OF_CODE, new Distribution(2, 1), EVALUATION));
-    assertEquals(origin,
-        new DataSummary(RECIPE, LINES_OF_CODE, DISTRIBUTION,
-            new PositiveEvaluation(false, 2, 1, 0.5)));
+        new DataSummary(RECIPE, DISTRIBUTION, new PositiveEvaluation(false, 2, 1, 0.5)));
   }
 
   @Test
@@ -80,14 +68,9 @@ public class DataSummaryTest {
     assertHashNotEquals(origin, new Object());
     assertHashEquals(origin, origin);
     assertHashEquals(origin, same);
-    assertHashNotEquals(origin,
-        new DataSummary("B-1.0.0-r0", LINES_OF_CODE, DISTRIBUTION, EVALUATION));
+    assertHashNotEquals(origin, new DataSummary("B-1.0.0-r0", DISTRIBUTION, EVALUATION));
+    assertHashEquals(origin, new DataSummary(RECIPE, new Distribution(2, 1), EVALUATION));
     assertHashEquals(origin,
-        new DataSummary(RECIPE, new LinesOfCode(4, 3, 2, 1, 0), DISTRIBUTION, EVALUATION));
-    assertHashEquals(origin,
-        new DataSummary(RECIPE, LINES_OF_CODE, new Distribution(2, 1), EVALUATION));
-    assertHashEquals(origin,
-        new DataSummary(RECIPE, LINES_OF_CODE, DISTRIBUTION,
-            new PositiveEvaluation(false, 2, 1, 0.5)));
+        new DataSummary(RECIPE, DISTRIBUTION, new PositiveEvaluation(false, 2, 1, 0.5)));
   }
 }
