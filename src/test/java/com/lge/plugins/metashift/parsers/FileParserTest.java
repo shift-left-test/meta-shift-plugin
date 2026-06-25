@@ -101,13 +101,13 @@ public class FileParserTest {
     builder
         .add(new FakeRecipe(source)
             .add(new FakeScript(10))
-            .add(new FakeSource(10, 3, 2, 0)))
+            .add(new FakeSource(10, 3, 2, 0).setStatementCoverage(1, 0)))
         .add(new FakeRecipe(source)
             .add(new FakeScript(20))
-            .add(new FakeSource(20, 6, 5, 0)))
+            .add(new FakeSource(20, 6, 5, 0).setStatementCoverage(1, 0)))
         .add(new FakeRecipe(source)
             .add(new FakeScript(30))
-            .add(new FakeSource(30, 9, 8, 0)));
+            .add(new FakeSource(30, 9, 8, 0).setStatementCoverage(1, 0)));
     builder.toFile(report);
 
     recipes = parser.parse(new FilePath(report));
@@ -183,21 +183,30 @@ public class FileParserTest {
   }
 
   @Test
-  public void testRemovesRecipesWithNoSourceFiles() throws IOException, InterruptedException {
-    builder.add(new FakeRecipe(source).add(new FakeSource(0, 0, 1, 1)));
-    builder.add(new FakeRecipe(source).add(new FakeSource(0, 0, 1, 1)));
-    builder.add(new FakeRecipe(source).add(new FakeSource(0, 0, 1, 1)));
-    builder.toFile(report);
+  public void testRemovesRecipesWithNoReportData() throws IOException, InterruptedException {
+    new FakeRecipe(source).add(new FakeSource(0, 0, 0, 0)).toFile(report);
+    new FakeRecipe(source).add(new FakeSource(0, 0, 0, 0)).toFile(report);
+    new FakeRecipe(source).add(new FakeSource(0, 0, 0, 0)).toFile(report);
     recipes = parser.parse(new FilePath(report));
     Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe data%n", 3);
     Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipe data removed.%n", 3);
   }
 
   @Test
-  public void testRemovesRecipesWithHiddenDirectoryName() throws IOException, InterruptedException {
-    builder.add(new FakeRecipe(source, ".hidden-project-1.0.0-r0").add(new FakeSource(1, 1, 1, 1)));
-    builder.add(new FakeRecipe(source, "qmake5-project-1.0.0-r0").add(new FakeSource(0, 0, 1, 1)));
+  public void testKeepsRecipeWithCoverageDataEvenIfNoCodeSizeData()
+      throws IOException, InterruptedException {
+    builder.add(new FakeRecipe(source)
+        .add(new FakeSource(0, 0, 0, 0).setStatementCoverage(1, 0)));
     builder.toFile(report);
+    recipes = parser.parse(new FilePath(report));
+    assertEquals(1, recipes.size());
+    Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipe data removed.%n", 0);
+  }
+
+  @Test
+  public void testRemovesRecipesWithHiddenDirectoryName() throws IOException, InterruptedException {
+    new FakeRecipe(source, ".hidden-project-1.0.0-r0").add(new FakeSource(1, 1, 1, 1)).toFile(report);
+    new FakeRecipe(source, "qmake5-project-1.0.0-r0").add(new FakeSource(0, 0, 0, 0)).toFile(report);
     recipes = parser.parse(new FilePath(report));
     Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe data%n", 1);
     Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipe data removed.%n", 1);
@@ -214,7 +223,7 @@ public class FileParserTest {
   public void testInitWithComplexName() throws IOException, InterruptedException {
     String fullName = "A.B.C.qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X-r+1.0-X";
     String expected = "A.B.C.qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X";
-    builder.add(new FakeRecipe(source, fullName).add(new FakeSource(1, 1, 1, 1)));
+    builder.add(new FakeRecipe(source, fullName).add(new FakeSource(1, 1, 1, 1).setStatementCoverage(1, 0)));
     builder.toFile(report);
     recipes = new FileParser().parse(new FilePath(report));
     assertEquals(1, recipes.size());

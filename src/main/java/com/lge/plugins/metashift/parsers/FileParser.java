@@ -5,10 +5,12 @@
 
 package com.lge.plugins.metashift.parsers;
 
-import com.lge.plugins.metashift.analysis.LinesOfCodeCollector;
+import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.DataList;
+import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.NamingUtils;
 import hudson.FilePath;
@@ -70,8 +72,11 @@ public class FileParser {
       recipes.add(parseEach(directory));
     }
 
-    logger.println("[meta-shift-plugin] Removing recipe data with no source files...");
-    recipes.removeIf(recipe -> new LinesOfCodeCollector().parse(recipe).getLines() == 0);
+    logger.println("[meta-shift-plugin] Removing recipe data with no report data...");
+    recipes.removeIf(recipe ->
+        !recipe.contains(CoverageData.class)
+        && !recipe.contains(TestData.class)
+        && !recipe.contains(MutationTestData.class));
     logger.printf("[meta-shift-plugin] -> %d recipe data removed.%n",
         directories.size() - recipes.size());
 
