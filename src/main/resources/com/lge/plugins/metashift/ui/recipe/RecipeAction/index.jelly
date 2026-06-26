@@ -8,15 +8,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
       <div class="metashift">
       <div class="page">
         <div class="h1">Overview</div>
-        <div class="h2">Build System</div>
-        <div class="section">
-          <ms:build-performance-row metrics_class="show_scale" />
-        </div>
-        <div class="h2">Static Analysis</div>
-        <div class="section">
-          <ms:static-analysis-row metrics_class="show_scale" />
-        </div>
-        <div class="h2">Dynamic Testing</div>
         <div class="section">
           <ms:dynamic-testing-row metrics_class="show_scale" />
         </div>
