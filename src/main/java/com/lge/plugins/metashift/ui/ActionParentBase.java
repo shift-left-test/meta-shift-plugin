@@ -9,8 +9,8 @@ import hudson.Functions;
 import hudson.model.Actionable;
 import hudson.model.Run;
 import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 /**
  * action parent class.
@@ -27,7 +27,7 @@ public abstract class ActionParentBase extends Actionable {
   private void addActionToMenu(ContextMenu menu, ActionChildBase action) {
     if (action != null && action.isAvailable()) {
       String base = Functions.getIconFilePath(action);
-      String icon = Stapler.getCurrentRequest().getContextPath()
+      String icon = Stapler.getCurrentRequest2().getContextPath()
           + (base.startsWith("images/") ? Functions.getResourcePath() : "")
           + '/' + base;
 
@@ -38,12 +38,12 @@ public abstract class ActionParentBase extends Actionable {
   /**
    * context menu provider for recipe action.
    */
-  public ContextMenu doContextMenu(StaplerRequest request, StaplerResponse response)
+  public ContextMenu doContextMenu(StaplerRequest2 request, StaplerResponse2 response)
       throws Exception {
     ContextMenu menu = new ContextMenu();
 
     final MenuItem headerCodeQuality = new MenuItem().withDisplayName("Code Quality");
-    headerCodeQuality.header = true;
+    headerCodeQuality.type = MenuItemType.HEADER;
     menu.add(headerCodeQuality);
     this.addActionToMenu(menu, this.childActionUnitTests);
     this.addActionToMenu(menu, this.childActionStatementCoverage);

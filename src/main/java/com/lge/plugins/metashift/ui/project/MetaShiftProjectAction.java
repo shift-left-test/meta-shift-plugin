@@ -13,8 +13,8 @@ import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 import io.jenkins.plugins.echarts.AsyncTrendChart;
 import java.io.IOException;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
@@ -87,7 +87,7 @@ public class MetaShiftProjectAction implements ProminentProjectAction, AsyncTren
   /**
    * redirect to build action page.
    */
-  public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException {
+  public void doIndex(StaplerRequest2 req, StaplerResponse2 rsp) throws IOException {
     Integer buildNumber = getLastResultBuildNumber();
     if (buildNumber == null) {
       rsp.sendRedirect2("nodata");

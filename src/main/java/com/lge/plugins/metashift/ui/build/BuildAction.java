@@ -34,8 +34,8 @@ import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -135,12 +135,12 @@ public class BuildAction extends ActionParentBase implements LastBuildAction, Ru
   /**
    * context menu provider.
    */
-  public ContextMenu doContextMenu(StaplerRequest request, StaplerResponse response)
+  public ContextMenu doContextMenu(StaplerRequest2 request, StaplerResponse2 response)
       throws Exception {
     ContextMenu menu = super.doContextMenu(request, response);
 
     final MenuItem headerCodeQuality = new MenuItem().withDisplayName("Recipes");
-    headerCodeQuality.header = true;
+    headerCodeQuality.type = MenuItemType.HEADER;
     menu.add(headerCodeQuality);
     // TODO: RecipeAction::getDisplayName may return null.
     List<RecipeAction> actions = this.getActions(RecipeAction.class).stream()

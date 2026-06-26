@@ -8,10 +8,10 @@ package com.lge.plugins.metashift.ui;
 import hudson.model.Action;
 import hudson.model.Run;
 import java.io.IOException;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 /**
  * action child class.
@@ -63,13 +63,13 @@ public abstract class ActionChildBase implements Action {
   }
 
   public String getUrlParameter(String paramName) {
-    return Stapler.getCurrentRequest().getParameter(paramName);
+    return Stapler.getCurrentRequest2().getParameter(paramName);
   }
 
   /**
    * view each metrics jelly page.
    */
-  public void doIndex(StaplerRequest req, StaplerResponse res)
+  public void doIndex(StaplerRequest2 req, StaplerResponse2 res)
       throws ServletException, IOException {
     if (req != null) {
       req.getView(this, this.url + ".jelly").forward(req, res);

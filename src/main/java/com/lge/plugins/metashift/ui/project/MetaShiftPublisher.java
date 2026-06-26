@@ -38,7 +38,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 /**
  * The post build step class.
@@ -109,7 +109,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     }
 
     @Override
-    public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
+    public boolean configure(StaplerRequest2 req, JSONObject formData) throws FormException {
       req.bindJSON(this.getConfiguration(), formData);
       this.getConfiguration().sanitizeValues();
 
