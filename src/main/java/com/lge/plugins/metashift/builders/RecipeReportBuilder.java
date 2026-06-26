@@ -34,7 +34,6 @@ import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils.Function;
-import hudson.FilePath;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -53,19 +52,16 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
 
   private final Configuration configuration;
   private final DataSource dataSource;
-  private final FilePath path;
 
   /**
    * Default constructor.
    *
    * @param configuration for evaluation
    * @param dataSource    for persistent objects
-   * @param path          to the report directory
    */
-  public RecipeReportBuilder(Configuration configuration, DataSource dataSource, FilePath path) {
+  public RecipeReportBuilder(Configuration configuration, DataSource dataSource) {
     this.configuration = configuration;
     this.dataSource = dataSource;
-    this.path = path;
   }
 
   private <T> void put(Metric metric, Data data, String recipe, T object) throws IOException {
@@ -105,7 +101,7 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     return null;
   }
 
-  private Void addStatementCoverage(Recipe recipe) throws IOException, InterruptedException {
+  private Void addStatementCoverage(Recipe recipe) throws IOException {
     add(Metric.STATEMENT_COVERAGE,
         new StatementCoverageEvaluator(configuration),
         new StatementCoverageCounter(),
@@ -118,7 +114,7 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     return null;
   }
 
-  private Void addBranchCoverage(Recipe recipe) throws IOException, InterruptedException {
+  private Void addBranchCoverage(Recipe recipe) throws IOException {
     add(Metric.BRANCH_COVERAGE,
         new BranchCoverageEvaluator(configuration),
         new BranchCoverageCounter(),
@@ -131,7 +127,7 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     return null;
   }
 
-  private Void addMutationTests(Recipe recipe) throws IOException, InterruptedException {
+  private Void addMutationTests(Recipe recipe) throws IOException {
     add(Metric.MUTATION_TESTS,
         new MutationTestEvaluator(configuration),
         new MutationTestCounter(),

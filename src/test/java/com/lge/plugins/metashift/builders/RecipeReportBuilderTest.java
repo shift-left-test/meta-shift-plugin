@@ -57,7 +57,7 @@ public class RecipeReportBuilderTest {
     Configuration configuration = ConfigurationUtils.of(50, 5, false);
     DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
     new ProjectReportBuilder(configuration, dataSource).parse(recipes);
-    this.report = new RecipeReportBuilder(configuration, dataSource, new FilePath(report))
+    this.report = new RecipeReportBuilder(configuration, dataSource)
         .parse(recipe);
   }
 

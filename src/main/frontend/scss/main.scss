@@ -75,10 +75,6 @@
   }
 }
 
-summary-code-size {
-  margin-left: 10px;
-}
-
 summary-metrics-simple-view {
   position: relative;
 
@@ -299,30 +295,6 @@ summary-metrics-simple-view {
       background: $source-bad;
     }
 
-    .sourceNotComplex {
-      background: $source-good;
-    }
-
-    .sourceComplex {
-      background: $source-bad;
-    }
-
-    .sourceDuplicated1 {
-      background: $duplicate-1;
-    }
-    .sourceDuplicated2 {
-      background: $duplicate-2;
-    }
-    .sourceDuplicated3 {
-      background: $duplicate-3;
-    }
-    .sourceDuplicated4 {
-      background: $duplicate-4;
-    }
-    .sourceDuplicated5 {
-      background: $duplicate-5;
-    }
-
     .mutationKilled {
       background: $source-good;
     }
@@ -374,37 +346,6 @@ build-trend-chart {
   .chart {
     width: 600px;
     height: 500px;
-  }
-}
-
-code-size {
-  .size-item {
-    display: inline-block;
-    border: 1px solid;
-    border-radius: 3px;
-    border-color: gray;
-    margin: 2px;
-    text-align: center;
-    width: 200px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    background-color: rgb(247, 247, 239);
-  }
-
-  .title {
-    font-size: 16px;
-    font-weight: bold;
-  }
-
-  .size-number {
-    font-weight: bold;
-    font-size: 30px;
-    line-height: 30px;
-  }
-
-  .size-diff {
-    font-size: 20px;
-    font-weight: normal;
   }
 }
 

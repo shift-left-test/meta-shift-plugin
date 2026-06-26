@@ -48,7 +48,7 @@ public class RecipeAction extends ActionParentBase implements Action {
     this.name = recipe.getName();
     this.parent = parent;
 
-    this.recipeReport = new RecipeReportBuilder(configuration, dataSource, reportRoot)
+    this.recipeReport = new RecipeReportBuilder(configuration, dataSource)
         .parse(recipe);
 
     this.addAction(this.childActionStatementCoverage = new RecipeActionChild(
