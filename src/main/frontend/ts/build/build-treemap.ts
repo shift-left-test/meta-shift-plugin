@@ -55,28 +55,6 @@ export class BuildTreemap extends RecipeTreemap {
   private qualifiedTooltip(tooltipInfo) {
     return `
     <div class="tooltip-column">
-      <div class="tooltip-section">Build System</div>
-      ${this.generateQualifiedTooltipString('Premirror Cache',
-      tooltipInfo.premirrorCache)}
-      ${this.generateQualifiedTooltipString('Shared State Cache',
-      tooltipInfo.sharedStateCache)}
-      ${this.generateQualifiedTooltipString('Recipe Violations',
-      tooltipInfo.recipeViolations)}
-      </div>
-    <div class="tooltip-column-gap"></div>
-    <div class="tooltip-column">
-      <div class="tooltip-section">Static Analysis</div>
-      ${this.generateQualifiedTooltipString('Comments',
-      tooltipInfo.comments)}
-      ${this.generateQualifiedTooltipString('Code Violations',
-      tooltipInfo.codeViolations)}
-      ${this.generateQualifiedTooltipString('Complexity',
-      tooltipInfo.complexity)}
-      ${this.generateQualifiedTooltipString('Duplications',
-      tooltipInfo.duplications)}
-      </div>
-    <div class="tooltip-column-gap"></div>
-    <div class="tooltip-column">
       <div class="tooltip-section">Dynamic Testing</div>
       ${this.generateQualifiedTooltipString('Unit Tests',
       tooltipInfo.unitTests)}
