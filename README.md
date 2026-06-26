@@ -6,17 +6,12 @@ A plugin for Jenkins to capture and visualize various software quality metrics f
 
 The list of software quality metric:
 
-- Lines of code
-- Premirror cache
-- Shared state cache
-- Bitbake script violations
-- Comments
-- Static analysis
-- Complexity
-- Duplications
 - Unit test
-- Code coverage
+- Statement coverage
+- Branch coverage
 - Mutation test
+
+> **Note (0.6.0):** The static-analysis, cache, code-size, and tested-recipes metrics were removed because the current meta-shift layer no longer produces their reports. This plugin now targets the current meta-shift (scarthgap) layer. Build results and job threshold settings from older versions need to be re-run / re-entered.
 
 You may find more information about the meta-shift layer on https://github.com/shift-left-test/meta-shift
 
