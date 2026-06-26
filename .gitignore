@@ -285,3 +285,4 @@ tags
 /src/main/frontend/node_modules
 /src/main/webapp/js
 test-dist/
+docs/
