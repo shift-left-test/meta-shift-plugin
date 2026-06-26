@@ -107,9 +107,9 @@ public class FileParser {
     }
     DataList dataList = new DataList();
     ExecutorServiceUtils.invokeAll(
-        new CoverageParser(path, dataList),
-        new MutationTestParser(path, dataList),
-        new TestParser(path, dataList)
+        new CoverageParser(path, dataList, logger),
+        new MutationTestParser(path, dataList, logger),
+        new TestParser(path, dataList, logger)
     );
     return new Recipe(NamingUtils.getRecipe(name), dataList);
   }

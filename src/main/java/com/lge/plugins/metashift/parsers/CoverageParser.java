@@ -13,12 +13,14 @@ import com.lge.plugins.metashift.utils.xml.SimpleXmlParser;
 import com.lge.plugins.metashift.utils.xml.Tag;
 import hudson.FilePath;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.io.output.NullPrintStream;
 import org.xml.sax.SAXException;
 
 /**
@@ -30,6 +32,20 @@ public class CoverageParser extends Parser {
 
   private final FilePath path;
   private final DataList dataList;
+  private final PrintStream logger;
+
+  /**
+   * Default constructor.
+   *
+   * @param path     to the report directory
+   * @param dataList to store objects
+   * @param logger   for logging
+   */
+  public CoverageParser(FilePath path, DataList dataList, PrintStream logger) {
+    this.path = path;
+    this.dataList = dataList;
+    this.logger = logger;
+  }
 
   /**
    * Default constructor.
@@ -38,8 +54,7 @@ public class CoverageParser extends Parser {
    * @param dataList to store objects
    */
   public CoverageParser(FilePath path, DataList dataList) {
-    this.path = path;
-    this.dataList = dataList;
+    this(path, dataList, NullPrintStream.NULL_PRINT_STREAM);
   }
 
   @Override
@@ -65,8 +80,8 @@ public class CoverageParser extends Parser {
       dataList.add(CoverageData.class);
     } catch (ParserConfigurationException | SAXException e) {
       throw new IllegalArgumentException("Failed to parse: " + report, e);
-    } catch (NoSuchFileException ignored) {
-      // ignored
+    } catch (NoSuchFileException e) {
+      logger.printf("[meta-shift-plugin] -> coverage report not found: %s%n", e.getFile());
     }
   }
 

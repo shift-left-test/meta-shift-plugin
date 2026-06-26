@@ -6,14 +6,17 @@
 package com.lge.plugins.metashift.parsers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
 import hudson.FilePath;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Before;
@@ -78,6 +81,16 @@ public class CoverageParserTest {
     File directory = utils.createDirectory("report", "A-1.0.0-r0", "coverage").getParentFile();
     parse(directory);
     assertDataList(false, 0);
+  }
+
+  @Test
+  public void testMissingReportLogsWarning() throws IOException, InterruptedException {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    PrintStream logger = new PrintStream(out);
+    ExecutorServiceUtils.invokeAll(new CoverageParser(new FilePath(directory), dataList, logger));
+    assertDataList(false, 0);
+    assertTrue(out.toString().contains("[meta-shift-plugin] -> coverage report not found:"));
   }
 
   @Test(expected = IllegalArgumentException.class)
