@@ -1,27 +1,28 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <st:adjunct includes="com.lge.plugins.metashift.front"/>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
   <tr>
     <td>
-      <img class="summary-icon" src="${rootURL}/plugin/meta-shift/img/meta_shift_first.png" />
+      <img class="summary-icon" width="48" height="48"
+        src="${rootURL}/plugin/meta-shift/img/meta_shift_first.png" />
     </td>
     <td style="vertical-align:middle">
       <div>
         <a href="meta-shift-report">meta-shift report</a>
       </div>
-      <div class="summary">
-        <div class="column">
-          <div class="column-title">Dynamic Testing</div>
-          <summary-metrics-simple-view name="Unit Tests" class="percent"
-            evaluation="${it.report.unitTests.evaluation}" />
-          <summary-metrics-simple-view name="Statement Coverage" class="percent"
-            evaluation="${it.report.statementCoverage.evaluation}" />
-          <summary-metrics-simple-view name="Branch Coverage" class="percent"
-            evaluation="${it.report.branchCoverage.evaluation}" />
-          <summary-metrics-simple-view name="Mutation Tests" class="percent"
-            evaluation="${it.report.mutationTests.evaluation}" />
-        </div>
+      <div class="d-flex flex-wrap gap-3 mt-1">
+        <j:forEach var="card" items="${it.metricCards}">
+          <span>
+            <span class="badge bg-${card.barClass}">
+              <j:choose>
+                <j:when test="${!card.available}">N/A</j:when>
+                <j:when test="${card.qualified}">PASS</j:when>
+                <j:otherwise>FAIL</j:otherwise>
+              </j:choose>
+            </span>
+            ${card.name}: <b>${card.ratioText}</b>
+          </span>
+        </j:forEach>
       </div>
     </td>
   </tr>

@@ -11,13 +11,14 @@ import com.lge.plugins.metashift.builders.Constants.Scope;
 import com.lge.plugins.metashift.persistence.DataSource;
 import java.io.Serializable;
 import java.util.Optional;
+import net.sf.json.JSONObject;
 
 /**
  * Group class.
  *
  * @author Sung Gon Kim
  */
-public class Group implements Serializable {
+public abstract class Group implements Serializable {
 
   private static final long serialVersionUID = 802493641209916939L;
 
@@ -37,6 +38,27 @@ public class Group implements Serializable {
     this.scope = scope;
     this.metric = metric;
   }
+
+  /**
+   * Returns the evaluation result.
+   *
+   * @return evaluation result
+   */
+  public abstract JSONObject getEvaluation();
+
+  /**
+   * Returns the statistics result.
+   *
+   * @return statistics result
+   */
+  public abstract JSONObject getStatistics();
+
+  /**
+   * Returns the distribution result.
+   *
+   * @return distribution result
+   */
+  public abstract JSONObject getDistribution();
 
   private <T> T getOrDefault(T defaultValue, String... names) {
     T o = dataSource.get(names);

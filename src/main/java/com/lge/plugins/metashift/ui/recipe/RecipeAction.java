@@ -12,6 +12,7 @@ import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.ActionParentBase;
+import com.lge.plugins.metashift.ui.MetricView;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import hudson.FilePath;
 import hudson.model.Action;
@@ -100,6 +101,16 @@ public class RecipeAction extends ActionParentBase implements Action {
 
   public RecipeReport getReport() {
     return this.recipeReport;
+  }
+
+  /**
+   * Returns the metric summary cards for the four surviving metrics.
+   *
+   * @return list of metric cards
+   */
+  public List<MetricView> getMetricCards() {
+    return MetricView.cardsFor(getReport(), getTestDelta(),
+        getStatementCoverageDelta(), getBranchCoverageDelta(), getMutationTestDelta());
   }
 
   private RecipeReport getPreviousReport() {

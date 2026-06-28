@@ -13,6 +13,7 @@ import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.ActionParentBase;
+import com.lge.plugins.metashift.ui.MetricView;
 import com.lge.plugins.metashift.ui.project.MetaShiftProjectAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import hudson.FilePath;
@@ -130,6 +131,16 @@ public class BuildAction extends ActionParentBase implements LastBuildAction, Ru
 
   public ProjectReport getReport() {
     return this.projectReport;
+  }
+
+  /**
+   * Returns the metric summary cards for the four surviving metrics.
+   *
+   * @return list of metric cards
+   */
+  public List<MetricView> getMetricCards() {
+    return MetricView.cardsFor(getReport(), getTestDelta(),
+        getStatementCoverageDelta(), getBranchCoverageDelta(), getMutationTestDelta());
   }
 
   /**

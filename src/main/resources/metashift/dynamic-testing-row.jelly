@@ -1,25 +1,45 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-
-  <metrics-simple-view name="Unit Tests" class="percent ${metrics_class}"
-    url="unit_tests"
-    evaluation="${it.report.unitTests.evaluation}"
-    delta="${it.testDelta}"
-    statistics="${it.report.unitTests.statistics}" />
-  <metrics-simple-view name="Statement Coverage" class="percent ${metrics_class}"
-    url="statement_coverage"
-    evaluation="${it.report.statementCoverage.evaluation}"
-    delta="${it.statementCoverageDelta}"
-    statistics="${it.report.statementCoverage.statistics}" />
-  <metrics-simple-view name="Branch Coverage" class="percent ${metrics_class}"
-    url="branch_coverage"
-    evaluation="${it.report.branchCoverage.evaluation}"
-    delta="${it.branchCoverageDelta}"
-    statistics="${it.report.branchCoverage.statistics}" />
-  <metrics-simple-view name="Mutation Tests" class="percent ${metrics_class}"
-    url="mutation_tests"
-    evaluation="${it.report.mutationTests.evaluation}"
-    delta="${it.mutationTestDelta}"
-    statistics="${it.report.mutationTests.statistics}" />
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
+  <div class="d-flex flex-wrap gap-3">
+    <j:forEach var="card" items="${it.metricCards}">
+      <div class="card" style="flex: 1 1 220px; min-width: 220px;">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-bold">${card.name}</span>
+            <span class="badge bg-${card.barClass}">
+              <j:choose>
+                <j:when test="${!card.available}">N/A</j:when>
+                <j:when test="${card.qualified}">PASS</j:when>
+                <j:otherwise>FAIL</j:otherwise>
+              </j:choose>
+            </span>
+          </div>
+          <div class="fs-3 fw-semibold">
+            <j:choose>
+              <j:when test="${card.available}">
+                <a class="text-decoration-none" href="${card.url}">${card.ratioText}</a>
+              </j:when>
+              <j:otherwise>${card.ratioText}</j:otherwise>
+            </j:choose>
+            <small class="text-muted fs-6 ms-1">${card.deltaText}</small>
+          </div>
+          <j:if test="${card.available}">
+            <div class="progress mt-2" style="height: 6px;">
+              <div class="progress-bar bg-${card.barClass}" role="progressbar"
+                style="width: ${card.ratioPercent}%"/>
+            </div>
+            <div class="small text-muted mt-2">
+              ${card.numerator} / ${card.denominator} &#183; Threshold ${card.thresholdText}
+            </div>
+            <j:if test="${card.statisticsAvailable}">
+              <div class="small text-muted">
+                min ${card.minimum} &#183; avg ${card.average} &#183; max ${card.maximum}
+              </div>
+            </j:if>
+          </j:if>
+        </div>
+      </div>
+    </j:forEach>
+  </div>
 </j:jelly>
