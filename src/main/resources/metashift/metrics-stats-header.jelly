@@ -1,21 +1,47 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <div class="column">
-    <div class="h2">Statistics
-      <span class="metrics-threshold">Threshold: ${it.thresholdString}</span>
-      <j:if test="${!empty scale}">
-      <span class="metrics-scale">${scale}</span>
-      </j:if>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
+  <j:set var="s" value="${it.statsHeader}"/>
+  <div class="d-flex flex-wrap gap-4">
+    <div style="flex: 1 1 320px; min-width: 280px;">
+      <div class="h2">Statistics
+        <span class="text-muted fs-6 ms-2">Threshold: ${it.thresholdString}</span>
+      </div>
+      <j:choose>
+        <j:when test="${s.statisticsAvailable}">
+          <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-${s.barClass}" role="progressbar"
+              style="width: ${s.ratioPercent}%"/>
+          </div>
+          <div class="small text-muted mt-2">
+            Low ${s.minimum} &#183; Average ${s.average} &#183; High ${s.maximum}
+          </div>
+        </j:when>
+        <j:otherwise><div class="text-muted">N/A</div></j:otherwise>
+      </j:choose>
     </div>
-    <statistics-bar class="section ${statistics_class}"
-      evaluation='${it.group.evaluation}'
-      statistics='${it.group.statistics}' />
-  </div>
-  <div class="column">
-    <div class="h2">Distribution</div>
-    <distribution-bar class="section"
-      labels="${labels}"
-      distribution='${it.group.distribution}' />
+    <div style="flex: 1 1 320px; min-width: 280px;">
+      <div class="h2">Distribution</div>
+      <j:choose>
+        <j:when test="${s.distributionAvailable}">
+          <j:set var="bands" value="${s.bands}"/>
+          <div class="progress" style="height: 10px;">
+            <j:forEach var="band" items="${bands}">
+              <div class="progress-bar bg-${band.color}" role="progressbar"
+                style="width: ${band.percent}%" title="${band.name}: ${band.count}"/>
+            </j:forEach>
+          </div>
+          <div class="d-flex flex-wrap gap-3 small text-muted mt-2">
+            <j:forEach var="band" items="${bands}">
+              <span>
+                <span class="badge bg-${band.color}">&#160;</span>
+                ${band.name} ${band.percent}% (${band.count})
+              </span>
+            </j:forEach>
+          </div>
+        </j:when>
+        <j:otherwise><div class="text-muted">N/A</div></j:otherwise>
+      </j:choose>
+    </div>
   </div>
 </j:jelly>

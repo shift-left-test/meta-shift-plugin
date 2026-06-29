@@ -5,6 +5,7 @@
 
 package com.lge.plugins.metashift.ui;
 
+import com.lge.plugins.metashift.builders.Group;
 import hudson.model.Action;
 import hudson.model.Run;
 import java.io.IOException;
@@ -77,6 +78,23 @@ public abstract class ActionChildBase implements Action {
   }
 
   public abstract boolean isAvailable();
+
+  /**
+   * Returns the persisted data group for this metric.
+   *
+   * @return data group
+   */
+  public abstract Group getGroup();
+
+  /**
+   * Returns the statistics/distribution header view for this metric page.
+   *
+   * @return stats header view
+   */
+  public StatsHeaderView getStatsHeader() {
+    return new StatsHeaderView(getGroup().getEvaluation(), getGroup().getStatistics(),
+        getGroup().getDistribution(), this.url);
+  }
 
   /**
    * return formatted string(precision 2).

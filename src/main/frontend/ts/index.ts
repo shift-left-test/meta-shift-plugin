@@ -7,9 +7,6 @@ import {BuildTreemap} from './build/build-treemap';
 import {RecipeList} from './build/recipe-list';
 import {BuildTrendChart} from './build/build-trend-chart';
 
-import {StatisticsBar} from './common/statistics-bar';
-import {DistributionBar} from './common/distribution-bar';
-
 import {UnitTestList}
   from './recipe/unit-test/unit-test-list';
 import {StatementCoverageFiles}
@@ -51,8 +48,6 @@ export {
   BuildTreemap,
   RecipeList,
   BuildTrendChart,
-  StatisticsBar,
-  DistributionBar,
   UnitTestList,
   StatementCoverageFiles,
   StatementCoverageFileView,
