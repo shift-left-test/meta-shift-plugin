@@ -198,6 +198,7 @@
         <artifactId>pitest-maven</artifactId>
         <version>1.6.4</version>
         <configuration>
+          <timestampedReports>false</timestampedReports>
           <outputFormats>
             <outputFormat>HTML</outputFormat>
             <outputFormat>XML</outputFormat>
