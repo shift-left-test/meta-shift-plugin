@@ -20,7 +20,7 @@ pipeline {
         }
         stage("Test") {
             steps {
-                sh "HOME=${env.WORKSPACE}/home mvn verify"
+                sh "mvn verify"
             }
         }
         stage("Coverage") {
