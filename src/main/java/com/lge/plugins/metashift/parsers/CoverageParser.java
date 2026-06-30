@@ -95,6 +95,9 @@ public class CoverageParser extends Parser {
    */
   private static List<CoverageData> createInstances(String recipe, String filename, Tag line) {
     List<CoverageData> list = new ArrayList<>();
+    if (line == null) {
+      return list;
+    }
     try {
       long lineNumber = Long.parseLong(line.getAttribute("number", "0"));
       boolean covered = Long.parseLong(line.getAttribute("hits", "0")) > 0;
@@ -117,7 +120,7 @@ public class CoverageParser extends Parser {
           }
         }
       }
-    } catch (NullPointerException | NumberFormatException ignored) {
+    } catch (NumberFormatException ignored) {
       // ignored
     }
     return list;

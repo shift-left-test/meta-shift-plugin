@@ -75,11 +75,14 @@ public class DataSource implements Serializable {
   @SuppressWarnings({"unchecked", "PMD.UnnecessaryModifier"})
   public <T> T get(final String... names) {
     byte[] bytes = fileStore.get(uid(names));
+    if (bytes == null) {
+      return null;
+    }
     try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes)) {
       try (ObjectInputStream ois = new ObjectInputStream(bis)) {
         return (T) ois.readObject();
       }
-    } catch (IOException | NullPointerException | ClassNotFoundException ignored) {
+    } catch (IOException | ClassNotFoundException ignored) {
       return null;
     }
   }
