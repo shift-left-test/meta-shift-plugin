@@ -20,7 +20,7 @@ pipeline {
         }
         stage("Test") {
             steps {
-                sh "mvn verify"
+                sh "HOME=${env.WORKSPACE}/home mvn -Dmaven.repo.local=${env.WORKSPACE}/.m2 verify"
             }
         }
         stage("Coverage") {
