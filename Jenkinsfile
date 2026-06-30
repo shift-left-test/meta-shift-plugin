@@ -42,7 +42,7 @@ pipeline {
             recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
             recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
             junit "**/target/surefire-reports/*.xml"
-            jacoco()
+            recordCoverage tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']]
             pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0, mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
             cleanWs disableDeferredWipeout: true
         }
