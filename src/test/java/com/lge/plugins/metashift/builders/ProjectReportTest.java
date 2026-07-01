@@ -38,13 +38,11 @@ public class ProjectReportTest {
     assertEquals(new JSONObject(), group.getEvaluation());
     assertEquals(new JSONObject(), group.getStatistics());
     assertEquals(new JSONObject(), group.getDistribution());
-    assertEquals(new JSONArray(), group.getTreemap());
     assertEquals(new JSONArray(), group.getSummaries());
   }
 
   @Test
   public void testInitialStatus() {
-    assertEquals(new JSONArray(), report.getTreemap());
     assertEquals(new JSONArray(), report.getSummaries());
   }
 

@@ -183,19 +183,6 @@ public class BuildAction extends ActionParentBase implements LastBuildAction, Ru
   }
 
   /**
-   * return recipe treemap chart model.
-   */
-  @JavaScriptMethod
-  public JSONObject getRecipesTreemapModel() {
-    JSONObject model = new JSONObject();
-
-    model.put("data", this.getReport().getTreemap());
-    model.put("tooltipInfo", this.getReport().getSummaries());
-
-    return model;
-  }
-
-  /**
    * return paginated recipes list.
    *
    * @return recipe qualifier list.

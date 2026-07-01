@@ -9,7 +9,6 @@ import com.lge.plugins.metashift.builders.ProjectGroup;
 import com.lge.plugins.metashift.ui.ActionChildBase;
 import com.lge.plugins.metashift.ui.ActionParentBase;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
@@ -47,18 +46,6 @@ public class BuildActionChild extends ActionChildBase {
    */
   public final String getThresholdString() {
     return this.getFormattedValue(this.getGroup().getEvaluation().getDouble("threshold"));
-  }
-
-  /**
-   * return recipe treemap chart model.
-   */
-  @JavaScriptMethod
-  public JSONObject getRecipesTreemapModel() {
-    JSONObject model = new JSONObject();
-    model.put("data", this.getGroup().getTreemap());
-    model.put("tooltipInfo", this.getGroup().getSummaries());
-
-    return model;
   }
 
   /**

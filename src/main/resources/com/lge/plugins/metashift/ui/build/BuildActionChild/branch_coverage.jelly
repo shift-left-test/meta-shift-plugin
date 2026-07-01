@@ -15,7 +15,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
               {"name":"Hits", "clazz": "valid-good"},
               {"name":"Misses", "clazz": "invalid"}
             ]' />
-          <branch-coverage-treemap />
           <div class="h1">Details</div>
           <div class="section">
             <branch-coverage-recipes downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.displayName}" />
@@ -24,9 +23,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
       </div>
       <script type="text/javascript">
       {
-        document.querySelector("branch-coverage-treemap").setAjaxFunc(
-          proxy.getRecipesTreemapModel
-        )
         document.querySelector("branch-coverage-recipes").setAjaxFunc(
           proxy.getRecipesTableModel
         )

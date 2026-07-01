@@ -16,7 +16,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
               {"name":"Survived", "clazz": "valid-bad"},
               {"name":"Skipped", "clazz": "invalid"}
             ]' />
-          <mutation-test-treemap />
           <div class="h1">Details</div>
           <div class="section">
             <mutation-test-recipes downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.displayName}" />
@@ -25,9 +24,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
       </div>
       <script type="text/javascript">
       {
-        document.querySelector("mutation-test-treemap").setAjaxFunc(
-          proxy.getRecipesTreemapModel
-        )
         document.querySelector("mutation-test-recipes").setAjaxFunc(
           proxy.getRecipesTableModel
         )

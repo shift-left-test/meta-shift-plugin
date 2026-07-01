@@ -39,7 +39,6 @@ public class Constants {
     STATISTICS,
     DISTRIBUTION,
     SUMMARIES,
-    TREEMAP,
     OBJECTS,
     FILE,
   }

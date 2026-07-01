@@ -13,8 +13,6 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import java.io.File;
 import java.util.List;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -47,14 +45,6 @@ public class BuildActionChildTest {
     project.getPublishersList().add(publisher);
   }
 
-  private JSONObject makeTreeMapModel(JSONArray treeMap, JSONArray tooltip) {
-    JSONObject model = new JSONObject();
-    model.put("data", treeMap);
-    model.put("tooltipInfo", tooltip);
-
-    return model;
-  }
-
   @Test
   public void testCreate() throws Exception {
     fakeRecipe
@@ -78,9 +68,6 @@ public class BuildActionChildTest {
     assertEquals("Unit Tests", unitTestsAction.getDisplayName());
     assertEquals(buildAction.getReport().getUnitTests(), unitTestsAction.getGroup());
     assertEquals("95%", unitTestsAction.getThresholdString());
-    assertEquals(makeTreeMapModel(buildAction.getReport().getUnitTests().getTreemap(),
-            buildAction.getReport().getUnitTests().getSummaries()),
-        unitTestsAction.getRecipesTreemapModel());
     assertEquals(buildAction.getReport().getUnitTests().getSummaries(),
         unitTestsAction.getRecipesTableModel());
 
@@ -93,9 +80,6 @@ public class BuildActionChildTest {
     assertEquals(buildAction.getReport().getStatementCoverage(),
         statementCoverageAction.getGroup());
     assertEquals("80%", statementCoverageAction.getThresholdString());
-    assertEquals(makeTreeMapModel(buildAction.getReport().getStatementCoverage().getTreemap(),
-            buildAction.getReport().getStatementCoverage().getSummaries()),
-        statementCoverageAction.getRecipesTreemapModel());
     assertEquals(buildAction.getReport().getStatementCoverage().getSummaries(),
         statementCoverageAction.getRecipesTableModel());
 
@@ -107,9 +91,6 @@ public class BuildActionChildTest {
     assertEquals("Branch Coverage", branchCoverageAction.getDisplayName());
     assertEquals(buildAction.getReport().getBranchCoverage(), branchCoverageAction.getGroup());
     assertEquals("40%", branchCoverageAction.getThresholdString());
-    assertEquals(makeTreeMapModel(buildAction.getReport().getBranchCoverage().getTreemap(),
-            buildAction.getReport().getBranchCoverage().getSummaries()),
-        branchCoverageAction.getRecipesTreemapModel());
     assertEquals(buildAction.getReport().getBranchCoverage().getSummaries(),
         branchCoverageAction.getRecipesTableModel());
 
@@ -121,9 +102,6 @@ public class BuildActionChildTest {
     assertEquals("Mutation Tests", mutationTestsAction.getDisplayName());
     assertEquals(buildAction.getReport().getMutationTests(), mutationTestsAction.getGroup());
     assertEquals("85%", mutationTestsAction.getThresholdString());
-    assertEquals(makeTreeMapModel(buildAction.getReport().getMutationTests().getTreemap(),
-            buildAction.getReport().getMutationTests().getSummaries()),
-        mutationTestsAction.getRecipesTreemapModel());
     assertEquals(buildAction.getReport().getMutationTests().getSummaries(),
         mutationTestsAction.getRecipesTableModel());
   }

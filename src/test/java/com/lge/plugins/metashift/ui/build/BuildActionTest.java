@@ -101,12 +101,6 @@ public class BuildActionTest {
     assertEquals(1, buildAction.getRecipes().size());
     assertNotNull(buildAction.getReport());
 
-    JSONObject expected = new JSONObject();
-    expected.put("data", buildAction.getReport().getTreemap());
-    expected.put("tooltipInfo", buildAction.getReport().getSummaries());
-
-    assertEquals(expected, buildAction.getRecipesTreemapModel());
-
     JSONArray recipeTableModel = buildAction.getRecipesTableModel();
 
     assertArrayEquals(new String[]{NamingUtils.getRecipe(fakeRecipe.getName()),},

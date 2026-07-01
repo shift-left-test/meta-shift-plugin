@@ -17,7 +17,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
               {"name":"Error", "clazz": "valid-error"},
               {"name":"Skipped", "clazz": "invalid"}
             ]' />
-          <unit-test-treemap />
           <div class="h1">Details</div>
           <div class="section">
             <unit-test-recipes downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-${it.displayName}" />
@@ -26,9 +25,6 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
       </div>
       <script type="text/javascript">
       {
-        document.querySelector("unit-test-treemap").setAjaxFunc(
-          proxy.getRecipesTreemapModel
-        )
         document.querySelector("unit-test-recipes").setAjaxFunc(
           proxy.getRecipesTableModel
         )

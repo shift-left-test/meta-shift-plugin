@@ -59,15 +59,6 @@ public class ProjectGroup extends Group {
   }
 
   /**
-   * Returns the treemap objects.
-   *
-   * @return treemap objects
-   */
-  public JSONArray getTreemap() {
-    return getOrDefault(Data.TREEMAP, new JSONArray());
-  }
-
-  /**
    * Returns the summary objects.
    *
    * @return summary objects

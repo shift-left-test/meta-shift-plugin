@@ -41,15 +41,6 @@ public class ProjectReport extends Report<ProjectGroup> {
   }
 
   /**
-   * Returns the treemap objects.
-   *
-   * @return treemap objects
-   */
-  public JSONArray getTreemap() {
-    return getOrDefault(Metric.NONE, Data.TREEMAP, new JSONArray());
-  }
-
-  /**
    * Returns the summary objects.
    *
    * @return summary objects

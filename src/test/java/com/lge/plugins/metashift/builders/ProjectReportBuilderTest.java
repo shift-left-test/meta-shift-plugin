@@ -95,15 +95,6 @@ public class ProjectReportBuilderTest {
     return o;
   }
 
-  private JSONObject newTreemapData(String name, long linesOfCode, double value, int grade) {
-    JSONObject o = new JSONObject();
-    o.put("name", name);
-    o.put("linesOfCode", linesOfCode);
-    o.put("value", value);
-    o.put("grade", grade);
-    return o;
-  }
-
   private JSONObject newStatistics(double min, double average, double max) {
     JSONObject o = new JSONObject();
     o.put("min", min);
@@ -121,14 +112,6 @@ public class ProjectReportBuilderTest {
   }
 
   @Test
-  public void testGetTreemap() {
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 12, 0.5, 3));
-    expected.add(newTreemapData(RECIPE2, 7, 0.5, 3));
-    assertEquals(expected, report.getTreemap());
-  }
-
-  @Test
   public void testGetSummaries() {
     assertEquals(2, report.getSummaries().size());
   }
@@ -139,10 +122,6 @@ public class ProjectReportBuilderTest {
     assertEquals(newEvaluation(true, 6, 3, true, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.25, 0.625, 1.0), group.getStatistics());
     assertEquals(newDistribution(3, 1, 1, 1), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 4, 0.25, 3));
-    expected.add(newTreemapData(RECIPE2, 2, 1.0, 0));
-    assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.25, summaries.get(0).getDouble("ratio"), 0.01);
     assertEquals(1.0, summaries.get(1).getDouble("ratio"), 0.01);
@@ -154,10 +133,6 @@ public class ProjectReportBuilderTest {
     assertEquals(newEvaluation(true, 8, 3, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.0, 0.3, 0.6), group.getStatistics());
     assertEquals(newDistribution(3, 5, 0, 0), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 5, 0.6, 0));
-    expected.add(newTreemapData(RECIPE2, 3, 0.0, 6));
-    assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.6, summaries.get(0).getDouble("ratio"), 0.01);
     assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
@@ -169,10 +144,6 @@ public class ProjectReportBuilderTest {
     assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.0, 0.25, 0.5), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 2, 0.5, 0));
-    expected.add(newTreemapData(RECIPE2, 2, 0.0, 6));
-    assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
     assertEquals(0.0, summaries.get(1).getDouble("ratio"), 0.01);
@@ -184,10 +155,6 @@ public class ProjectReportBuilderTest {
     assertEquals(newEvaluation(true, 5, 3, true, 0.5, 0, "POSITIVE"), group.getEvaluation());
     assertEquals(newStatistics(0.3333333333333333, 0.6666666666666666, 1.0), group.getStatistics());
     assertEquals(newDistribution(3, 1, 1, 0), group.getDistribution());
-    JSONArray expected = new JSONArray();
-    expected.add(newTreemapData(RECIPE1, 3, 0.3333333333333333, 2));
-    expected.add(newTreemapData(RECIPE2, 2, 1.0, 0));
-    assertEquals(expected, group.getTreemap());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.3333333333333333,
         summaries.get(0).getDouble("ratio"), 0.01);
