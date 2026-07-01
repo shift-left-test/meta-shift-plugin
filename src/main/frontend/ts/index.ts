@@ -4,7 +4,6 @@
  */
 
 import {RecipeList} from './build/recipe-list';
-import {BuildTrendChart} from './build/build-trend-chart';
 
 import {UnitTestList}
   from './recipe/unit-test/unit-test-list';
@@ -37,7 +36,6 @@ import '@fortawesome/fontawesome-free/js/all';
 
 export {
   RecipeList,
-  BuildTrendChart,
   UnitTestList,
   StatementCoverageFiles,
   StatementCoverageFileView,

@@ -1,17 +1,4 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
-    xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local" >
-  <st:adjunct includes="com.lge.plugins.metashift.front"/>
-
-  <st:bind var="proxy" value="${from}" />
-  <div class="metashift">
-    <build-trend-chart />
-  </div>
-  <script type="text/javascript">
-  {
-    document.querySelector("build-trend-chart").setAjaxFunc(
-      proxy.getTrendChartModel
-    )
-  }
-  </script>
+<j:jelly xmlns:j="jelly:core" xmlns:c="/charts">
+  <c:trend-chart it="${from}" title="Trend" configurationId="default" enableLinks="false"/>
 </j:jelly>
