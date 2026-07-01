@@ -30,7 +30,7 @@ pipeline {
         }
         stage("MutationTest") {
             steps {
-                sh "mvn org.pitest:pitest-maven:mutationCoverage"
+                sh "HOME=${env.WORKSPACE}/home mvn -Dmaven.repo.local=${env.WORKSPACE}/.m2 org.pitest:pitest-maven:mutationCoverage"
             }
         }
     }
