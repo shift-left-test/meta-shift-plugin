@@ -13,7 +13,6 @@ import com.lge.plugins.metashift.ui.tables.SummaryTableModel;
 import com.lge.plugins.metashift.ui.tables.SummaryTableSpec;
 import io.jenkins.plugins.datatables.AsyncTableContentProvider;
 import io.jenkins.plugins.datatables.TableModel;
-import net.sf.json.JSONArray;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
@@ -51,16 +50,6 @@ public class BuildActionChild extends ActionChildBase implements AsyncTableConte
    */
   public final String getThresholdString() {
     return this.getFormattedValue(this.getGroup().getEvaluation().getDouble("threshold"));
-  }
-
-  /**
-   * return recipes list.
-   *
-   * @return recipe qualifier list.
-   */
-  @JavaScriptMethod
-  public JSONArray getRecipesTableModel() throws InterruptedException {
-    return this.getGroup().getSummaries();
   }
 
   @Override

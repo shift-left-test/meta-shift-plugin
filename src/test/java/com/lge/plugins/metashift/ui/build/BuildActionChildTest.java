@@ -68,8 +68,6 @@ public class BuildActionChildTest {
     assertEquals("Unit Tests", unitTestsAction.getDisplayName());
     assertEquals(buildAction.getReport().getUnitTests(), unitTestsAction.getGroup());
     assertEquals("95%", unitTestsAction.getThresholdString());
-    assertEquals(buildAction.getReport().getUnitTests().getSummaries(),
-        unitTestsAction.getRecipesTableModel());
 
     // statement_coverage
     BuildActionChild statementCoverageAction = children.stream()
@@ -80,8 +78,6 @@ public class BuildActionChildTest {
     assertEquals(buildAction.getReport().getStatementCoverage(),
         statementCoverageAction.getGroup());
     assertEquals("80%", statementCoverageAction.getThresholdString());
-    assertEquals(buildAction.getReport().getStatementCoverage().getSummaries(),
-        statementCoverageAction.getRecipesTableModel());
 
     // branch_coverage
     BuildActionChild branchCoverageAction = children.stream()
@@ -91,8 +87,6 @@ public class BuildActionChildTest {
     assertEquals("Branch Coverage", branchCoverageAction.getDisplayName());
     assertEquals(buildAction.getReport().getBranchCoverage(), branchCoverageAction.getGroup());
     assertEquals("40%", branchCoverageAction.getThresholdString());
-    assertEquals(buildAction.getReport().getBranchCoverage().getSummaries(),
-        branchCoverageAction.getRecipesTableModel());
 
     // mutation_tests
     BuildActionChild mutationTestsAction = children.stream()
@@ -102,7 +96,5 @@ public class BuildActionChildTest {
     assertEquals("Mutation Tests", mutationTestsAction.getDisplayName());
     assertEquals(buildAction.getReport().getMutationTests(), mutationTestsAction.getGroup());
     assertEquals("85%", mutationTestsAction.getThresholdString());
-    assertEquals(buildAction.getReport().getMutationTests().getSummaries(),
-        mutationTestsAction.getRecipesTableModel());
   }
 }

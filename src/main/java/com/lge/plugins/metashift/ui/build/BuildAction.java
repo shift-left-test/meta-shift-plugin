@@ -36,8 +36,6 @@ import io.jenkins.plugins.datatables.AsyncTableContentProvider;
 import io.jenkins.plugins.datatables.TableModel;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
@@ -185,16 +183,6 @@ public class BuildAction extends ActionParentBase
     }
 
     return this.recipeActions;
-  }
-
-  /**
-   * return paginated recipes list.
-   *
-   * @return recipe qualifier list.
-   */
-  @JavaScriptMethod
-  public JSONArray getRecipesTableModel() throws InterruptedException {
-    return this.getReport().getSummaries();
   }
 
   @Override

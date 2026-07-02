@@ -74,8 +74,6 @@ public class RecipeActionChildTest {
     assertEquals("10%", unitTestsAction.getScale());
     assertEquals(recipeAction.getReport().getUnitTests(), unitTestsAction.getGroup());
     assertEquals("95%", unitTestsAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getUnitTests().getSummaries(),
-        unitTestsAction.getTableModel());
 
     // statement_coverage
     RecipeActionChild statementCoverageAction = children.stream()
@@ -87,8 +85,6 @@ public class RecipeActionChildTest {
     assertEquals(recipeAction.getReport().getStatementCoverage(),
         statementCoverageAction.getGroup());
     assertEquals("80%", statementCoverageAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getStatementCoverage().getSummaries(),
-        statementCoverageAction.getTableModel());
 
     // branch_coverage
     RecipeActionChild branchCoverageAction = children.stream()
@@ -99,8 +95,6 @@ public class RecipeActionChildTest {
     assertEquals("42%", branchCoverageAction.getScale());
     assertEquals(recipeAction.getReport().getBranchCoverage(), branchCoverageAction.getGroup());
     assertEquals("40%", branchCoverageAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getBranchCoverage().getSummaries(),
-        branchCoverageAction.getTableModel());
 
     // mutation_tests
     RecipeActionChild mutationTestsAction = children.stream()
@@ -111,7 +105,5 @@ public class RecipeActionChildTest {
     assertEquals("16%", mutationTestsAction.getScale());
     assertEquals(recipeAction.getReport().getMutationTests(), mutationTestsAction.getGroup());
     assertEquals("85%", mutationTestsAction.getThresholdString());
-    assertEquals(recipeAction.getReport().getMutationTests().getSummaries(),
-        mutationTestsAction.getTableModel());
   }
 }

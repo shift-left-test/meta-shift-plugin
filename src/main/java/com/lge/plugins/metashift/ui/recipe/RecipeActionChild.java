@@ -14,7 +14,6 @@ import com.lge.plugins.metashift.ui.tables.SummaryTableSpec;
 import com.lge.plugins.metashift.ui.tables.TestListTableModel;
 import io.jenkins.plugins.datatables.AsyncTableContentProvider;
 import io.jenkins.plugins.datatables.TableModel;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
@@ -67,11 +66,6 @@ public class RecipeActionChild extends ActionChildBase implements AsyncTableCont
     } else {
       return "N/A";
     }
-  }
-
-  @JavaScriptMethod
-  public JSONArray getTableModel() throws InterruptedException {
-    return this.getGroup().getSummaries();
   }
 
   @Override

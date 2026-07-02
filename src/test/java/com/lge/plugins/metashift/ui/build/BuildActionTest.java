@@ -5,7 +5,6 @@
 
 package com.lge.plugins.metashift.ui.build;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -16,13 +15,10 @@ import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
-import com.lge.plugins.metashift.utils.NamingUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import java.io.File;
-import java.util.Arrays;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,13 +50,6 @@ public class BuildActionTest {
     project.setCustomWorkspace(workspace.getAbsolutePath());
     MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
     project.getPublishersList().add(publisher);
-  }
-
-  @SafeVarargs
-  private final <T> JSONArray newJsonArray(T... values) {
-    JSONArray objects = new JSONArray();
-    objects.addAll(Arrays.asList(values));
-    return objects;
   }
 
   private void assertValues(JSONObject object, boolean qualified, boolean available,
@@ -100,11 +89,6 @@ public class BuildActionTest {
     assertEquals("meta-shift-report", buildAction.getUrlName());
     assertEquals(1, buildAction.getRecipes().size());
     assertNotNull(buildAction.getReport());
-
-    JSONArray recipeTableModel = buildAction.getRecipesTableModel();
-
-    assertArrayEquals(new String[]{NamingUtils.getRecipe(fakeRecipe.getName()),},
-        recipeTableModel.stream().map(o -> ((JSONObject) o).getString("name")).toArray());
 
     ProjectReport projectReport = buildAction.getReport();
     assertValues(projectReport.getStatementCoverage().getEvaluation(), false, true, 0.8, 5, 2, 0.4);
