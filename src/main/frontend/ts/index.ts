@@ -10,7 +10,6 @@ import {BranchCoverageFileView}
 import {MutationTestFileView}
   from './recipe/mutation-test/mutation-test-file-view';
 
-import 'tabulator-tables/src/scss/tabulator.scss';
 import '../scss/main.scss';
 
 import '@fortawesome/fontawesome-free/css/all.css';
