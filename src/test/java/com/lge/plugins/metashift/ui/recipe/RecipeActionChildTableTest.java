@@ -15,6 +15,7 @@ import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
 import com.lge.plugins.metashift.ui.tables.SummaryTableModel;
+import com.lge.plugins.metashift.ui.tables.TestListTableModel;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -94,6 +95,22 @@ public class RecipeActionChildTableTest {
     JSONObject name = rows.getJSONObject(0).getJSONObject("name");
     // name cell links to the file view on the same page
     assertTrue(name.getString("display").contains(".?file="));
+  }
+
+  @Test
+  public void testUnitTestListTableModel() {
+    RecipeActionChild child = child("unit_tests");
+
+    assertTrue(child.getTableModel("unit_tests") instanceof TestListTableModel);
+    List<String> headers = child.getTableModel("unit_tests").getColumns().stream()
+        .map(TableColumn::getHeaderLabel).collect(Collectors.toList());
+    assertEquals(List.of("Suite", "Name", "Status", "Message"), headers);
+
+    JSONArray rows = JSONArray.fromObject(child.getTableRows("unit_tests"));
+    assertTrue(rows.size() >= 1);
+    JSONObject row = rows.getJSONObject(0);
+    assertTrue(row.containsKey("suite"));
+    assertTrue(row.getJSONObject("status").getString("display").contains("badge"));
   }
 
   @Test

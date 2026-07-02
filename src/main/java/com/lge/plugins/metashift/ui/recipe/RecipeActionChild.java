@@ -11,6 +11,7 @@ import com.lge.plugins.metashift.ui.ActionParentBase;
 import com.lge.plugins.metashift.ui.tables.NativeTables;
 import com.lge.plugins.metashift.ui.tables.SummaryTableModel;
 import com.lge.plugins.metashift.ui.tables.SummaryTableSpec;
+import com.lge.plugins.metashift.ui.tables.TestListTableModel;
 import io.jenkins.plugins.datatables.AsyncTableContentProvider;
 import io.jenkins.plugins.datatables.TableModel;
 import net.sf.json.JSONArray;
@@ -75,6 +76,9 @@ public class RecipeActionChild extends ActionChildBase implements AsyncTableCont
 
   @Override
   public TableModel getTableModel(String id) {
+    if ("unit_tests".equals(id)) {
+      return new TestListTableModel(id, getGroup().getSummaries());
+    }
     return new SummaryTableModel(SummaryTableSpec.forRecipeFile(id), getGroup().getSummaries());
   }
 
