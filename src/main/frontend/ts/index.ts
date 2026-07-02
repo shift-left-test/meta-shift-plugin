@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import {RecipeList} from './build/recipe-list';
-
 import {UnitTestList}
   from './recipe/unit-test/unit-test-list';
 import {StatementCoverageFileView}
@@ -21,7 +19,6 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all';
 
 export {
-  RecipeList,
   UnitTestList,
   StatementCoverageFileView,
   BranchCoverageFileView,

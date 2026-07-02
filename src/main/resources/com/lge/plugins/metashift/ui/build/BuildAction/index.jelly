@@ -1,11 +1,11 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metashift">
+xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metashift"
+xmlns:dt="/data-tables">
   <l:layout title="meta-shift report">
     <st:adjunct includes="com.lge.plugins.metashift.front"/>
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
-      <st:bind var="proxy" value="${it}" />
       <div class="metashift">
       <div class="page">
         <div class="h1">Overview</div>
@@ -14,17 +14,10 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
         </div>
         <div class="h1">Recipes</div>
         <div class="section">
-          <recipe-list downloadFileName="${it.run.parent.displayName}-${it.run.displayName}-recipes" />
+          <dt:table model="${it.getTableModel('recipe-list')}" />
         </div>
       </div>
       </div>
-      <script type="text/javascript">
-      {
-        document.querySelector("recipe-list").setAjaxFunc(
-          proxy.getRecipesTableModel
-        )
-      }
-      </script>
     </l:main-panel>
   </l:layout>
 </j:jelly>

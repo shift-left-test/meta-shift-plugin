@@ -16,6 +16,8 @@ import com.lge.plugins.metashift.ui.ActionParentBase;
 import com.lge.plugins.metashift.ui.MetricView;
 import com.lge.plugins.metashift.ui.project.MetaShiftProjectAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
+import com.lge.plugins.metashift.ui.tables.EvaluationSummaryTableModel;
+import com.lge.plugins.metashift.ui.tables.NativeTables;
 import hudson.FilePath;
 import hudson.Functions;
 import hudson.model.Action;
@@ -30,6 +32,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import io.jenkins.plugins.datatables.AsyncTableContentProvider;
+import io.jenkins.plugins.datatables.TableModel;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 import net.sf.json.JSONArray;
@@ -44,7 +48,8 @@ import org.kohsuke.stapler.export.ExportedBean;
  * The main post build action class.
  */
 @ExportedBean
-public class BuildAction extends ActionParentBase implements LastBuildAction, RunAction2 {
+public class BuildAction extends ActionParentBase
+    implements LastBuildAction, RunAction2, AsyncTableContentProvider {
 
   private transient Run<?, ?> run;
   private transient List<RecipeAction> recipeActions;
@@ -190,6 +195,17 @@ public class BuildAction extends ActionParentBase implements LastBuildAction, Ru
   @JavaScriptMethod
   public JSONArray getRecipesTableModel() throws InterruptedException {
     return this.getReport().getSummaries();
+  }
+
+  @Override
+  public TableModel getTableModel(String id) {
+    return new EvaluationSummaryTableModel(id, this.getReport().getSummaries());
+  }
+
+  @Override
+  @JavaScriptMethod
+  public String getTableRows(String id) {
+    return NativeTables.toJson(getTableModel(id).getRows());
   }
 
   private transient BuildAction previousAction;
