@@ -7,16 +7,10 @@ import {RecipeList} from './build/recipe-list';
 
 import {UnitTestList}
   from './recipe/unit-test/unit-test-list';
-import {StatementCoverageFiles}
-  from './recipe/statement-coverage/statement-coverage-files';
 import {StatementCoverageFileView}
   from './recipe/statement-coverage/statement-coverage-file-view';
-import {BranchCoverageFiles}
-  from './recipe/branch-coverage/branch-coverage-files';
 import {BranchCoverageFileView}
   from './recipe/branch-coverage/branch-coverage-file-view';
-import {MutationTestList}
-  from './recipe/mutation-test/mutation-test-list';
 import {MutationTestFileView}
   from './recipe/mutation-test/mutation-test-file-view';
 
@@ -29,11 +23,8 @@ import '@fortawesome/fontawesome-free/js/all';
 export {
   RecipeList,
   UnitTestList,
-  StatementCoverageFiles,
   StatementCoverageFileView,
-  BranchCoverageFiles,
   BranchCoverageFileView,
-  MutationTestList,
   MutationTestFileView,
 
 };

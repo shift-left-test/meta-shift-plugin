@@ -8,6 +8,11 @@ package com.lge.plugins.metashift.ui.recipe;
 import com.lge.plugins.metashift.builders.RecipeGroup;
 import com.lge.plugins.metashift.ui.ActionChildBase;
 import com.lge.plugins.metashift.ui.ActionParentBase;
+import com.lge.plugins.metashift.ui.tables.NativeTables;
+import com.lge.plugins.metashift.ui.tables.SummaryTableModel;
+import com.lge.plugins.metashift.ui.tables.SummaryTableSpec;
+import io.jenkins.plugins.datatables.AsyncTableContentProvider;
+import io.jenkins.plugins.datatables.TableModel;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -15,7 +20,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 /**
  * Detail view common feature class.
  */
-public class RecipeActionChild extends ActionChildBase {
+public class RecipeActionChild extends ActionChildBase implements AsyncTableContentProvider {
 
   private final RecipeGroup recipeGroup;
 
@@ -66,6 +71,17 @@ public class RecipeActionChild extends ActionChildBase {
   @JavaScriptMethod
   public JSONArray getTableModel() throws InterruptedException {
     return this.getGroup().getSummaries();
+  }
+
+  @Override
+  public TableModel getTableModel(String id) {
+    return new SummaryTableModel(SummaryTableSpec.forRecipeFile(id), getGroup().getSummaries());
+  }
+
+  @Override
+  @JavaScriptMethod
+  public String getTableRows(String id) {
+    return NativeTables.toJson(getTableModel(id).getRows());
   }
 
   /**
