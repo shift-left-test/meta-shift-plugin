@@ -3,7 +3,6 @@
 xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metashift"
 xmlns:dt="/data-tables">
   <l:layout title="meta-shift report">
-    <st:adjunct includes="com.lge.plugins.metashift.front"/>
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
       <div class="metashift">
