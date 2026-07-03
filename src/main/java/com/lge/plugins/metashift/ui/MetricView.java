@@ -7,6 +7,7 @@ package com.lge.plugins.metashift.ui;
 
 import com.lge.plugins.metashift.builders.Group;
 import com.lge.plugins.metashift.builders.Report;
+import com.lge.plugins.metashift.ui.tables.TableHtml;
 import java.util.Arrays;
 import java.util.List;
 import net.sf.json.JSONObject;
@@ -70,10 +71,6 @@ public class MetricView {
     return new MetricView(name, url, group.getEvaluation(), group.getStatistics(), delta);
   }
 
-  private static int percent(double ratio) {
-    return (int) Math.floor(ratio * 100);
-  }
-
   public String getName() {
     return name;
   }
@@ -103,12 +100,24 @@ public class MetricView {
   }
 
   /**
+   * Status label shown alongside the badge: "N/A", "PASS" or "FAIL".
+   *
+   * @return status text
+   */
+  public String getStatusText() {
+    if (!isAvailable()) {
+      return "N/A";
+    }
+    return isQualified() ? "PASS" : "FAIL";
+  }
+
+  /**
    * Main ratio as a percent string, or "N/A" when unavailable.
    *
    * @return ratio text
    */
   public String getRatioText() {
-    return isAvailable() ? percent(evaluation.optDouble("ratio", 0)) + "%" : "N/A";
+    return isAvailable() ? TableHtml.percent(evaluation.optDouble("ratio", 0)) + "%" : "N/A";
   }
 
   /**
@@ -117,7 +126,7 @@ public class MetricView {
    * @return ratio percent
    */
   public int getRatioPercent() {
-    return isAvailable() ? percent(evaluation.optDouble("ratio", 0)) : 0;
+    return isAvailable() ? TableHtml.percent(evaluation.optDouble("ratio", 0)) : 0;
   }
 
   /**
@@ -142,7 +151,7 @@ public class MetricView {
   }
 
   public String getThresholdText() {
-    return percent(evaluation.optDouble("threshold", 0)) + "%";
+    return TableHtml.percent(evaluation.optDouble("threshold", 0)) + "%";
   }
 
   /**
@@ -155,14 +164,14 @@ public class MetricView {
   }
 
   public String getMinimum() {
-    return percent(statistics.optDouble("min", 0)) + "%";
+    return TableHtml.percent(statistics.optDouble("min", 0)) + "%";
   }
 
   public String getAverage() {
-    return percent(statistics.optDouble("average", 0)) + "%";
+    return TableHtml.percent(statistics.optDouble("average", 0)) + "%";
   }
 
   public String getMaximum() {
-    return percent(statistics.optDouble("max", 0)) + "%";
+    return TableHtml.percent(statistics.optDouble("max", 0)) + "%";
   }
 }

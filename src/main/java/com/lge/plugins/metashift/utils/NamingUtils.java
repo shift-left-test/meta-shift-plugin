@@ -15,10 +15,11 @@ import java.util.regex.Pattern;
  */
 public class NamingUtils {
 
+  private static final Pattern PATTERN =
+      Pattern.compile("^(?<recipe>[\\w-.+]+)-(?<version>[\\w-.+]+)-(?<revision>[\\w-.+]+)$");
+
   private static Matcher parse(String name) {
-    String regexp = "^(?<recipe>[\\w-.+]+)-(?<version>[\\w-.+]+)-(?<revision>[\\w-.+]+)$";
-    Pattern pattern = Pattern.compile(regexp);
-    return pattern.matcher(name);
+    return PATTERN.matcher(name);
   }
 
   /**

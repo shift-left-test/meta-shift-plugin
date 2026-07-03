@@ -7,13 +7,7 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-1">
             <span class="fw-bold">${card.name}</span>
-            <span class="badge bg-${card.barClass}">
-              <j:choose>
-                <j:when test="${!card.available}">N/A</j:when>
-                <j:when test="${card.qualified}">PASS</j:when>
-                <j:otherwise>FAIL</j:otherwise>
-              </j:choose>
-            </span>
+            <span class="badge bg-${card.barClass}">${card.statusText}</span>
           </div>
           <div class="fs-3 fw-semibold">
             <j:choose>

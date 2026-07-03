@@ -7,6 +7,7 @@ package com.lge.plugins.metashift.ui.project;
 
 import com.lge.plugins.metashift.builders.ProjectGroup;
 import com.lge.plugins.metashift.builders.ProjectReport;
+import com.lge.plugins.metashift.ui.tables.TableHtml;
 import edu.hm.hafner.echarts.line.LineSeries;
 import edu.hm.hafner.echarts.line.LineSeries.FilledMode;
 import edu.hm.hafner.echarts.line.LineSeries.StackedMode;
@@ -82,7 +83,7 @@ final class TrendChartModel {
   private static Double percentValue(ProjectGroup group) {
     JSONObject evaluation = group.getEvaluation();
     if (evaluation != null && evaluation.optBoolean("available", false)) {
-      return Math.floor(evaluation.getDouble("ratio") * 100.0);
+      return (double) TableHtml.percent(evaluation.getDouble("ratio"));
     }
     return null;
   }

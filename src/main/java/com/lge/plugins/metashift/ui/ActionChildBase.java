@@ -6,18 +6,23 @@
 package com.lge.plugins.metashift.ui;
 
 import com.lge.plugins.metashift.builders.Group;
+import com.lge.plugins.metashift.ui.tables.NativeTables;
+import com.lge.plugins.metashift.ui.tables.TableHtml;
 import hudson.model.Action;
 import hudson.model.Run;
+import io.jenkins.plugins.datatables.AsyncTableContentProvider;
+import io.jenkins.plugins.datatables.TableModel;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
  * action child class.
  */
-public abstract class ActionChildBase implements Action {
+public abstract class ActionChildBase implements Action, AsyncTableContentProvider {
 
   private final ActionParentBase parent;
 
@@ -96,12 +101,18 @@ public abstract class ActionChildBase implements Action {
         getGroup().getDistribution(), this.url);
   }
 
+  @Override
+  @JavaScriptMethod
+  public String getTableRows(String id) {
+    return NativeTables.toJson(getTableModel(id).getRows());
+  }
+
   /**
    * return formatted string(precision 2).
    */
   protected String getFormattedValue(double value) {
     if (this.percentScale) {
-      return String.format("%d%%", (int) (value * 100));
+      return String.format("%d%%", TableHtml.percent(value));
     } else {
       return String.format("%.2f", Math.floor(value * 100) / 100);
     }

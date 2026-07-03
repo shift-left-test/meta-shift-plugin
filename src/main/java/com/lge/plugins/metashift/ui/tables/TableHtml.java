@@ -52,13 +52,34 @@ public final class TableHtml {
   }
 
   /**
+   * Converts a ratio in [0, 1] to an integer percent (0-100), rounding down.
+   *
+   * @param ratio value in [0, 1]
+   * @return integer percent
+   */
+  public static int percent(double ratio) {
+    return (int) Math.floor(ratio * 100);
+  }
+
+  /**
+   * Builds an HTML anchor with an escaped label.
+   *
+   * @param href  link target, already URL-encoded
+   * @param label visible, HTML-escaped text
+   * @return anchor HTML
+   */
+  public static String anchor(String href, String label) {
+    return "<a href=\"" + href + "\">" + escape(label) + "</a>";
+  }
+
+  /**
    * Builds a Bootstrap progress bar whose width is the ratio rendered as an integer percent.
    *
    * @param ratio value in [0, 1]
    * @return progress bar HTML
    */
   public static String progressBar(double ratio) {
-    int percent = (int) Math.floor(ratio * 100);
+    int percent = percent(ratio);
     return "<div class=\"progress\">"
         + "<div class=\"progress-bar\" role=\"progressbar\" style=\"width:" + percent + "%\" "
         + "aria-valuenow=\"" + percent + "\" aria-valuemin=\"0\" aria-valuemax=\"100\">"

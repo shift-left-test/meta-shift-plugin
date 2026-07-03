@@ -13,13 +13,7 @@
       <div class="d-flex flex-wrap gap-3 mt-1">
         <j:forEach var="card" items="${it.metricCards}">
           <span>
-            <span class="badge bg-${card.barClass}">
-              <j:choose>
-                <j:when test="${!card.available}">N/A</j:when>
-                <j:when test="${card.qualified}">PASS</j:when>
-                <j:otherwise>FAIL</j:otherwise>
-              </j:choose>
-            </span>
+            <span class="badge bg-${card.barClass}">${card.statusText}</span>
             ${card.name}: <b>${card.ratioText}</b>
           </span>
         </j:forEach>

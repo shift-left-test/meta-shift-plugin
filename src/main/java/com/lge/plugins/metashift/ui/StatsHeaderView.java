@@ -5,6 +5,7 @@
 
 package com.lge.plugins.metashift.ui;
 
+import com.lge.plugins.metashift.ui.tables.TableHtml;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -63,10 +64,6 @@ public class StatsHeaderView {
     this.url = url;
   }
 
-  private static int percent(double ratio) {
-    return (int) Math.floor(ratio * 100);
-  }
-
   public boolean isAvailable() {
     return evaluation.optBoolean("available", false);
   }
@@ -84,11 +81,11 @@ public class StatsHeaderView {
   }
 
   public int getRatioPercent() {
-    return isAvailable() ? percent(evaluation.optDouble("ratio", 0)) : 0;
+    return isAvailable() ? TableHtml.percent(evaluation.optDouble("ratio", 0)) : 0;
   }
 
   public int getThresholdPercent() {
-    return percent(evaluation.optDouble("threshold", 0));
+    return TableHtml.percent(evaluation.optDouble("threshold", 0));
   }
 
   /**
@@ -101,15 +98,15 @@ public class StatsHeaderView {
   }
 
   public String getMinimum() {
-    return percent(statistics.optDouble("min", 0)) + "%";
+    return TableHtml.percent(statistics.optDouble("min", 0)) + "%";
   }
 
   public String getAverage() {
-    return percent(statistics.optDouble("average", 0)) + "%";
+    return TableHtml.percent(statistics.optDouble("average", 0)) + "%";
   }
 
   public String getMaximum() {
-    return percent(statistics.optDouble("max", 0)) + "%";
+    return TableHtml.percent(statistics.optDouble("max", 0)) + "%";
   }
 
   /**
@@ -137,7 +134,7 @@ public class StatsHeaderView {
       if (scale == null) {
         continue;
       }
-      bands.add(new Band(labels[i][0], percent(scale.optDouble("ratio", 0)),
+      bands.add(new Band(labels[i][0], TableHtml.percent(scale.optDouble("ratio", 0)),
           String.format("%,d", scale.optLong("count")), labels[i][1]));
     }
     return bands;

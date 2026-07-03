@@ -148,6 +148,6 @@ public final class SummaryTableSpec {
     String href = linkKind == LinkKind.BUILD_METRIC_RECIPE
         ? "../" + encoded + "/" + metricUrl
         : ".?file=" + encoded;
-    return "<a href=\"" + href + "\">" + TableHtml.escape(name) + "</a>";
+    return TableHtml.anchor(href, name);
   }
 }

@@ -8,14 +8,7 @@ xmlns:dt="/data-tables">
       <div class="metashift">
         <div class="page">
           <div class="h1">Overview</div>
-          <ms:metrics-stats-header
-            statistics_class="percent"
-            labels='[
-              {"name":"Passed", "clazz": "valid-good"},
-              {"name":"Failed", "clazz": "valid-bad"},
-              {"name":"Error", "clazz": "valid-error"},
-              {"name":"Skipped", "clazz": "invalid"}
-            ]' />
+          <ms:metrics-stats-header/>
           <div class="h1">Details</div>
           <div class="section">
             <dt:table model="${it.getTableModel('unit_tests')}" />

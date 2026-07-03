@@ -8,7 +8,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metas
       <div class="page">
         <div class="h1">Overview</div>
         <div class="section">
-          <ms:dynamic-testing-row metrics_class="show_scale" />
+          <ms:dynamic-testing-row />
         </div>
       </div>
       </div>

@@ -96,7 +96,7 @@ public class EvaluationSummaryTableModel extends TableModel {
 
     public DetailedCell<String> getName() {
       String name = data.getString("name");
-      String anchor = "<a href=\"" + Util.rawEncode(name) + "\">" + TableHtml.escape(name) + "</a>";
+      String anchor = TableHtml.anchor(Util.rawEncode(name), name);
       return new DetailedCell<>(anchor, name);
     }
 
