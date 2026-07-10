@@ -60,9 +60,10 @@ public class TrendChartModelTest {
         Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
     assertEquals(Collections.emptyList(), model.getDomainAxisLabels());
-    assertEquals(Arrays.asList("Test", "StatementCoverage", "BranchCoverage", "Mutation"),
+    assertEquals(
+        Arrays.asList("Unit Tests", "Statement Coverage", "Branch Coverage", "Mutation Tests"),
         model.getSeries().stream().map(LineSeries::getName).collect(Collectors.toList()));
-    assertEquals(Collections.emptyList(), seriesOf(model, "Test").getData());
+    assertEquals(Collections.emptyList(), seriesOf(model, "Unit Tests").getData());
   }
 
   @Test
@@ -74,7 +75,7 @@ public class TrendChartModelTest {
     assertEquals(Collections.singletonList("#1"), model.getDomainAxisLabels());
     assertEquals(Collections.singletonList(1), model.getBuildNumbers());
     // A single passed unit test yields a 100% qualification ratio.
-    assertEquals(Collections.singletonList(100.0), seriesOf(model, "Test").getData());
+    assertEquals(Collections.singletonList(100.0), seriesOf(model, "Unit Tests").getData());
   }
 
   @Test
@@ -84,7 +85,7 @@ public class TrendChartModelTest {
         Collections.singletonList(report));
 
     // No coverage data was provided, so the metric is a gap (null), not zero.
-    List<Double> data = seriesOf(model, "StatementCoverage").getData();
+    List<Double> data = seriesOf(model, "Statement Coverage").getData();
     assertEquals(Collections.singletonList(null), data);
   }
 
@@ -94,6 +95,6 @@ public class TrendChartModelTest {
         Arrays.asList("#1", "#2"), Arrays.asList(1, 2), Arrays.asList(report, report));
 
     assertEquals(Arrays.asList("#1", "#2"), model.getDomainAxisLabels());
-    assertEquals(Arrays.asList(100.0, 100.0), seriesOf(model, "Test").getData());
+    assertEquals(Arrays.asList(100.0, 100.0), seriesOf(model, "Unit Tests").getData());
   }
 }

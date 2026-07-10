@@ -29,4 +29,19 @@ public final class ErrorTestData extends TestData {
       final String message) {
     super(recipe, suite, name, message, Status.ERROR);
   }
+
+  /**
+   * Default constructor.
+   *
+   * @param recipe  name
+   * @param suite   name
+   * @param name    of the test
+   * @param message of the test
+   * @param file    source file of the test, empty when unknown
+   * @param line    line number of the test, 0 when unknown
+   */
+  public ErrorTestData(final String recipe, final String suite, final String name,
+      final String message, final String file, final long line) {
+    super(recipe, suite, name, message, file, line, Status.ERROR);
+  }
 }

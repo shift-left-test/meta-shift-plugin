@@ -111,6 +111,24 @@ public class FileParser {
         new MutationTestParser(path, dataList, logger),
         new TestParser(path, dataList, logger)
     );
-    return new Recipe(NamingUtils.getRecipe(name), dataList);
+    Recipe recipe = new Recipe(NamingUtils.getRecipe(name), dataList);
+    recipe.setSourceDir(readSourceDir(path));
+    return recipe;
+  }
+
+  /**
+   * Reads the BitBake S variable from the first available task metadata.json.
+   *
+   * @param path to the recipe directory
+   * @return source directory path, or null when not available
+   */
+  private String readSourceDir(FilePath path) throws InterruptedException {
+    for (String task : new String[]{"coverage", "checktest", "test"}) {
+      String value = Parser.readSourceRoot(path.child(task));
+      if (value != null) {
+        return value;
+      }
+    }
+    return null;
   }
 }

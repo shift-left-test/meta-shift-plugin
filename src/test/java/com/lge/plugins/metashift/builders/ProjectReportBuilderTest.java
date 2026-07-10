@@ -9,7 +9,6 @@ import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
-import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Distribution;
@@ -57,23 +56,13 @@ public class ProjectReportBuilderTest {
   private void createReports(File source, File report) throws IOException {
     FakeReportBuilder fakeReportBuilder = new FakeReportBuilder();
     fakeReportBuilder.add(new FakeRecipe(source, RECIPE1 + "-1.0.0-r0")
-        .setPremirror(1, 1)
-        .setSharedState(1, 1)
-        .add(new FakeScript(1).setIssues(1, 1, 1))
         .add(new FakeSource(1, 1, 0, 0)
-            .setCodeViolations(1, 1, 1)
-            .setComplexity(10, 1, 0)
             .setTests(1, 1, 1, 1)
             .setStatementCoverage(2, 1)
             .setBranchCoverage(1, 1)
             .setMutationTests(1, 1, 1)));
     fakeReportBuilder.add(new FakeRecipe(source, RECIPE2 + "-1.0.0-r0")
-        .setPremirror(0, 2)
-        .setSharedState(0, 2)
-        .add(new FakeScript(20).setIssues(2, 2, 2))
         .add(new FakeSource(20, 10, 10, 10)
-            .setCodeViolations(2, 2, 2)
-            .setComplexity(10, 10, 10)
             .setTests(2, 0, 0, 0)
             .setStatementCoverage(0, 2)
             .setBranchCoverage(0, 2)
@@ -95,14 +84,6 @@ public class ProjectReportBuilderTest {
     return o;
   }
 
-  private JSONObject newStatistics(double min, double average, double max) {
-    JSONObject o = new JSONObject();
-    o.put("min", min);
-    o.put("average", average);
-    o.put("max", max);
-    return o;
-  }
-
   private JSONObject newDistribution(long first, long second, long third, long fourth) {
     return JSONObject.fromObject(new Distribution(first, second, third, fourth));
   }
@@ -120,7 +101,6 @@ public class ProjectReportBuilderTest {
   public void testGetUnitTests() {
     ProjectGroup group = report.getUnitTests();
     assertEquals(newEvaluation(true, 6, 3, true, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.25, 0.625, 1.0), group.getStatistics());
     assertEquals(newDistribution(3, 1, 1, 1), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.25, summaries.get(0).getDouble("ratio"), 0.01);
@@ -131,7 +111,6 @@ public class ProjectReportBuilderTest {
   public void testGetStatementCoverage() {
     ProjectGroup group = report.getStatementCoverage();
     assertEquals(newEvaluation(true, 8, 3, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.0, 0.3, 0.6), group.getStatistics());
     assertEquals(newDistribution(3, 5, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.6, summaries.get(0).getDouble("ratio"), 0.01);
@@ -142,7 +121,6 @@ public class ProjectReportBuilderTest {
   public void testGetBranchCoverage() {
     ProjectGroup group = report.getBranchCoverage();
     assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.0, 0.25, 0.5), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
@@ -153,7 +131,6 @@ public class ProjectReportBuilderTest {
   public void testGetMutationTests() {
     ProjectGroup group = report.getMutationTests();
     assertEquals(newEvaluation(true, 5, 3, true, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.3333333333333333, 0.6666666666666666, 1.0), group.getStatistics());
     assertEquals(newDistribution(3, 1, 1, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.3333333333333333,

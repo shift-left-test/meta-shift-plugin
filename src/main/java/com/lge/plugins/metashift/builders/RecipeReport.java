@@ -36,9 +36,26 @@ public class RecipeReport extends Report<RecipeGroup> {
     Stream.of(Metric.values()).forEach(o -> put(o, new RecipeGroup(dataSource, o, recipe)));
   }
 
-  private <T> T getOrDefault(Metric metric, Data data, T defaultValue) {
-    T o = dataSource.get(Scope.RECIPE.name(), metric.name(), data.name(), recipe);
-    return Optional.ofNullable(o).orElse(defaultValue);
+  /**
+   * Returns the stored source of the file. The source is recipe-scoped, not
+   * metric-scoped.
+   *
+   * @param file name
+   * @return source text, empty when not stored
+   */
+  public String readFile(String file) {
+    String data = dataSource.get(
+        Scope.RECIPE.name(), Metric.NONE.name(), Data.FILE.name(), recipe, file);
+    return Optional.ofNullable(data).orElse("");
   }
 
+  /**
+   * Tests if the source of the file is stored.
+   *
+   * @param file name
+   * @return true when the source is stored
+   */
+  public boolean hasFile(String file) {
+    return dataSource.has(Scope.RECIPE.name(), Metric.NONE.name(), Data.FILE.name(), recipe, file);
+  }
 }

@@ -6,7 +6,11 @@
 package com.lge.plugins.metashift.parsers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.fixture.FakeMutationTestReport;
+import com.lge.plugins.metashift.fixture.FakeRecipe;
+import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
@@ -201,5 +205,20 @@ public class MutationTestParserTest {
     assertValues(0, "D-1.0.0-r0", "path/to/a.file", "A", "func1", 1, "AOR", "test1");
     assertValues(1, "D-1.0.0-r0", "path/to/b.file", "B", "func2", 2, "BOR", "test2");
     assertValues(2, "D-1.0.0-r0", "path/to/c.file", "C", "func3", 3, "COR", "test3");
+  }
+
+  @Test
+  public void testFilePathsAreRelativizedAgainstMetadataS() throws Exception {
+    File source = utils.createDirectory("source");
+    File report = utils.createDirectory("report");
+    FakeRecipe fakeRecipe = new FakeRecipe(source);
+    FakeSource fakeSource = new FakeSource(fakeRecipe, 10, 5, 5, 0)
+        .setMutationTests(1, 0, 0);
+    fakeRecipe.add(fakeSource);
+    fakeRecipe.toFile(report);
+    new FakeMutationTestReport(fakeRecipe).toFile(report);
+    parse(new File(report, fakeRecipe.getName()));
+    assertTrue(dataList.objects(MutationTestData.class)
+        .allMatch(o -> o.getFile().equals(fakeSource.getFilename())));
   }
 }

@@ -13,6 +13,23 @@ The list of software quality metric:
 
 > **Note (0.6.0):** The static-analysis, cache, code-size, and tested-recipes metrics were removed because the current meta-shift layer no longer produces their reports. This plugin now targets the current meta-shift (scarthgap) layer. Build results and job threshold settings from older versions need to be re-run / re-entered.
 
+> **Note (0.7.0):** The per-metric detail pages were merged into the build and recipe
+> pages (the distribution now renders inside each metric card), and the annotated
+> source page was replaced by a per-file annotation summary (uncovered line ranges,
+> partially covered branches, and mutation details). Source files are no longer
+> stored with the build. Reports from builds published by older versions need to be
+> re-run to be viewable.
+
+> **Note (0.8.0):** The annotated source page is back: the current meta-shift layer
+> writes a `metadata.json` (the BitBake `S` variable) into each task report
+> directory, so the plugin now stores the reported source files with the build at
+> publish time (capped at 1MB per file) and paints coverage, branch and mutation
+> annotations directly on the source. The per-metric file tables of the recipe page
+> were merged into a single per-file table, unit tests link to their source lines,
+> the build overview highlights the worst failing recipes, and the CSV/Excel export
+> buttons were removed. Builds published by older versions fall back to the
+> annotation summary on the file page.
+
 You may find more information about the meta-shift layer on https://github.com/shift-left-test/meta-shift
 
 
@@ -47,12 +64,6 @@ You may also configure the parameters on the Jenkins system configuration panel,
 ### How to run locally (invokes a local Jenkins instance with the plugin installed)
 
     $ mvn hpi:run -Dhost=0.0.0.0 -Djetty.port=12345
-
-### How to run webpack-dev-server
-
-    $ cd src/main/frontend
-    $ ./node/npm run serve
-
 
 ## License
 

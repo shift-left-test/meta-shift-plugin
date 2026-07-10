@@ -11,7 +11,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
-import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -57,7 +56,6 @@ public class MetaShiftProjectActionTest {
 
   private void configureReport() throws Exception {
     fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
@@ -84,7 +82,8 @@ public class MetaShiftProjectActionTest {
     JSONArray series = model.getJSONArray("series");
     List<String> names = series.stream()
         .map(o -> ((JSONObject) o).getString("name")).collect(Collectors.toList());
-    assertEquals(List.of("Test", "StatementCoverage", "BranchCoverage", "Mutation"), names);
+    assertEquals(
+        List.of("Unit Tests", "Statement Coverage", "Branch Coverage", "Mutation Tests"), names);
   }
 
   @Test

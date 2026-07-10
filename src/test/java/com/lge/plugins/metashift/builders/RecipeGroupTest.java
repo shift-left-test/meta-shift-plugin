@@ -38,10 +38,8 @@ public class RecipeGroupTest {
   @Test
   public void testInitialStatus() {
     assertEquals(new JSONObject(), group.getEvaluation());
-    assertEquals(new JSONObject(), group.getStatistics());
     assertEquals(new JSONObject(), group.getDistribution());
     assertEquals(new JSONArray(), group.getSummaries());
     assertEquals(new JSONArray(), group.getObjects("a.file"));
-    assertEquals("", group.readFile("a.file"));
   }
 }

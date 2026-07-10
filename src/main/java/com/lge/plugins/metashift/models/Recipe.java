@@ -27,6 +27,12 @@ public final class Recipe extends Data implements Streamable {
   private final DataList dataList;
 
   /**
+   * Represents the source directory of the recipe (the BitBake S variable),
+   * null when metadata.json is not available.
+   */
+  private String sourceDir;
+
+  /**
    * Creates an empty Recipe object with the given recipe name.
    *
    * @param name of the recipe
@@ -54,6 +60,24 @@ public final class Recipe extends Data implements Streamable {
    */
   public <T> void add(final T object) {
     dataList.add(object);
+  }
+
+  /**
+   * Returns the source directory of the recipe.
+   *
+   * @return absolute source directory path, or null when unknown
+   */
+  public String getSourceDir() {
+    return sourceDir;
+  }
+
+  /**
+   * Sets the source directory of the recipe.
+   *
+   * @param sourceDir absolute source directory path
+   */
+  public void setSourceDir(final String sourceDir) {
+    this.sourceDir = sourceDir;
   }
 
   @Override

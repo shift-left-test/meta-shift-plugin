@@ -1,21 +1,54 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metashift"
-xmlns:dt="/data-tables">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+xmlns:l="/lib/layout" xmlns:ms="/metashift" xmlns:dt="/data-tables">
   <l:layout title="meta-shift report">
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
-      <div class="metashift">
-      <div class="page">
-        <div class="h1">Overview</div>
-        <div class="section">
-          <ms:dynamic-testing-row />
-        </div>
-        <div class="h1">Recipes</div>
-        <div class="section">
-          <dt:table model="${it.getTableModel('recipe-list')}" />
-        </div>
+      <h2>Overview</h2>
+      <div class="mb-4">
+        <ms:dynamic-testing-row />
       </div>
+      <j:if test="${it.availableCount &gt; 0}">
+        <j:set var="attention" value="${it.attention}"/>
+        <j:choose>
+          <j:when test="${attention.failedCount == 0}">
+            <div class="alert alert-success py-2 mb-4">
+              All recipes satisfy their thresholds.
+            </div>
+          </j:when>
+          <j:otherwise>
+            <div class="alert alert-warning py-2 mb-4">
+              <div class="fw-bold mb-1">
+                &#9888; Recipes needing attention
+                <span class="fw-normal text-muted">
+                  &#8212; ${attention.recipes.size()} of ${attention.failedCount}
+                  failing recipes, worst first
+                </span>
+              </div>
+              <j:forEach var="entry" items="${attention.recipes}">
+                <div>
+                  <a href="${entry.name}">${entry.name}</a>
+                  <j:forEach var="chip" items="${entry.chips}">
+                    <span class="badge text-bg-danger ms-1">
+                      ${chip.name} ${chip.ratioText}
+                    </span>
+                  </j:forEach>
+                </div>
+              </j:forEach>
+              <j:if test="${attention.truncated}">
+                <div class="small text-muted mt-1">
+                  Sort the table below by the Qualified column to see the rest.
+                </div>
+              </j:if>
+            </div>
+          </j:otherwise>
+        </j:choose>
+      </j:if>
+      <h2>Recipes
+        <small class="text-muted fs-6">${it.recipeCount} recipes</small>
+      </h2>
+      <div class="mb-4">
+        <dt:table model="${it.getTableModel('recipe-list')}" />
       </div>
     </l:main-panel>
   </l:layout>

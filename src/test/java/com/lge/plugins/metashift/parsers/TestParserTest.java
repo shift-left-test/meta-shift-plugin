@@ -6,7 +6,11 @@
 package com.lge.plugins.metashift.parsers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.fixture.FakeRecipe;
+import com.lge.plugins.metashift.fixture.FakeSource;
+import com.lge.plugins.metashift.fixture.FakeTestReport;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
@@ -213,5 +217,41 @@ public class TestParserTest {
     assertValues(1, "E-1.0.0-r0", "B", "test2", "failure");
     assertValues(2, "E-1.0.0-r0", "C", "test3", "error");
     assertValues(3, "E-1.0.0-r0", "D", "test4", "skipped");
+  }
+
+  @Test
+  public void testCreateWithNonStatusChildren() throws Exception {
+    File directory = utils.createDirectory("report", "F-1.0.0-r0");
+    builder
+        .append("<testsuites>")
+        .append("  <testsuite name='A'>")
+        .append("    <testcase name='test1'>")
+        .append("      <system-out>log output</system-out>")
+        .append("    </testcase>")
+        .append("    <testcase name='test2'>")
+        .append("      <system-err>err output</system-err>")
+        .append("      <failure message='failed'/>")
+        .append("    </testcase>")
+        .append("  </testsuite>")
+        .append("</testsuites>");
+    utils.writeLines(builder, directory, "test", "1.xml");
+    parse(directory);
+    assertDataList(true, 2);
+    assertValues(0, "F-1.0.0-r0", "A", "test1", "");
+    assertValues(1, "F-1.0.0-r0", "A", "test2", "failed");
+  }
+
+  @Test
+  public void testParseReadsFileAndLineAttributes() throws Exception {
+    File source = utils.createDirectory("source");
+    File report = utils.createDirectory("report");
+    FakeRecipe fakeRecipe = new FakeRecipe(source);
+    FakeSource fakeSource = new FakeSource(fakeRecipe, 10, 5, 5, 0).setTests(1, 1, 1, 1);
+    fakeRecipe.add(fakeSource);
+    fakeRecipe.toFile(report);
+    new FakeTestReport(fakeRecipe).toFile(report);
+    parse(new File(report, fakeRecipe.getName()));
+    assertTrue(dataList.objects(TestData.class)
+        .allMatch(o -> o.getFile().equals(fakeSource.getFilename()) && o.getLine() == 1));
   }
 }

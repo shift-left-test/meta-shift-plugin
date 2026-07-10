@@ -24,11 +24,6 @@ public class FakeSource implements FakeFile {
   private FakeRecipe recipe;
   private final String filename;
   private final long totalLines;
-  private final long codeLines;
-  private final long commentLines;
-  private final long duplicatedLines;
-  private final long classes;
-  private final long functions;
   private long testPassed;
   private long testFailed;
   private long testError;
@@ -40,12 +35,6 @@ public class FakeSource implements FakeFile {
   private long statementCoverageMissed;
   private long branchCoverageCovered;
   private long branchCoverageMissed;
-  private int complexityTolerance;
-  private long complexityExceeded;
-  private long complexityNormal;
-  private long majorViolations;
-  private long minorViolations;
-  private long infoViolations;
 
   public FakeSource(String name, long totalLines, long codeLines, long commentLines,
       long duplicatedLines) {
@@ -66,11 +55,6 @@ public class FakeSource implements FakeFile {
     this.recipe = recipe;
     this.filename = name;
     this.totalLines = totalLines;
-    this.codeLines = codeLines;
-    this.commentLines = commentLines;
-    this.duplicatedLines = duplicatedLines;
-    this.classes = 0;
-    this.functions = 0;
     testPassed = 0;
     testFailed = 0;
     testError = 0;
@@ -82,12 +66,6 @@ public class FakeSource implements FakeFile {
     statementCoverageMissed = 0;
     branchCoverageCovered = 0;
     branchCoverageMissed = 0;
-    complexityTolerance = 0;
-    complexityExceeded = 0;
-    complexityNormal = 0;
-    majorViolations = 0;
-    minorViolations = 0;
-    infoViolations = 0;
   }
 
   public String getFilename() {
@@ -105,26 +83,6 @@ public class FakeSource implements FakeFile {
 
   public long getTotalLines() {
     return totalLines;
-  }
-
-  public long getCodeLines() {
-    return codeLines;
-  }
-
-  public long getCommentLines() {
-    return commentLines;
-  }
-
-  public long getDuplicatedLines() {
-    return duplicatedLines;
-  }
-
-  public long getClasses() {
-    return classes;
-  }
-
-  public long getFunctions() {
-    return functions;
   }
 
   public long getTestPassed() {
@@ -171,30 +129,6 @@ public class FakeSource implements FakeFile {
     return branchCoverageMissed;
   }
 
-  public int getComplexityTolerance() {
-    return complexityTolerance;
-  }
-
-  public long getComplexityExceeded() {
-    return complexityExceeded;
-  }
-
-  public long getComplexityNormal() {
-    return complexityNormal;
-  }
-
-  public long getMajorViolations() {
-    return majorViolations;
-  }
-
-  public long getMinorViolations() {
-    return minorViolations;
-  }
-
-  public long getInfoViolations() {
-    return infoViolations;
-  }
-
   public FakeSource setRecipe(FakeRecipe recipe) {
     this.recipe = recipe;
     return this;
@@ -224,20 +158,6 @@ public class FakeSource implements FakeFile {
   public FakeSource setBranchCoverage(long covered, long missed) {
     branchCoverageCovered = covered;
     branchCoverageMissed = missed;
-    return this;
-  }
-
-  public FakeSource setComplexity(int tolerance, long exceeded, long normal) {
-    complexityTolerance = tolerance;
-    complexityExceeded = exceeded;
-    complexityNormal = normal;
-    return this;
-  }
-
-  public FakeSource setCodeViolations(long major, long minor, long info) {
-    majorViolations = major;
-    minorViolations = minor;
-    infoViolations = info;
     return this;
   }
 

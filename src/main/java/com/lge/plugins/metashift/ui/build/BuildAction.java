@@ -12,7 +12,6 @@ import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.ActionParentBase;
 import com.lge.plugins.metashift.ui.MetricView;
 import com.lge.plugins.metashift.ui.project.MetaShiftProjectAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
@@ -21,6 +20,7 @@ import com.lge.plugins.metashift.ui.tables.NativeTables;
 import hudson.FilePath;
 import hudson.Functions;
 import hudson.model.Action;
+import hudson.model.Actionable;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -36,6 +36,7 @@ import io.jenkins.plugins.datatables.AsyncTableContentProvider;
 import io.jenkins.plugins.datatables.TableModel;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
+import net.sf.json.JSONArray;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
@@ -46,7 +47,7 @@ import org.kohsuke.stapler.export.ExportedBean;
  * The main post build action class.
  */
 @ExportedBean
-public class BuildAction extends ActionParentBase
+public class BuildAction extends Actionable
     implements LastBuildAction, RunAction2, AsyncTableContentProvider {
 
   private transient Run<?, ?> run;
@@ -57,12 +58,9 @@ public class BuildAction extends ActionParentBase
   /**
    * Default constructor.
    */
-  public BuildAction(Run<?, ?> run, TaskListener listener,
-      Configuration configuration, DataSource dataSource,
-      FilePath reportRoot, Recipes recipes)
+  public BuildAction(Run<?, ?> run, TaskListener listener, Configuration configuration,
+      DataSource dataSource, FilePath reportRoot, Recipes recipes)
       throws IOException, InterruptedException {
-    super();
-
     this.run = run;
 
     this.projectReport = new ProjectReportBuilder(configuration, dataSource).parse(recipes);
@@ -71,23 +69,11 @@ public class BuildAction extends ActionParentBase
 
     for (Recipe recipe : recipes) {
       listener.getLogger().printf("[meta-shift-plugin] -> %s%n", recipe.getName());
-      RecipeAction recipeAction = new RecipeAction(
-          this, configuration, dataSource, reportRoot, recipe);
+      RecipeAction recipeAction =
+          new RecipeAction(this, configuration, dataSource, reportRoot, recipe);
       this.addAction(recipeAction);
     }
 
-    this.addAction(this.childActionStatementCoverage = new BuildActionChild(
-        this, this.getReport().getStatementCoverage(),
-        "Statement Coverage", "statement_coverage", true));
-    this.addAction(this.childActionBranchCoverage = new BuildActionChild(
-        this, this.getReport().getBranchCoverage(),
-        "Branch Coverage", "branch_coverage", true));
-    this.addAction(this.childActionMutationTests = new BuildActionChild(
-        this, this.getReport().getMutationTests(),
-        "Mutation Tests", "mutation_tests", true));
-    this.addAction(this.childActionUnitTests = new BuildActionChild(
-        this, this.getReport().getUnitTests(),
-        "Unit Tests", "unit_tests", true));
     listener.getLogger().println("[meta-shift-plugin] Successfully published.");
   }
 
@@ -127,7 +113,6 @@ public class BuildAction extends ActionParentBase
    *
    * @return Run class
    */
-  @Override
   public Run<?, ?> getRun() {
     return this.run;
   }
@@ -136,14 +121,79 @@ public class BuildAction extends ActionParentBase
     return this.projectReport;
   }
 
+  private transient List<MetricView> metricCards;
+
   /**
-   * Returns the metric summary cards for the four surviving metrics.
+   * Returns the metric summary cards for the four surviving metrics. The persisted
+   * data is immutable after publish, so the cards are computed once per load.
    *
    * @return list of metric cards
    */
   public List<MetricView> getMetricCards() {
-    return MetricView.cardsFor(getReport(), getTestDelta(),
-        getStatementCoverageDelta(), getBranchCoverageDelta(), getMutationTestDelta());
+    if (metricCards == null) {
+      metricCards = MetricView.cardsFor(getReport(), getTestDelta(),
+          getStatementCoverageDelta(), getBranchCoverageDelta(), getMutationTestDelta());
+    }
+    return metricCards;
+  }
+
+  private static final int MAX_ATTENTION_RECIPES = 5;
+
+  // persisted data is immutable after publish, so page-render reads are memoized
+  private transient JSONArray recipeSummaries;
+
+  private JSONArray getRecipeSummaries() {
+    if (recipeSummaries == null) {
+      recipeSummaries = getReport().getSummaries();
+    }
+    return recipeSummaries;
+  }
+
+  /**
+   * Returns the "recipes needing attention" view for the overview page.
+   *
+   * @return attention view
+   */
+  public AttentionView getAttention() {
+    return AttentionView.of(getRecipeSummaries(), MAX_ATTENTION_RECIPES);
+  }
+
+  /**
+   * Returns the number of recipes of this report.
+   *
+   * @return recipe count
+   */
+  public int getRecipeCount() {
+    return getRecipeSummaries().size();
+  }
+
+  /**
+   * Number of metrics with a report available.
+   *
+   * @return available metric count
+   */
+  public long getAvailableCount() {
+    return getMetricCards().stream().filter(MetricView::isAvailable).count();
+  }
+
+  /**
+   * Number of available metrics that satisfy their threshold.
+   *
+   * @return qualified metric count
+   */
+  public long getQualifiedCount() {
+    return getMetricCards().stream().filter(MetricView::isAvailable)
+        .filter(MetricView::isQualified).count();
+  }
+
+  /**
+   * Available metrics that do not satisfy their threshold, for the summary badges.
+   *
+   * @return failed metric cards
+   */
+  public List<MetricView> getFailedCards() {
+    return getMetricCards().stream().filter(MetricView::isAvailable)
+        .filter(card -> !card.isQualified()).collect(Collectors.toList());
   }
 
   /**
@@ -151,7 +201,7 @@ public class BuildAction extends ActionParentBase
    */
   public ContextMenu doContextMenu(StaplerRequest2 request, StaplerResponse2 response)
       throws Exception {
-    ContextMenu menu = super.doContextMenu(request, response);
+    ContextMenu menu = new ContextMenu();
 
     final MenuItem headerCodeQuality = new MenuItem().withDisplayName("Recipes");
     headerCodeQuality.type = MenuItemType.HEADER;
@@ -187,7 +237,7 @@ public class BuildAction extends ActionParentBase
 
   @Override
   public TableModel getTableModel(String id) {
-    return new EvaluationSummaryTableModel(id, this.getReport().getSummaries());
+    return new EvaluationSummaryTableModel(id, getRecipeSummaries());
   }
 
   @Override
@@ -229,30 +279,30 @@ public class BuildAction extends ActionParentBase
     }
   }
 
-  private double getRatioDelta(Function<ProjectReport, ProjectGroup> mapper) {
+  private Double getRatioDelta(Function<ProjectReport, ProjectGroup> mapper) {
     ProjectGroup previous = Optional.ofNullable(getPreviousReport()).map(mapper).orElse(null);
     ProjectGroup current = mapper.apply(getReport());
-    if (current == null) {
-      return 0;
+    if (current == null || previous == null) {
+      return null;
     }
-    return (previous != null) ? current.getEvaluation().getDouble("ratio")
-        - previous.getEvaluation().getDouble("ratio") : current.getEvaluation().getDouble("ratio");
+    return current.getEvaluation().getDouble("ratio")
+        - previous.getEvaluation().getDouble("ratio");
   }
 
-  // ratio delta
-  public double getStatementCoverageDelta() {
+  // ratio delta, null when there is no reference build
+  public Double getStatementCoverageDelta() {
     return getRatioDelta(ProjectReport::getStatementCoverage);
   }
 
-  public double getBranchCoverageDelta() {
+  public Double getBranchCoverageDelta() {
     return getRatioDelta(ProjectReport::getBranchCoverage);
   }
 
-  public double getMutationTestDelta() {
+  public Double getMutationTestDelta() {
     return getRatioDelta(ProjectReport::getMutationTests);
   }
 
-  public double getTestDelta() {
+  public Double getTestDelta() {
     return getRatioDelta(ProjectReport::getUnitTests);
   }
 

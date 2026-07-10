@@ -10,18 +10,15 @@ import static org.junit.Assert.assertNotEquals;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
-import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
-import com.lge.plugins.metashift.ui.recipe.RecipeActionChild;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.util.FormValidation;
 import java.io.File;
-import java.util.List;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -83,10 +80,7 @@ public class MetaShiftPublisherTest {
     project.getPublishersList().add(publisher);
 
     fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
             .setBranchCoverage(3, 4)
@@ -106,12 +100,6 @@ public class MetaShiftPublisherTest {
     assertEquals(1, action.getActions(RecipeAction.class).size());
     RecipeAction recipeAction = action.getAction(RecipeAction.class);
     assertEquals(run, recipeAction.getRun());
-
-    // verify RecipeActionChild created.
-    List<RecipeActionChild> children = recipeAction.getActions(RecipeActionChild.class);
-    assertEquals(4, children.size());
-    assertEquals(run, children.get(0).getRun());
-    assertEquals("document.png", children.get(0).getIconFileName());
   }
 
   @Test
@@ -123,10 +111,7 @@ public class MetaShiftPublisherTest {
     project.getPublishersList().add(publisher);
 
     fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
             .setBranchCoverage(3, 4)
@@ -146,12 +131,6 @@ public class MetaShiftPublisherTest {
     assertEquals(1, action.getActions(RecipeAction.class).size());
     RecipeAction recipeAction = action.getAction(RecipeAction.class);
     assertEquals(run, recipeAction.getRun());
-
-    // verify RecipeActionChild created.
-    List<RecipeActionChild> children = recipeAction.getActions(RecipeActionChild.class);
-    assertEquals(4, children.size());
-    assertEquals(run, children.get(0).getRun());
-    assertEquals("document.png", children.get(0).getIconFileName());
   }
 
   @Test
@@ -159,10 +138,7 @@ public class MetaShiftPublisherTest {
     WorkflowJob project = jenkins.createProject(WorkflowJob.class);
 
     fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
             .setBranchCoverage(3, 4)
@@ -186,12 +162,6 @@ public class MetaShiftPublisherTest {
     assertEquals(1, action.getActions(RecipeAction.class).size());
     RecipeAction recipeAction = action.getAction(RecipeAction.class);
     assertEquals(run, recipeAction.getRun());
-
-    // verify RecipeActionChild created.
-    List<RecipeActionChild> children = recipeAction.getActions(RecipeActionChild.class);
-    assertEquals(4, children.size());
-    assertEquals(run, children.get(0).getRun());
-    assertEquals("document.png", children.get(0).getIconFileName());
   }
 
   @Test
@@ -203,24 +173,6 @@ public class MetaShiftPublisherTest {
 
     // Fail with invalid report path.
     jenkins.buildAndAssertStatus(Result.FAILURE, project);
-  }
-
-  @Test
-  public void testDoCheckThreshold() {
-    MetaShiftPublisher.DescriptorImpl impl = new MetaShiftPublisher.DescriptorImpl();
-
-    assertEquals(FormValidation.ok(), impl.doCheckThreshold("0"));
-    assertEquals(FormValidation.ok(), impl.doCheckThreshold("10"));
-    assertEquals(FormValidation.ok(), impl.doCheckThreshold("100"));
-    assertEquals(FormValidation.ok(), impl.doCheckThreshold("0.0"));
-    assertEquals(FormValidation.ok(), impl.doCheckThreshold("0.0001"));
-    assertEquals(FormValidation.ok(), impl.doCheckThreshold("10.0"));
-    assertEquals(FormValidation.ok(), impl.doCheckThreshold("10.1"));
-    assertEquals(FormValidation.ok(), impl.doCheckThreshold("110"));
-
-    assertNotEquals(FormValidation.ok(), impl.doCheckThreshold(null));
-    assertNotEquals(FormValidation.ok(), impl.doCheckThreshold("-10"));
-    assertNotEquals(FormValidation.ok(), impl.doCheckThreshold("test"));
   }
 
   @Test
@@ -238,24 +190,7 @@ public class MetaShiftPublisherTest {
     assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold("110"));
     assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold(null));
     assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold("-10"));
-    assertNotEquals(FormValidation.ok(), impl.doCheckThreshold("test"));
+    assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold("test"));
   }
 
-  @Test
-  public void testDoCheckLimit() {
-    MetaShiftPublisher.DescriptorImpl impl = new MetaShiftPublisher.DescriptorImpl();
-
-    assertEquals(FormValidation.ok(), impl.doCheckLimit("0"));
-    assertEquals(FormValidation.ok(), impl.doCheckLimit("10"));
-    assertEquals(FormValidation.ok(), impl.doCheckLimit("100"));
-    assertEquals(FormValidation.ok(), impl.doCheckLimit("110"));
-
-    assertNotEquals(FormValidation.ok(), impl.doCheckLimit("0.0"));
-    assertNotEquals(FormValidation.ok(), impl.doCheckLimit("0.0001"));
-    assertNotEquals(FormValidation.ok(), impl.doCheckLimit("10.0"));
-    assertNotEquals(FormValidation.ok(), impl.doCheckLimit("10.1"));
-    assertNotEquals(FormValidation.ok(), impl.doCheckLimit(null));
-    assertNotEquals(FormValidation.ok(), impl.doCheckLimit("-10"));
-    assertNotEquals(FormValidation.ok(), impl.doCheckThreshold("test"));
-  }
 }

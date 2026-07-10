@@ -119,30 +119,6 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     }
 
     /**
-     * check double type threshold value validation.
-     *
-     * @param value input value
-     * @return form validation
-     */
-    public FormValidation doCheckThreshold(@QueryParameter String value) {
-      String thresholdStr = Util.fixEmptyAndTrim(value);
-      if (thresholdStr == null) {
-        return FormValidation.error("Value cannot be empty");
-      }
-
-      try {
-        float threshold = Float.parseFloat(thresholdStr);
-
-        if (threshold < 0) {
-          return FormValidation.error("Value must be a positive real value.");
-        }
-        return FormValidation.ok();
-      } catch (Exception e) {
-        return FormValidation.error("Value must be a real number.");
-      }
-    }
-
-    /**
      * check percent type threshold value validation.
      */
     public FormValidation doCheckPercentThreshold(@QueryParameter String value) {
@@ -164,30 +140,6 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     }
 
     /**
-     * check int type limit value validation.
-     *
-     * @param value input value
-     * @return form validation
-     */
-    public FormValidation doCheckLimit(@QueryParameter String value) {
-      String limitStr = Util.fixEmptyAndTrim(value);
-      if (limitStr == null) {
-        return FormValidation.error("Value cannot be empty");
-      }
-
-      try {
-        int limit = Integer.parseInt(limitStr);
-
-        if (limit < 0) {
-          return FormValidation.error("Value must be a positive integer.");
-        }
-        return FormValidation.ok();
-      } catch (Exception e) {
-        return FormValidation.error("Value must be a positive integer.");
-      }
-    }
-
-    /**
      * Returns the configuration.
      *
      * @return configuration
@@ -205,8 +157,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     return DurationFormatUtils.formatDuration(millis, "HH:mm:ss.S");
   }
 
-  private Callable<Void> publishReport(Run<?, ?> run, FilePath reportPath, TaskListener listener,
-      Configuration configuration, Recipes recipes) {
+  private Callable<Void> publishReport(Run<?, ?> run, TaskListener listener,
+      Configuration configuration, FilePath reportPath, Recipes recipes) {
     return () -> {
       FilePath buildPath = new FilePath(run.getRootDir());
       DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
@@ -260,7 +212,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     try {
       Recipes recipes = new FileParser(listener.getLogger()).parse(reportPath);
 
-      ExecutorServiceUtils.invoke(publishReport(run, reportPath, listener, configuration, recipes));
+      ExecutorServiceUtils.invoke(
+          publishReport(run, listener, configuration, reportPath, recipes));
 
       Instant finished = Instant.now();
       logger.printf("[meta-shift-plugin] Finished at %s%n", finished.toString());

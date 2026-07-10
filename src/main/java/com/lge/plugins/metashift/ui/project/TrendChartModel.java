@@ -43,10 +43,12 @@ final class TrendChartModel {
   }
 
   private static final List<SeriesDef> SERIES = List.of(
-      new SeriesDef("Test", JenkinsPalette.BLUE, ProjectReport::getUnitTests),
-      new SeriesDef("StatementCoverage", JenkinsPalette.GREEN, ProjectReport::getStatementCoverage),
-      new SeriesDef("BranchCoverage", JenkinsPalette.YELLOW, ProjectReport::getBranchCoverage),
-      new SeriesDef("Mutation", JenkinsPalette.RED, ProjectReport::getMutationTests));
+      new SeriesDef("Unit Tests", JenkinsPalette.BLUE, ProjectReport::getUnitTests),
+      new SeriesDef("Statement Coverage", JenkinsPalette.GREEN,
+          ProjectReport::getStatementCoverage),
+      new SeriesDef("Branch Coverage", JenkinsPalette.YELLOW,
+          ProjectReport::getBranchCoverage),
+      new SeriesDef("Mutation Tests", JenkinsPalette.RED, ProjectReport::getMutationTests));
 
   private TrendChartModel() {
   }

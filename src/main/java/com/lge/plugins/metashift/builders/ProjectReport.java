@@ -12,7 +12,6 @@ import com.lge.plugins.metashift.persistence.DataSource;
 import java.util.Optional;
 import java.util.stream.Stream;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * ProjectReport class.

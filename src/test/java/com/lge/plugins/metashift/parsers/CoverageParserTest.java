@@ -8,6 +8,9 @@ package com.lge.plugins.metashift.parsers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.lge.plugins.metashift.fixture.FakeCoverageReport;
+import com.lge.plugins.metashift.fixture.FakeRecipe;
+import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.CoverageData;
 import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
@@ -283,5 +286,20 @@ public class CoverageParserTest {
     assertValues(2, "E-1.0.0-r0", "b.cpp", 30, 0, true);
     assertValues(3, "E-1.0.0-r0", "b.cpp", 30, 0, true);
     assertValues(4, "E-1.0.0-r0", "b.cpp", 30, 1, false);
+  }
+
+  @Test
+  public void testFilePathsAreRelativizedAgainstMetadataS() throws Exception {
+    File source = utils.createDirectory("source");
+    File report = utils.createDirectory("report");
+    FakeRecipe fakeRecipe = new FakeRecipe(source);
+    FakeSource fakeSource = new FakeSource(fakeRecipe, 10, 5, 5, 0)
+        .setStatementCoverage(1, 1);
+    fakeRecipe.add(fakeSource);
+    fakeRecipe.toFile(report);
+    new FakeCoverageReport(fakeRecipe).toFile(report);
+    parse(new File(report, fakeRecipe.getName()));
+    assertTrue(dataList.objects(CoverageData.class)
+        .allMatch(o -> o.getFile().equals(fakeSource.getFilename())));
   }
 }

@@ -63,12 +63,14 @@ public class MutationTestParser extends Parser {
       SimpleXmlParser parser = new SimpleXmlParser(report);
       List<MutationTestData> objects = new ArrayList<>();
 
+      String sourceRoot = readSourceRoot(path.child("checktest"));
       for (Tag tag : parser.getChildNodes("mutation")) {
-        String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
+        String file = relativize(sourceRoot,
+            tag.getChildNodes("sourceFilePath").first().getTextContent());
         if (isHidden(file)) {
           continue;
         }
-        objects.add(createInstance(path.getName(), tag));
+        objects.add(createInstance(path.getName(), file, tag));
       }
       dataList.addAll(objects);
       dataList.add(MutationTestData.class);
@@ -83,14 +85,14 @@ public class MutationTestParser extends Parser {
    * Parse the tag to create a data object.
    *
    * @param recipe name
+   * @param file   source file path
    * @param tag    to parse
    * @return an object
    * @throws SAXException if failed to parse the file
    */
-  private static MutationTestData createInstance(final String recipe, final Tag tag)
-      throws SAXException {
+  private static MutationTestData createInstance(final String recipe, final String file,
+      final Tag tag) throws SAXException {
     String detected = tag.getAttribute("detected");
-    String file = tag.getChildNodes("sourceFilePath").first().getTextContent();
     String mutatedClass = tag.getChildNodes("mutatedClass").first().getTextContent();
     String mutatedMethod = tag.getChildNodes("mutatedMethod").first().getTextContent();
     long line = Long.parseLong(tag.getChildNodes("lineNumber").first().getTextContent());

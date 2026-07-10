@@ -65,6 +65,8 @@ public class EvaluationSummaryTableModel extends TableModel {
           .withDataPropertyKey(metric.key).withType(ColumnType.NUMBER)
           .withHeaderClass(ColumnCss.PERCENTAGE).withDetailedCell().build());
     }
+    columns.add(new ColumnBuilder().withHeaderLabel("Qualified")
+        .withDataPropertyKey("qualified").withType(ColumnType.NUMBER).withDetailedCell().build());
     return columns;
   }
 
@@ -79,7 +81,7 @@ public class EvaluationSummaryTableModel extends TableModel {
 
   @Override
   public TableConfiguration getTableConfiguration() {
-    return new TableConfiguration().buttons("excelHtml5", "csvHtml5");
+    return new TableConfiguration();
   }
 
   /**
@@ -116,11 +118,36 @@ public class EvaluationSummaryTableModel extends TableModel {
       return metricCell("mutationTests");
     }
 
+    /**
+     * Qualified metric count cell, e.g. "✔ 3/3" / "✘ 1/3"; sorts by the failed count so
+     * the most problematic recipes group together.
+     */
+    public DetailedCell<Integer> getQualified() {
+      int available = 0;
+      int qualified = 0;
+      for (Metric metric : METRICS) {
+        JSONObject block = data.optJSONObject(metric.key);
+        if (block != null && block.optBoolean("available", false)) {
+          available++;
+          if (block.optBoolean("qualified", false)) {
+            qualified++;
+          }
+        }
+      }
+      if (available == 0) {
+        return new DetailedCell<>("N/A", -1);
+      }
+      return new DetailedCell<>(
+          TableHtml.qualifiedIcon(qualified == available, qualified + "/" + available),
+          available - qualified);
+    }
+
     private DetailedCell<Double> metricCell(String key) {
       JSONObject metric = data.optJSONObject(key);
       if (metric != null && metric.optBoolean("available", false)) {
         double ratio = metric.getDouble("ratio");
-        return new DetailedCell<>(TableHtml.progressBar(ratio), ratio);
+        boolean qualified = metric.optBoolean("qualified", false);
+        return new DetailedCell<>(TableHtml.progressBar(ratio, qualified), ratio);
       }
       // Unavailable metrics render as N/A and sort below any real ratio.
       return new DetailedCell<>("N/A", -1.0);

@@ -49,10 +49,7 @@ public class FakeReportBuilderTest {
   public void testCreateWithSingleRecipe() throws IOException {
     FakeRecipe recipe = new FakeRecipe(source);
     recipe
-        .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
-            .setComplexity(10, 5, 6)
-            .setCodeViolations(1, 2, 3)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
             .setBranchCoverage(3, 4)
@@ -62,12 +59,11 @@ public class FakeReportBuilderTest {
 
     File root = FileUtils.getFile(report, recipe.getName());
     assertTrue(root.exists());
-    assertTrue(FileUtils.getFile(root, "checkcache", "caches.json").exists());
-    assertTrue(FileUtils.getFile(root, "checkcode", "sage_report.json").exists());
-    assertTrue(FileUtils.getFile(root, "checkrecipe", "files.json").exists());
-    assertTrue(FileUtils.getFile(root, "checkrecipe", "recipe_violations.json").exists());
     assertTrue(FileUtils.getFile(root, "checktest", "mutations.xml").exists());
+    assertTrue(FileUtils.getFile(root, "checktest", "metadata.json").exists());
     assertTrue(FileUtils.getFile(root, "coverage", "coverage.xml").exists());
+    assertTrue(FileUtils.getFile(root, "coverage", "metadata.json").exists());
+    assertTrue(FileUtils.getFile(root, "test", "metadata.json").exists());
     assertNotNull(FileUtils.getFile(root, "test").listFiles());
   }
 }

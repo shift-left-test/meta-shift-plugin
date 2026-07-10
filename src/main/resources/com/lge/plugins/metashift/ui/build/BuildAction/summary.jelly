@@ -1,23 +1,62 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
   <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
-  <tr>
+  <tr class="app-summary">
     <td>
-      <img class="summary-icon" width="48" height="48"
+      <img width="48" height="48"
         src="${rootURL}/plugin/meta-shift/img/meta_shift_first.png" />
     </td>
     <td style="vertical-align:middle">
       <div>
         <a href="meta-shift-report">meta-shift report</a>
+        <j:choose>
+          <j:when test="${it.availableCount == 0}">
+            <span class="badge text-bg-secondary ms-2">N/A</span>
+          </j:when>
+          <j:otherwise>
+            <span class="badge ${it.qualifiedCount == it.availableCount
+                ? 'text-bg-success' : 'text-bg-danger'} ms-2">
+              ${it.qualifiedCount}/${it.availableCount} qualified
+            </span>
+            <span class="small text-muted ms-2">${it.recipeCount} recipes</span>
+          </j:otherwise>
+        </j:choose>
       </div>
-      <div class="d-flex flex-wrap gap-3 mt-1">
-        <j:forEach var="card" items="${it.metricCards}">
-          <span>
+      <j:if test="${it.availableCount &gt; 0}">
+        <div class="small mt-2" style="display: grid;
+            grid-template-columns: repeat(4, max-content);
+            column-gap: 12px; row-gap: 4px; align-items: center;">
+          <j:forEach var="card" items="${it.metricCards}">
             <span class="badge bg-${card.barClass}">${card.statusText}</span>
-            ${card.name}: <b>${card.ratioText}</b>
-          </span>
-        </j:forEach>
-      </div>
+            <span class="${card.available ? '' : 'text-muted'}">${card.name}</span>
+            <j:choose>
+              <j:when test="${card.available}">
+                <b class="text-end ${card.qualified ? '' : 'text-danger'}"
+                  title="${card.numerator} / ${card.denominator} &#183; Threshold ${card.thresholdText}"
+                >${card.ratioText}</b>
+              </j:when>
+              <j:otherwise>
+                <span class="text-muted">${card.ratioText}</span>
+              </j:otherwise>
+            </j:choose>
+            <span class="text-muted">
+              <j:choose>
+                <j:when test="${card.newMetric}">
+                  <span class="badge text-bg-secondary">NEW</span>
+                </j:when>
+                <j:otherwise>
+                  ${card.deltaText}
+                  <j:if test="${card.available and !card.qualified}">
+                    <span class="${card.deltaText == '' ? '' : 'ms-2'}">
+                      Threshold ${card.thresholdText}
+                    </span>
+                  </j:if>
+                </j:otherwise>
+              </j:choose>
+            </span>
+          </j:forEach>
+        </div>
+      </j:if>
     </td>
   </tr>
 </j:jelly>

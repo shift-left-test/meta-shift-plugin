@@ -1,16 +1,42 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:ms="/metashift">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+xmlns:l="/lib/layout" xmlns:ms="/metashift" xmlns:dt="/data-tables">
   <l:layout title="meta-shift report">
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
-      <div class="metashift">
-      <div class="page">
-        <div class="h1">Overview</div>
-        <div class="section">
-          <ms:dynamic-testing-row />
-        </div>
+      <div class="small mb-2">
+        <a href="..">&#8592; meta-shift report</a>
       </div>
+      <h1 class="h3 mb-3">${it.displayName}</h1>
+      <h2>Overview</h2>
+      <div class="mb-4">
+        <ms:dynamic-testing-row anchors="true"/>
+      </div>
+      <j:set var="testCount" value="${it.testCount}"/>
+      <h2 id="unit_tests">Unit Tests
+        <small class="text-muted fs-6">
+          ${testCount} tests &#183; ${it.failedTestCount} failed
+        </small>
+      </h2>
+      <div class="mb-4">
+        <j:choose>
+          <j:when test="${testCount &gt; 0}">
+            <dt:table model="${it.getTableModel('unit_tests')}" />
+          </j:when>
+          <j:otherwise><div class="text-muted">N/A</div></j:otherwise>
+        </j:choose>
+      </div>
+      <j:set var="fileCount" value="${it.fileCount}"/>
+      <h2 id="files">Files
+        <small class="text-muted fs-6">${fileCount} files</small>
+      </h2>
+      <div class="mb-4">
+        <j:choose>
+          <j:when test="${fileCount &gt; 0}">
+            <dt:table model="${it.getTableModel('files')}" />
+          </j:when>
+          <j:otherwise><div class="text-muted">N/A</div></j:otherwise>
+        </j:choose>
       </div>
     </l:main-panel>
   </l:layout>

@@ -8,11 +8,11 @@ package com.lge.plugins.metashift.ui.build;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.builders.ProjectReport;
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
-import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
 import hudson.model.FreeStyleBuild;
@@ -70,10 +70,16 @@ public class BuildActionTest {
     assertEquals(test, action.getTestDelta(), 0.01);
   }
 
+  private void assertMetricDeltaIsNull(BuildAction action) {
+    assertNull(action.getStatementCoverageDelta());
+    assertNull(action.getBranchCoverageDelta());
+    assertNull(action.getMutationTestDelta());
+    assertNull(action.getTestDelta());
+  }
+
   @Test
   public void testCreate() throws Exception {
     fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
@@ -100,7 +106,6 @@ public class BuildActionTest {
   @Test
   public void testGetPreviousBuildAction() throws Exception {
     fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
@@ -113,7 +118,7 @@ public class BuildActionTest {
     BuildAction buildAction = run.getAction(BuildAction.class);
 
     assertNull(buildAction.getPreviousBuildAction());
-    assertMetricDelta(buildAction, 0.4, 0.42, 0.16, 0.1);
+    assertMetricDeltaIsNull(buildAction);
 
     // second build and check diff.
     FreeStyleBuild run2 = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
@@ -121,5 +126,29 @@ public class BuildActionTest {
 
     assertNotNull(buildAction2.getPreviousBuildAction());
     assertMetricDelta(buildAction2, 0.0, 0.0, 0.0, 0.0);
+  }
+
+  @Test
+  public void testSummaryCounts() throws Exception {
+    fakeRecipe
+        .add(new FakeSource(10, 4, 5, 6)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+
+    FreeStyleBuild build = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
+    BuildAction action = build.getAction(BuildAction.class);
+
+    long available = action.getMetricCards().stream()
+        .filter(com.lge.plugins.metashift.ui.MetricView::isAvailable).count();
+    assertEquals(available, action.getAvailableCount());
+    assertTrue(action.getQualifiedCount() <= action.getAvailableCount());
+    assertTrue(action.getFailedCards().stream()
+        .noneMatch(com.lge.plugins.metashift.ui.MetricView::isQualified));
+    assertEquals(action.getAvailableCount() - action.getQualifiedCount(),
+        action.getFailedCards().size());
   }
 }

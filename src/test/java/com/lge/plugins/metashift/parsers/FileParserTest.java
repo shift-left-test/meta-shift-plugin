@@ -6,10 +6,10 @@
 package com.lge.plugins.metashift.parsers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
-import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.BranchCoverageData;
 import com.lge.plugins.metashift.models.MutationTestData;
@@ -22,6 +22,8 @@ import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -94,13 +96,10 @@ public class FileParserTest {
   public void testCreateWithMultipleDirectories() throws IOException, InterruptedException {
     builder
         .add(new FakeRecipe(source)
-            .add(new FakeScript(10))
             .add(new FakeSource(10, 3, 2, 0).setStatementCoverage(1, 0)))
         .add(new FakeRecipe(source)
-            .add(new FakeScript(20))
             .add(new FakeSource(20, 6, 5, 0).setStatementCoverage(1, 0)))
         .add(new FakeRecipe(source)
-            .add(new FakeScript(30))
             .add(new FakeSource(30, 9, 8, 0).setStatementCoverage(1, 0)));
     builder.toFile(report);
 
@@ -111,15 +110,12 @@ public class FileParserTest {
 
   @Test
   public void testParseSingleRecipeReportFiles() throws IOException, InterruptedException {
-    builder.add(new FakeRecipe(source).setPremirror(1, 2).setSharedState(3, 4)
-        .add(new FakeScript(10).setIssues(1, 2, 3))
+    builder.add(new FakeRecipe(source)
         .add(new FakeSource(10, 3, 2, 1)
             .setMutationTests(1, 2, 3)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
             .setBranchCoverage(1, 2)
-            .setComplexity(10, 1, 2)
-            .setCodeViolations(1, 2, 3)
         )
     );
     builder.toFile(report);
@@ -134,26 +130,20 @@ public class FileParserTest {
 
   @Test
   public void testParseMultipleRecipeReportFiles() throws IOException, InterruptedException {
-    builder.add(new FakeRecipe(source).setPremirror(1, 2).setSharedState(3, 4)
-        .add(new FakeScript(10).setIssues(1, 2, 3))
+    builder.add(new FakeRecipe(source)
         .add(new FakeSource(10, 3, 2, 1)
             .setMutationTests(1, 2, 3)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
             .setBranchCoverage(1, 2)
-            .setComplexity(10, 1, 2)
-            .setCodeViolations(1, 2, 3)
         )
     );
-    builder.add(new FakeRecipe(source).setPremirror(1, 2).setSharedState(3, 4)
-        .add(new FakeScript(10).setIssues(1, 2, 3))
+    builder.add(new FakeRecipe(source)
         .add(new FakeSource(10, 3, 2, 1)
             .setMutationTests(1, 2, 3)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
             .setBranchCoverage(1, 2)
-            .setComplexity(10, 1, 2)
-            .setCodeViolations(1, 2, 3)
         )
     );
     builder.toFile(report);
@@ -189,8 +179,10 @@ public class FileParserTest {
 
   @Test
   public void testRemovesRecipesWithHiddenDirectoryName() throws IOException, InterruptedException {
-    new FakeRecipe(source, ".hidden-project-1.0.0-r0").add(new FakeSource(1, 1, 1, 1)).toFile(report);
-    new FakeRecipe(source, "qmake5-project-1.0.0-r0").add(new FakeSource(0, 0, 0, 0)).toFile(report);
+    new FakeRecipe(source, ".hidden-project-1.0.0-r0").add(new FakeSource(1, 1, 1, 1))
+        .toFile(report);
+    new FakeRecipe(source, "qmake5-project-1.0.0-r0").add(new FakeSource(0, 0, 0, 0))
+        .toFile(report);
     recipes = parser.parse(new FilePath(report));
     Mockito.verify(logger).printf("[meta-shift-plugin] -> Found %d recipe data%n", 1);
     Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipe data removed.%n", 1);
@@ -207,10 +199,54 @@ public class FileParserTest {
   public void testInitWithComplexName() throws IOException, InterruptedException {
     String fullName = "A.B.C.qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X-r+1.0-X";
     String expected = "A.B.C.qtbase+-native-5.15.2+gitAUTOINC+40143c189b-X";
-    builder.add(new FakeRecipe(source, fullName).add(new FakeSource(1, 1, 1, 1).setStatementCoverage(1, 0)));
+    builder.add(new FakeRecipe(source, fullName)
+        .add(new FakeSource(1, 1, 1, 1).setStatementCoverage(1, 0)));
     builder.toFile(report);
     recipes = new FileParser().parse(new FilePath(report));
     assertEquals(1, recipes.size());
     assertEquals(expected, recipes.get(0).getName());
+  }
+
+  @Test
+  public void testParseSetsSourceDirFromMetadata() throws Exception {
+    FakeRecipe fakeRecipe = new FakeRecipe(source)
+        .add(new FakeSource(10, 5, 5, 0).setStatementCoverage(1, 1));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    Recipes recipes = new FileParser().parse(new FilePath(report));
+    assertEquals(1, recipes.size());
+    assertEquals(fakeRecipe.getSourcePath().getAbsolutePath(), recipes.get(0).getSourceDir());
+  }
+
+  @Test
+  public void testParseWithoutMetadataLeavesSourceDirNull() throws Exception {
+    FakeRecipe fakeRecipe = new FakeRecipe(source)
+        .add(new FakeSource(10, 5, 5, 0).setStatementCoverage(1, 1));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    // 태스크 디렉토리들의 metadata.json 제거
+    for (String task : new String[]{"test", "coverage", "checktest"}) {
+      FileUtils.deleteQuietly(
+          FileUtils.getFile(report, fakeRecipe.getName(), task, "metadata.json"));
+    }
+    Recipes recipes = new FileParser().parse(new FilePath(report));
+    assertEquals(1, recipes.size());
+    assertNull(recipes.get(0).getSourceDir());
+  }
+
+  @Test
+  public void testParseWithMalformedMetadataLeavesSourceDirNull() throws Exception {
+    FakeRecipe fakeRecipe = new FakeRecipe(source)
+        .add(new FakeSource(10, 5, 5, 0).setStatementCoverage(1, 1));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    for (String task : new String[]{"test", "coverage", "checktest"}) {
+      FileUtils.writeStringToFile(
+          FileUtils.getFile(report, fakeRecipe.getName(), task, "metadata.json"),
+          "not a json", StandardCharsets.UTF_8);
+    }
+    Recipes recipes = new FileParser().parse(new FilePath(report));
+    assertEquals(1, recipes.size());
+    assertNull(recipes.get(0).getSourceDir());
   }
 }

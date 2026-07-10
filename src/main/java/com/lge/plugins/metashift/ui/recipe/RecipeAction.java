@@ -11,24 +11,39 @@ import com.lge.plugins.metashift.builders.RecipeReportBuilder;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.ActionParentBase;
 import com.lge.plugins.metashift.ui.MetricView;
 import com.lge.plugins.metashift.ui.build.BuildAction;
+import com.lge.plugins.metashift.ui.tables.FileSummaryTableModel;
+import com.lge.plugins.metashift.ui.tables.NativeTables;
+import com.lge.plugins.metashift.ui.tables.TestListTableModel;
 import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.Run;
+import io.jenkins.plugins.datatables.AsyncTableContentProvider;
+import io.jenkins.plugins.datatables.TableModel;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 /**
- * The recipe action class.
+ * The recipe action class: a single consolidated page with the metric cards on
+ * top, the unit test list and the unified per-file table, plus the annotated
+ * source page of each file.
  */
 @ExportedBean
-public class RecipeAction extends ActionParentBase implements Action {
+public class RecipeAction implements Action, AsyncTableContentProvider {
 
   BuildAction parent;
 
@@ -40,30 +55,13 @@ public class RecipeAction extends ActionParentBase implements Action {
   /**
    * Default constructor.
    */
-  public RecipeAction(BuildAction parent,
-      Configuration configuration, DataSource dataSource,
-      FilePath reportRoot, Recipe recipe)
-      throws IOException, InterruptedException {
-    super();
-
+  public RecipeAction(BuildAction parent, Configuration configuration, DataSource dataSource,
+      FilePath reportRoot, Recipe recipe) throws IOException, InterruptedException {
     this.name = recipe.getName();
     this.parent = parent;
 
-    this.recipeReport = new RecipeReportBuilder(configuration, dataSource)
-        .parse(recipe);
-
-    this.addAction(this.childActionStatementCoverage = new RecipeActionChild(
-        this, this.getReport().getStatementCoverage(),
-        "Statement Coverage", "statement_coverage", true));
-    this.addAction(this.childActionBranchCoverage = new RecipeActionChild(
-        this, this.getReport().getBranchCoverage(),
-        "Branch Coverage", "branch_coverage", true));
-    this.addAction(this.childActionMutationTests = new RecipeActionChild(
-        this, this.getReport().getMutationTests(),
-        "Mutation Tests", "mutation_tests", true));
-    this.addAction(this.childActionUnitTests = new RecipeActionChild(
-        this, this.getReport().getUnitTests(),
-        "Unit Tests", "unit_tests", true));
+    this.recipeReport =
+        new RecipeReportBuilder(configuration, dataSource, reportRoot).parse(recipe);
   }
 
   public BuildAction getParentAction() {
@@ -89,12 +87,6 @@ public class RecipeAction extends ActionParentBase implements Action {
     return this.name;
   }
 
-  @Override
-  public String getSearchUrl() {
-    return getUrlName();
-  }
-
-  @Override
   public Run<?, ?> getRun() {
     return this.parent.getRun();
   }
@@ -113,6 +105,78 @@ public class RecipeAction extends ActionParentBase implements Action {
         getStatementCoverageDelta(), getBranchCoverageDelta(), getMutationTestDelta());
   }
 
+  // persisted data is immutable after publish, so page-render reads are memoized
+  private transient JSONArray testSummaries;
+  private transient FileSummaryTableModel fileSummaryModel;
+
+  private JSONArray getTestSummaries() {
+    if (testSummaries == null) {
+      testSummaries = getReport().getUnitTests().getSummaries();
+    }
+    return testSummaries;
+  }
+
+  private FileSummaryTableModel getFileSummaryModel() {
+    if (fileSummaryModel == null) {
+      RecipeReport report = getReport();
+      fileSummaryModel = new FileSummaryTableModel("files",
+          report.getStatementCoverage().getSummaries(),
+          report.getBranchCoverage().getSummaries(),
+          report.getMutationTests().getSummaries());
+    }
+    return fileSummaryModel;
+  }
+
+  @Override
+  public TableModel getTableModel(String id) {
+    if ("unit_tests".equals(id)) {
+      RecipeReport report = getReport();
+      Map<String, Boolean> stored = new HashMap<>();
+      return new TestListTableModel(id, getTestSummaries(),
+          file -> stored.computeIfAbsent(file, report::hasFile));
+    }
+    if ("files".equals(id)) {
+      return getFileSummaryModel();
+    }
+    throw new IllegalArgumentException("Unknown table: " + id);
+  }
+
+  /**
+   * Returns the number of unit tests of this recipe.
+   *
+   * @return test count
+   */
+  public int getTestCount() {
+    return getTestSummaries().size();
+  }
+
+  /**
+   * Returns the number of failed or error unit tests of this recipe.
+   *
+   * @return failed test count
+   */
+  public long getFailedTestCount() {
+    return getTestSummaries().stream()
+        .map(o -> ((JSONObject) o).optString("status"))
+        .filter(status -> "FAILED".equals(status) || "ERROR".equals(status))
+        .count();
+  }
+
+  /**
+   * Returns the number of files known to any file-scoped metric.
+   *
+   * @return file count
+   */
+  public int getFileCount() {
+    return getFileSummaryModel().getFileCount();
+  }
+
+  @Override
+  @JavaScriptMethod
+  public String getTableRows(String id) {
+    return NativeTables.toJson(getTableModel(id).getRows());
+  }
+
   private RecipeReport getPreviousReport() {
     if (getParentAction().getPreviousBuildAction() != null) {
       List<RecipeAction> recipes =
@@ -126,29 +190,79 @@ public class RecipeAction extends ActionParentBase implements Action {
     return null;
   }
 
-  private double getRatioDelta(Function<RecipeReport, RecipeGroup> mapper) {
+  private Double getRatioDelta(Function<RecipeReport, RecipeGroup> mapper) {
     RecipeGroup previous = Optional.ofNullable(getPreviousReport()).map(mapper).orElse(null);
     RecipeGroup current = mapper.apply(getReport());
-    if (current == null) {
-      return 0;
+    if (current == null || previous == null) {
+      return null;
     }
-    return (previous != null) ? current.getEvaluation().getDouble("ratio")
-        - previous.getEvaluation().getDouble("ratio") : current.getEvaluation().getDouble("ratio");
+    return current.getEvaluation().getDouble("ratio")
+        - previous.getEvaluation().getDouble("ratio");
   }
 
-  public double getStatementCoverageDelta() {
+  // ratio delta, null when there is no reference build
+  public Double getStatementCoverageDelta() {
     return getRatioDelta(RecipeReport::getStatementCoverage);
   }
 
-  public double getBranchCoverageDelta() {
+  public Double getBranchCoverageDelta() {
     return getRatioDelta(RecipeReport::getBranchCoverage);
   }
 
-  public double getMutationTestDelta() {
+  public Double getMutationTestDelta() {
     return getRatioDelta(RecipeReport::getMutationTests);
   }
 
-  public double getTestDelta() {
+  public Double getTestDelta() {
     return getRatioDelta(RecipeReport::getUnitTests);
+  }
+
+  /**
+   * Returns the view model of the requested file, or null when unknown.
+   *
+   * @return file detail view
+   */
+  public FileDetailView getFileDetail() {
+    String file = Stapler.getCurrentRequest2().getParameter("name");
+    if (file == null || file.isEmpty()) {
+      return null;
+    }
+    RecipeReport report = getReport();
+    return FileDetailView.of(file,
+        FileDetailView.MetricData.of(
+            report.getStatementCoverage().getObjects(file),
+            report.getStatementCoverage().getSummaries()),
+        FileDetailView.MetricData.of(
+            report.getBranchCoverage().getObjects(file),
+            report.getBranchCoverage().getSummaries()),
+        FileDetailView.MetricData.of(
+            report.getMutationTests().getObjects(file),
+            report.getMutationTests().getSummaries()));
+  }
+
+  /**
+   * Returns the annotated source view of the requested file, or null when the source is
+   * not stored with this build (the page then falls back to the annotation summary).
+   *
+   * @return source annotation view or null
+   */
+  public SourceAnnotationView getSourceView() {
+    String file = Stapler.getCurrentRequest2().getParameter("name");
+    if (file == null || file.isEmpty()) {
+      return null;
+    }
+    RecipeReport report = getReport();
+    return SourceAnnotationView.of(file, report.readFile(file),
+        report.getStatementCoverage().getObjects(file),
+        report.getBranchCoverage().getObjects(file),
+        report.getMutationTests().getObjects(file));
+  }
+
+  /**
+   * Renders the per-file annotated source page.
+   */
+  public void doFile(StaplerRequest2 req, StaplerResponse2 res)
+      throws ServletException, IOException {
+    req.getView(this, "file.jelly").forward(req, res);
   }
 }
