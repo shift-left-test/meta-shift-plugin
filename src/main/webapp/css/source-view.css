@@ -1,0 +1,57 @@
+/* Annotated source view of the meta-shift report file page. */
+.msp-source {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.msp-source table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-family-mono, ui-monospace, monospace);
+  font-size: 0.8rem;
+  line-height: 1.8;
+}
+
+.msp-source td {
+  padding: 0 12px;
+  white-space: pre;
+}
+
+.msp-source .msp-num,
+.msp-source .msp-gutter {
+  width: 1%;
+  min-width: 44px;
+  text-align: right;
+  padding: 0 8px;
+  border-right: 1px solid #dee2e6;
+  background: rgba(0, 0, 0, 0.03);
+  color: #888;
+  user-select: none;
+}
+
+.msp-source .msp-gutter {
+  font-size: 0.7rem;
+}
+
+.msp-line--covered {
+  background-color: rgba(25, 135, 84, 0.12);
+}
+
+.msp-line--partial {
+  background-color: rgba(255, 193, 7, 0.18);
+}
+
+.msp-line--uncovered,
+.msp-row--survived {
+  background-color: rgba(220, 53, 69, 0.12);
+}
+
+.msp-legend {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #dee2e6;
+  vertical-align: -2px;
+}

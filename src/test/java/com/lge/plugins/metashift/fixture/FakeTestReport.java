@@ -24,25 +24,26 @@ public class FakeTestReport implements FakeReport {
     this.recipe = recipe;
   }
 
-  private void createPassedTestFile(File path) throws IOException {
+  private void createPassedTestFile(FakeSource source, File path) throws IOException {
     List<String> report = new ArrayList<>();
     report.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     report.add("<testsuites tests=\"1\" name=\"AllTests\">");
     report.add(String.format("<testsuite name=\"%s.Test\" tests=\"1\" >", recipe.getName()));
-    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\" />",
-        FakeRandom.nextString(), recipe.getName()));
+    report.add(String.format(
+        "<testcase name=\"%s\" classname=\"%s.Test\" file=\"%s\" line=\"1\" />",
+        FakeRandom.nextString(), recipe.getName(), source.getFile().getAbsolutePath()));
     report.add("</testsuite>");
     report.add("</testsuites>");
     FileUtils.writeLines(path, report);
   }
 
-  private void createFailedTestFile(File path) throws IOException {
+  private void createFailedTestFile(FakeSource source, File path) throws IOException {
     List<String> report = new ArrayList<>();
     report.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     report.add("<testsuites tests=\"1\" name=\"AllTests\">");
     report.add(String.format("<testsuite name=\"%s.Test\" tests=\"1\" >", recipe.getName()));
-    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\">",
-        FakeRandom.nextString(), recipe.getName()));
+    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\" file=\"%s\" line=\"1\">",
+        FakeRandom.nextString(), recipe.getName(), source.getFile().getAbsolutePath()));
     report.add("<failure message=\"failure_message\"><![CDATA[failure details]]></failure>");
     report.add("</testcase>");
     report.add("</testsuite>");
@@ -50,13 +51,13 @@ public class FakeTestReport implements FakeReport {
     FileUtils.writeLines(path, report);
   }
 
-  private void createErrorTestFile(File path) throws IOException {
+  private void createErrorTestFile(FakeSource source, File path) throws IOException {
     List<String> report = new ArrayList<>();
     report.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     report.add("<testsuites tests=\"1\" name=\"AllTests\">");
     report.add(String.format("<testsuite name=\"%s.Test\" tests=\"1\" >", recipe.getName()));
-    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\">",
-        FakeRandom.nextString(), recipe.getName()));
+    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\" file=\"%s\" line=\"1\">",
+        FakeRandom.nextString(), recipe.getName(), source.getFile().getAbsolutePath()));
     report.add("<error message=\"error_message\"/>");
     report.add("</testcase>");
     report.add("</testsuite>");
@@ -64,13 +65,13 @@ public class FakeTestReport implements FakeReport {
     FileUtils.writeLines(path, report);
   }
 
-  private void createSkippedTestFile(File path) throws IOException {
+  private void createSkippedTestFile(FakeSource source, File path) throws IOException {
     List<String> report = new ArrayList<>();
     report.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     report.add("<testsuites tests=\"1\" name=\"AllTests\">");
     report.add(String.format("<testsuite name=\"%s.Test\" tests=\"1\" >", recipe.getName()));
-    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\">",
-        FakeRandom.nextString(), recipe.getName()));
+    report.add(String.format("<testcase name=\"%s\" classname=\"%s.Test\" file=\"%s\" line=\"1\">",
+        FakeRandom.nextString(), recipe.getName(), source.getFile().getAbsolutePath()));
     report.add("<skipped><![CDATA[skipped details]]></skipped>");
     report.add("</testcase>");
     report.add("</testsuite>");
@@ -82,7 +83,7 @@ public class FakeTestReport implements FakeReport {
     String basename = FakeRandom.nextString();
     for (long i = 0; i < source.getTestPassed(); i++) {
       File path = FileUtils.getFile(report, String.format("passed_%s_%d.xml", basename, i));
-      createPassedTestFile(path);
+      createPassedTestFile(source, path);
     }
   }
 
@@ -90,7 +91,7 @@ public class FakeTestReport implements FakeReport {
     String basename = FakeRandom.nextString();
     for (long i = 0; i < source.getTestFailed(); i++) {
       File path = FileUtils.getFile(report, String.format("failed_%s_%d.xml", basename, i));
-      createFailedTestFile(path);
+      createFailedTestFile(source, path);
     }
   }
 
@@ -98,7 +99,7 @@ public class FakeTestReport implements FakeReport {
     String basename = FakeRandom.nextString();
     for (long i = 0; i < source.getTestError(); i++) {
       File path = FileUtils.getFile(report, String.format("error_%s_%d.xml", basename, i));
-      createErrorTestFile(path);
+      createErrorTestFile(source, path);
     }
   }
 
@@ -106,7 +107,7 @@ public class FakeTestReport implements FakeReport {
     String basename = FakeRandom.nextString();
     for (long i = 0; i < source.getTestSkipped(); i++) {
       File path = FileUtils.getFile(report, String.format("skipped_%s_%d.xml", basename, i));
-      createSkippedTestFile(path);
+      createSkippedTestFile(source, path);
     }
   }
 

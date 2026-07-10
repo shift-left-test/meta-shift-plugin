@@ -73,17 +73,34 @@ public final class TableHtml {
   }
 
   /**
-   * Builds a Bootstrap progress bar whose width is the ratio rendered as an integer percent.
+   * Builds a progress bar coloured by the qualification status (light green when qualified,
+   * light red otherwise) with an always-visible label overlaid on the track.
    *
-   * @param ratio value in [0, 1]
+   * @param ratio     value in [0, 1]
+   * @param qualified qualification status of the metric for this row
+   * @param label     visible label, HTML-escaped by the caller when needed
    * @return progress bar HTML
    */
-  public static String progressBar(double ratio) {
+  public static String progressBar(double ratio, boolean qualified, String label) {
     int percent = percent(ratio);
-    return "<div class=\"progress\">"
-        + "<div class=\"progress-bar\" role=\"progressbar\" style=\"width:" + percent + "%\" "
-        + "aria-valuenow=\"" + percent + "\" aria-valuemin=\"0\" aria-valuemax=\"100\">"
-        + percent + "%</div></div>";
+    String color = qualified ? "success" : "danger";
+    return "<div class=\"progress position-relative\" role=\"progressbar\" aria-valuenow=\""
+        + percent + "\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"height: 16px;\">"
+        + "<div class=\"progress-bar bg-" + color + " bg-opacity-25\" style=\"width:"
+        + percent + "%\"></div>"
+        + "<span class=\"position-absolute top-50 start-0 translate-middle-y ps-2 small"
+        + " text-body\">" + label + "</span></div>";
+  }
+
+  /**
+   * Builds a progress bar whose label is the integer percent.
+   *
+   * @param ratio     value in [0, 1]
+   * @param qualified qualification status of the metric for this row
+   * @return progress bar HTML
+   */
+  public static String progressBar(double ratio, boolean qualified) {
+    return progressBar(ratio, qualified, percent(ratio) + "%");
   }
 
   /**
@@ -93,8 +110,20 @@ public final class TableHtml {
    * @return indicator HTML
    */
   public static String qualifiedIcon(boolean qualified) {
+    return qualifiedIcon(qualified, "");
+  }
+
+  /**
+   * Builds the qualified-status indicator with a trailing label, e.g. "✔ 3/3".
+   *
+   * @param qualified qualification status
+   * @param label     visible label, HTML-escaped by the caller when needed
+   * @return indicator HTML
+   */
+  public static String qualifiedIcon(boolean qualified, String label) {
+    String suffix = label.isEmpty() ? "" : " " + label;
     return qualified
-        ? "<span class=\"text-success\">✔</span>"
-        : "<span class=\"text-danger\">✘</span>";
+        ? "<span class=\"text-success\">✔" + suffix + "</span>"
+        : "<span class=\"text-danger\">✘" + suffix + "</span>";
   }
 }

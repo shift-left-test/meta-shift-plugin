@@ -6,15 +6,18 @@
 package com.lge.plugins.metashift.builders;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
-import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Distribution;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
+import com.lge.plugins.metashift.models.StatementCoverageData;
 import com.lge.plugins.metashift.parsers.FileParser;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ConfigurationUtils;
@@ -41,9 +44,9 @@ public class RecipeReportBuilderTest {
 
   @Rule
   public final TemporaryFolder folder = new TemporaryFolder();
+  private Configuration configuration;
+  private DataSource dataSource;
   private RecipeReport report;
-  private String RECIPE1;
-  private String RECIPE2;
   private String FILE1;
   private String FILE2;
 
@@ -54,45 +57,33 @@ public class RecipeReportBuilderTest {
     createReports(source, report);
     Recipes recipes = new FileParser().parse(new FilePath(report));
     Recipe recipe = recipes.get(0);
-    Configuration configuration = ConfigurationUtils.of(50, 5, false);
-    DataSource dataSource = new DataSource(new FilePath(folder.newFolder()));
+    configuration = ConfigurationUtils.of(50, 5, false);
+    dataSource = new DataSource(new FilePath(folder.newFolder()));
     new ProjectReportBuilder(configuration, dataSource).parse(recipes);
-    this.report = new RecipeReportBuilder(configuration, dataSource)
-        .parse(recipe);
+    this.report =
+        new RecipeReportBuilder(configuration, dataSource, new FilePath(report)).parse(recipe);
   }
 
   private void createReports(File source, File report) throws IOException {
-    FakeScript script1 = new FakeScript(1);
-    FakeScript script2 = new FakeScript(20);
     FakeSource source1 = new FakeSource(1, 1, 0, 0);
     FakeSource source2 = new FakeSource(20, 10, 10, 10);
 
     FakeReportBuilder fakeReportBuilder = new FakeReportBuilder();
     fakeReportBuilder.add(new FakeRecipe(source, RECIPE + "-1.0.0-r0")
-        .setPremirror(1, 3)
-        .setSharedState(1, 3)
-        .add(script1.setIssues(1, 1, 1))
         .add(source1
-            .setCodeViolations(1, 1, 1)
-            .setComplexity(10, 1, 0)
             .setTests(1, 1, 1, 1)
             .setStatementCoverage(2, 1)
             .setBranchCoverage(1, 1)
             .setMutationTests(1, 1, 1))
-        .add(script2.setIssues(2, 2, 2))
         .add(source2
-            .setCodeViolations(2, 2, 2)
-            .setComplexity(10, 10, 10)
             .setTests(2, 0, 0, 0)
             .setStatementCoverage(0, 2)
             .setBranchCoverage(0, 2)
             .setMutationTests(2, 0, 0)));
     fakeReportBuilder.toFile(report);
 
-    RECIPE1 = script1.getAbsolutePath();
-    RECIPE2 = script2.getAbsolutePath();
-    FILE1 = source1.getAbsolutePath();
-    FILE2 = source2.getAbsolutePath();
+    FILE1 = source1.getFilename();
+    FILE2 = source2.getFilename();
   }
 
   private JSONObject newEvaluation(boolean available, long denominator, long numerator,
@@ -109,14 +100,6 @@ public class RecipeReportBuilderTest {
     return o;
   }
 
-  private JSONObject newStatistics(double value) {
-    JSONObject o = new JSONObject();
-    o.put("min", value);
-    o.put("average", value);
-    o.put("max", value);
-    return o;
-  }
-
   private JSONObject newDistribution(long first, long second, long third, long fourth) {
     return JSONObject.fromObject(new Distribution(first, second, third, fourth));
   }
@@ -129,7 +112,6 @@ public class RecipeReportBuilderTest {
   public void testGetUnitTests() {
     RecipeGroup group = report.getUnitTests();
     assertEquals(newEvaluation(true, 6, 3, true, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.5), group.getStatistics());
     assertEquals(newDistribution(3, 1, 1, 1), group.getDistribution());
     assertEquals(6, group.getSummaries().size());
   }
@@ -138,7 +120,6 @@ public class RecipeReportBuilderTest {
   public void testGetStatementCoverage() {
     RecipeGroup group = report.getStatementCoverage();
     assertEquals(newEvaluation(true, 8, 3, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.375), group.getStatistics());
     assertEquals(newDistribution(3, 5, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.6, summaries.get(0).getDouble("ratio"), 0.01);
@@ -151,7 +132,6 @@ public class RecipeReportBuilderTest {
   public void testGetBranchCoverage() {
     RecipeGroup group = report.getBranchCoverage();
     assertEquals(newEvaluation(true, 4, 1, false, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.25), group.getStatistics());
     assertEquals(newDistribution(1, 3, 0, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.5, summaries.get(0).getDouble("ratio"), 0.01);
@@ -164,7 +144,6 @@ public class RecipeReportBuilderTest {
   public void testGetMutationTests() {
     RecipeGroup group = report.getMutationTests();
     assertEquals(newEvaluation(true, 5, 3, true, 0.5, 0, "POSITIVE"), group.getEvaluation());
-    assertEquals(newStatistics(0.6), group.getStatistics());
     assertEquals(newDistribution(3, 1, 1, 0), group.getDistribution());
     List<JSONObject> summaries = toList(group.getSummaries());
     assertEquals(0.3333333333333333,
@@ -172,5 +151,92 @@ public class RecipeReportBuilderTest {
     assertEquals(1.0, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(3, group.getObjects(FILE1).size());
     assertEquals(2, group.getObjects(FILE2).size());
+  }
+
+  @Test
+  public void testStoresSourceFilesOfReportedFiles() throws Exception {
+    File source = new File(folder.newFolder(), "source");
+    File reportDir = new File(folder.newFolder(), "report");
+    FakeRecipe fakeRecipe = new FakeRecipe(source);
+    FakeSource fakeSource = new FakeSource(fakeRecipe, 10, 5, 5, 0)
+        .setStatementCoverage(1, 1).setMutationTests(1, 0, 0).setTests(1, 0, 0, 0);
+    fakeRecipe.add(fakeSource);
+    new FakeReportBuilder().add(fakeRecipe).toFile(reportDir);
+    Recipe recipe = new FileParser().parse(new FilePath(reportDir)).get(0);
+
+    new RecipeReportBuilder(configuration, dataSource, new FilePath(reportDir)).parse(recipe);
+
+    String stored = dataSource.get("RECIPE", "NONE", "FILE",
+        recipe.getName(), fakeSource.getFilename());
+    assertNotNull(stored);
+    assertTrue(stored.contains(FakeSource.SOURCE_LINE));
+  }
+
+  @Test
+  public void testSkipsSourceLargerThanCap() throws Exception {
+    File source = new File(folder.newFolder(), "source");
+    File reportDir = new File(folder.newFolder(), "report");
+    FakeRecipe fakeRecipe = new FakeRecipe(source);
+    // over 1MB: 12 bytes ("HELLO WORLD\n") x 100,000 lines
+    FakeSource fakeSource = new FakeSource(fakeRecipe, 100000, 5, 5, 0)
+        .setStatementCoverage(1, 1);
+    fakeRecipe.add(fakeSource);
+    new FakeReportBuilder().add(fakeRecipe).toFile(reportDir);
+    Recipe recipe = new FileParser().parse(new FilePath(reportDir)).get(0);
+
+    new RecipeReportBuilder(configuration, dataSource, new FilePath(reportDir)).parse(recipe);
+
+    assertNull(dataSource.get("RECIPE", "NONE", "FILE",
+        recipe.getName(), fakeSource.getFilename()));
+  }
+
+  @Test
+  public void testSkipsSourceStorageWithoutSourceDir() throws Exception {
+    File source = new File(folder.newFolder(), "source");
+    File reportDir = new File(folder.newFolder(), "report");
+    FakeRecipe fakeRecipe = new FakeRecipe(source);
+    FakeSource fakeSource = new FakeSource(fakeRecipe, 10, 5, 5, 0)
+        .setStatementCoverage(1, 1);
+    fakeRecipe.add(fakeSource);
+    new FakeReportBuilder().add(fakeRecipe).toFile(reportDir);
+    Recipe recipe = new FileParser().parse(new FilePath(reportDir)).get(0);
+    recipe.setSourceDir(null);
+
+    new RecipeReportBuilder(configuration, dataSource, new FilePath(reportDir)).parse(recipe);
+
+    assertNull(dataSource.get("RECIPE", "NONE", "FILE",
+        recipe.getName(), fakeSource.getFilename()));
+  }
+
+  @Test
+  public void testSkipsAbsolutePathsOutsideSourceRoot() throws Exception {
+    // files still absolute after relativization live outside S and are not stored
+    File source = new File(folder.newFolder(), "source");
+    Recipe recipe = new Recipe("outside");
+    recipe.setSourceDir(source.getAbsolutePath());
+    recipe.add(new StatementCoverageData("outside", "/etc/passwd", 1, true));
+    recipe.add(StatementCoverageData.class);
+
+    new RecipeReportBuilder(configuration, dataSource, new FilePath(folder.newFolder()))
+        .parse(recipe);
+
+    assertNull(dataSource.get("RECIPE", "NONE", "FILE", "outside", "/etc/passwd"));
+  }
+
+  @Test
+  public void testSkipsPathTraversalOutsideSourceRoot() throws Exception {
+    File source = new File(folder.newFolder(), "source");
+    File secret = new File(source.getParentFile(), "secret.txt");
+    org.apache.commons.io.FileUtils.writeStringToFile(secret, "top secret",
+        java.nio.charset.StandardCharsets.UTF_8);
+    Recipe recipe = new Recipe("traversal");
+    recipe.setSourceDir(source.getAbsolutePath());
+    recipe.add(new StatementCoverageData("traversal", "../secret.txt", 1, true));
+    recipe.add(StatementCoverageData.class);
+
+    new RecipeReportBuilder(configuration, dataSource, new FilePath(folder.newFolder()))
+        .parse(recipe);
+
+    assertNull(dataSource.get("RECIPE", "NONE", "FILE", "traversal", "../secret.txt"));
   }
 }

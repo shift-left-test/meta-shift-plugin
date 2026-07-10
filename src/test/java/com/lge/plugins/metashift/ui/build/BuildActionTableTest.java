@@ -10,7 +10,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
-import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
 import com.lge.plugins.metashift.ui.tables.EvaluationSummaryTableModel;
@@ -55,7 +54,6 @@ public class BuildActionTableTest {
     project.getPublishersList().add(new MetaShiftPublisher(report.getName()));
 
     fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
@@ -75,7 +73,7 @@ public class BuildActionTableTest {
     List<String> headers = action.getTableModel("recipe-list").getColumns().stream()
         .map(TableColumn::getHeaderLabel).collect(Collectors.toList());
     assertEquals(List.of("Recipes", "Unit Tests", "Statement Coverage", "Branch Coverage",
-        "Mutation Tests"), headers);
+        "Mutation Tests", "Qualified"), headers);
 
     JSONArray rows = JSONArray.fromObject(action.getTableRows("recipe-list"));
     assertEquals(1, rows.size());
@@ -94,6 +92,30 @@ public class BuildActionTableTest {
       assertTrue(content.contains("id=\"recipe-list\""));
       assertTrue(content.contains("Unit Tests"));
       assertTrue(content.contains("Statement Coverage"));
+    }
+  }
+
+  @Test
+  public void testOverviewShowsAttentionStrip() throws Exception {
+    try (JenkinsRule.WebClient wc = jenkins.createWebClient()) {
+      wc.getOptions().setThrowExceptionOnScriptError(false);
+      HtmlPage page = wc.getPage(run, "meta-shift-report/");
+      String content = page.getWebResponse().getContentAsString();
+      assertTrue(content.contains("Recipes needing attention"));
+    }
+  }
+
+  @Test
+  public void testBuildPageSummaryShowsAllMetrics() throws Exception {
+    try (JenkinsRule.WebClient wc = jenkins.createWebClient()) {
+      wc.getOptions().setThrowExceptionOnScriptError(false);
+      HtmlPage page = wc.getPage(run);
+      String content = page.getWebResponse().getContentAsString();
+      assertTrue(content.contains("qualified"));
+      assertTrue(content.contains("Unit Tests"));
+      assertTrue(content.contains("Statement Coverage"));
+      assertTrue(content.contains("Branch Coverage"));
+      assertTrue(content.contains("Mutation Tests"));
     }
   }
 }

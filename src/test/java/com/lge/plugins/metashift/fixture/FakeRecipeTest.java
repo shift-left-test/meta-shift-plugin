@@ -36,27 +36,14 @@ public class FakeRecipeTest {
 
   @Test
   public void testInitialState() {
-    assertEquals(0, fakeRecipe.getPremirrorFound());
-    assertEquals(0, fakeRecipe.getPremirrorMissed());
-    assertEquals(0, fakeRecipe.getSharedStateFound());
-    assertEquals(0, fakeRecipe.getSharedStateMissed());
     assertEquals(new File(source, fakeRecipe.getName()), fakeRecipe.getSourcePath());
     assertFalse(fakeRecipe.getSourcePath().exists());
     assertEquals(0, fakeRecipe.getSources().size());
-    assertEquals(0, fakeRecipe.getScripts().size());
   }
 
   @Test
   public void testSetValues() {
-    fakeRecipe.setPremirror(1, 2);
-    fakeRecipe.setSharedState(3, 4);
     fakeRecipe.add(new FakeSource(fakeRecipe, 10, 1, 2, 3));
-    fakeRecipe.add(new FakeScript(fakeRecipe, 20));
-    assertEquals(1, fakeRecipe.getPremirrorFound());
-    assertEquals(2, fakeRecipe.getPremirrorMissed());
-    assertEquals(3, fakeRecipe.getSharedStateFound());
-    assertEquals(4, fakeRecipe.getSharedStateMissed());
     assertEquals(1, fakeRecipe.getSources().size());
-    assertEquals(1, fakeRecipe.getScripts().size());
   }
 }

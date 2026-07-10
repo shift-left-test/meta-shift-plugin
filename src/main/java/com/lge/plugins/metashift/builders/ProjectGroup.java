@@ -41,15 +41,6 @@ public class ProjectGroup extends Group {
   }
 
   /**
-   * Returns the statistics result.
-   *
-   * @return statistics result
-   */
-  public JSONObject getStatistics() {
-    return getOrDefault(Data.STATISTICS, new JSONObject());
-  }
-
-  /**
    * Returns the distribution result.
    *
    * @return distribution result

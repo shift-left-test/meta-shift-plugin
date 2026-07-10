@@ -10,7 +10,6 @@ import static org.junit.Assert.assertEquals;
 import com.lge.plugins.metashift.builders.RecipeReport;
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
-import com.lge.plugins.metashift.fixture.FakeScript;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
@@ -69,7 +68,6 @@ public class RecipeActionTest {
   @Test
   public void testCreate() throws Exception {
     fakeRecipe
-        .add(new FakeScript(10, 1, 2, 3))
         .add(new FakeSource(10, 4, 5, 6)
             .setTests(1, 2, 3, 4)
             .setStatementCoverage(1, 2)
@@ -93,26 +91,6 @@ public class RecipeActionTest {
     assertValues(recipeReport.getBranchCoverage().getEvaluation(), true, true, 0.4, 7, 3, 0.42);
     assertValues(recipeReport.getMutationTests().getEvaluation(), false, true, 0.85, 6, 1, 0.16);
     assertValues(recipeReport.getUnitTests().getEvaluation(), false, true, 0.95, 10, 1, 0.1);
-
-    JSONObject branchCoverageStatistics = recipeReport.getBranchCoverage().getStatistics();
-    assertEquals(0.42, branchCoverageStatistics.getDouble("average"), 0.01);
-    assertEquals(0.42, branchCoverageStatistics.getDouble("min"), 0.01);
-    assertEquals(0.42, branchCoverageStatistics.getDouble("max"), 0.01);
-
-    JSONObject mutationTestStatistics = recipeReport.getMutationTests().getStatistics();
-    assertEquals(0.16, mutationTestStatistics.getDouble("average"), 0.01);
-    assertEquals(0.16, mutationTestStatistics.getDouble("min"), 0.01);
-    assertEquals(0.16, mutationTestStatistics.getDouble("max"), 0.01);
-
-    JSONObject statementCoverageStatistics = recipeReport.getStatementCoverage().getStatistics();
-    assertEquals(0.4, statementCoverageStatistics.getDouble("average"), 0.01);
-    assertEquals(0.4, statementCoverageStatistics.getDouble("min"), 0.01);
-    assertEquals(0.4, statementCoverageStatistics.getDouble("max"), 0.01);
-
-    JSONObject testStatistics = recipeReport.getUnitTests().getStatistics();
-    assertEquals(0.1, testStatistics.getDouble("average"), 0.01);
-    assertEquals(0.1, testStatistics.getDouble("min"), 0.01);
-    assertEquals(0.1, testStatistics.getDouble("max"), 0.01);
   }
 
 }

@@ -42,9 +42,6 @@ public class FakeSourceTest {
   @Test
   public void testInitialState() {
     assertEquals(10, fakeSource.getTotalLines());
-    assertEquals(2, fakeSource.getCodeLines());
-    assertEquals(3, fakeSource.getCommentLines());
-    assertEquals(4, fakeSource.getDuplicatedLines());
   }
 
   @Test

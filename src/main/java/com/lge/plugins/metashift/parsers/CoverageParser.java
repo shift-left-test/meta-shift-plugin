@@ -67,8 +67,9 @@ public class CoverageParser extends Parser {
       SimpleXmlParser parser = new SimpleXmlParser(report);
       List<CoverageData> objects = new ArrayList<>();
 
+      String sourceRoot = readSourceRoot(path.child("coverage"));
       for (Tag tag : parser.getChildNodes("class")) {
-        String filename = tag.getAttribute("filename");
+        String filename = relativize(sourceRoot, tag.getAttribute("filename"));
         if (isHidden(filename)) {
           continue;
         }

@@ -47,13 +47,6 @@ public abstract class Group implements Serializable {
   public abstract JSONObject getEvaluation();
 
   /**
-   * Returns the statistics result.
-   *
-   * @return statistics result
-   */
-  public abstract JSONObject getStatistics();
-
-  /**
    * Returns the distribution result.
    *
    * @return distribution result
@@ -63,10 +56,6 @@ public abstract class Group implements Serializable {
   private <T> T getOrDefault(T defaultValue, String... names) {
     T o = dataSource.get(names);
     return Optional.ofNullable(o).orElse(defaultValue);
-  }
-
-  protected <T> T getOrDefault(Scope scope, Data data, T defaultValue) {
-    return getOrDefault(defaultValue, scope.name(), metric.name(), data.name());
   }
 
   protected <T> T getOrDefault(Data data, T defaultValue) {
@@ -79,9 +68,5 @@ public abstract class Group implements Serializable {
 
   protected <T> T getOrDefault(Data data, String recipe, String file, T defaultValue) {
     return getOrDefault(defaultValue, scope.name(), metric.name(), data.name(), recipe, file);
-  }
-
-  protected String readFile(String recipe, String file) {
-    return getOrDefault("", scope.name(), Metric.NONE.name(), Data.FILE.name(), recipe, file);
   }
 }

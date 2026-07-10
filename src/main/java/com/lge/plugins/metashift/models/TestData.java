@@ -51,6 +51,16 @@ public abstract class TestData extends Data {
   private final Status status;
 
   /**
+   * Represents the source file of the test, empty when unknown.
+   */
+  private final String file;
+
+  /**
+   * Represents the line number of the test in the source file, 0 when unknown.
+   */
+  private final long line;
+
+  /**
    * Default constructor.
    *
    * @param recipe  name
@@ -61,10 +71,28 @@ public abstract class TestData extends Data {
    */
   public TestData(final String recipe, final String suite, final String test,
       final String message, final Status status) {
+    this(recipe, suite, test, message, "", 0, status);
+  }
+
+  /**
+   * Default constructor.
+   *
+   * @param recipe  name
+   * @param suite   name
+   * @param test    name
+   * @param message of the test
+   * @param file    source file of the test, empty when unknown
+   * @param line    line number of the test, 0 when unknown
+   * @param status  of the test
+   */
+  public TestData(final String recipe, final String suite, final String test,
+      final String message, final String file, final long line, final Status status) {
     super(recipe);
     this.suite = suite;
     this.test = test;
     this.message = message;
+    this.file = file;
+    this.line = line;
     this.status = status;
   }
 
@@ -131,5 +159,23 @@ public abstract class TestData extends Data {
    */
   public final String getStatus() {
     return status.name();
+  }
+
+  /**
+   * Returns the source file of the test.
+   *
+   * @return source file path, empty when unknown
+   */
+  public final String getFile() {
+    return file;
+  }
+
+  /**
+   * Returns the line number of the test.
+   *
+   * @return line number, 0 when unknown
+   */
+  public final long getLine() {
+    return line;
   }
 }

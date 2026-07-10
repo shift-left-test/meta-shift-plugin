@@ -36,7 +36,6 @@ public class Constants {
    */
   enum Data {
     EVALUATION,
-    STATISTICS,
     DISTRIBUTION,
     SUMMARIES,
     OBJECTS,

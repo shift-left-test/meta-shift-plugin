@@ -44,20 +44,8 @@
       <artifactId>echarts-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>font-awesome-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>jquery3-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jackson2-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>snakeyaml-api</artifactId>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -70,10 +58,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>bootstrap5-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>prism-api</artifactId>
     </dependency>
     <dependency>
       <groupId>jakarta.servlet</groupId>
@@ -203,62 +187,6 @@
             <outputFormat>HTML</outputFormat>
             <outputFormat>XML</outputFormat>
           </outputFormats>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.11.3</version>
-        <executions>
-          <execution>
-            <id>install node and npm</id>
-            <goals>
-              <goal>install-node-and-npm</goal>
-            </goals>
-            <phase>generate-resources</phase>
-          </execution>
-          <execution>
-            <id>npm install</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <arguments>install</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>webpack build</id>
-            <goals>
-              <goal>webpack</goal>
-            </goals>
-            <phase>generate-resources</phase>
-          </execution>
-          <execution>
-            <id>frontend lint</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <phase>generate-test-resources</phase>
-            <configuration>
-              <arguments>run lint</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>frontend test</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <phase>test</phase>
-            <configuration>
-              <arguments>t</arguments>
-            </configuration>
-          </execution>
-        </executions>
-        <configuration>
-          <workingDirectory>src/main/frontend</workingDirectory>
-          <nodeVersion>v12.20.0</nodeVersion>
-          <npmVersion>6.14.12</npmVersion>
         </configuration>
       </plugin>
       <plugin>

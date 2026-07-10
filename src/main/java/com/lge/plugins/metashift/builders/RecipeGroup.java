@@ -45,15 +45,6 @@ public class RecipeGroup extends Group {
   }
 
   /**
-   * Returns the statistics result.
-   *
-   * @return statistics result
-   */
-  public JSONObject getStatistics() {
-    return getOrDefault(Scope.PROJECT, Data.STATISTICS, new JSONObject());
-  }
-
-  /**
    * Returns the distribution result.
    *
    * @return distribution result
@@ -79,15 +70,5 @@ public class RecipeGroup extends Group {
    */
   public JSONArray getObjects(String file) {
     return getOrDefault(Data.OBJECTS, recipe, file, new JSONArray());
-  }
-
-  /**
-   * Returns the content of the file.
-   *
-   * @param file name
-   * @return content of the file
-   */
-  public String readFile(String file) {
-    return readFile(recipe, file);
   }
 }

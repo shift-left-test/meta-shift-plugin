@@ -1,0 +1,117 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+  <l:layout title="meta-shift report">
+    <st:include it="${it.run}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
+      <link rel="stylesheet" type="text/css"
+            href="${rootURL}/plugin/meta-shift/css/source-view.css"/>
+      <j:set var="v" value="${it.fileDetail}"/>
+      <j:set var="s" value="${it.sourceView}"/>
+      <j:choose>
+        <j:when test="${v == null and s == null}">
+          <div class="alert alert-warning mt-3">
+            The requested file was not found in this report.
+            <a class="alert-link" href=".">Back to ${it.displayName}</a>
+          </div>
+        </j:when>
+        <j:otherwise>
+          <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+            <a href=".">&#8592; ${it.displayName}</a>
+            <span class="h5 mb-0 font-monospace">${s != null ? s.file : v.file}</span>
+            <j:if test="${v != null}">
+              <j:forEach var="badge" items="${v.badges}">
+                <span class="badge ${badge.color}">${badge.name} ${badge.ratioText}</span>
+              </j:forEach>
+            </j:if>
+          </div>
+          <j:choose>
+            <j:when test="${s != null}">
+              <div class="d-flex flex-wrap gap-3 small text-muted mb-2 align-items-center">
+                <span><span class="msp-legend msp-line--covered"></span> Covered</span>
+                <span><span class="msp-legend msp-line--uncovered"></span> Uncovered</span>
+                <span><span class="msp-legend msp-line--partial"></span> Partial branch</span>
+                <span><span class="badge text-bg-danger">M</span> Survived mutant</span>
+                <span><span class="badge text-bg-success">M</span> Killed mutant</span>
+              </div>
+              <div class="msp-source">
+                <table>
+                  <tbody>
+                    <j:forEach var="line" items="${s.lines}">
+                      <tr class="${line.stateClass}">
+                        <td class="msp-num" id="L${line.number}">${line.number}</td>
+                        <td class="msp-gutter">${line.branchText}</td>
+                        <td>${line.text}<j:forEach var="marker" items="${line.markers}"
+                          ><a class="badge ${marker.badgeClass} ms-2 text-decoration-none"
+                              href="#M${marker.index}">M ${marker.mutator}</a></j:forEach></td>
+                      </tr>
+                    </j:forEach>
+                  </tbody>
+                </table>
+              </div>
+            </j:when>
+            <j:otherwise>
+              <div class="text-muted small mb-3">
+                Source is not stored for this build; showing the annotation summary.
+              </div>
+              <j:if test="${v.statementDataAvailable}">
+                <h2 class="h6">Uncovered statement lines</h2>
+                <p class="font-monospace">
+                  <j:choose>
+                    <j:when test="${empty(v.uncoveredStatementLines)}">None</j:when>
+                    <j:otherwise>${v.uncoveredStatementLines}</j:otherwise>
+                  </j:choose>
+                </p>
+              </j:if>
+              <j:if test="${v.branchDataAvailable}">
+                <h2 class="h6 mt-4">Partially covered branches</h2>
+                <j:choose>
+                  <j:when test="${v.uncoveredBranches.isEmpty()}">
+                    <p class="font-monospace">None</p>
+                  </j:when>
+                  <j:otherwise>
+                    <ul class="font-monospace list-unstyled">
+                      <j:forEach var="line" items="${v.uncoveredBranches}">
+                        <li>${line}</li>
+                      </j:forEach>
+                    </ul>
+                  </j:otherwise>
+                </j:choose>
+              </j:if>
+            </j:otherwise>
+          </j:choose>
+          <j:set var="mutations" value="${s != null ? s.mutations : v.mutations}"/>
+          <j:if test="${!mutations.isEmpty()}">
+            <h2 class="h6 mt-4">Mutations</h2>
+            <table class="jenkins-table">
+              <thead>
+                <tr>
+                  <th>Line</th><th>Status</th><th>Mutator</th>
+                  <th>Method</th><th>Killing Test</th>
+                </tr>
+              </thead>
+              <tbody>
+                <j:forEach var="m" items="${mutations}" varStatus="loop">
+                  <tr id="M${loop.index}" class="${m.rowClass}">
+                    <td>
+                      <j:choose>
+                        <j:when test="${s != null}">
+                          <a href="#L${m.line}">${m.line}</a>
+                        </j:when>
+                        <j:otherwise>${m.line}</j:otherwise>
+                      </j:choose>
+                    </td>
+                    <td><span class="badge ${m.badgeClass}">${m.status}</span></td>
+                    <td>${m.mutator}</td>
+                    <td class="font-monospace">${m.mutatedClass}::${m.mutatedMethod}</td>
+                    <td>${m.killingTest}</td>
+                  </tr>
+                </j:forEach>
+              </tbody>
+            </table>
+          </j:if>
+        </j:otherwise>
+      </j:choose>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

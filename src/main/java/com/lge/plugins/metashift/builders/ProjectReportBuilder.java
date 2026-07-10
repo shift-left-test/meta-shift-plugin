@@ -19,7 +19,6 @@ import com.lge.plugins.metashift.analysis.MutationTestCounter;
 import com.lge.plugins.metashift.analysis.MutationTestEvaluator;
 import com.lge.plugins.metashift.analysis.StatementCoverageCounter;
 import com.lge.plugins.metashift.analysis.StatementCoverageEvaluator;
-import com.lge.plugins.metashift.analysis.StatisticsCollector;
 import com.lge.plugins.metashift.analysis.UnitTestCounter;
 import com.lge.plugins.metashift.analysis.UnitTestEvaluator;
 import com.lge.plugins.metashift.builders.Constants.Data;
@@ -31,7 +30,6 @@ import com.lge.plugins.metashift.models.Distribution;
 import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.EvaluationSummary;
 import com.lge.plugins.metashift.models.Recipes;
-import com.lge.plugins.metashift.models.Statistics;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils.Function;
@@ -71,8 +69,6 @@ public class ProjectReportBuilder implements Builder<Recipes, ProjectReport> {
       Aggregator<DataSummary> aggregator, Recipes recipes) throws IOException {
     Evaluation evaluation = evaluator.parse(recipes);
     put(metric, Data.EVALUATION, JSONObject.fromObject(evaluation));
-    Statistics statistics = new StatisticsCollector(evaluator).parse(recipes);
-    put(metric, Data.STATISTICS, JSONObject.fromObject(statistics));
     Distribution distribution = counter.parse(recipes);
     put(metric, Data.DISTRIBUTION, JSONObject.fromObject(distribution));
     List<DataSummary> summaries = aggregator.parse(recipes);

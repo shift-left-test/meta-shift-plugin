@@ -36,7 +36,6 @@ public class ProjectReportTest {
 
   private void assertValues(ProjectGroup group) {
     assertEquals(new JSONObject(), group.getEvaluation());
-    assertEquals(new JSONObject(), group.getStatistics());
     assertEquals(new JSONObject(), group.getDistribution());
     assertEquals(new JSONArray(), group.getSummaries());
   }

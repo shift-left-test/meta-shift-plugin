@@ -1,18 +1,16 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
-  xmlns:c="/charts">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
   <l:layout title="meta-shift report">
     <st:include it="${it.project}" page="sidepanel.jelly"/>
     <l:main-panel>
-      <div class="metashift">
-        <div class="page">
-          <div class="h2">Page Not Found</div>
-          <p>The meta-shift report you were looking for could not be found. It might have been
-            removed, or did not exist in the first place.
-          </p>
-        </div>
-      </div>
+      <h2>No meta-shift report yet</h2>
+      <p>No build of this job has produced a meta-shift report so far. This page will show
+        the latest report once one is available.</p>
+      <ul>
+        <li>Check that the <b>meta-shift report</b> post-build action is configured with a
+          valid report root path.</li>
+        <li>Run a build. Reports are not published for builds that finished as FAILURE.</li>
+      </ul>
     </l:main-panel>
   </l:layout>
 </j:jelly>

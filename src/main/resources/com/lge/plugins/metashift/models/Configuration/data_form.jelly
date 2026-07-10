@@ -27,11 +27,6 @@
     .input {
     display: inline;
     }
-    .tolerance {
-    padding-left: 20px;
-    width: 200px;
-    display: inline-block;
-    }
   </style>
   <f:entry title="Adequacy Criteria" field="configuration">
     <div class="evaluate-header"><b>Unstable</b>
@@ -44,9 +39,6 @@
     </div>
     <div class="input">
       <b>Threshold</b>
-    </div>
-    <div class="tolerance">
-      <b>Tolerance</b>
     </div>
   </f:entry>
   <f:entry field="UnitTest">

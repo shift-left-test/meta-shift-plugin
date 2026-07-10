@@ -67,9 +67,10 @@ public class TestParser extends Parser {
       if (files.length == 0) {
         return;
       }
+      String sourceRoot = readSourceRoot(path.child("test"));
       for (FilePath file : files) {
         try {
-          objects.addAll(parseFile(path.getName(), file));
+          objects.addAll(parseFile(path.getName(), sourceRoot, file));
         } catch (ParserConfigurationException | SAXException e) {
           throw new IllegalArgumentException("Failed to parse: " + file, e);
         }
@@ -86,22 +87,24 @@ public class TestParser extends Parser {
   /**
    * Parses the report file to create list of test data.
    *
-   * @param recipe name
-   * @param file   report file
+   * @param recipe     name
+   * @param sourceRoot source root path, nullable
+   * @param file       report file
    * @return a list of test data objects
    * @throws ParserConfigurationException if failed to parse the xml files
    * @throws IOException                  if failed to parse the xml files
    * @throws SAXException                 if failed to parse the xml files
    * @throws InterruptedException         if an interruption occurs
    */
-  private static Collection<? extends TestData> parseFile(final String recipe, final FilePath file)
+  private Collection<? extends TestData> parseFile(final String recipe, final String sourceRoot,
+      final FilePath file)
       throws ParserConfigurationException, IOException, SAXException, InterruptedException {
     List<TestData> list = new ArrayList<>();
     SimpleXmlParser parser = new SimpleXmlParser(file);
     for (Tag testsuite : parser.getChildNodes("testsuite")) {
       String suite = testsuite.getAttribute("name");
       for (Tag testcase : testsuite.getChildNodes("testcase")) {
-        list.add(createInstance(recipe, suite, testcase));
+        list.add(createInstance(recipe, suite, sourceRoot, testcase));
       }
     }
     return list;
@@ -110,30 +113,46 @@ public class TestParser extends Parser {
   /**
    * Creates a test data instance using the given tag.
    *
-   * @param recipe   name
-   * @param suite    name
-   * @param testcase object
+   * @param recipe     name
+   * @param suite      name
+   * @param sourceRoot source root path, nullable
+   * @param testcase   object
    * @return a test data object
    */
-  private static TestData createInstance(final String recipe, final String suite,
-      final Tag testcase) throws SAXException {
+  private TestData createInstance(final String recipe, final String suite,
+      final String sourceRoot, final Tag testcase) throws SAXException {
     String name = testcase.getAttribute("name");
+    String file = relativize(sourceRoot, testcase.getAttribute("file", ""));
+    long line;
+    try {
+      line = Long.parseLong(testcase.getAttribute("line", "0"));
+    } catch (NumberFormatException ignored) {
+      line = 0;
+    }
     for (Tag tag : testcase.getChildNodes()) {
-      String message = tag.getAttribute("message", tag.getTextContent());
-      message = StringUtils.removeStart(message, "<![CDATA[");
-      message = StringUtils.removeEnd(message, "]]>");
-      String status = tag.getTagName();
-      switch (status.toLowerCase()) {
+      String status = tag.getTagName().toLowerCase();
+      switch (status) {
         case "failure":
-          return new FailedTestData(recipe, suite, name, message);
+          return new FailedTestData(recipe, suite, name, message(tag), file, line);
         case "error":
-          return new ErrorTestData(recipe, suite, name, message);
+          return new ErrorTestData(recipe, suite, name, message(tag), file, line);
         case "skipped":
-          return new SkippedTestData(recipe, suite, name, message);
+          return new SkippedTestData(recipe, suite, name, message(tag), file, line);
+        case "system-out":
+        case "system-err":
+        case "properties":
+          // standard JUnit children that do not carry the test status
+          continue;
         default:
           throw new SAXException("Unknown status tag: " + status);
       }
     }
-    return new PassedTestData(recipe, suite, name, "");
+    return new PassedTestData(recipe, suite, name, "", file, line);
+  }
+
+  private static String message(final Tag tag) {
+    String message = tag.getAttribute("message", tag.getTextContent());
+    message = StringUtils.removeStart(message, "<![CDATA[");
+    return StringUtils.removeEnd(message, "]]>");
   }
 }
