@@ -63,6 +63,24 @@ public class SourceAnnotationViewTest {
   }
 
   @Test
+  public void testHitsTextShowsCountOnlyForMeasuredLines() {
+    SourceAnnotationView view = SourceAnnotationView.of("a.cpp", "int a;\nint b;\n",
+        JSONArray.fromObject("[{'line':2,'covered':true,'hits':7}]"),
+        new JSONArray(), new JSONArray());
+    // line 1 has no statement coverage data at all -> empty, not "×0"
+    assertEquals("", view.getLines().get(0).getHitsText());
+    assertEquals("×7", view.getLines().get(1).getHitsText());
+  }
+
+  @Test
+  public void testHitsTextIsZeroForAnUncoveredMeasuredLine() {
+    SourceAnnotationView view = SourceAnnotationView.of("a.cpp", "int a;\n",
+        JSONArray.fromObject("[{'line':1,'covered':false,'hits':0}]"),
+        new JSONArray(), new JSONArray());
+    assertEquals("×0", view.getLines().get(0).getHitsText());
+  }
+
+  @Test
   public void testCoveredLineWithoutBranchesIsGreen() {
     SourceAnnotationView view = SourceAnnotationView.of("a.cpp", "int a;\n",
         JSONArray.fromObject("[{'line':1,'covered':true}]"), new JSONArray(), new JSONArray());

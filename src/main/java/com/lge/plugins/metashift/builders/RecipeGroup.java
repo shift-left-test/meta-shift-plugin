@@ -71,4 +71,14 @@ public class RecipeGroup extends Group {
   public JSONArray getObjects(String file) {
     return getOrDefault(Data.OBJECTS, recipe, file, new JSONArray());
   }
+
+  /**
+   * Returns every object of this metric, flattened across files. Only populated for
+   * {@code MUTATION_TESTS} (see {@code RecipeReportBuilder.addMutationTests}).
+   *
+   * @return list of objects
+   */
+  public JSONArray getAllObjects() {
+    return getOrDefault(Data.FLAT_OBJECTS, recipe, new JSONArray());
+  }
 }

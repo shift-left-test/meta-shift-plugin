@@ -53,6 +53,7 @@ public class SourceAnnotationView {
     }
     Map<Long, long[]> statementByLine = FileDetailView.coveredTotalsByLine(statements);
     Map<Long, long[]> branchByLine = FileDetailView.coveredTotalsByLine(branches);
+    Map<Long, Long> hitsByLine = hitsByLine(statements);
     List<MutationDetail> details = FileDetailView.toMutationDetails(mutations);
     Map<Long, List<Marker>> markersByLine = markersByLine(details);
 
@@ -66,9 +67,26 @@ public class SourceAnnotationView {
       lines.add(new Line(number, texts[i],
           stateOf(statementByLine.get(number), branchByLine.get(number)),
           branchTextOf(branchByLine.get(number)),
+          hitsByLine.get(number),
           markersByLine.getOrDefault(number, List.of())));
     }
     return new SourceAnnotationView(file, lines, details);
+  }
+
+  /**
+   * Maps each line to its statement execution count ({@code hits}), the highest reported value
+   * when the report lists a line more than once.
+   *
+   * @param statements statement coverage OBJECTS rows
+   * @return hits per line, absent for lines with no statement coverage data
+   */
+  private static Map<Long, Long> hitsByLine(JSONArray statements) {
+    Map<Long, Long> byLine = new HashMap<>();
+    for (Object o : statements) {
+      JSONObject data = (JSONObject) o;
+      byLine.merge(data.optLong("line"), data.optLong("hits", 0), Long::max);
+    }
+    return byLine;
   }
 
   private static Map<Long, List<Marker>> markersByLine(List<MutationDetail> details) {
@@ -125,13 +143,16 @@ public class SourceAnnotationView {
     private final String text;
     private final String stateClass;
     private final String branchText;
+    private final Long hits;
     private final List<Marker> markers;
 
-    Line(long number, String text, String stateClass, String branchText, List<Marker> markers) {
+    Line(long number, String text, String stateClass, String branchText, Long hits,
+        List<Marker> markers) {
       this.number = number;
       this.text = text;
       this.stateClass = stateClass;
       this.branchText = branchText;
+      this.hits = hits;
       this.markers = markers;
     }
 
@@ -149,6 +170,17 @@ public class SourceAnnotationView {
 
     public String getBranchText() {
       return branchText;
+    }
+
+    /**
+     * Statement execution count, e.g. {@code "×7"}. Empty when this line has no statement
+     * coverage data (not a line gcov/gcovr measured, e.g. a comment or blank line) -
+     * distinct from an actually-uncovered line, which reports {@code "×0"}.
+     *
+     * @return hits text, empty when this line has no statement coverage data
+     */
+    public String getHitsText() {
+      return hits == null ? "" : "×" + hits;
     }
 
     public List<Marker> getMarkers() {

@@ -41,7 +41,9 @@ public class EvaluationSummaryCollector implements Collector<Recipe, EvaluationS
 
   @Override
   public EvaluationSummary parse(Recipe recipe) {
-    return createEvaluationSummary(recipe.getName(), recipe);
+    EvaluationSummary summary = createEvaluationSummary(recipe.getName(), recipe);
+    summary.setVersion(recipe.getVersion());
+    return summary;
   }
 
   @SuppressWarnings("PMD.UnusedPrivateMethod")

@@ -123,21 +123,20 @@ public class TestParser extends Parser {
       final String sourceRoot, final Tag testcase) throws SAXException {
     String name = testcase.getAttribute("name");
     String file = relativize(sourceRoot, testcase.getAttribute("file", ""));
-    long line;
-    try {
-      line = Long.parseLong(testcase.getAttribute("line", "0"));
-    } catch (NumberFormatException ignored) {
-      line = 0;
-    }
+    long line = parseLong(testcase.getAttribute("line", "0"));
+    double duration = parseDouble(testcase.getAttribute("time", "0"));
     for (Tag tag : testcase.getChildNodes()) {
       String status = tag.getTagName().toLowerCase();
       switch (status) {
         case "failure":
-          return new FailedTestData(recipe, suite, name, message(tag), file, line);
+          return withDuration(
+              new FailedTestData(recipe, suite, name, message(tag), file, line), duration);
         case "error":
-          return new ErrorTestData(recipe, suite, name, message(tag), file, line);
+          return withDuration(
+              new ErrorTestData(recipe, suite, name, message(tag), file, line), duration);
         case "skipped":
-          return new SkippedTestData(recipe, suite, name, message(tag), file, line);
+          return withDuration(
+              new SkippedTestData(recipe, suite, name, message(tag), file, line), duration);
         case "system-out":
         case "system-err":
         case "properties":
@@ -147,7 +146,28 @@ public class TestParser extends Parser {
           throw new SAXException("Unknown status tag: " + status);
       }
     }
-    return new PassedTestData(recipe, suite, name, "", file, line);
+    return withDuration(new PassedTestData(recipe, suite, name, "", file, line), duration);
+  }
+
+  private static <T extends TestData> T withDuration(final T data, final double duration) {
+    data.setDuration(duration);
+    return data;
+  }
+
+  private static long parseLong(final String value) {
+    try {
+      return Long.parseLong(value);
+    } catch (NumberFormatException ignored) {
+      return 0;
+    }
+  }
+
+  private static double parseDouble(final String value) {
+    try {
+      return Double.parseDouble(value);
+    } catch (NumberFormatException ignored) {
+      return 0;
+    }
   }
 
   private static String message(final Tag tag) {

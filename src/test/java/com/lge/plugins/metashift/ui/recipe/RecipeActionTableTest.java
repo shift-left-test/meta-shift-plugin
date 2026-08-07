@@ -15,6 +15,7 @@ import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
 import com.lge.plugins.metashift.ui.tables.FileSummaryTableModel;
+import com.lge.plugins.metashift.ui.tables.MutationListTableModel;
 import com.lge.plugins.metashift.ui.tables.TestListTableModel;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -101,6 +102,18 @@ public class RecipeActionTableTest {
     assertTrue(action.getTableModel("unit_tests") instanceof TestListTableModel);
     JSONArray rows = JSONArray.fromObject(action.getTableRows("unit_tests"));
     assertTrue(rows.size() >= 1);
+    assertTrue(rows.getJSONObject(0).getJSONObject("status").getString("display")
+        .contains("badge"));
+  }
+
+  @Test
+  public void testMutationListTableModel() {
+    RecipeAction action = recipeAction();
+
+    assertTrue(action.getTableModel("mutations") instanceof MutationListTableModel);
+    assertEquals(6, action.getMutationCount());
+    JSONArray rows = JSONArray.fromObject(action.getTableRows("mutations"));
+    assertEquals(6, rows.size());
     assertTrue(rows.getJSONObject(0).getJSONObject("status").getString("display")
         .contains("badge"));
   }

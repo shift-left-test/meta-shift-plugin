@@ -6,6 +6,7 @@
 package com.lge.plugins.metashift.ui.project;
 
 import com.lge.plugins.metashift.builders.ProjectReport;
+import com.lge.plugins.metashift.ui.MetricView;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
@@ -13,11 +14,8 @@ import hudson.model.ProminentProjectAction;
 import hudson.model.Result;
 import hudson.model.Run;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.kohsuke.stapler.StaplerRequest2;
-import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
@@ -87,15 +85,59 @@ public class MetaShiftProjectAction implements ProminentProjectAction,
     return null;
   }
 
+  private static final int MAX_RECENT_BUILDS = 20;
+
   /**
-   * redirect to build action page.
+   * Returns the most recent builds with a report, newest first, for the recent-builds table on
+   * the trend page. Uses the same not-failed/has-report walk as
+   * {@link #getConfigurableBuildTrendModel}, but keeps build order (newest first) since this
+   * feeds a table rather than a chart.
+   *
+   * @return recent build rows, newest first
    */
-  public void doIndex(StaplerRequest2 req, StaplerResponse2 rsp) throws IOException {
-    Integer buildNumber = getLastResultBuildNumber();
-    if (buildNumber == null) {
-      rsp.sendRedirect2("nodata");
-    } else {
-      rsp.sendRedirect2("../" + buildNumber + "/meta-shift-report");
+  public List<BuildRow> getRecentBuilds() {
+    List<BuildRow> rows = new ArrayList<>();
+    for (Run<?, ?> b = project.getParent().getLastSuccessfulBuild();
+        b != null && rows.size() < MAX_RECENT_BUILDS; b = b.getPreviousNotFailedBuild()) {
+      if (b.getResult() == Result.FAILURE) {
+        continue;
+      }
+      BuildAction action = b.getAction(BuildAction.class);
+      if (action == null || action.getReport() == null) {
+        continue;
+      }
+      rows.add(new BuildRow(b.getNumber(), b.getDisplayName(),
+          MetricView.cardsFor(action.getReport(), null, null, null, null)));
+    }
+    return rows;
+  }
+
+  /**
+   * One row of the recent-builds table: a build and its four metric cards (deltas not computed,
+   * since the table already shows one row per build).
+   */
+  public static final class BuildRow {
+
+    private final int number;
+    private final String displayName;
+    private final List<MetricView> cards;
+
+    BuildRow(int number, String displayName, List<MetricView> cards) {
+      this.number = number;
+      this.displayName = displayName;
+      this.cards = cards;
+    }
+
+    public int getNumber() {
+      return number;
+    }
+
+    public String getDisplayName() {
+      return displayName;
+    }
+
+    public List<MetricView> getCards() {
+      return cards;
     }
   }
 

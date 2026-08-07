@@ -108,6 +108,13 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
   private final Group mutationTests;
 
   /**
+   * Represents the version of the recipe, empty for the project-wide aggregate row and for
+   * builds published before 0.9.0. Display-only, set after construction like
+   * {@code Recipe.setVersion}.
+   */
+  private String version = "";
+
+  /**
    * Default constructor.
    *
    * @param name              of the data
@@ -169,5 +176,23 @@ public class EvaluationSummary extends Data implements Aggregate<EvaluationSumma
   @Override
   public Group getMutationTests() {
     return mutationTests;
+  }
+
+  /**
+   * Returns the version of the recipe.
+   *
+   * @return version string, empty when unknown
+   */
+  public String getVersion() {
+    return version;
+  }
+
+  /**
+   * Sets the version of the recipe.
+   *
+   * @param version to set
+   */
+  public void setVersion(String version) {
+    this.version = version;
   }
 }

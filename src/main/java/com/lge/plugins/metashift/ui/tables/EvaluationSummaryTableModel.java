@@ -60,6 +60,8 @@ public class EvaluationSummaryTableModel extends TableModel {
     List<TableColumn> columns = new ArrayList<>();
     columns.add(new ColumnBuilder().withHeaderLabel("Recipes")
         .withDataPropertyKey("name").withType(ColumnType.STRING).withDetailedCell().build());
+    columns.add(new ColumnBuilder().withHeaderLabel("Version")
+        .withDataPropertyKey("version").withType(ColumnType.STRING).build());
     for (Metric metric : METRICS) {
       columns.add(new ColumnBuilder().withHeaderLabel(metric.header)
           .withDataPropertyKey(metric.key).withType(ColumnType.NUMBER)
@@ -100,6 +102,10 @@ public class EvaluationSummaryTableModel extends TableModel {
       String name = data.getString("name");
       String anchor = TableHtml.anchor(Util.rawEncode(name), name);
       return new DetailedCell<>(anchor, name);
+    }
+
+    public String getVersion() {
+      return data.optString("version", "");
     }
 
     public DetailedCell<Double> getUnitTests() {

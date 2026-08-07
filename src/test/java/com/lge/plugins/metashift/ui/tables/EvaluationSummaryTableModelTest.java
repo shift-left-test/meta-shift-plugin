@@ -32,6 +32,7 @@ public class EvaluationSummaryTableModelTest {
   private EvaluationSummaryTableModel model() {
     JSONObject row = new JSONObject();
     row.put("name", "A-1.0.0-r0");
+    row.put("version", "1.0.0");
     row.put("unitTests", metric(true, 0.9, true));
     row.put("statementCoverage", metric(true, 0.4, false));
     row.put("branchCoverage", metric(false, 0.0, false));
@@ -45,8 +46,8 @@ public class EvaluationSummaryTableModelTest {
   public void testColumns() {
     List<String> headers = model().getColumns().stream()
         .map(TableColumn::getHeaderLabel).collect(Collectors.toList());
-    assertEquals(List.of("Recipes", "Unit Tests", "Statement Coverage", "Branch Coverage",
-        "Mutation Tests", "Qualified"), headers);
+    assertEquals(List.of("Recipes", "Version", "Unit Tests", "Statement Coverage",
+        "Branch Coverage", "Mutation Tests", "Qualified"), headers);
     assertEquals("recipe-list", model().getId());
   }
 
@@ -86,6 +87,7 @@ public class EvaluationSummaryTableModelTest {
 
     assertEquals("A-1.0.0-r0", row.getName().getSort());
     assertTrue(row.getName().getDisplay().contains("href=\"A-1.0.0-r0\""));
+    assertEquals("1.0.0", row.getVersion());
 
     assertEquals(0.9, row.getUnitTests().getSort(), 0.001);
     assertTrue(row.getUnitTests().getDisplay().contains("90%"));

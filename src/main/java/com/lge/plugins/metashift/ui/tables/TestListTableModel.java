@@ -29,18 +29,34 @@ public class TestListTableModel extends TableModel {
   private final String id;
   private final JSONArray summaries;
   private final Predicate<String> hasSource;
+  private final boolean includeRecipeColumn;
 
   /**
-   * Default constructor.
+   * Default constructor, for the single-recipe list on the recipe page.
    *
    * @param id        table id
    * @param summaries TestData rows
    * @param hasSource tests whether the source of a file is stored with the build
    */
   public TestListTableModel(String id, JSONArray summaries, Predicate<String> hasSource) {
+    this(id, summaries, hasSource, false);
+  }
+
+  /**
+   * Default constructor.
+   *
+   * @param id                  table id
+   * @param summaries           TestData rows, possibly spanning multiple recipes
+   * @param hasSource           tests whether the source of a file is stored with the build
+   * @param includeRecipeColumn true to add a Recipe column linking to each row's recipe page,
+   *                            for the project-wide list on the build page
+   */
+  public TestListTableModel(String id, JSONArray summaries, Predicate<String> hasSource,
+      boolean includeRecipeColumn) {
     this.id = id;
     this.summaries = summaries;
     this.hasSource = hasSource;
+    this.includeRecipeColumn = includeRecipeColumn;
   }
 
   @Override
@@ -51,10 +67,14 @@ public class TestListTableModel extends TableModel {
   @Override
   public List<TableColumn> getColumns() {
     List<TableColumn> columns = new ArrayList<>();
+    if (includeRecipeColumn) {
+      columns.add(new ColumnBuilder().withHeaderLabel("Recipe")
+          .withDataPropertyKey("recipe").withType(ColumnType.STRING).withDetailedCell().build());
+    }
     columns.add(new ColumnBuilder().withHeaderLabel("Suite")
         .withDataPropertyKey("suite").withType(ColumnType.STRING).build());
-    // Second column: the data-tables default order ([[1,'asc']]) sorts the numeric
-    // status rank, surfacing FAILED/ERROR rows first.
+    // Without the Recipe column, this is index 1: the data-tables default order
+    // ([[1,'asc']]) sorts by this numeric status rank, surfacing FAILED/ERROR rows first.
     columns.add(new ColumnBuilder().withHeaderLabel("Status")
         .withDataPropertyKey("status").withType(ColumnType.NUMBER).withDetailedCell().build());
     columns.add(new ColumnBuilder().withHeaderLabel("Name")
@@ -95,6 +115,16 @@ public class TestListTableModel extends TableModel {
 
     public String getSuite() {
       return data.optString("suite");
+    }
+
+    /**
+     * Recipe name cell, linking to that recipe's page. Only rendered when the table includes
+     * the Recipe column (the project-wide list on the build page).
+     */
+    public DetailedCell<String> getRecipe() {
+      String recipe = data.optString("name");
+      return new DetailedCell<>(
+          TableHtml.anchor(Util.rawEncode(recipe) + "/", recipe), recipe);
     }
 
     /**

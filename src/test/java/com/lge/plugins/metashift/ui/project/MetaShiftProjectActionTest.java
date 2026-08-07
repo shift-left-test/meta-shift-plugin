@@ -100,4 +100,34 @@ public class MetaShiftProjectActionTest {
       assertTrue(content.contains("echarts-trend"));
     }
   }
+
+  @Test
+  public void testGetRecentBuildsNewestFirst() throws Exception {
+    configureReport();
+    jenkins.buildAndAssertStatus(Result.SUCCESS, project);
+    jenkins.buildAndAssertStatus(Result.SUCCESS, project);
+
+    MetaShiftProjectAction action = project.getAction(MetaShiftProjectAction.class);
+    List<MetaShiftProjectAction.BuildRow> rows = action.getRecentBuilds();
+    assertEquals(2, rows.size());
+    assertEquals(2, rows.get(0).getNumber());
+    assertEquals(1, rows.get(1).getNumber());
+    assertEquals(4, rows.get(0).getCards().size());
+  }
+
+  @Test
+  public void testProjectActionPageRendersTrendAndRecentBuilds() throws Exception {
+    configureReport();
+    jenkins.buildAndAssertStatus(Result.SUCCESS, project);
+
+    try (JenkinsRule.WebClient wc = jenkins.createWebClient()) {
+      wc.getOptions().setThrowExceptionOnScriptError(false);
+      HtmlPage page = wc.getPage(project, "meta-shift-report/");
+      String content = page.getWebResponse().getContentAsString();
+      assertTrue(content.contains("Recent builds"));
+      assertTrue(content.contains("Latest report"));
+      assertTrue(content.contains("echarts-trend"));
+    }
+  }
+
 }

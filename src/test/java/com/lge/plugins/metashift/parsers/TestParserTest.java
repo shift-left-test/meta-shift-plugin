@@ -242,6 +242,27 @@ public class TestParserTest {
   }
 
   @Test
+  public void testParseReadsTimeAttributeAsDuration() throws Exception {
+    File directory = utils.createDirectory("report", "G-1.0.0-r0");
+    builder
+        .append("<testsuites>")
+        .append("  <testsuite name='A'>")
+        .append("    <testcase name='test1' time='0.125'/>")
+        .append("    <testcase name='test2'>")
+        .append("      <failure message='failure' time='2.5'/>")
+        .append("    </testcase>")
+        .append("    <testcase name='test3'/>")
+        .append("  </testsuite>")
+        .append("</testsuites>");
+    utils.writeLines(builder, directory, "test", "1.xml");
+    parse(directory);
+    List<TestData> objects = dataList.objects(TestData.class).collect(Collectors.toList());
+    assertEquals(0.125, objects.get(0).getDuration(), 0.0001);
+    assertEquals(0, objects.get(1).getDuration(), 0.0001);
+    assertEquals(0, objects.get(2).getDuration(), 0.0001);
+  }
+
+  @Test
   public void testParseReadsFileAndLineAttributes() throws Exception {
     File source = utils.createDirectory("source");
     File report = utils.createDirectory("report");

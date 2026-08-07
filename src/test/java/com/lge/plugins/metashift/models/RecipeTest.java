@@ -32,6 +32,16 @@ public class RecipeTest {
   @Test
   public void testInitialState() {
     assertEquals("A-1.0.0-r0", origin.getName());
+    assertEquals("", origin.getVersion());
+    assertEquals("", origin.getReportDir());
+  }
+
+  @Test
+  public void testSetVersionAndReportDir() {
+    origin.setVersion("1.0.0-r0");
+    origin.setReportDir("A-1.0.0-r0");
+    assertEquals("1.0.0-r0", origin.getVersion());
+    assertEquals("A-1.0.0-r0", origin.getReportDir());
   }
 
   @Test

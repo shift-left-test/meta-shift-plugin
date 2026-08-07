@@ -151,6 +151,7 @@ public class RecipeReportBuilderTest {
     assertEquals(1.0, summaries.get(1).getDouble("ratio"), 0.01);
     assertEquals(3, group.getObjects(FILE1).size());
     assertEquals(2, group.getObjects(FILE2).size());
+    assertEquals(5, group.getAllObjects().size());
   }
 
   @Test

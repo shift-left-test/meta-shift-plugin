@@ -14,9 +14,11 @@ import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.ui.MetricView;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.ui.tables.FileSummaryTableModel;
+import com.lge.plugins.metashift.ui.tables.MutationListTableModel;
 import com.lge.plugins.metashift.ui.tables.NativeTables;
 import com.lge.plugins.metashift.ui.tables.TestListTableModel;
 import hudson.FilePath;
+import hudson.Util;
 import hudson.model.Action;
 import hudson.model.Run;
 import io.jenkins.plugins.datatables.AsyncTableContentProvider;
@@ -50,6 +52,13 @@ public class RecipeAction implements Action, AsyncTableContentProvider {
   @Exported(visibility = 999)
   public String name;
 
+  /**
+   * Version and report directory of the recipe, display-only (see {@code Recipe.getVersion()}).
+   * Null on builds published before 0.9.0; getters below fall back to "" for those.
+   */
+  private final String version;
+  private final String reportDir;
+
   private final RecipeReport recipeReport;
 
   /**
@@ -59,6 +68,8 @@ public class RecipeAction implements Action, AsyncTableContentProvider {
       FilePath reportRoot, Recipe recipe) throws IOException, InterruptedException {
     this.name = recipe.getName();
     this.parent = parent;
+    this.version = recipe.getVersion();
+    this.reportDir = recipe.getReportDir();
 
     this.recipeReport =
         new RecipeReportBuilder(configuration, dataSource, reportRoot).parse(recipe);
@@ -70,6 +81,45 @@ public class RecipeAction implements Action, AsyncTableContentProvider {
 
   public String getName() {
     return this.name;
+  }
+
+  /**
+   * Returns the version of the recipe, empty on builds published before 0.9.0.
+   *
+   * @return version string
+   */
+  public String getVersion() {
+    return version == null ? "" : version;
+  }
+
+  /**
+   * Returns the report directory name of the recipe, empty on builds published before 0.9.0.
+   *
+   * @return report directory name
+   */
+  public String getReportDir() {
+    return reportDir == null ? "" : reportDir;
+  }
+
+  /**
+   * Tests whether the raw HTML report of the given task is archived with this build.
+   *
+   * @param task task name ({@code test}, {@code coverage} or {@code checktest})
+   * @return true when the report is available
+   */
+  public boolean hasHtmlReport(String task) {
+    String dir = getReportDir();
+    return !dir.isEmpty() && getParentAction().hasHtmlReport(dir, task);
+  }
+
+  /**
+   * Returns the URL of the raw HTML report of the given task, relative to this recipe's page.
+   *
+   * @param task task name ({@code test}, {@code coverage} or {@code checktest})
+   * @return relative URL
+   */
+  public String getHtmlReportUrl(String task) {
+    return "../html/" + Util.rawEncode(getReportDir()) + "/" + task + "/index.html";
   }
 
   @Override
@@ -138,7 +188,19 @@ public class RecipeAction implements Action, AsyncTableContentProvider {
     if ("files".equals(id)) {
       return getFileSummaryModel();
     }
+    if ("mutations".equals(id)) {
+      return new MutationListTableModel(id, getReport().getMutationTests().getAllObjects());
+    }
     throw new IllegalArgumentException("Unknown table: " + id);
+  }
+
+  /**
+   * Returns the number of mutations of this recipe.
+   *
+   * @return mutation count
+   */
+  public int getMutationCount() {
+    return getReport().getMutationTests().getAllObjects().size();
   }
 
   /**

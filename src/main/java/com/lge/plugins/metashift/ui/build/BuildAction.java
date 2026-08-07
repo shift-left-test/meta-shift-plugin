@@ -12,11 +12,14 @@ import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.ui.HtmlReportServer;
 import com.lge.plugins.metashift.ui.MetricView;
 import com.lge.plugins.metashift.ui.project.MetaShiftProjectAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import com.lge.plugins.metashift.ui.tables.EvaluationSummaryTableModel;
+import com.lge.plugins.metashift.ui.tables.MutationListTableModel;
 import com.lge.plugins.metashift.ui.tables.NativeTables;
+import com.lge.plugins.metashift.ui.tables.TestListTableModel;
 import hudson.FilePath;
 import hudson.Functions;
 import hudson.model.Action;
@@ -37,6 +40,7 @@ import io.jenkins.plugins.datatables.TableModel;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
@@ -196,6 +200,37 @@ public class BuildAction extends Actionable
         .filter(card -> !card.isQualified()).collect(Collectors.toList());
   }
 
+  private transient HtmlReportServer htmlReportServer;
+
+  private HtmlReportServer getHtmlReportServer() {
+    if (htmlReportServer == null) {
+      htmlReportServer = new HtmlReportServer(getRun().getRootDir());
+    }
+    return htmlReportServer;
+  }
+
+  /**
+   * Serves the raw meta-shift HTML report archived with this build, under
+   * {@code meta-shift-report/html/}.
+   *
+   * @param req stapler request
+   * @param rsp stapler response
+   */
+  public void doHtml(StaplerRequest2 req, StaplerResponse2 rsp) throws IOException {
+    getHtmlReportServer().serve(req, rsp);
+  }
+
+  /**
+   * Tests whether the raw HTML report of the given recipe task is archived with this build.
+   *
+   * @param reportDir report directory name of the recipe ({@code Recipe.getReportDir()})
+   * @param task      task name ({@code test}, {@code coverage} or {@code checktest})
+   * @return true when the report is available
+   */
+  public boolean hasHtmlReport(String reportDir, String task) {
+    return getHtmlReportServer().hasFile(reportDir + "/" + task + "/index.html");
+  }
+
   /**
    * context menu provider.
    */
@@ -235,9 +270,120 @@ public class BuildAction extends Actionable
     return this.recipeActions;
   }
 
+  /**
+   * Row cap for the project-wide Tests/Mutations tabs: a very large project could otherwise
+   * push thousands of rows into a single ajax response. {@link #isFailedTestsTruncated()} and
+   * {@link #isSurvivedMutationsTruncated()} report when this cap was hit, so the page can say
+   * so instead of silently looking complete.
+   */
+  private static final int MAX_LISTED_ROWS = 2000;
+
+  // persisted data is immutable after publish, so page-render reads are memoized
+  private transient JSONArray failedTestSummaries;
+  private transient JSONArray survivedMutationSummaries;
+
+  /**
+   * Returns the failed/error unit tests of every recipe, for the build-wide Tests tab.
+   *
+   * @return failed/error TestData rows, each carrying its recipe name
+   */
+  private JSONArray getFailedTestSummaries() {
+    if (failedTestSummaries == null) {
+      JSONArray all = new JSONArray();
+      for (RecipeAction recipe : getRecipes()) {
+        for (Object o : recipe.getReport().getUnitTests().getSummaries()) {
+          JSONObject row = (JSONObject) o;
+          String status = row.optString("status");
+          if ("FAILED".equals(status) || "ERROR".equals(status)) {
+            all.add(row);
+          }
+        }
+      }
+      failedTestSummaries = all;
+    }
+    return failedTestSummaries;
+  }
+
+  /**
+   * Returns the survived mutations of every recipe, for the build-wide Mutations tab.
+   *
+   * @return survived MutationTestData rows, each carrying its recipe name
+   */
+  private JSONArray getSurvivedMutationSummaries() {
+    if (survivedMutationSummaries == null) {
+      JSONArray all = new JSONArray();
+      for (RecipeAction recipe : getRecipes()) {
+        for (Object o : recipe.getReport().getMutationTests().getAllObjects()) {
+          JSONObject row = (JSONObject) o;
+          if ("SURVIVED".equals(row.optString("status"))) {
+            all.add(row);
+          }
+        }
+      }
+      survivedMutationSummaries = all;
+    }
+    return survivedMutationSummaries;
+  }
+
+  private static JSONArray limited(JSONArray array) {
+    if (array.size() <= MAX_LISTED_ROWS) {
+      return array;
+    }
+    JSONArray limited = new JSONArray();
+    for (int i = 0; i < MAX_LISTED_ROWS; i++) {
+      limited.add(array.get(i));
+    }
+    return limited;
+  }
+
+  /**
+   * Number of failed/error unit tests across every recipe.
+   *
+   * @return failed/error test count
+   */
+  public int getFailedTestCount() {
+    return getFailedTestSummaries().size();
+  }
+
+  /**
+   * Whether the build-wide Tests tab was capped at {@link #MAX_LISTED_ROWS}.
+   *
+   * @return true when rows were dropped
+   */
+  public boolean isFailedTestsTruncated() {
+    return getFailedTestSummaries().size() > MAX_LISTED_ROWS;
+  }
+
+  /**
+   * Number of survived mutations across every recipe.
+   *
+   * @return survived mutation count
+   */
+  public int getSurvivedMutationCount() {
+    return getSurvivedMutationSummaries().size();
+  }
+
+  /**
+   * Whether the build-wide Mutations tab was capped at {@link #MAX_LISTED_ROWS}.
+   *
+   * @return true when rows were dropped
+   */
+  public boolean isSurvivedMutationsTruncated() {
+    return getSurvivedMutationSummaries().size() > MAX_LISTED_ROWS;
+  }
+
   @Override
   public TableModel getTableModel(String id) {
-    return new EvaluationSummaryTableModel(id, getRecipeSummaries());
+    switch (id) {
+      case "recipe-list":
+        return new EvaluationSummaryTableModel(id, getRecipeSummaries());
+      case "tests":
+        return new TestListTableModel(id, limited(getFailedTestSummaries()), file -> false, true);
+      case "mutations":
+        return new MutationListTableModel(id, limited(getSurvivedMutationSummaries()), true);
+      default:
+        throw new IllegalArgumentException("Unknown table: " + id);
+    }
   }
 
   @Override

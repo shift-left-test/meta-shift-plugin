@@ -101,8 +101,11 @@ public class CoverageParser extends Parser {
     }
     try {
       long lineNumber = Long.parseLong(line.getAttribute("number", "0"));
-      boolean covered = Long.parseLong(line.getAttribute("hits", "0")) > 0;
-      list.add(new StatementCoverageData(recipe, filename, lineNumber, covered));
+      long hits = Long.parseLong(line.getAttribute("hits", "0"));
+      StatementCoverageData statement =
+          new StatementCoverageData(recipe, filename, lineNumber, hits > 0);
+      statement.setHits(hits);
+      list.add(statement);
 
       if (line.hasAttribute("condition-coverage")) {
         Pattern pattern = Pattern.compile("(\\d+)/(\\d+)");

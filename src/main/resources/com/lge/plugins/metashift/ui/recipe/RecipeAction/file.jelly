@@ -40,7 +40,7 @@
                     <j:forEach var="line" items="${s.lines}">
                       <tr class="${line.stateClass}">
                         <td class="msp-num" id="L${line.number}">${line.number}</td>
-                        <td class="msp-gutter">${line.branchText}</td>
+                        <td class="msp-gutter">${line.branchText} ${line.hitsText}</td>
                         <td>${line.text}<j:forEach var="marker" items="${line.markers}"
                           ><a class="badge ${marker.badgeClass} ms-2 text-decoration-none"
                               href="#M${marker.index}">M ${marker.mutator}</a></j:forEach></td>

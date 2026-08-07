@@ -45,6 +45,20 @@ public class EvaluationSummaryTest {
     assertEquals(0.8, summary.getStatementCoverage().getRatio(), 0.01);
     assertEquals(0.9, summary.getBranchCoverage().getRatio(), 0.01);
     assertEquals(1.0, summary.getMutationTests().getRatio(), 0.01);
+    assertEquals("", summary.getVersion());
+  }
+
+  @Test
+  public void testSetVersion() {
+    EvaluationSummary summary = new EvaluationSummary(
+        RECIPE,
+        newEvaluation(true, 10, 7, 0.5),
+        newEvaluation(true, 10, 8, 0.5),
+        newEvaluation(true, 10, 9, 0.5),
+        newEvaluation(true, 10, 10, 0.5)
+    );
+    summary.setVersion("1.0.0");
+    assertEquals("1.0.0", summary.getVersion());
   }
 
   @Test

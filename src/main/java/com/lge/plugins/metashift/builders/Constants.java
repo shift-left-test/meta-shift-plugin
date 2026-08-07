@@ -40,5 +40,10 @@ public class Constants {
     SUMMARIES,
     OBJECTS,
     FILE,
+    /**
+     * Every object of a recipe's metric, flattened across files (unlike {@link #OBJECTS}, which
+     * is keyed per file). Used to list a recipe's mutations on a single page.
+     */
+    FLAT_OBJECTS,
   }
 }

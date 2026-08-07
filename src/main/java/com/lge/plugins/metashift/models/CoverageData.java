@@ -54,6 +54,13 @@ public abstract class CoverageData extends Data {
   private final Type type;
 
   /**
+   * Represents the number of times the line was executed, 0 when unknown. Only meaningful for
+   * statement coverage; not part of identity, so it is set after construction like
+   * {@link TestData#setDuration}.
+   */
+  private long hits;
+
+  /**
    * Default constructor.
    *
    * @param recipe  name
@@ -147,5 +154,23 @@ public abstract class CoverageData extends Data {
    */
   public String getType() {
     return type.name();
+  }
+
+  /**
+   * Returns the number of times the line was executed.
+   *
+   * @return hit count, 0 when unknown
+   */
+  public long getHits() {
+    return hits;
+  }
+
+  /**
+   * Sets the number of times the line was executed.
+   *
+   * @param hits count
+   */
+  public void setHits(final long hits) {
+    this.hits = hits;
   }
 }

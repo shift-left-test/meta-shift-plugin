@@ -41,5 +41,6 @@ public class RecipeGroupTest {
     assertEquals(new JSONObject(), group.getDistribution());
     assertEquals(new JSONArray(), group.getSummaries());
     assertEquals(new JSONArray(), group.getObjects("a.file"));
+    assertEquals(new JSONArray(), group.getAllObjects());
   }
 }

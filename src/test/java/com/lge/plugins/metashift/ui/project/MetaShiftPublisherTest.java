@@ -6,7 +6,9 @@
 package com.lge.plugins.metashift.ui.project;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
@@ -19,6 +21,9 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.util.FormValidation;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import org.apache.commons.io.FileUtils;
+import org.htmlunit.html.HtmlPage;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -100,6 +105,75 @@ public class MetaShiftPublisherTest {
     assertEquals(1, action.getActions(RecipeAction.class).size());
     RecipeAction recipeAction = action.getAction(RecipeAction.class);
     assertEquals(run, recipeAction.getRun());
+  }
+
+  @Test
+  public void testPerformLogsPerMetricQualityGate() throws Exception {
+    FreeStyleProject project = jenkins.createFreeStyleProject();
+    project.setCustomWorkspace(workspace.getAbsolutePath());
+    MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
+    Configuration configuration = new Configuration();
+    configuration.setTestThreshold(100);
+    configuration.setTestAsUnstable(true);
+    publisher.setCustomConfiguration(configuration);
+    project.getPublishersList().add(publisher);
+
+    // 1 passed / 10 total tests -> 10%, below the 100% threshold; no coverage report at all
+    // (FakeCoverageReport only writes coverage.xml when statement/branch coverage is set).
+    fakeRecipe.add(new FakeSource(10, 4, 5, 6).setTests(1, 2, 3, 4));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.UNSTABLE, project);
+    jenkins.assertLogContains(
+        "Unit Tests: 10.0% < threshold 100.0% -> UNSTABLE", run);
+    jenkins.assertLogContains(
+        "Statement Coverage: no report found; excluded from the build result.", run);
+    jenkins.assertLogContains(
+        "Branch Coverage: no report found; excluded from the build result.", run);
+  }
+
+  @Test
+  public void testPerformArchivesRawHtmlReports() throws Exception {
+    FreeStyleProject project = jenkins.createFreeStyleProject();
+    project.setCustomWorkspace(workspace.getAbsolutePath());
+    MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
+    project.getPublishersList().add(publisher);
+
+    fakeRecipe
+        .add(new FakeSource(10, 4, 5, 6)
+            .setTests(1, 2, 3, 4)
+            .setStatementCoverage(1, 2)
+            .setBranchCoverage(3, 4)
+            .setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+
+    File coverageHtml = FileUtils.getFile(
+        report, fakeRecipe.getName(), "coverage", "index.html");
+    FileUtils.forceMkdirParent(coverageHtml);
+    FileUtils.writeStringToFile(coverageHtml, "<html>coverage report</html>",
+        StandardCharsets.UTF_8);
+
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
+    BuildAction action = run.getAction(BuildAction.class);
+    RecipeAction recipeAction = action.getAction(RecipeAction.class);
+
+    assertTrue(action.hasHtmlReport(recipeAction.getReportDir(), "coverage"));
+    assertFalse(action.hasHtmlReport(recipeAction.getReportDir(), "test"));
+
+    HtmlPage page = client.getPage(run,
+        "meta-shift-report/html/" + recipeAction.getReportDir() + "/coverage/index.html");
+    assertEquals("<html>coverage report</html>",
+        page.getWebResponse().getContentAsString());
+    assertEquals("sandbox allow-scripts; default-src 'none'; img-src 'self' data:; "
+            + "style-src 'unsafe-inline'; script-src 'unsafe-inline';",
+        page.getWebResponse().getResponseHeaderValue("Content-Security-Policy"));
+
+    client.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    HtmlPage missing = client.getPage(run,
+        "meta-shift-report/html/" + recipeAction.getReportDir() + "/test/index.html");
+    assertEquals(404, missing.getWebResponse().getStatusCode());
   }
 
   @Test

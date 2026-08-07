@@ -42,6 +42,14 @@ public class FileStore implements Serializable {
   private final File referer;
 
   /**
+   * In-memory cache of index.json, avoiding a disk read and JSON parse on every
+   * {@link #has}/{@link #get}/{@link #size} call. Transient because this class is persisted
+   * with the build (via {@code RecipeReport}/{@code ProjectReport}); it is lazily rebuilt after
+   * deserialization the same way it is built on first use within a live instance.
+   */
+  private transient JSONObject indices;
+
+  /**
    * Default constructor.
    *
    * @param path to storage directory
@@ -64,9 +72,9 @@ public class FileStore implements Serializable {
    *
    * @return the number of stored keys
    */
-  public int size() {
+  public synchronized int size() {
     try {
-      return createObject(referer).size();
+      return indices().size();
     } catch (IOException ignored) {
       return 0;
     }
@@ -78,13 +86,26 @@ public class FileStore implements Serializable {
    * @param key to test
    * @return true if the key exists, false otherwise
    */
-  public boolean has(final String key) {
+  public synchronized boolean has(final String key) {
     try {
-      JSONObject indices = createObject(referer);
-      return indices.has(key);
+      return indices().has(key);
     } catch (IOException ignored) {
       return false;
     }
+  }
+
+  /**
+   * Returns the cached index, loading it from {@link #referer} on first use. Callers must hold
+   * the monitor of this instance, since the returned object is mutated in place by {@link #put}.
+   *
+   * @return the index
+   * @throws IOException if failed to operate with the file
+   */
+  private JSONObject indices() throws IOException {
+    if (indices == null) {
+      indices = createObject(referer);
+    }
+    return indices;
   }
 
   /**
@@ -105,9 +126,9 @@ public class FileStore implements Serializable {
    * @param key whose associated value is to be returned
    * @return the value to which the specified key is mapped, or null if no mapping found
    */
-  public byte[] get(final String key) {
+  public synchronized byte[] get(final String key) {
     try {
-      JSONObject indices = createObject(referer);
+      JSONObject indices = indices();
       File file = new File(objects, indices.getString(key));
       GZIPInputStream gis = new GZIPInputStream(new BufferedInputStream(
           Files.newInputStream(file.toPath())));
@@ -125,7 +146,7 @@ public class FileStore implements Serializable {
    * @throws IOException if failed to operate with index.json
    */
   public synchronized void put(final String key, final byte[] value) throws IOException {
-    JSONObject indices = createObject(referer);
+    JSONObject indices = indices();
     String checksum = DigestUtils.sha256Hex(value);
     File file = FileUtils.getFile(objects, checksum.substring(0, 2), checksum.substring(2));
     if (!file.exists()) {

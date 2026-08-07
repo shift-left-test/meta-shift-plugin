@@ -4,51 +4,135 @@ xmlns:l="/lib/layout" xmlns:ms="/metashift" xmlns:dt="/data-tables">
   <l:layout title="meta-shift report">
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
-      <h2>Overview</h2>
-      <div class="mb-4">
-        <ms:dynamic-testing-row />
+      <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
+      <script src="${rootURL}/plugin/echarts-api/js/echarts.min.js"
+              type="text/javascript"></script>
+      <st:adjunct includes="com.lge.plugins.metashift.ui.metashift"/>
+
+      <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+        <h1 class="h3 mb-0">meta-shift report</h1>
+        <span class="badge ${it.qualifiedCount == it.availableCount
+            ? 'text-bg-success' : 'text-bg-danger'}">
+          ${it.qualifiedCount}/${it.availableCount} metrics qualified
+        </span>
+        <span class="text-muted small">${it.recipeCount} recipes</span>
       </div>
-      <j:if test="${it.availableCount &gt; 0}">
-        <j:set var="attention" value="${it.attention}"/>
-        <j:choose>
-          <j:when test="${attention.failedCount == 0}">
-            <div class="alert alert-success py-2 mb-4">
-              All recipes satisfy their thresholds.
-            </div>
-          </j:when>
-          <j:otherwise>
-            <div class="alert alert-warning py-2 mb-4">
-              <div class="fw-bold mb-1">
-                &#9888; Recipes needing attention
-                <span class="fw-normal text-muted">
-                  &#8212; ${attention.recipes.size()} of ${attention.failedCount}
-                  failing recipes, worst first
-                </span>
-              </div>
-              <j:forEach var="entry" items="${attention.recipes}">
-                <div>
-                  <a href="${entry.name}">${entry.name}</a>
-                  <j:forEach var="chip" items="${entry.chips}">
-                    <span class="badge text-bg-danger ms-1">
-                      ${chip.name} ${chip.ratioText}
+
+      <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" data-bs-toggle="tab"
+                  data-bs-target="#ms-panel-overview" type="button" role="tab">
+            Overview
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" data-bs-toggle="tab"
+                  data-bs-target="#ms-panel-recipes" type="button" role="tab">
+            Recipes <span class="badge text-bg-secondary ms-1">${it.recipeCount}</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" data-bs-toggle="tab"
+                  data-bs-target="#ms-panel-tests" type="button" role="tab">
+            Tests
+            <j:if test="${it.failedTestCount &gt; 0}">
+              <span class="badge text-bg-danger ms-1">${it.failedTestCount}</span>
+            </j:if>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" data-bs-toggle="tab"
+                  data-bs-target="#ms-panel-mutations" type="button" role="tab">
+            Mutations
+            <j:if test="${it.survivedMutationCount &gt; 0}">
+              <span class="badge text-bg-danger ms-1">${it.survivedMutationCount}</span>
+            </j:if>
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="ms-panel-overview" role="tabpanel">
+          <div class="mb-4">
+            <ms:dynamic-testing-row />
+          </div>
+          <j:if test="${it.availableCount &gt; 0}">
+            <j:set var="attention" value="${it.attention}"/>
+            <j:choose>
+              <j:when test="${attention.failedCount == 0}">
+                <div class="alert alert-success py-2 mb-4">
+                  All recipes satisfy their thresholds.
+                </div>
+              </j:when>
+              <j:otherwise>
+                <div class="alert alert-warning py-2 mb-4">
+                  <div class="fw-bold mb-1">
+                    &#9888; Recipes needing attention
+                    <span class="fw-normal text-muted">
+                      &#8212; ${attention.recipes.size()} of ${attention.failedCount}
+                      failing recipes, worst first
                     </span>
+                  </div>
+                  <j:forEach var="entry" items="${attention.recipes}">
+                    <div>
+                      <a href="${entry.name}">${entry.name}</a>
+                      <j:forEach var="chip" items="${entry.chips}">
+                        <span class="badge text-bg-danger ms-1">
+                          ${chip.name} ${chip.ratioText}
+                        </span>
+                      </j:forEach>
+                    </div>
                   </j:forEach>
+                  <j:if test="${attention.truncated}">
+                    <div class="small text-muted mt-1">
+                      Open the Recipes tab and sort by the Qualified column to see the rest.
+                    </div>
+                  </j:if>
                 </div>
-              </j:forEach>
-              <j:if test="${attention.truncated}">
-                <div class="small text-muted mt-1">
-                  Sort the table below by the Qualified column to see the rest.
-                </div>
-              </j:if>
+              </j:otherwise>
+            </j:choose>
+          </j:if>
+
+          <div class="d-flex flex-wrap gap-4 mt-4">
+            <div style="flex:1;min-width:320px;">
+              <h2 class="h6">Unit Test Status</h2>
+              <!-- MetricView.cardsFor() order: 0=Unit Tests, 3=Mutation Tests -->
+              <div data-ms-donut="true"
+                   data-dist="${it.metricCards.get(0).distributionJson}"
+                   style="width:100%;height:320px;"></div>
             </div>
-          </j:otherwise>
-        </j:choose>
-      </j:if>
-      <h2>Recipes
-        <small class="text-muted fs-6">${it.recipeCount} recipes</small>
-      </h2>
-      <div class="mb-4">
-        <dt:table model="${it.getTableModel('recipe-list')}" />
+            <div style="flex:1;min-width:320px;">
+              <h2 class="h6">Mutation Status</h2>
+              <div data-ms-donut="true"
+                   data-dist="${it.metricCards.get(3).distributionJson}"
+                   style="width:100%;height:320px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="ms-panel-recipes" role="tabpanel">
+          <dt:table model="${it.getTableModel('recipe-list')}" />
+        </div>
+
+        <div class="tab-pane fade" id="ms-panel-tests" role="tabpanel">
+          <p class="text-muted small">Failed and error unit tests across every recipe.</p>
+          <j:if test="${it.failedTestsTruncated}">
+            <div class="alert alert-warning py-2 small">
+              Showing the first 2,000 rows. Open a recipe's own Tests tab to see the rest.
+            </div>
+          </j:if>
+          <dt:table model="${it.getTableModel('tests')}" />
+        </div>
+
+        <div class="tab-pane fade" id="ms-panel-mutations" role="tabpanel">
+          <p class="text-muted small">Survived mutations across every recipe.</p>
+          <j:if test="${it.survivedMutationsTruncated}">
+            <div class="alert alert-warning py-2 small">
+              Showing the first 2,000 rows. Open a recipe's own Mutations tab to see the rest.
+            </div>
+          </j:if>
+          <dt:table model="${it.getTableModel('mutations')}" />
+        </div>
       </div>
     </l:main-panel>
   </l:layout>

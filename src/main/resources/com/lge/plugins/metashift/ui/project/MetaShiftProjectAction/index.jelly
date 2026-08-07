@@ -1,0 +1,61 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:c="/charts">
+  <l:layout title="meta-shift report">
+    <st:include it="${it.project}" page="sidepanel.jelly"/>
+    <l:main-panel>
+      <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
+      <j:choose>
+        <j:when test="${it.lastResultBuildNumber == null}">
+          <h2>No meta-shift report yet</h2>
+          <p>No build of this job has produced a meta-shift report so far. This page will show
+            the latest report once one is available.</p>
+          <ul>
+            <li>Check that the <b>meta-shift report</b> post-build action is configured with a
+              valid report root path.</li>
+            <li>Run a build. Reports are not published for builds that finished as FAILURE.</li>
+          </ul>
+        </j:when>
+        <j:otherwise>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3 mb-0">meta-shift trend</h1>
+            <a class="btn btn-primary btn-sm"
+               href="../${it.lastResultBuildNumber}/meta-shift-report">
+              Latest report &#8594;
+            </a>
+          </div>
+
+          <script src="${rootURL}/plugin/echarts-api/js/echarts.min.js"
+                  type="text/javascript"></script>
+          <c:trend-chart it="${it}" title="Trend" configurationId="project" enableLinks="true"/>
+
+          <h2 class="h5 mt-4">Recent builds</h2>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Build</th>
+                  <th>Unit Tests</th>
+                  <th>Statement Coverage</th>
+                  <th>Branch Coverage</th>
+                  <th>Mutation Tests</th>
+                </tr>
+              </thead>
+              <tbody>
+                <j:forEach var="row" items="${it.recentBuilds}">
+                  <tr>
+                    <td><a href="../${row.number}/meta-shift-report">${row.displayName}</a></td>
+                    <j:forEach var="card" items="${row.cards}">
+                      <td>
+                        <span class="badge bg-${card.barClass}">${card.ratioText}</span>
+                      </td>
+                    </j:forEach>
+                  </tr>
+                </j:forEach>
+              </tbody>
+            </table>
+          </div>
+        </j:otherwise>
+      </j:choose>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

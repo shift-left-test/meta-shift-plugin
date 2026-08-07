@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -99,16 +100,6 @@ public class MetricView {
     return url;
   }
 
-  /**
-   * Recipe page section anchor of this metric: unit tests have their own section, the
-   * three file-scoped metrics share the Files section.
-   *
-   * @return section anchor id
-   */
-  public String getSectionAnchor() {
-    return "unit_tests".equals(url) ? "unit_tests" : "files";
-  }
-
   public boolean isAvailable() {
     return evaluation.optBoolean("available", false);
   }
@@ -148,6 +139,17 @@ public class MetricView {
    */
   public String getRatioText() {
     return isAvailable() ? TableHtml.percent(evaluation.optDouble("ratio", 0)) + "%" : "N/A";
+  }
+
+  /**
+   * Explains why {@link #getRatioText()} shows "N/A": no report of this metric was found.
+   * Used on both the build-wide and the per-recipe cards, so the text names only the metric.
+   * Empty when the metric is available.
+   *
+   * @return reason text, empty when available
+   */
+  public String getUnavailableReasonText() {
+    return isAvailable() ? "" : "No " + name + " report found.";
   }
 
   /**
@@ -222,9 +224,26 @@ public class MetricView {
         continue;
       }
       bands.add(new Band(labels[i][0], TableHtml.percent(scale.optDouble("ratio", 0)),
-          String.format("%,d", scale.optLong("count")), labels[i][1]));
+          scale.optLong("count"), labels[i][1]));
     }
     return bands;
+  }
+
+  /**
+   * Distribution bands as a JSON array for the donut chart, e.g.
+   * {@code [{"name":"Passed","value":8}, ...]}. Empty array when unavailable.
+   *
+   * @return JSON array string
+   */
+  public String getDistributionJson() {
+    JSONArray array = new JSONArray();
+    for (Band band : getBands()) {
+      JSONObject entry = new JSONObject();
+      entry.put("name", band.getName());
+      entry.put("value", band.getValue());
+      array.add(entry);
+    }
+    return array.toString();
   }
 
   /**
@@ -234,13 +253,13 @@ public class MetricView {
 
     private final String name;
     private final int percent;
-    private final String count;
+    private final long value;
     private final String color;
 
-    Band(String name, int percent, String count, String color) {
+    Band(String name, int percent, long value, String color) {
       this.name = name;
       this.percent = percent;
-      this.count = count;
+      this.value = value;
       this.color = color;
     }
 
@@ -252,8 +271,22 @@ public class MetricView {
       return percent;
     }
 
+    /**
+     * Raw count of this band, for the donut chart JSON.
+     *
+     * @return raw count
+     */
+    public long getValue() {
+      return value;
+    }
+
+    /**
+     * Formatted count for display, e.g. {@code "1,234"}.
+     *
+     * @return formatted count
+     */
     public String getCount() {
-      return count;
+      return String.format("%,d", value);
     }
 
     public String getColor() {

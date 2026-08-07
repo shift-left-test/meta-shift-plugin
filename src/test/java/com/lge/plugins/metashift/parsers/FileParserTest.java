@@ -235,6 +235,36 @@ public class FileParserTest {
   }
 
   @Test
+  public void testParseSetsVersionAndReportDir() throws Exception {
+    FakeRecipe fakeRecipe = new FakeRecipe(source)
+        .add(new FakeSource(10, 5, 5, 0).setStatementCoverage(1, 1));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    Recipes recipes = new FileParser().parse(new FilePath(report));
+    assertEquals(1, recipes.size());
+    assertEquals("1.0.0-r0", recipes.get(0).getVersion());
+    assertEquals(fakeRecipe.getName(), recipes.get(0).getReportDir());
+  }
+
+  @Test
+  public void testParseWarnsOnDuplicateRecipeNames() throws Exception {
+    String name = "myrecipe";
+    builder.add(new FakeRecipe(source, name + "-1.0.0-r0")
+        .add(new FakeSource(1, 1, 1, 0).setStatementCoverage(1, 0)));
+    builder.add(new FakeRecipe(source, name + "-2.0.0-r0")
+        .add(new FakeSource(1, 1, 1, 0).setStatementCoverage(1, 0)));
+    builder.toFile(report);
+    recipes = new FileParser(logger).parse(new FilePath(report));
+    // both directories are still parsed into separate Recipe objects; the plugin does not
+    // deduplicate them, so downstream data/URLs collide under the shared name (see warning)
+    assertEquals(2, recipes.size());
+    Mockito.verify(logger).printf(
+        "[meta-shift-plugin] WARNING: multiple report directories map to recipe '%s'; "
+            + "only one recipe page will be shown and their data may overwrite each other.%n",
+        name);
+  }
+
+  @Test
   public void testParseWithMalformedMetadataLeavesSourceDirNull() throws Exception {
     FakeRecipe fakeRecipe = new FakeRecipe(source)
         .add(new FakeSource(10, 5, 5, 0).setStatementCoverage(1, 1));

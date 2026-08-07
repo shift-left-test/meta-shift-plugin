@@ -203,6 +203,32 @@ public class CoverageParserTest {
   }
 
   @Test
+  public void testStatementCoverageKeepsHitCount() throws Exception {
+    File directory = utils.createDirectory("report", "C-1.0.0-r0");
+    builder
+        .append("<classes>")
+        .append("  <class filename='a.cpp'>")
+        .append("    <methods>")
+        .append("      <method name='func1()'>")
+        .append("        <lines>")
+        .append("          <line number='1'/>")
+        .append("        </lines>")
+        .append("      </method>")
+        .append("    </methods>")
+        .append("    <lines>")
+        .append("      <line branch='false' hits='7' number='2'/>")
+        .append("      <line branch='false' hits='0' number='3'/>")
+        .append("    </lines>")
+        .append("  </class>")
+        .append("</classes>");
+    utils.writeLines(builder, directory, "coverage", "coverage.xml");
+    parse(directory);
+    List<CoverageData> objects = dataList.objects(CoverageData.class).collect(Collectors.toList());
+    assertEquals(7, objects.get(0).getHits());
+    assertEquals(0, objects.get(1).getHits());
+  }
+
+  @Test
   public void testCreateWithMultipleData() throws Exception {
     File directory = utils.createDirectory("report", "D-1.0.0-r0");
     builder

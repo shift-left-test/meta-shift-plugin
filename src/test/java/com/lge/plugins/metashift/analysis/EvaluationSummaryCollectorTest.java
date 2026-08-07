@@ -96,6 +96,19 @@ public class EvaluationSummaryCollectorTest {
   }
 
   @Test
+  public void testParseRecipeCarriesVersion() {
+    recipe1.setVersion("1.2.3");
+    summary = collector.parse(recipe1);
+    assertEquals("1.2.3", summary.getVersion());
+  }
+
+  @Test
+  public void testParseRecipesAggregateHasNoVersion() {
+    summary = collector.parse(recipes);
+    assertEquals("", summary.getVersion());
+  }
+
+  @Test
   public void testParseRecipeWithMultipleData() {
     recipe1.add(new PassedTestData(RECIPE1, "A", "A", "A"));
     recipe1.add(new StatementCoverageData(RECIPE1, "a.file", 1, false));

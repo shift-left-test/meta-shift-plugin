@@ -35,6 +35,7 @@ import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.persistence.DataSource;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils.Function;
+import com.lge.plugins.metashift.utils.PathUtils;
 import hudson.FilePath;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -123,7 +124,7 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
 
   private void writeSource(Recipe recipe, String file) {
     // only store files that stay within the source root
-    if (escapesSourceRoot(file)) {
+    if (PathUtils.escapesRoot(file)) {
       return;
     }
     try {
@@ -137,25 +138,6 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
     } catch (IOException | InterruptedException ignored) {
       // the source file is unavailable: the file page falls back to the summary
     }
-  }
-
-  /**
-   * Rejects absolute paths and {@code ..} traversal, OS-independently, so a report
-   * cannot make source storage read files outside the source root.
-   *
-   * @param file source-root-relative file path from the report
-   * @return true when the path must not be stored
-   */
-  private static boolean escapesSourceRoot(String file) {
-    if (file.startsWith("/") || file.startsWith("\\") || file.matches("^[A-Za-z]:.*")) {
-      return true;
-    }
-    for (String segment : file.split("[/\\\\]")) {
-      if (segment.equals("..")) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private <T> Void addObjects(Metric metric, String recipe, Map<String, List<T>> group)
@@ -208,9 +190,12 @@ public class RecipeReportBuilder implements Builder<Recipe, RecipeReport> {
         new MutationTestDataSummaryAggregator(configuration),
         recipe);
 
-    Map<String, List<MutationTestData>> group = recipe.objects(MutationTestData.class)
+    List<MutationTestData> objects = recipe.objects(MutationTestData.class)
+        .collect(Collectors.toList());
+    Map<String, List<MutationTestData>> group = objects.stream()
         .collect(Collectors.groupingBy(MutationTestData::getFile));
     addObjects(Metric.MUTATION_TESTS, recipe.getName(), group);
+    put(Metric.MUTATION_TESTS, Data.FLAT_OBJECTS, recipe.getName(), JSONArray.fromObject(objects));
     return null;
   }
 

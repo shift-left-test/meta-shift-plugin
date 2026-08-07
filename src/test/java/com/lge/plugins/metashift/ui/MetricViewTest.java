@@ -99,6 +99,14 @@ public class MetricViewTest {
     assertEquals(0, view.getRatioPercent());
     assertEquals("", view.getDeltaText());
     assertFalse(view.isDistributionAvailable());
+    assertEquals("No Unit Tests report found.", view.getUnavailableReasonText());
+  }
+
+  @Test
+  public void testUnavailableReasonTextEmptyWhenAvailable() {
+    MetricView view = new MetricView("Unit Tests", "unit_tests",
+        evaluation(true, true, 0.8, 0.5, 8, 10), new JSONObject(), null);
+    assertEquals("", view.getUnavailableReasonText());
   }
 
   @Test
@@ -113,8 +121,26 @@ public class MetricViewTest {
     assertEquals("success", bands.get(0).getColor());
     assertEquals(50, bands.get(0).getPercent());
     assertEquals("5", bands.get(0).getCount());
+    assertEquals(5, bands.get(0).getValue());
     assertEquals("Failed", bands.get(1).getName());
     assertEquals("danger", bands.get(1).getColor());
+  }
+
+  @Test
+  public void testDistributionJson() {
+    MetricView view = new MetricView("Unit Tests", "unit_tests",
+        evaluation(true, false, 0.5, 0.95, 5, 10),
+        distribution(10, scale(5, 0.5), scale(3, 0.3), scale(1, 0.1), scale(1, 0.1)), null);
+    assertEquals("[{\"name\":\"Passed\",\"value\":5},{\"name\":\"Failed\",\"value\":3},"
+        + "{\"name\":\"Error\",\"value\":1},{\"name\":\"Skipped\",\"value\":1}]",
+        view.getDistributionJson());
+  }
+
+  @Test
+  public void testDistributionJsonEmptyWhenUnavailable() {
+    MetricView view = new MetricView("Unit Tests", "unit_tests",
+        evaluation(true, true, 0.8, 0.5, 8, 10), new JSONObject(), null);
+    assertEquals("[]", view.getDistributionJson());
   }
 
   @Test

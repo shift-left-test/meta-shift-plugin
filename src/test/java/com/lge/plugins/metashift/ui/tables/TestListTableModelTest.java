@@ -111,6 +111,30 @@ public class TestListTableModelTest {
   }
 
   @Test
+  public void testRecipeColumnOmittedByDefault() {
+    List<String> headers = model().getColumns().stream()
+        .map(TableColumn::getHeaderLabel).collect(Collectors.toList());
+    assertFalse(headers.contains("Recipe"));
+  }
+
+  @Test
+  public void testRecipeColumnAddedWhenRequested() {
+    JSONArray rows = new JSONArray();
+    JSONObject row = test("s", "t1", "PASSED", "");
+    row.put("name", "recipe-A");
+    rows.add(row);
+    TestListTableModel model = new TestListTableModel("unit_tests", rows, file -> true, true);
+
+    List<String> headers = model.getColumns().stream()
+        .map(TableColumn::getHeaderLabel).collect(Collectors.toList());
+    assertEquals(List.of("Recipe", "Suite", "Status", "Name", "Message"), headers);
+
+    TestListTableModel.TestRow r = (TestListTableModel.TestRow) model.getRows().get(0);
+    assertEquals("recipe-A", r.getRecipe().getSort());
+    assertTrue(r.getRecipe().getDisplay().contains("href=\"recipe-A/\""));
+  }
+
+  @Test
   public void testMessageEscapedAndTruncated() {
     String longMessage = "<b>" + "x".repeat(400);
     TestListTableModel.TestRow row =

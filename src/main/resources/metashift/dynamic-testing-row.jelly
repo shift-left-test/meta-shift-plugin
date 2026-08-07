@@ -6,14 +6,7 @@
       <div class="card" style="flex: 1 1 220px; min-width: 220px;">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-1">
-            <span class="fw-bold">
-              <j:choose>
-                <j:when test="${attrs.anchors}">
-                  <a class="text-decoration-none" href="#${card.sectionAnchor}">${card.name}</a>
-                </j:when>
-                <j:otherwise>${card.name}</j:otherwise>
-              </j:choose>
-            </span>
+            <span class="fw-bold">${card.name}</span>
             <span class="badge bg-${card.barClass}">${card.statusText}</span>
           </div>
           <div class="fs-3 fw-semibold">
@@ -27,25 +20,37 @@
               </j:otherwise>
             </j:choose>
           </div>
-          <j:if test="${card.available}">
-            <div class="progress mt-2" style="height: 6px;">
-              <j:choose>
-                <j:when test="${card.distributionAvailable}">
-                  <j:forEach var="band" items="${card.bands}">
-                    <div class="progress-bar bg-${band.color}" role="progressbar"
-                      style="width: ${band.percent}%" title="${band.name}: ${band.count}"/>
+          <j:choose>
+            <j:when test="${card.available}">
+              <div class="progress mt-2" style="height: 6px;">
+                <j:choose>
+                  <j:when test="${card.distributionAvailable}">
+                    <j:forEach var="band" items="${card.bands}">
+                      <div class="progress-bar bg-${band.color}" role="progressbar"
+                        style="width: ${band.percent}%" title="${band.name}: ${band.count}"/>
+                    </j:forEach>
+                  </j:when>
+                  <j:otherwise>
+                    <div class="progress-bar bg-${card.barClass}" role="progressbar"
+                      style="width: ${card.ratioPercent}%"/>
+                  </j:otherwise>
+                </j:choose>
+              </div>
+              <j:if test="${card.distributionAvailable}">
+                <div class="small text-muted mt-2">
+                  <j:forEach var="band" items="${card.bands}" varStatus="loop">
+                    <j:if test="${!loop.first}"> &#183; </j:if>${band.name} ${band.count}
                   </j:forEach>
-                </j:when>
-                <j:otherwise>
-                  <div class="progress-bar bg-${card.barClass}" role="progressbar"
-                    style="width: ${card.ratioPercent}%"/>
-                </j:otherwise>
-              </j:choose>
-            </div>
-            <div class="small text-muted mt-2">
-              ${card.numerator} / ${card.denominator} &#183; Threshold ${card.thresholdText}
-            </div>
-          </j:if>
+                </div>
+              </j:if>
+              <div class="small text-muted mt-2">
+                ${card.numerator} / ${card.denominator} &#183; Threshold ${card.thresholdText}
+              </div>
+            </j:when>
+            <j:otherwise>
+              <div class="small text-muted mt-2">${card.unavailableReasonText}</div>
+            </j:otherwise>
+          </j:choose>
         </div>
       </div>
     </j:forEach>

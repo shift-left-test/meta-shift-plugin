@@ -5,11 +5,17 @@
 
 package com.lge.plugins.metashift.ui.project;
 
+import com.lge.plugins.metashift.analysis.BranchCoverageEvaluator;
 import com.lge.plugins.metashift.analysis.BuildStatusResolver;
+import com.lge.plugins.metashift.analysis.MutationTestEvaluator;
+import com.lge.plugins.metashift.analysis.StatementCoverageEvaluator;
+import com.lge.plugins.metashift.analysis.UnitTestEvaluator;
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.parsers.FileParser;
 import com.lge.plugins.metashift.persistence.DataSource;
+import com.lge.plugins.metashift.ui.HtmlReportServer;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import hudson.AbortException;
@@ -157,6 +163,72 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     return DurationFormatUtils.formatDuration(millis, "HH:mm:ss.S");
   }
 
+  /**
+   * Archives the raw meta-shift HTML reports (gcovr coverage, sentinel mutation testing, gtest
+   * unit test) with the build, so {@link HtmlReportServer} can serve them later. Best-effort:
+   * archiving failures never fail the build, matching the source-storage policy of
+   * {@code RecipeReportBuilder.addSources}.
+   *
+   * @param run        the build to archive the reports with
+   * @param reportPath the report root directory, possibly on a remote agent
+   * @param logger     for logging
+   */
+  private void archiveHtmlReports(Run<?, ?> run, FilePath reportPath, PrintStream logger) {
+    try {
+      FilePath target = new FilePath(HtmlReportServer.archiveDir(run.getRootDir()));
+      int count = reportPath.copyRecursiveTo("**/*.html", target);
+      logger.printf("[meta-shift-plugin] Archived %d raw HTML report file(s).%n", count);
+    } catch (IOException | InterruptedException e) {
+      logger.println("[meta-shift-plugin] WARNING: failed to archive the raw HTML reports; "
+          + "the raw report links will be unavailable for this build.");
+      e.printStackTrace(logger);
+    }
+  }
+
+  /**
+   * Logs the per-metric quality gate judgment, so a build result change (or the lack of one)
+   * is traceable without cross-referencing the report pages.
+   *
+   * @param recipes       to evaluate
+   * @param configuration for evaluation and unstable thresholds
+   * @param logger        for logging
+   */
+  private void logQualityGate(Recipes recipes, Configuration configuration, PrintStream logger) {
+    logMetric(logger, "Unit Tests", new UnitTestEvaluator(configuration).parse(recipes),
+        configuration.isTestAsUnstable());
+    logMetric(logger, "Statement Coverage",
+        new StatementCoverageEvaluator(configuration).parse(recipes),
+        configuration.isStatementCoverageAsUnstable());
+    logMetric(logger, "Branch Coverage",
+        new BranchCoverageEvaluator(configuration).parse(recipes),
+        configuration.isBranchCoverageAsUnstable());
+    logMetric(logger, "Mutation Tests",
+        new MutationTestEvaluator(configuration).parse(recipes),
+        configuration.isMutationTestAsUnstable());
+  }
+
+  private void logMetric(PrintStream logger, String name, Evaluation evaluation,
+      boolean asUnstable) {
+    if (!evaluation.isAvailable()) {
+      logger.printf(
+          "[meta-shift-plugin] %s: no report found; excluded from the build result.%n", name);
+      return;
+    }
+    double ratio = evaluation.getRatio() * 100;
+    double threshold = evaluation.getThreshold() * 100;
+    if (evaluation.isQualified()) {
+      logger.printf("[meta-shift-plugin] %s: %.1f%% >= threshold %.1f%% -> PASS%n",
+          name, ratio, threshold);
+    } else if (asUnstable) {
+      logger.printf("[meta-shift-plugin] %s: %.1f%% < threshold %.1f%% -> UNSTABLE%n",
+          name, ratio, threshold);
+    } else {
+      logger.printf(
+          "[meta-shift-plugin] %s: %.1f%% < threshold %.1f%% -> FAIL (not configured to "
+              + "unstable the build)%n", name, ratio, threshold);
+    }
+  }
+
   private Callable<Void> publishReport(Run<?, ?> run, TaskListener listener,
       Configuration configuration, FilePath reportPath, Recipes recipes) {
     return () -> {
@@ -166,6 +238,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       BuildAction buildAction = new BuildAction(
           run, listener, configuration, dataSource, reportPath, recipes);
       run.addAction(buildAction);
+
+      logQualityGate(recipes, configuration, listener.getLogger());
 
       BuildStatusResolver buildStatus = new BuildStatusResolver(configuration);
       buildStatus.parse(recipes);
@@ -214,6 +288,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
       ExecutorServiceUtils.invoke(
           publishReport(run, listener, configuration, reportPath, recipes));
+
+      archiveHtmlReports(run, reportPath, logger);
 
       Instant finished = Instant.now();
       logger.printf("[meta-shift-plugin] Finished at %s%n", finished.toString());

@@ -61,6 +61,13 @@ public abstract class TestData extends Data {
   private final long line;
 
   /**
+   * Represents the execution duration of the test in seconds, 0 when unknown. Not part of
+   * identity (like {@link #message}/{@link #file}/{@link #line}), so it is set after
+   * construction instead of threading it through every subclass constructor.
+   */
+  private double duration;
+
+  /**
    * Default constructor.
    *
    * @param recipe  name
@@ -177,5 +184,23 @@ public abstract class TestData extends Data {
    */
   public final long getLine() {
     return line;
+  }
+
+  /**
+   * Returns the execution duration of the test in seconds.
+   *
+   * @return duration in seconds, 0 when unknown
+   */
+  public final double getDuration() {
+    return duration;
+  }
+
+  /**
+   * Sets the execution duration of the test in seconds.
+   *
+   * @param duration in seconds
+   */
+  public final void setDuration(final double duration) {
+    this.duration = duration;
   }
 }

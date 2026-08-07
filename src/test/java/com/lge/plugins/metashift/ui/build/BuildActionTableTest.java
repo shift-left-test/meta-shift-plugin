@@ -6,6 +6,7 @@
 package com.lge.plugins.metashift.ui.build;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.lge.plugins.metashift.fixture.FakeRecipe;
@@ -13,10 +14,13 @@ import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.ui.project.MetaShiftPublisher;
 import com.lge.plugins.metashift.ui.tables.EvaluationSummaryTableModel;
+import com.lge.plugins.metashift.ui.tables.MutationListTableModel;
+import com.lge.plugins.metashift.ui.tables.TestListTableModel;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableModel;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,8 +76,8 @@ public class BuildActionTableTest {
     assertTrue(action.getTableModel("recipe-list") instanceof EvaluationSummaryTableModel);
     List<String> headers = action.getTableModel("recipe-list").getColumns().stream()
         .map(TableColumn::getHeaderLabel).collect(Collectors.toList());
-    assertEquals(List.of("Recipes", "Unit Tests", "Statement Coverage", "Branch Coverage",
-        "Mutation Tests", "Qualified"), headers);
+    assertEquals(List.of("Recipes", "Version", "Unit Tests", "Statement Coverage",
+        "Branch Coverage", "Mutation Tests", "Qualified"), headers);
 
     JSONArray rows = JSONArray.fromObject(action.getTableRows("recipe-list"));
     assertEquals(1, rows.size());
@@ -81,6 +85,28 @@ public class BuildActionTableTest {
     assertTrue(row.getJSONObject("name").getString("display").contains("<a "));
     assertTrue(row.containsKey("unitTests"));
     assertTrue(row.containsKey("mutationTests"));
+  }
+
+  @Test
+  public void testProjectWideTestsAndMutationsTableModels() {
+    BuildAction action = run.getAction(BuildAction.class);
+
+    TableModel testsModel = action.getTableModel("tests");
+    assertTrue(testsModel instanceof TestListTableModel);
+    assertEquals(5, testsModel.getRows().size());
+    assertEquals(5, action.getFailedTestCount());
+    assertFalse(action.isFailedTestsTruncated());
+
+    TableModel mutationsModel = action.getTableModel("mutations");
+    assertTrue(mutationsModel instanceof MutationListTableModel);
+    assertEquals(2, mutationsModel.getRows().size());
+    assertEquals(2, action.getSurvivedMutationCount());
+    assertFalse(action.isSurvivedMutationsTruncated());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testUnknownTableIdThrows() {
+    run.getAction(BuildAction.class).getTableModel("unknown");
   }
 
   @Test

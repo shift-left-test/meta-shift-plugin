@@ -35,6 +35,13 @@ public class TestDataTest {
     assertEquals("a.tc", origin.getTest());
     assertEquals("msg", origin.getMessage());
     assertEquals("PASSED", origin.getStatus());
+    assertEquals(0, origin.getDuration(), 0.0001);
+  }
+
+  @Test
+  public void testSetDuration() {
+    origin.setDuration(1.5);
+    assertEquals(1.5, origin.getDuration(), 0.0001);
   }
 
   @Test

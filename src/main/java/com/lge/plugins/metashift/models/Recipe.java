@@ -33,6 +33,19 @@ public final class Recipe extends Data implements Streamable {
   private String sourceDir;
 
   /**
+   * Represents the version of the recipe (including the BitBake revision, e.g.
+   * {@code "1.0.0-r0"}), parsed from the report directory name. Display-only: {@link #getName()}
+   * stays version-stripped so build-over-build delta matching keeps working.
+   */
+  private String version = "";
+
+  /**
+   * Represents the name of the report directory this recipe was parsed from
+   * (e.g. {@code autotools-project-1.0.0-r0}), used to locate task subdirectories.
+   */
+  private String reportDir = "";
+
+  /**
    * Creates an empty Recipe object with the given recipe name.
    *
    * @param name of the recipe
@@ -78,6 +91,42 @@ public final class Recipe extends Data implements Streamable {
    */
   public void setSourceDir(final String sourceDir) {
     this.sourceDir = sourceDir;
+  }
+
+  /**
+   * Returns the version of the recipe, empty when unknown.
+   *
+   * @return version string
+   */
+  public String getVersion() {
+    return version;
+  }
+
+  /**
+   * Sets the version of the recipe.
+   *
+   * @param version to set
+   */
+  public void setVersion(final String version) {
+    this.version = version;
+  }
+
+  /**
+   * Returns the name of the report directory this recipe was parsed from.
+   *
+   * @return report directory name
+   */
+  public String getReportDir() {
+    return reportDir;
+  }
+
+  /**
+   * Sets the name of the report directory this recipe was parsed from.
+   *
+   * @param reportDir to set
+   */
+  public void setReportDir(final String reportDir) {
+    this.reportDir = reportDir;
   }
 
   @Override
