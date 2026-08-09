@@ -5,11 +5,15 @@
 
 package com.lge.plugins.metashift.utils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import org.junit.Test;
 
 /**
@@ -48,5 +52,58 @@ public class ExecutorServiceUtilsTest {
       throw new IOException();
     };
     ExecutorServiceUtils.invoke(task);
+  }
+
+  /**
+   * Live worker threads of {@code Executors} pools. The core worker of a single-thread executor
+   * never times out, so it stays alive until the executor is shut down. Compared as a set rather
+   * than a count, because pools left behind by other tests may terminate at any moment.
+   */
+  private static Set<Thread> poolThreads() {
+    return Thread.getAllStackTraces().keySet().stream()
+        .filter(Thread::isAlive)
+        .filter(o -> o.getName().matches("pool-\\d+-thread-\\d+"))
+        .collect(Collectors.toSet());
+  }
+
+  private static Set<Thread> awaitNoNewPoolThreads(Set<Thread> before)
+      throws InterruptedException {
+    Set<Thread> created = poolThreads();
+    for (int i = 0; i < 100 && !created.isEmpty(); i++) {
+      Thread.sleep(20);
+      created = poolThreads();
+      created.removeAll(before);
+    }
+    return created;
+  }
+
+  @Test
+  public void testInvokeAllShutsDownTheExecutorItCreated() throws Exception {
+    Set<Thread> before = poolThreads();
+
+    for (int i = 0; i < 20; i++) {
+      ExecutorServiceUtils.invoke(function(new AtomicBoolean(false)));
+    }
+
+    assertEquals("invokeAll left worker threads running",
+        Collections.emptySet(), awaitNoNewPoolThreads(before));
+  }
+
+  @Test
+  public void testInvokeAllShutsDownTheExecutorWhenATaskFails() throws Exception {
+    Set<Thread> before = poolThreads();
+
+    for (int i = 0; i < 20; i++) {
+      try {
+        ExecutorServiceUtils.invoke(() -> {
+          throw new IOException();
+        });
+      } catch (IOException ignored) {
+        // expected
+      }
+    }
+
+    assertEquals("a failing task left its worker thread running",
+        Collections.emptySet(), awaitNoNewPoolThreads(before));
   }
 }

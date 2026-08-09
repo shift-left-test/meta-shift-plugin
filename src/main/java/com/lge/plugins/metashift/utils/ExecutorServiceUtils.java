@@ -40,7 +40,13 @@ public class ExecutorServiceUtils {
   }
 
   /**
-   * Invokes all the tasks.
+   * Runs all the tasks to completion, one after another, and rethrows the first failure.
+   *
+   * <p>The executor is deliberately single-threaded: this runs on the Jenkins controller inside
+   * the publish step, so the tasks are sequential and only the exception handling of
+   * {@code invokeAll} is being used. It is shut down before returning — its core worker never
+   * times out, so without that every call would park a live platform thread until GC eventually
+   * finalized the executor.
    *
    * @param tasks to invoke
    * @throws IOException          if failed to operate with files
@@ -48,8 +54,8 @@ public class ExecutorServiceUtils {
    */
   @SafeVarargs
   public static void invokeAll(Callable<Void>... tasks) throws IOException, InterruptedException {
+    ExecutorService executor = Executors.newSingleThreadExecutor();
     try {
-      ExecutorService executor = Executors.newSingleThreadExecutor();
       for (Future<Void> future : executor.invokeAll(Arrays.asList(tasks))) {
         future.get();
       }
@@ -62,6 +68,8 @@ public class ExecutorServiceUtils {
         throw (IOException) cause;
       }
       throw new RuntimeException("Unknown exception: " + cause.getMessage(), cause);
+    } finally {
+      executor.shutdown();
     }
   }
 
