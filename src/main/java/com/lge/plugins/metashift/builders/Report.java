@@ -34,23 +34,39 @@ public abstract class Report<T> implements Aggregate<T>, Serializable {
     groups.put(metric, object);
   }
 
+  /**
+   * Returns the group of the given metric, or null when this report did not fully deserialize.
+   *
+   * <p>Jenkins' {@code RobustReflectionConverter} keeps a build record loadable when one of its
+   * fields fails to convert, but it populates the object by reflection rather than through a
+   * constructor: a report that hit such a failure is handed back with {@code groups} — and every
+   * field written after it — left null, despite being declared final. Callers therefore have to
+   * treat a missing group as "no data" instead of assuming the map exists.
+   *
+   * @param metric to look up
+   * @return group, or null when unavailable
+   */
+  private T get(Metric metric) {
+    return groups == null ? null : groups.get(metric);
+  }
+
   @Override
   public T getUnitTests() {
-    return groups.get(Metric.UNIT_TESTS);
+    return get(Metric.UNIT_TESTS);
   }
 
   @Override
   public T getStatementCoverage() {
-    return groups.get(Metric.STATEMENT_COVERAGE);
+    return get(Metric.STATEMENT_COVERAGE);
   }
 
   @Override
   public T getBranchCoverage() {
-    return groups.get(Metric.BRANCH_COVERAGE);
+    return get(Metric.BRANCH_COVERAGE);
   }
 
   @Override
   public T getMutationTests() {
-    return groups.get(Metric.MUTATION_TESTS);
+    return get(Metric.MUTATION_TESTS);
   }
 }

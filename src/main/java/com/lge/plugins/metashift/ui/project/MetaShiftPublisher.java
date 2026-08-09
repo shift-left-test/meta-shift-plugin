@@ -262,7 +262,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       Configuration configuration, FilePath reportPath, Recipes recipes) {
     return () -> {
       FilePath buildPath = new FilePath(run.getRootDir());
-      DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
+      DataSource dataSource =
+          new DataSource(new FilePath(buildPath, BuildAction.STORAGE_DIR_NAME));
 
       try {
         BuildAction buildAction = new BuildAction(

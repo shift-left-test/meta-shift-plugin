@@ -22,10 +22,13 @@ import hudson.model.Result;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.FileUtils;
 import org.htmlunit.html.HtmlPage;
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,6 +48,7 @@ public class BuildActionTableTest {
   public TemporaryFolder folder = new TemporaryFolder();
 
   private FreeStyleBuild run;
+  private FreeStyleProject project;
 
   @Before
   public void setUp() throws Exception {
@@ -53,7 +57,7 @@ public class BuildActionTableTest {
     FakeReportBuilder builder = new FakeReportBuilder();
     FakeRecipe fakeRecipe = new FakeRecipe(new File(workspace, "source"));
 
-    FreeStyleProject project = jenkins.createFreeStyleProject();
+    project = jenkins.createFreeStyleProject();
     project.setCustomWorkspace(workspace.getAbsolutePath());
     project.getPublishersList().add(new MetaShiftPublisher(report.getName()));
 
@@ -107,6 +111,59 @@ public class BuildActionTableTest {
   @Test(expected = IllegalArgumentException.class)
   public void testUnknownTableIdThrows() {
     run.getAction(BuildAction.class).getTableModel("unknown");
+  }
+
+  /**
+   * Drops every stored object whose key starts with one of the given prefixes, then reloads the
+   * build record so the store is read back from disk. Used to prove which stored entries a page
+   * actually reads.
+   */
+  private BuildAction reloadWithoutStoredKeys(String... prefixes) throws Exception {
+    File index = new File(new File(run.getRootDir(), "meta-shift-report"), "index.json");
+    JSONObject indices = JSONObject.fromObject(
+        FileUtils.readFileToString(index, StandardCharsets.UTF_8));
+    JSONObject kept = new JSONObject();
+    for (Object each : indices.keySet()) {
+      String key = (String) each;
+      if (Stream.of(prefixes).noneMatch(key::startsWith)) {
+        kept.put(key, indices.get(key));
+      }
+    }
+    assertTrue("nothing was dropped, so this proves nothing",
+        kept.size() < indices.size());
+    FileUtils.writeStringToFile(index, kept.toString(2), StandardCharsets.UTF_8);
+
+    project._getRuns().purgeCache();
+    return project.getBuildByNumber(run.getNumber()).getAction(BuildAction.class);
+  }
+
+  @Test
+  public void testProjectWideTabsDoNotReadEveryRecipesStoredData() throws Exception {
+    // The build page used to walk every recipe and deserialize its full test and mutation lists
+    // on the request thread. Those per-recipe entries belong to the recipe pages; the build page
+    // must serve its tabs from what publishing precomputed.
+    BuildAction action = reloadWithoutStoredKeys(
+        "RECIPE:UNIT_TESTS:SUMMARIES", "RECIPE:MUTATION_TESTS:FLAT_OBJECTS");
+
+    assertEquals(5, action.getFailedTestCount());
+    assertFalse(action.isFailedTestsTruncated());
+    assertEquals(5, action.getTableModel("tests").getRows().size());
+    assertEquals(2, action.getSurvivedMutationCount());
+    assertFalse(action.isSurvivedMutationsTruncated());
+    assertEquals(2, action.getTableModel("mutations").getRows().size());
+  }
+
+  @Test
+  public void testProjectWideTabsStillWorkForBuildsPublishedBeforeTheyWerePrecomputed()
+      throws Exception {
+    // Builds published by an earlier release carry only the per-recipe entries.
+    BuildAction action = reloadWithoutStoredKeys("PROJECT:UNIT_TESTS:FAILED_OBJECTS",
+        "PROJECT:MUTATION_TESTS:SURVIVED_OBJECTS", "PROJECT:NONE:COUNTS");
+
+    assertEquals(5, action.getFailedTestCount());
+    assertEquals(5, action.getTableModel("tests").getRows().size());
+    assertEquals(2, action.getSurvivedMutationCount());
+    assertEquals(2, action.getTableModel("mutations").getRows().size());
   }
 
   @Test

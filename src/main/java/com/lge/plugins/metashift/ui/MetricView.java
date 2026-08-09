@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -47,8 +48,9 @@ public class MetricView {
   private final String name;
   private final String url;
   private final JSONObject evaluation;
-  private final JSONObject distribution;
+  private final Supplier<JSONObject> distributionSource;
   private final Double delta;
+  private JSONObject distribution;
 
   /**
    * Default constructor.
@@ -61,11 +63,37 @@ public class MetricView {
    */
   public MetricView(String name, String url, JSONObject evaluation, JSONObject distribution,
       Double delta) {
+    this(name, url, evaluation, () -> distribution, delta);
+  }
+
+  /**
+   * Constructor taking the distribution lazily.
+   *
+   * <p>Each distribution is a separate read from the build's store, and the recent-builds table
+   * on the trend page renders twenty builds of four metrics from {@code barClass} and
+   * {@code ratioText} alone — both evaluation-only. Deferring the read halves what that page
+   * costs.
+   *
+   * @param name         metric display name
+   * @param url          metric url segment, used as the section anchor and band key
+   * @param evaluation   evaluation result JSON
+   * @param distribution supplies the distribution result JSON on first use
+   * @param delta        build-over-build ratio delta, null when there is no reference build
+   */
+  public MetricView(String name, String url, JSONObject evaluation,
+      Supplier<JSONObject> distribution, Double delta) {
     this.name = name;
     this.url = url;
     this.evaluation = evaluation;
-    this.distribution = distribution;
+    this.distributionSource = distribution;
     this.delta = delta;
+  }
+
+  private JSONObject distribution() {
+    if (distribution == null) {
+      distribution = distributionSource.get();
+    }
+    return distribution;
   }
 
   /**
@@ -89,7 +117,12 @@ public class MetricView {
   }
 
   private static MetricView of(String name, String url, Group group, Double delta) {
-    return new MetricView(name, url, group.getEvaluation(), group.getDistribution(), delta);
+    // A build record that only partly deserialized hands back a report without groups
+    // (see Report#get); render the card as unavailable rather than failing the page.
+    if (group == null) {
+      return new MetricView(name, url, new JSONObject(), new JSONObject(), delta);
+    }
+    return new MetricView(name, url, group.getEvaluation(), group::getDistribution, delta);
   }
 
   public String getName() {
@@ -203,8 +236,8 @@ public class MetricView {
    * @return true when the stacked bar should be shown
    */
   public boolean isDistributionAvailable() {
-    return BANDS.containsKey(url) && distribution != null
-        && distribution.optLong("total", 0) > 0;
+    JSONObject values = distribution();
+    return BANDS.containsKey(url) && values != null && values.optLong("total", 0) > 0;
   }
 
   /**
@@ -219,7 +252,7 @@ public class MetricView {
     }
     List<Band> bands = new ArrayList<>();
     for (int i = 0; i < labels.length && i < SCALE_KEYS.length; i++) {
-      JSONObject scale = distribution.optJSONObject(SCALE_KEYS[i]);
+      JSONObject scale = distribution().optJSONObject(SCALE_KEYS[i]);
       if (scale == null) {
         continue;
       }

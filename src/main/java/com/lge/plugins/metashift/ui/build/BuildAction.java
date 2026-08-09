@@ -27,6 +27,9 @@ import hudson.model.Actionable;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import io.jenkins.plugins.datatables.AsyncTableContentProvider;
+import io.jenkins.plugins.datatables.TableModel;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,8 +38,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import io.jenkins.plugins.datatables.AsyncTableContentProvider;
-import io.jenkins.plugins.datatables.TableModel;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 import net.sf.json.JSONArray;
@@ -53,6 +54,12 @@ import org.kohsuke.stapler.export.ExportedBean;
 @ExportedBean
 public class BuildAction extends Actionable
     implements LastBuildAction, RunAction2, AsyncTableContentProvider {
+
+  /**
+   * Name of the directory inside the build directory that holds the published report, and the
+   * URL segment this action is served under.
+   */
+  public static final String STORAGE_DIR_NAME = "meta-shift-report";
 
   private transient Run<?, ?> run;
   private transient List<RecipeAction> recipeActions;
@@ -93,7 +100,7 @@ public class BuildAction extends Actionable
 
   @Override
   public String getUrlName() {
-    return "meta-shift-report";
+    return STORAGE_DIR_NAME;
   }
 
   // implements RunAction2 API
@@ -105,6 +112,32 @@ public class BuildAction extends Actionable
   @Override
   public void onLoad(Run<?, ?> run) {
     this.run = run;
+    relocateReports(run);
+  }
+
+  /**
+   * Points every report of this build at the store inside the build directory it was just loaded
+   * from.
+   *
+   * <p>The store's paths are persisted absolute, so they are stale for any build whose directory
+   * has moved since it was published — a job rename, a move in or out of a folder, a different
+   * {@code JENKINS_HOME}. The data moved with the build, so only the paths need correcting, and
+   * this is the first point that knows where the build actually lives. The project report and
+   * the recipe reports normally share one store, but they are rebound individually in case an
+   * older record wrote separate copies.
+   *
+   * @param run this action belongs to
+   */
+  private void relocateReports(Run<?, ?> run) {
+    File storage = new File(run.getRootDir(), STORAGE_DIR_NAME);
+    if (projectReport != null) {
+      projectReport.relocate(storage);
+    }
+    for (RecipeAction recipe : getActions(RecipeAction.class)) {
+      if (recipe.getReport() != null) {
+        recipe.getReport().relocate(storage);
+      }
+    }
   }
 
   @Override
@@ -249,7 +282,7 @@ public class BuildAction extends Actionable
 
     for (Action a : actions) {
       String base = Functions.getIconFilePath(a);
-      String icon = Stapler.getCurrentRequest().getContextPath()
+      String icon = Stapler.getCurrentRequest2().getContextPath()
           + (base.startsWith("images/") ? Functions.getResourcePath() : "")
           + '/' + base;
 
@@ -272,106 +305,132 @@ public class BuildAction extends Actionable
     return this.recipeActions;
   }
 
-  /**
-   * Row cap for the project-wide Tests/Mutations tabs: a very large project could otherwise
-   * push thousands of rows into a single ajax response. {@link #isFailedTestsTruncated()} and
-   * {@link #isSurvivedMutationsTruncated()} report when this cap was hit, so the page can say
-   * so instead of silently looking complete.
-   */
-  private static final int MAX_LISTED_ROWS = 2000;
-
   // persisted data is immutable after publish, so page-render reads are memoized
   private transient JSONArray failedTestSummaries;
   private transient JSONArray survivedMutationSummaries;
+  private transient JSONObject listCounts;
 
   /**
-   * Returns the failed/error unit tests of every recipe, for the build-wide Tests tab.
+   * Returns the failed/error unit tests of the whole build, for the build-wide Tests tab.
    *
    * @return failed/error TestData rows, each carrying its recipe name
    */
   private JSONArray getFailedTestSummaries() {
     if (failedTestSummaries == null) {
-      JSONArray all = new JSONArray();
-      for (RecipeAction recipe : getRecipes()) {
-        for (Object o : recipe.getReport().getUnitTests().getSummaries()) {
-          JSONObject row = (JSONObject) o;
-          String status = row.optString("status");
-          if ("FAILED".equals(status) || "ERROR".equals(status)) {
-            all.add(row);
-          }
-        }
+      failedTestSummaries = getReport().getFailedTests();
+      if (failedTestSummaries.isEmpty() && !hasPrecomputedLists()) {
+        failedTestSummaries = limited(collectFailedTestSummaries());
       }
-      failedTestSummaries = all;
     }
     return failedTestSummaries;
   }
 
   /**
-   * Returns the survived mutations of every recipe, for the build-wide Mutations tab.
+   * Returns the survived mutations of the whole build, for the build-wide Mutations tab.
    *
    * @return survived MutationTestData rows, each carrying its recipe name
    */
   private JSONArray getSurvivedMutationSummaries() {
     if (survivedMutationSummaries == null) {
-      JSONArray all = new JSONArray();
-      for (RecipeAction recipe : getRecipes()) {
-        for (Object o : recipe.getReport().getMutationTests().getAllObjects()) {
-          JSONObject row = (JSONObject) o;
-          if ("SURVIVED".equals(row.optString("status"))) {
-            all.add(row);
-          }
-        }
+      survivedMutationSummaries = getReport().getSurvivedMutations();
+      if (survivedMutationSummaries.isEmpty() && !hasPrecomputedLists()) {
+        survivedMutationSummaries = limited(collectSurvivedMutationSummaries());
       }
-      survivedMutationSummaries = all;
     }
     return survivedMutationSummaries;
   }
 
+  /**
+   * Whether this build carries the project-wide lists computed while publishing.
+   *
+   * <p>Builds published before they existed do not, and fall back to reading every recipe's own
+   * lists back from the store — slow, but the alternative is showing those builds empty tabs.
+   *
+   * @return true when the lists were precomputed
+   */
+  private boolean hasPrecomputedLists() {
+    if (listCounts == null) {
+      listCounts = getReport().getCounts();
+    }
+    return !listCounts.isEmpty();
+  }
+
+  private int totalOf(String key, JSONArray fallback) {
+    return hasPrecomputedLists() ? listCounts.optInt(key) : fallback.size();
+  }
+
+  private JSONArray collectFailedTestSummaries() {
+    JSONArray all = new JSONArray();
+    for (RecipeAction recipe : getRecipes()) {
+      for (Object o : recipe.getReport().getUnitTests().getSummaries()) {
+        JSONObject row = (JSONObject) o;
+        String status = row.optString("status");
+        if ("FAILED".equals(status) || "ERROR".equals(status)) {
+          all.add(row);
+        }
+      }
+    }
+    return all;
+  }
+
+  private JSONArray collectSurvivedMutationSummaries() {
+    JSONArray all = new JSONArray();
+    for (RecipeAction recipe : getRecipes()) {
+      for (Object o : recipe.getReport().getMutationTests().getAllObjects()) {
+        JSONObject row = (JSONObject) o;
+        if ("SURVIVED".equals(row.optString("status"))) {
+          all.add(row);
+        }
+      }
+    }
+    return all;
+  }
+
   private static JSONArray limited(JSONArray array) {
-    if (array.size() <= MAX_LISTED_ROWS) {
+    if (array.size() <= ProjectReportBuilder.MAX_LISTED_ROWS) {
       return array;
     }
     JSONArray limited = new JSONArray();
-    for (int i = 0; i < MAX_LISTED_ROWS; i++) {
+    for (int i = 0; i < ProjectReportBuilder.MAX_LISTED_ROWS; i++) {
       limited.add(array.get(i));
     }
     return limited;
   }
 
   /**
-   * Number of failed/error unit tests across every recipe.
+   * Number of failed/error unit tests across every recipe, before any capping.
    *
    * @return failed/error test count
    */
   public int getFailedTestCount() {
-    return getFailedTestSummaries().size();
+    return totalOf("failedTests", getFailedTestSummaries());
   }
 
   /**
-   * Whether the build-wide Tests tab was capped at {@link #MAX_LISTED_ROWS}.
+   * Whether the build-wide Tests tab shows fewer rows than there are.
    *
    * @return true when rows were dropped
    */
   public boolean isFailedTestsTruncated() {
-    return getFailedTestSummaries().size() > MAX_LISTED_ROWS;
+    return getFailedTestCount() > getFailedTestSummaries().size();
   }
 
   /**
-   * Number of survived mutations across every recipe.
+   * Number of survived mutations across every recipe, before any capping.
    *
    * @return survived mutation count
    */
   public int getSurvivedMutationCount() {
-    return getSurvivedMutationSummaries().size();
+    return totalOf("survivedMutations", getSurvivedMutationSummaries());
   }
 
   /**
-   * Whether the build-wide Mutations tab was capped at {@link #MAX_LISTED_ROWS}.
+   * Whether the build-wide Mutations tab shows fewer rows than there are.
    *
    * @return true when rows were dropped
    */
   public boolean isSurvivedMutationsTruncated() {
-    return getSurvivedMutationSummaries().size() > MAX_LISTED_ROWS;
+    return getSurvivedMutationCount() > getSurvivedMutationSummaries().size();
   }
 
   @Override
@@ -380,9 +439,9 @@ public class BuildAction extends Actionable
       case "recipe-list":
         return new EvaluationSummaryTableModel(id, getRecipeSummaries());
       case "tests":
-        return new TestListTableModel(id, limited(getFailedTestSummaries()), file -> false, true);
+        return new TestListTableModel(id, getFailedTestSummaries(), file -> false, true);
       case "mutations":
-        return new MutationListTableModel(id, limited(getSurvivedMutationSummaries()), true);
+        return new MutationListTableModel(id, getSurvivedMutationSummaries(), true);
       default:
         throw new IllegalArgumentException("Unknown table: " + id);
     }

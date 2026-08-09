@@ -54,6 +54,11 @@ public abstract class Group implements Serializable {
   public abstract JSONObject getDistribution();
 
   private <T> T getOrDefault(T defaultValue, String... names) {
+    // Reachable from the persisted action graph, so a build record that only partly deserialized
+    // leaves these final fields null (see Report). Fall back rather than fail the page.
+    if (dataSource == null || scope == null || metric == null) {
+      return defaultValue;
+    }
     T o = dataSource.get(names);
     return Optional.ofNullable(o).orElse(defaultValue);
   }

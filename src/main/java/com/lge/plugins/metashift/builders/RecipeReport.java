@@ -9,6 +9,7 @@ import com.lge.plugins.metashift.builders.Constants.Data;
 import com.lge.plugins.metashift.builders.Constants.Metric;
 import com.lge.plugins.metashift.builders.Constants.Scope;
 import com.lge.plugins.metashift.persistence.DataSource;
+import java.io.File;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -33,7 +34,18 @@ public class RecipeReport extends Report<RecipeGroup> {
   public RecipeReport(DataSource dataSource, String recipe) {
     this.dataSource = dataSource;
     this.recipe = recipe;
-    Stream.of(Metric.values()).forEach(o -> put(o, new RecipeGroup(dataSource, o, recipe)));
+    Stream.of(Metric.active()).forEach(o -> put(o, new RecipeGroup(dataSource, o, recipe)));
+  }
+
+  /**
+   * Points this report's store at the given storage directory, which is where its files are now.
+   *
+   * @param storage directory holding the stored objects and their index
+   */
+  public void relocate(File storage) {
+    if (dataSource != null) {
+      dataSource.relocate(storage);
+    }
   }
 
   /**
@@ -44,6 +56,10 @@ public class RecipeReport extends Report<RecipeGroup> {
    * @return source text, empty when not stored
    */
   public String readFile(String file) {
+    // Null on a report that only partly deserialized, despite being final (see Report#get).
+    if (dataSource == null || recipe == null) {
+      return "";
+    }
     String data = dataSource.get(
         Scope.RECIPE.name(), Metric.NONE.name(), Data.FILE.name(), recipe, file);
     return Optional.ofNullable(data).orElse("");
@@ -56,6 +72,9 @@ public class RecipeReport extends Report<RecipeGroup> {
    * @return true when the source is stored
    */
   public boolean hasFile(String file) {
+    if (dataSource == null || recipe == null) {
+      return false;
+    }
     return dataSource.has(Scope.RECIPE.name(), Metric.NONE.name(), Data.FILE.name(), recipe, file);
   }
 }
