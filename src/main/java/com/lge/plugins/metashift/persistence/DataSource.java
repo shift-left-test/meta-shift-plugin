@@ -8,6 +8,7 @@ package com.lge.plugins.metashift.persistence;
 import hudson.FilePath;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -34,6 +35,15 @@ public class DataSource implements Serializable {
    */
   public DataSource(final FilePath path) throws IOException, InterruptedException {
     fileStore = new FileStore(path);
+  }
+
+  /**
+   * Points this data source at the given storage directory, which is where its files are now.
+   *
+   * @param storage directory holding the stored objects and their index
+   */
+  public synchronized void relocate(final File storage) {
+    fileStore.relocate(storage);
   }
 
   /**
@@ -88,11 +98,23 @@ public class DataSource implements Serializable {
   }
 
   /**
+   * Writes the index of everything stored so far, making it readable by a later instance.
+   *
+   * <p>{@link #put} only writes the object itself, so publishing has to call this once it is
+   * done — including when it failed part way, so that whatever was published is still readable.
+   *
+   * @throws IOException if failed to operate with index.json
+   */
+  public synchronized void flush() throws IOException {
+    fileStore.flush();
+  }
+
+  /**
    * Associates the specified value with the specified key in the map.
    *
    * @param object to be associated with the specified key
    * @param names  with which the specified value is to be associated
-   * @throws IOException if failed to operate with index.json or the object
+   * @throws IOException if failed to operate with the object
    */
   public synchronized void put(final Object object, final String... names) throws IOException {
     String key = uid(names);

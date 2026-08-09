@@ -123,6 +123,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     }
 
     @Override
+    // BuildStepDescriptor declares this with a raw AbstractProject; the signature has to match.
+    @SuppressWarnings("rawtypes")
     public boolean isApplicable(Class<? extends AbstractProject> clazz) {
       return true;
     }
@@ -262,19 +264,26 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       FilePath buildPath = new FilePath(run.getRootDir());
       DataSource dataSource = new DataSource(new FilePath(buildPath, "meta-shift-report"));
 
-      BuildAction buildAction = new BuildAction(
-          run, listener, configuration, dataSource, reportPath, recipes);
-      run.addAction(buildAction);
+      try {
+        BuildAction buildAction = new BuildAction(
+            run, listener, configuration, dataSource, reportPath, recipes);
+        run.addAction(buildAction);
 
-      logQualityGate(recipes, configuration, listener.getLogger());
+        logQualityGate(recipes, configuration, listener.getLogger());
 
-      BuildStatusResolver buildStatus = new BuildStatusResolver(configuration);
-      buildStatus.parse(recipes);
-      Result buildResult = buildStatus.getCombined();
+        BuildStatusResolver buildStatus = new BuildStatusResolver(configuration);
+        buildStatus.parse(recipes);
+        Result buildResult = buildStatus.getCombined();
 
-      Result runResult = run.getResult() == null ? Result.SUCCESS : run.getResult();
-      if (runResult.isBetterThan(buildResult)) {
-        run.setResult(buildResult);
+        Result runResult = run.getResult() == null ? Result.SUCCESS : run.getResult();
+        if (runResult.isBetterThan(buildResult)) {
+          run.setResult(buildResult);
+        }
+      } finally {
+        // The store keeps its index in memory while publishing; write it even when publishing
+        // failed part way, or the objects already written would not be listed and the report
+        // would read back empty.
+        dataSource.flush();
       }
 
       return null;
@@ -282,8 +291,8 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   }
 
   @Override
-  public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
-      throws InterruptedException, IOException {
+  public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher,
+      TaskListener listener) throws InterruptedException, IOException {
     PrintStream logger = listener.getLogger();
 
     Result buildResult = run.getResult();
@@ -294,10 +303,11 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
     logger.println("[meta-shift-plugin] Scanning for the meta-shift report...");
 
-    Instant started = Instant.now();
-    logger.printf("[meta-shift-plugin] Started at %s%n", started.toString());
+    // Instant is only for the human-readable stamps; the duration is measured with the
+    // monotonic clock, so an NTP step or a DST change mid-build cannot make it run backwards.
+    logger.printf("[meta-shift-plugin] Started at %s%n", Instant.now());
+    long startedNanos = System.nanoTime();
 
-    EnvVars env = run.getEnvironment(listener);
     FilePath reportPath = workspace.child(env.expand(this.reportRoot));
     logger.printf("[meta-shift-plugin] Searching for all report files in %s%n", reportPath);
 
@@ -318,11 +328,10 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
       archiveRawReports(run, reportPath, logger);
 
-      Instant finished = Instant.now();
-      logger.printf("[meta-shift-plugin] Finished at %s%n", finished.toString());
+      logger.printf("[meta-shift-plugin] Finished at %s%n", Instant.now());
 
       logger.printf("[meta-shift-plugin] Total time: %s%n",
-          getFormattedTime(Duration.between(started, finished).toMillis()));
+          getFormattedTime(Duration.ofNanos(System.nanoTime() - startedNanos).toMillis()));
 
       logger.println("[meta-shift-plugin] Done.");
     } catch (IllegalArgumentException | IOException e) {

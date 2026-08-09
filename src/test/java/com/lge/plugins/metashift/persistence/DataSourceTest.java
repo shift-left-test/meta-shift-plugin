@@ -65,6 +65,7 @@ public class DataSourceTest {
   public void testGetPreparedData() throws IOException, InterruptedException {
     String source = "HELLO WORLD";
     dataSource.put(source, "hello", "world");
+    dataSource.flush();
 
     DataSource newDataSource = new DataSource(new FilePath(storage));
     assertEquals(1, newDataSource.size());

@@ -33,13 +33,19 @@ public class FileStore implements Serializable {
 
   /**
    * Represents the path to storage directory.
+   *
+   * <p>Not final: XStream writes a {@link File} as its absolute path, so a build record carries
+   * where the store lived when it was published. Moving the job — a rename, a move in or out of a
+   * folder, a different {@code JENKINS_HOME} — moves the store with it and leaves that path
+   * pointing nowhere, and {@link #get} answers null for everything, so the report renders empty
+   * with no error. {@link #relocate} rebinds both paths when the build record is loaded.
    */
-  private final File objects;
+  private File objects;
 
   /**
    * Represents the path to index.json.
    */
-  private final File referer;
+  private File referer;
 
   /**
    * In-memory cache of index.json, avoiding a disk read and JSON parse on every
@@ -65,6 +71,22 @@ public class FileStore implements Serializable {
     if (!referer.exists()) {
       FileUtils.writeStringToFile(referer, "{}", StandardCharsets.UTF_8);
     }
+  }
+
+  /**
+   * Points this store at the given storage directory, which is where its files are now.
+   *
+   * @param storage directory holding {@code objects/} and {@code index.json}
+   */
+  public synchronized void relocate(final File storage) {
+    File relocated = new File(storage, "objects");
+    if (relocated.equals(objects)) {
+      return;
+    }
+    objects = relocated;
+    referer = new File(storage, "index.json");
+    // the cached index describes the previous location
+    indices = null;
   }
 
   /**
@@ -116,8 +138,10 @@ public class FileStore implements Serializable {
    * @throws IOException if failed to operate with the file
    */
   private JSONObject createObject(final File path) throws IOException {
-    InputStream is = new BufferedInputStream(Files.newInputStream(path.toPath()));
-    return JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
+    // IOUtils does not close what it is handed, so the stream has to be closed here.
+    try (InputStream is = new BufferedInputStream(Files.newInputStream(path.toPath()))) {
+      return JSONObject.fromObject(IOUtils.toString(is, StandardCharsets.UTF_8));
+    }
   }
 
   /**
@@ -130,20 +154,40 @@ public class FileStore implements Serializable {
     try {
       JSONObject indices = indices();
       File file = new File(objects, indices.getString(key));
-      GZIPInputStream gis = new GZIPInputStream(new BufferedInputStream(
-          Files.newInputStream(file.toPath())));
-      return IOUtils.toByteArray(gis);
+      // IOUtils does not close what it is handed. Rendering a report reads two stored objects per
+      // recipe back to back, so a descriptor plus a native inflate stream left open per read can
+      // exhaust the process limit long before GC reclaims any of them.
+      try (GZIPInputStream gis = new GZIPInputStream(new BufferedInputStream(
+          Files.newInputStream(file.toPath())))) {
+        return IOUtils.toByteArray(gis);
+      }
     } catch (IOException | JSONException ignored) {
       return null;
     }
   }
 
   /**
+   * Writes the index of every key stored so far, making them readable by a later instance.
+   *
+   * @throws IOException if failed to operate with index.json
+   */
+  public synchronized void flush() throws IOException {
+    FileUtils.writeStringToFile(referer, indices().toString(2), StandardCharsets.UTF_8);
+  }
+
+  /**
    * Associates the specified value with the specified key in the map.
+   *
+   * <p>Only the object blob is written here; the index is kept in memory until {@link #flush} so
+   * that publishing a report does not serialize the entire index once per stored object. One
+   * store is shared by the whole build, so the index grows monotonically across recipes and a
+   * per-put rewrite makes the publish step quadratic in the number of objects. Callers must flush
+   * once publishing ends, including on the failure path — an index that does not list its blobs
+   * reads back as an empty report.
    *
    * @param key   with which the specified value is to be associated
    * @param value to be associated with the specified key
-   * @throws IOException if failed to operate with index.json
+   * @throws IOException if failed to operate with the object
    */
   public synchronized void put(final String key, final byte[] value) throws IOException {
     JSONObject indices = indices();
@@ -160,6 +204,5 @@ public class FileStore implements Serializable {
       indices.remove(key);
     }
     indices.put(key, objects.toURI().relativize(file.toURI()).getPath());
-    FileUtils.writeStringToFile(referer, indices.toString(2), StandardCharsets.UTF_8);
   }
 }
