@@ -5,7 +5,6 @@
 
 package com.lge.plugins.metashift.parsers;
 
-import com.jsoniter.spi.JsonException;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.File;
@@ -51,9 +50,9 @@ public abstract class Parser implements Callable<Void> {
       if (!metadata.exists()) {
         return null;
       }
-      String value = JsonUtils.createObject(metadata).toString("S");
+      String value = JsonUtils.createObject(metadata).optString("S");
       return (value == null || value.isEmpty()) ? null : value;
-    } catch (IOException | JSONException | JsonException ignored) {
+    } catch (IOException | JSONException ignored) {
       return null;
     }
   }

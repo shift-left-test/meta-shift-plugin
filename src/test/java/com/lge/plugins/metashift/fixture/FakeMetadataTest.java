@@ -8,10 +8,10 @@ package com.lge.plugins.metashift.fixture;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.jsoniter.any.Any;
 import com.lge.plugins.metashift.utils.JsonUtils;
 import hudson.FilePath;
 import java.io.File;
+import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,8 +38,8 @@ public class FakeMetadataTest {
     for (String task : new String[]{"test", "coverage", "checktest"}) {
       File metadata = FileUtils.getFile(report, "AAA-1.0.0-r0", task, "metadata.json");
       assertTrue(metadata.exists());
-      Any json = JsonUtils.createObject(new FilePath(metadata));
-      assertEquals(recipe.getSourcePath().getAbsolutePath(), json.toString("S"));
+      JSONObject json = JsonUtils.createObject(new FilePath(metadata));
+      assertEquals(recipe.getSourcePath().getAbsolutePath(), json.getString("S"));
     }
   }
 }
