@@ -5,7 +5,6 @@
 
 package com.lge.plugins.metashift.utils.xml;
 
-import com.lge.plugins.metashift.utils.LruCache;
 import hudson.FilePath;
 import java.io.IOException;
 import java.io.StringReader;
@@ -22,11 +21,6 @@ import org.xml.sax.SAXException;
  * @author Sung Gon Kim
  */
 public class SimpleXmlParser {
-
-  /**
-   * Represents the singleton cache object.
-   */
-  private static final LruCache<String, Document> objects = new LruCache<>();
 
   /**
    * Represents the document object.
@@ -51,16 +45,17 @@ public class SimpleXmlParser {
    */
   public SimpleXmlParser(final FilePath file)
       throws ParserConfigurationException, IOException, SAXException, InterruptedException {
-    String checksum = file.digest();
-    if (!objects.containsKey(checksum)) {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder builder = factory.newDocumentBuilder();
-      builder.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
-      Document document = builder.parse(file.read());
-      document.getDocumentElement().normalize();
-      objects.put(checksum, document);
-    }
-    this.document = objects.get(checksum);
+    // Parsed documents used to be held in a static LRU cache. Two builds publishing at once each
+    // parse on their own thread, and that cache was mutated without synchronization: a get could
+    // come back null right after a successful put, leaving this parser without a document and
+    // silently dropping the recipe from the report. Sharing one org.w3c.dom tree between threads
+    // is a second hazard on its own, since the DOM is not thread-safe. Parsing per instance costs
+    // one read of a file whose digest we would have had to compute anyway.
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+    builder.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
+    this.document = builder.parse(file.read());
+    this.document.getDocumentElement().normalize();
   }
 
   /**

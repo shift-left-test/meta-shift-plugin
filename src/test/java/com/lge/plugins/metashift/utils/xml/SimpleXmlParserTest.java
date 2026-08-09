@@ -14,6 +14,14 @@ import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -120,6 +128,51 @@ public class SimpleXmlParserTest {
     tags = parser.getChildNodes("extra");
     assertEquals(1, tags.size());
     assertFalse(tags.first().hasChildNodes());
+  }
+
+  /**
+   * Two builds of different jobs publish concurrently on the controller, one thread each, and
+   * they parse their own report files. Nothing may be shared between them: a parser that quietly
+   * comes back without a document makes the whole recipe drop out of the report while the build
+   * stays green.
+   */
+  @Test
+  public void testParsingFromSeveralThreadsAtOnce() throws Exception {
+    int files = 40;
+    for (int i = 0; i < files; i++) {
+      utils.writeLines(new StringBuilder().append("<tags><tag number='").append(i)
+          .append("'/></tags>"), utils.getPath("concurrent-" + i + ".xml"));
+    }
+
+    int threads = 8;
+    ExecutorService executor = Executors.newFixedThreadPool(threads);
+    List<Throwable> failures = Collections.synchronizedList(new ArrayList<>());
+    CountDownLatch start = new CountDownLatch(1);
+    List<Future<?>> futures = new ArrayList<>();
+    for (int t = 0; t < threads; t++) {
+      futures.add(executor.submit(() -> {
+        try {
+          start.await();
+          for (int i = 0; i < files * 5; i++) {
+            int number = i % files;
+            SimpleXmlParser each = new SimpleXmlParser(
+                new FilePath(utils.getPath("concurrent-" + number + ".xml")));
+            TagList tags = each.getChildNodes("tag");
+            assertEquals("lost the parsed document", 1, tags.size());
+            assertEquals(String.valueOf(number), tags.first().getAttribute("number"));
+          }
+        } catch (Throwable e) {
+          failures.add(e);
+        }
+      }));
+    }
+    start.countDown();
+    for (Future<?> future : futures) {
+      future.get(60, TimeUnit.SECONDS);
+    }
+    executor.shutdown();
+
+    assertEquals("concurrent parsing failed: " + failures, Collections.emptyList(), failures);
   }
 
   @Test
