@@ -135,6 +135,28 @@ public class TestListTableModelTest {
   }
 
   @Test
+  public void testSuiteCellEscapesMarkupAndSortsOnRawValue() {
+    String raw = "<img src=x onerror=alert(1)>suite";
+    Object row = model(test(raw, "t", "PASSED", "")).getRows().get(0);
+
+    assertEquals("&lt;img src=x onerror=alert(1)&gt;suite", CellValues.html(row, "suite"));
+    assertEquals(raw, CellValues.sort(row, "suite"));
+  }
+
+  @Test
+  public void testRecipeCellLinksToTheVersionStrippedRecipePage() {
+    JSONArray rows = new JSONArray();
+    JSONObject row = test("s", "t1", "PASSED", "");
+    row.put("name", "autotools-project-1.0.0-r0");
+    rows.add(row);
+    Object r = new TestListTableModel("unit_tests", rows, file -> true, true).getRows().get(0);
+
+    assertEquals("<a href=\"autotools-project/\">autotools-project</a>",
+        CellValues.html(r, "recipe"));
+    assertEquals("autotools-project", CellValues.sort(r, "recipe"));
+  }
+
+  @Test
   public void testMessageEscapedAndTruncated() {
     String longMessage = "<b>" + "x".repeat(400);
     TestListTableModel.TestRow row =

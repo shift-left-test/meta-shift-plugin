@@ -5,7 +5,6 @@
 
 package com.lge.plugins.metashift.ui.tables;
 
-import hudson.Util;
 import io.jenkins.plugins.datatables.DetailedCell;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnBuilder;
@@ -66,17 +65,17 @@ public class MutationListTableModel extends TableModel {
           .withDataPropertyKey("recipe").withType(ColumnType.STRING).withDetailedCell().build());
     }
     columns.add(new ColumnBuilder().withHeaderLabel("File")
-        .withDataPropertyKey("file").withType(ColumnType.STRING).build());
+        .withDataPropertyKey("file").withType(ColumnType.STRING).withDetailedCell().build());
     columns.add(new ColumnBuilder().withHeaderLabel("Line")
         .withDataPropertyKey("line").withType(ColumnType.NUMBER).build());
     columns.add(new ColumnBuilder().withHeaderLabel("Method")
         .withDataPropertyKey("method").withType(ColumnType.STRING).withDetailedCell().build());
     columns.add(new ColumnBuilder().withHeaderLabel("Mutator")
-        .withDataPropertyKey("mutator").withType(ColumnType.STRING).build());
+        .withDataPropertyKey("mutator").withType(ColumnType.STRING).withDetailedCell().build());
     columns.add(new ColumnBuilder().withHeaderLabel("Status")
         .withDataPropertyKey("status").withType(ColumnType.NUMBER).withDetailedCell().build());
     columns.add(new ColumnBuilder().withHeaderLabel("Killing Test")
-        .withDataPropertyKey("killingTest").withType(ColumnType.STRING).build());
+        .withDataPropertyKey("killingTest").withType(ColumnType.STRING).withDetailedCell().build());
     return columns;
   }
 
@@ -111,13 +110,11 @@ public class MutationListTableModel extends TableModel {
      * the Recipe column (the project-wide list on the build page).
      */
     public DetailedCell<String> getRecipe() {
-      String recipe = data.optString("name");
-      return new DetailedCell<>(
-          TableHtml.anchor(Util.rawEncode(recipe) + "/", recipe), recipe);
+      return TableHtml.recipeCell(data.optString("name"));
     }
 
-    public String getFile() {
-      return data.optString("file");
+    public DetailedCell<String> getFile() {
+      return TableHtml.textCell(data.optString("file"));
     }
 
     public long getLine() {
@@ -132,8 +129,8 @@ public class MutationListTableModel extends TableModel {
       return new DetailedCell<>(TableHtml.escape(qualified), qualified);
     }
 
-    public String getMutator() {
-      return data.optString("mutator");
+    public DetailedCell<String> getMutator() {
+      return TableHtml.textCell(data.optString("mutator"));
     }
 
     public DetailedCell<Integer> getStatus() {
@@ -144,8 +141,8 @@ public class MutationListTableModel extends TableModel {
           rank(status));
     }
 
-    public String getKillingTest() {
-      return data.optString("killingTest");
+    public DetailedCell<String> getKillingTest() {
+      return TableHtml.textCell(data.optString("killingTest"));
     }
 
     private static String badgeClass(String status) {

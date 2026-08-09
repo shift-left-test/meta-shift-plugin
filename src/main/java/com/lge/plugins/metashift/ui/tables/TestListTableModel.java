@@ -72,7 +72,7 @@ public class TestListTableModel extends TableModel {
           .withDataPropertyKey("recipe").withType(ColumnType.STRING).withDetailedCell().build());
     }
     columns.add(new ColumnBuilder().withHeaderLabel("Suite")
-        .withDataPropertyKey("suite").withType(ColumnType.STRING).build());
+        .withDataPropertyKey("suite").withType(ColumnType.STRING).withDetailedCell().build());
     // Without the Recipe column, this is index 1: the data-tables default order
     // ([[1,'asc']]) sorts by this numeric status rank, surfacing FAILED/ERROR rows first.
     columns.add(new ColumnBuilder().withHeaderLabel("Status")
@@ -113,8 +113,8 @@ public class TestListTableModel extends TableModel {
       this.hasSource = hasSource;
     }
 
-    public String getSuite() {
-      return data.optString("suite");
+    public DetailedCell<String> getSuite() {
+      return TableHtml.textCell(data.optString("suite"));
     }
 
     /**
@@ -122,9 +122,7 @@ public class TestListTableModel extends TableModel {
      * the Recipe column (the project-wide list on the build page).
      */
     public DetailedCell<String> getRecipe() {
-      String recipe = data.optString("name");
-      return new DetailedCell<>(
-          TableHtml.anchor(Util.rawEncode(recipe) + "/", recipe), recipe);
+      return TableHtml.recipeCell(data.optString("name"));
     }
 
     /**

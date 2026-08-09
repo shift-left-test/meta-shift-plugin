@@ -5,6 +5,10 @@
 
 package com.lge.plugins.metashift.ui.tables;
 
+import com.lge.plugins.metashift.utils.NamingUtils;
+import hudson.Util;
+import io.jenkins.plugins.datatables.DetailedCell;
+
 /**
  * Small helpers that build the raw HTML rendered inside data-tables
  * {@link io.jenkins.plugins.datatables.DetailedCell} display values, using only Bootstrap 5
@@ -70,6 +74,38 @@ public final class TableHtml {
    */
   public static String anchor(String href, String label) {
     return "<a href=\"" + href + "\">" + escape(label) + "</a>";
+  }
+
+  /**
+   * Builds a cell linking to a recipe page, given the name carried by a {@code Data} object.
+   *
+   * <p>That name is the report directory name, which includes the version and revision
+   * ({@code autotools-project-1.0.0-r0}), while the recipe page is served under the
+   * version-stripped name ({@code RecipeAction.getUrlName()}, i.e. {@code Recipe.getName()}).
+   * Linking to the directory name yields a 404, so it is stripped here. A name that does not
+   * follow the recipe naming convention is used as is.
+   *
+   * @param name report directory name of the recipe
+   * @return cell displaying a link to the recipe page and sorting on the recipe name
+   */
+  public static DetailedCell<String> recipeCell(String name) {
+    String recipe = NamingUtils.isValid(name) ? NamingUtils.getRecipe(name) : name;
+    return new DetailedCell<>(anchor(Util.rawEncode(recipe) + "/", recipe), recipe);
+  }
+
+  /**
+   * Builds a cell whose display value is HTML-escaped while sorting, filtering and searching
+   * stay on the raw text.
+   *
+   * <p>A column that carries a plain {@code String} instead has no data-tables render function,
+   * so its value reaches {@code td.innerHTML} verbatim. Every column showing report-derived text
+   * therefore has to go through here.
+   *
+   * @param value raw value
+   * @return cell with escaped display and raw sort value
+   */
+  public static DetailedCell<String> textCell(String value) {
+    return new DetailedCell<>(escape(value), value);
   }
 
   /**

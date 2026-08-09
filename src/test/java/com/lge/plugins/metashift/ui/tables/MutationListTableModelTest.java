@@ -67,11 +67,11 @@ public class MutationListTableModelTest {
 
     assertEquals("recipe-A", row.getRecipe().getSort());
     assertTrue(row.getRecipe().getDisplay().contains("href=\"recipe-A/\""));
-    assertEquals("a.cpp", row.getFile());
+    assertEquals("a.cpp", row.getFile().getSort());
     assertEquals(12, row.getLine());
     assertEquals("A::foo", row.getMethod().getSort());
-    assertEquals("AOR", row.getMutator());
-    assertEquals("test1", row.getKillingTest());
+    assertEquals("AOR", row.getMutator().getSort());
+    assertEquals("test1", row.getKillingTest().getSort());
   }
 
   @Test
@@ -103,5 +103,45 @@ public class MutationListTableModelTest {
   @Test
   public void testNoExportButtons() {
     assertFalse(model(false).getTableConfiguration().isUseButtons());
+  }
+
+  @Test
+  public void testFileCellEscapesMarkupAndSortsOnRawValue() {
+    String raw = "<img src=x onerror=alert(1)>a.cpp";
+    Object row = model(false,
+        mutation("r", raw, 1, "C", "m", "AOR", "KILLED", "t")).getRows().get(0);
+
+    assertEquals("&lt;img src=x onerror=alert(1)&gt;a.cpp", CellValues.html(row, "file"));
+    assertEquals(raw, CellValues.sort(row, "file"));
+  }
+
+  @Test
+  public void testMutatorCellEscapesMarkupAndSortsOnRawValue() {
+    String raw = "<img src=x onerror=alert(1)>AOR";
+    Object row = model(false,
+        mutation("r", "a.cpp", 1, "C", "m", raw, "KILLED", "t")).getRows().get(0);
+
+    assertEquals("&lt;img src=x onerror=alert(1)&gt;AOR", CellValues.html(row, "mutator"));
+    assertEquals(raw, CellValues.sort(row, "mutator"));
+  }
+
+  @Test
+  public void testKillingTestCellEscapesMarkupAndSortsOnRawValue() {
+    String raw = "<img src=x onerror=alert(1)>test1";
+    Object row = model(false,
+        mutation("r", "a.cpp", 1, "C", "m", "AOR", "KILLED", raw)).getRows().get(0);
+
+    assertEquals("&lt;img src=x onerror=alert(1)&gt;test1", CellValues.html(row, "killingTest"));
+    assertEquals(raw, CellValues.sort(row, "killingTest"));
+  }
+
+  @Test
+  public void testRecipeCellLinksToTheVersionStrippedRecipePage() {
+    Object row = model(true, mutation("autotools-project-1.0.0-r0", "a.cpp", 1, "C", "m", "AOR",
+        "KILLED", "t")).getRows().get(0);
+
+    assertEquals("<a href=\"autotools-project/\">autotools-project</a>",
+        CellValues.html(row, "recipe"));
+    assertEquals("autotools-project", CellValues.sort(row, "recipe"));
   }
 }
