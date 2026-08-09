@@ -15,8 +15,9 @@ import java.util.regex.Pattern;
  */
 public class NamingUtils {
 
+  // '~' is valid in a BitBake PV and marks a pre-release, e.g. openssl-3.0.0~beta1-r0.
   private static final Pattern PATTERN =
-      Pattern.compile("^(?<recipe>[\\w-.+]+)-(?<version>[\\w-.+]+)-(?<revision>[\\w-.+]+)$");
+      Pattern.compile("^(?<recipe>[\\w-.+~]+)-(?<version>[\\w-.+~]+)-(?<revision>[\\w-.+~]+)$");
 
   private static Matcher parse(String name) {
     return PATTERN.matcher(name);

@@ -8,6 +8,7 @@ package com.lge.plugins.metashift.analysis;
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.ErrorTestData;
 import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.FailedTestData;
@@ -16,6 +17,7 @@ import com.lge.plugins.metashift.models.PositiveEvaluation;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.models.SkippedTestData;
+import com.lge.plugins.metashift.models.TestData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,6 +69,19 @@ public class UnitTestEvaluatorTest {
   @Test
   public void testParseRecipesNoMatchingData() {
     // recipe with no TestData → not available
+    assertValues(0, 0, 0.0);
+    assertStatus(false, false);
+  }
+
+  @Test
+  public void testParsePresentButEmptyReportIsUnavailableNotZeroPercent() {
+    // A test report that exists but yielded no test case: the parser registers the type marker
+    // with no objects. Nothing ran, so the metric has no result rather than a failing one.
+    DataList dataList = new DataList();
+    dataList.add(TestData.class);
+    recipes = new Recipes();
+    recipes.add(new Recipe("A-A-A", dataList));
+
     assertValues(0, 0, 0.0);
     assertStatus(false, false);
   }

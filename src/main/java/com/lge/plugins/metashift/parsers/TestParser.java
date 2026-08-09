@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.output.NullPrintStream;
-import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -56,7 +55,7 @@ public class TestParser extends Parser {
    * @param dataList to store objects
    */
   public TestParser(FilePath path, DataList dataList) {
-    this(path, dataList, NullPrintStream.NULL_PRINT_STREAM);
+    this(path, dataList, NullPrintStream.INSTANCE);
   }
 
   @Override
@@ -68,15 +67,24 @@ public class TestParser extends Parser {
         return;
       }
       String sourceRoot = readSourceRoot(path.child("test"));
+      boolean parsedAny = false;
       for (FilePath file : files) {
         try {
           objects.addAll(parseFile(path.getName(), sourceRoot, file));
+          parsedAny = true;
         } catch (ParserConfigurationException | SAXException e) {
-          throw new IllegalArgumentException("Failed to parse: " + file, e);
+          // One unreadable report file is not a reason to discard the recipes that did parse,
+          // nor the other report files of this recipe.
+          logger.printf("[meta-shift-plugin] -> skipping malformed unit test report %s: %s%n",
+              file, e.getMessage());
         }
       }
       dataList.addAll(objects);
-      dataList.add(TestData.class);
+      if (parsedAny) {
+        // Registering the type marker is what makes the metric available; when nothing could be
+        // read the metric has no result, rather than a result of zero.
+        dataList.add(TestData.class);
+      }
     } catch (NoSuchFileException e) {
       logger.printf("[meta-shift-plugin] -> unit test report not found: %s%n", e.getFile());
     } catch (IOException ignored) {
@@ -137,13 +145,12 @@ public class TestParser extends Parser {
         case "skipped":
           return withDuration(
               new SkippedTestData(recipe, suite, name, message(tag), file, line), duration);
-        case "system-out":
-        case "system-err":
-        case "properties":
-          // standard JUnit children that do not carry the test status
-          continue;
         default:
-          throw new SAXException("Unknown status tag: " + status);
+          // Anything else does not carry the test status: the standard JUnit children
+          // (system-out, system-err, properties) as well as vendor extensions such as
+          // Surefire's rerunFailure/flakyFailure or assertions. A report format the plugin
+          // does not fully model is not a reason to discard the build's data.
+          continue;
       }
     }
     return withDuration(new PassedTestData(recipe, suite, name, "", file, line), duration);
@@ -170,9 +177,17 @@ public class TestParser extends Parser {
     }
   }
 
+  private static final String CDATA_PREFIX = "<![CDATA[";
+  private static final String CDATA_SUFFIX = "]]>";
+
   private static String message(final Tag tag) {
     String message = tag.getAttribute("message", tag.getTextContent());
-    message = StringUtils.removeStart(message, "<![CDATA[");
-    return StringUtils.removeEnd(message, "]]>");
+    if (message.startsWith(CDATA_PREFIX)) {
+      message = message.substring(CDATA_PREFIX.length());
+    }
+    if (message.endsWith(CDATA_SUFFIX)) {
+      message = message.substring(0, message.length() - CDATA_SUFFIX.length());
+    }
+    return message;
   }
 }

@@ -12,6 +12,8 @@ import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.fixture.FakeTestReport;
 import com.lge.plugins.metashift.models.DataList;
+import com.lge.plugins.metashift.models.FailedTestData;
+import com.lge.plugins.metashift.models.PassedTestData;
 import com.lge.plugins.metashift.models.TestData;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import com.lge.plugins.metashift.utils.TemporaryFileUtils;
@@ -82,20 +84,23 @@ public class TestParserTest {
     assertDataList(false, 0);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithMalformedData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("/testsuite>");
     utils.writeLines(builder, directory, "test", "1.xml");
     parse(directory);
+    // the report is unreadable, so the metric has no data rather than a zero result
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithEmptyFile() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "test", "1.xml");
     parse(directory);
+    assertDataList(false, 0);
   }
 
   @Test
@@ -107,7 +112,7 @@ public class TestParserTest {
     assertDataList(true, 0);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithInvalidData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
@@ -120,6 +125,50 @@ public class TestParserTest {
         .append("</testsuites>");
     utils.writeLines(builder, directory, "test", "1.xml");
     parse(directory);
+    // an element the plugin does not model does not carry the status; the test case passed
+    assertDataList(true, 1);
+    assertValues(0, "A-1.0.0-r0", "A", "test1", "");
+    assertEquals(1, dataList.objects(PassedTestData.class).count());
+  }
+
+  @Test
+  public void testVendorSpecificChildElementsOfTestcaseAreIgnored() throws Exception {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    builder
+        .append("<testsuites>")
+        .append("  <testsuite name='A'>")
+        .append("    <testcase name='test1'>")
+        .append("      <flakyFailure message='flaky'/>")
+        .append("      <rerunFailure message='rerun'/>")
+        .append("    </testcase>")
+        .append("    <testcase name='test2'>")
+        .append("      <assertions>1</assertions>")
+        .append("      <failure message='boom'/>")
+        .append("    </testcase>")
+        .append("  </testsuite>")
+        .append("</testsuites>");
+    utils.writeLines(builder, directory, "test", "1.xml");
+    parse(directory);
+
+    assertDataList(true, 2);
+    assertEquals(1, dataList.objects(PassedTestData.class).count());
+    assertEquals(1, dataList.objects(FailedTestData.class).count());
+  }
+
+  @Test
+  public void testMalformedFileDoesNotDiscardTheOtherReportFiles() throws Exception {
+    File directory = utils.createDirectory("report", "A-1.0.0-r0");
+    utils.writeLines(new StringBuilder().append("/testsuite>"), directory, "test", "1.xml");
+    utils.writeLines(new StringBuilder()
+        .append("<testsuites>")
+        .append("  <testsuite name='A'>")
+        .append("    <testcase name='test1'/>")
+        .append("  </testsuite>")
+        .append("</testsuites>"), directory, "test", "2.xml");
+    parse(directory);
+
+    assertDataList(true, 1);
+    assertValues(0, "A-1.0.0-r0", "A", "test1", "");
   }
 
   @Test

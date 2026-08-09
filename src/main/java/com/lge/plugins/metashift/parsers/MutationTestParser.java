@@ -53,7 +53,7 @@ public class MutationTestParser extends Parser {
    * @param dataList to store objects
    */
   public MutationTestParser(FilePath path, DataList dataList) {
-    this(path, dataList, NullPrintStream.NULL_PRINT_STREAM);
+    this(path, dataList, NullPrintStream.INSTANCE);
   }
 
   @Override
@@ -65,17 +65,27 @@ public class MutationTestParser extends Parser {
 
       String sourceRoot = readSourceRoot(path.child("checktest"));
       for (Tag tag : parser.getChildNodes("mutation")) {
-        String file = relativize(sourceRoot,
-            tag.getChildNodes("sourceFilePath").first().getTextContent());
-        if (isHidden(file)) {
-          continue;
+        try {
+          String file = relativize(sourceRoot,
+              tag.getChildNodes("sourceFilePath").first().getTextContent());
+          if (isHidden(file)) {
+            continue;
+          }
+          objects.add(createInstance(path.getName(), file, tag));
+        } catch (SAXException | NumberFormatException e) {
+          // One entry missing a field the plugin needs is not a reason to discard the entries
+          // that are complete, let alone the whole build's data.
+          logger.printf("[meta-shift-plugin] -> skipping unreadable mutation entry in %s: %s%n",
+              report, e.getMessage());
         }
-        objects.add(createInstance(path.getName(), file, tag));
       }
       dataList.addAll(objects);
       dataList.add(MutationTestData.class);
     } catch (ParserConfigurationException | SAXException e) {
-      throw new IllegalArgumentException("Failed to parse: " + report, e);
+      // A report the plugin cannot read is not a reason to discard the whole build's data:
+      // leaving the type marker unregistered reports this metric as unavailable instead.
+      logger.printf("[meta-shift-plugin] -> skipping malformed mutation test report %s: %s%n",
+          report, e.getMessage());
     } catch (NoSuchFileException e) {
       logger.printf("[meta-shift-plugin] -> mutation test report not found: %s%n", e.getFile());
     }

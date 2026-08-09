@@ -33,9 +33,9 @@ public class EvaluationTest {
 
   @Test
   public void testCreateObject() {
-    Evaluation object = new PositiveEvaluation(true, 0, 0, 0.0, 10);
+    Evaluation object = new PositiveEvaluation(true, 5, 0, 0.0, 10);
     assertStatus(object, true, true);
-    assertEquals(0, object.getDenominator());
+    assertEquals(5, object.getDenominator());
     assertEquals(0, object.getNumerator());
     assertEquals(0.0, object.getThreshold(), 0.01);
     assertEquals(10, object.getTolerance());
@@ -60,10 +60,18 @@ public class EvaluationTest {
 
   @Test
   public void testPositiveWithZeroDenominator() {
+    // Nothing was measured, so there is no ratio to judge: the metric is unavailable rather than
+    // a hard 0% failure. A report that exists but is empty reaches here.
     Evaluation object = new PositiveEvaluation(true, 0, 1, 0.5);
-    assertStatus(object, true, false);
+    assertStatus(object, false, false);
     assertEquals(0.0, object.getRatio(), 0.01);
     assertEquals(0.5, object.getThreshold(), 0.01);
+  }
+
+  @Test
+  public void testCopyConstructorKeepsTheZeroDenominatorMetricUnavailable() {
+    Evaluation object = new PositiveEvaluation(new PositiveEvaluation(true, 0, 0, 0.5));
+    assertStatus(object, false, false);
   }
 
   @Test

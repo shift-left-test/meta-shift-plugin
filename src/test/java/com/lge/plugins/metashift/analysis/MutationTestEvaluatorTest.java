@@ -8,8 +8,10 @@ package com.lge.plugins.metashift.analysis;
 import static org.junit.Assert.assertEquals;
 
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.models.DataList;
 import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.KilledMutationTestData;
+import com.lge.plugins.metashift.models.MutationTestData;
 import com.lge.plugins.metashift.models.PositiveEvaluation;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
@@ -66,6 +68,19 @@ public class MutationTestEvaluatorTest {
   @Test
   public void testParseRecipesNoMatchingData() {
     // recipe with no MutationTestData → not available
+    assertValues(0, 0, 0.0);
+    assertStatus(false, false);
+  }
+
+  @Test
+  public void testParsePresentButEmptyReportIsUnavailableNotZeroPercent() {
+    // A mutations.xml that exists but yielded no usable mutation: the parser registers the type
+    // marker with no objects. Nothing ran, so the metric has no result rather than a failing one.
+    DataList dataList = new DataList();
+    dataList.add(MutationTestData.class);
+    recipes = new Recipes();
+    recipes.add(new Recipe("A-A-A", dataList));
+
     assertValues(0, 0, 0.0);
     assertStatus(false, false);
   }

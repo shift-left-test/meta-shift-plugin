@@ -43,7 +43,13 @@ public abstract class Evaluation implements Serializable {
    */
   public Evaluation(boolean available, long denominator, long numerator, double threshold,
       long tolerance, Type type) {
-    this.available = available;
+    // A report that exists but measured nothing is not a result of zero: the parsers register a
+    // type marker as soon as a report file is readable, so a test report with no test case or a
+    // mutations.xml with no usable mutation would otherwise score a hard 0% and be reported as a
+    // failed metric. With nothing in the denominator there is no ratio to judge, so the metric is
+    // unavailable — which is what the coverage metrics already did, since CoverageParser only
+    // registers the parent type their evaluators do not gate on.
+    this.available = available && denominator > 0;
     this.denominator = denominator;
     this.numerator = numerator;
     this.threshold = threshold;

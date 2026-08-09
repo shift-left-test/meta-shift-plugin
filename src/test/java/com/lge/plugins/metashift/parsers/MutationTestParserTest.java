@@ -87,15 +87,17 @@ public class MutationTestParserTest {
     assertDataList(false, 0);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithMalformedFile() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append("<mutation>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
     parse(directory);
+    // the report is unreadable, so the metric has no data rather than a zero result
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithInsufficientData() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
@@ -106,14 +108,17 @@ public class MutationTestParserTest {
         .append("</mutations>");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
     parse(directory);
+    // the file is readable; only the incomplete entry is dropped
+    assertDataList(true, 0);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithEmptyFile() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "checktest", "mutations.xml");
     parse(directory);
+    assertDataList(false, 0);
   }
 
   @Test

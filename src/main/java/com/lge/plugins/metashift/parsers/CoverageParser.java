@@ -54,7 +54,7 @@ public class CoverageParser extends Parser {
    * @param dataList to store objects
    */
   public CoverageParser(FilePath path, DataList dataList) {
-    this(path, dataList, NullPrintStream.NULL_PRINT_STREAM);
+    this(path, dataList, NullPrintStream.INSTANCE);
   }
 
   @Override
@@ -80,7 +80,10 @@ public class CoverageParser extends Parser {
       dataList.addAll(objects);
       dataList.add(CoverageData.class);
     } catch (ParserConfigurationException | SAXException e) {
-      throw new IllegalArgumentException("Failed to parse: " + report, e);
+      // A report the plugin cannot read is not a reason to discard the whole build's data:
+      // leaving the type marker unregistered reports this metric as unavailable instead.
+      logger.printf("[meta-shift-plugin] -> skipping malformed coverage report %s: %s%n",
+          report, e.getMessage());
     } catch (NoSuchFileException e) {
       logger.printf("[meta-shift-plugin] -> coverage report not found: %s%n", e.getFile());
     }

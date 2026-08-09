@@ -85,11 +85,12 @@ public class FileParserTest {
     assertEquals(0, recipes.size());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithInvalidDirectories() throws IOException, InterruptedException {
     File report = utils.createDirectory("report");
     utils.createDirectory(report, "invalid");
-    parser.parse(new FilePath(report));
+    recipes = parser.parse(new FilePath(report));
+    assertEquals(0, recipes.size());
   }
 
   @Test
@@ -188,11 +189,11 @@ public class FileParserTest {
     Mockito.verify(logger).printf("[meta-shift-plugin] -> %d recipe data removed.%n", 1);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testParseDirectoryWithInvalidName() throws IOException, InterruptedException {
     builder.add(new FakeRecipe(source, "invalid_name").add(new FakeSource(1, 1, 1, 1)));
     builder.toFile(report);
-    new FileParser().parse(new FilePath(report));
+    assertEquals(0, new FileParser().parse(new FilePath(report)).size());
   }
 
   @Test
@@ -205,6 +206,62 @@ public class FileParserTest {
     recipes = new FileParser().parse(new FilePath(report));
     assertEquals(1, recipes.size());
     assertEquals(expected, recipes.get(0).getName());
+  }
+
+  @Test
+  public void testNonRecipeDirectoryIsSkippedInsteadOfFailingTheReport()
+      throws IOException, InterruptedException {
+    builder.add(new FakeRecipe(source, "cmake-project-1.0.0-r0")
+        .add(new FakeSource(10, 3, 2, 0).setStatementCoverage(1, 0)));
+    builder.toFile(report);
+    utils.createDirectory(report, "logs");
+
+    recipes = parser.parse(new FilePath(report));
+
+    assertEquals(1, recipes.size());
+    assertEquals("cmake-project", recipes.get(0).getName());
+    Mockito.verify(logger).printf(
+        "[meta-shift-plugin] -> skipping '%s': not a recipe report directory.%n", "logs");
+  }
+
+  @Test
+  public void testPreReleaseVersionInTheRecipeNameIsParsed()
+      throws IOException, InterruptedException {
+    builder.add(new FakeRecipe(source, "openssl-3.0.0~beta1-r0")
+        .add(new FakeSource(10, 3, 2, 0).setStatementCoverage(1, 0)));
+    builder.toFile(report);
+
+    recipes = parser.parse(new FilePath(report));
+
+    assertEquals(1, recipes.size());
+    assertEquals("openssl", recipes.get(0).getName());
+    assertEquals("3.0.0~beta1-r0", recipes.get(0).getVersion());
+  }
+
+  @Test
+  public void testMalformedReportInOneRecipeDoesNotDiscardTheOthers()
+      throws IOException, InterruptedException {
+    FakeRecipe broken = new FakeRecipe(source, "broken-project-1.0.0-r0")
+        .add(new FakeSource(10, 3, 2, 1).setMutationTests(1, 2, 3).setStatementCoverage(1, 0));
+    builder.add(broken);
+    builder.add(new FakeRecipe(source, "cmake-project-1.0.0-r0")
+        .add(new FakeSource(10, 3, 2, 0).setMutationTests(1, 2, 3).setStatementCoverage(1, 0)));
+    builder.add(new FakeRecipe(source, "qmake-project-1.0.0-r0")
+        .add(new FakeSource(10, 3, 2, 0).setMutationTests(1, 2, 3).setStatementCoverage(1, 0)));
+    builder.toFile(report);
+    FileUtils.write(
+        FileUtils.getFile(report, broken.getName(), "checktest", "mutations.xml"),
+        "<mutations><mutation>truncated", StandardCharsets.UTF_8);
+
+    recipes = parser.parse(new FilePath(report));
+
+    assertEquals(3, recipes.size());
+    // only the unreadable metric of the affected recipe is dropped; the rest is untouched
+    Recipe brokenRecipe = recipes.stream()
+        .filter(o -> o.getName().equals("broken-project")).findFirst().orElseThrow();
+    assertEquals(0, brokenRecipe.objects(MutationTestData.class).count());
+    assertEquals(1, brokenRecipe.objects(StatementCoverageData.class).count());
+    assertEquals(12, recipes.objects(MutationTestData.class).count());
   }
 
   @Test

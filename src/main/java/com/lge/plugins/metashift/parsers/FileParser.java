@@ -45,7 +45,7 @@ public class FileParser {
    * Default constructor.
    */
   public FileParser() {
-    this(NullPrintStream.NULL_PRINT_STREAM);
+    this(NullPrintStream.INSTANCE);
   }
 
   /**
@@ -71,16 +71,19 @@ public class FileParser {
     Recipes recipes = new Recipes();
     for (FilePath directory : directories) {
       logger.printf("[meta-shift-plugin] -> %s%n", directory.getName());
-      recipes.add(parseEach(directory));
+      Recipe recipe = parseEach(directory);
+      if (recipe != null) {
+        recipes.add(recipe);
+      }
     }
 
     logger.println("[meta-shift-plugin] Removing recipe data with no report data...");
+    int parsed = recipes.size();
     recipes.removeIf(recipe ->
         !recipe.contains(CoverageData.class)
         && !recipe.contains(TestData.class)
         && !recipe.contains(MutationTestData.class));
-    logger.printf("[meta-shift-plugin] -> %d recipe data removed.%n",
-        directories.size() - recipes.size());
+    logger.printf("[meta-shift-plugin] -> %d recipe data removed.%n", parsed - recipes.size());
 
     warnOnDuplicateNames(recipes);
     Collections.sort(recipes);
@@ -92,8 +95,13 @@ public class FileParser {
   /**
    * Creates a Recipe object using the given recipe directory.
    *
+   * <p>A report root routinely holds directories that are not recipe reports (build logs, images,
+   * scratch directories), and a name the recipe naming convention does not cover is not a reason
+   * to discard the report of every other recipe, so such a directory is skipped with a warning.
+   *
    * @param path to the recipe directory
-   * @throws IllegalArgumentException if the recipe name is malformed or the path is invalid
+   * @return the recipe, or null when the directory is not a recipe report directory
+   * @throws IllegalArgumentException if the path is invalid
    * @throws IOException              if a file IO fails
    * @throws InterruptedException     if an interruption occurs
    */
@@ -106,7 +114,9 @@ public class FileParser {
     }
     String name = path.getName();
     if (!NamingUtils.isValid(name)) {
-      throw new IllegalArgumentException("Invalid recipe name: " + name);
+      logger.printf("[meta-shift-plugin] -> skipping '%s': not a recipe report directory.%n",
+          name);
+      return null;
     }
     DataList dataList = new DataList();
     ExecutorServiceUtils.invokeAll(

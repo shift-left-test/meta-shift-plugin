@@ -96,15 +96,17 @@ public class CoverageParserTest {
     assertTrue(out.toString().contains("[meta-shift-plugin] -> coverage report not found:"));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithEmptyFile() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder.append(" ");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     parse(directory);
+    // the report is unreadable, so the metric has no data rather than a zero result
+    assertDataList(false, 0);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testCreateWithMalformedFile() throws Exception {
     File directory = utils.createDirectory("report", "A-1.0.0-r0");
     builder
@@ -113,6 +115,7 @@ public class CoverageParserTest {
         .append("    <method name='func1()'>");
     utils.writeLines(builder, directory, "coverage", "coverage.xml");
     parse(directory);
+    assertDataList(false, 0);
   }
 
   @Test
