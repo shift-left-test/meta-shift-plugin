@@ -102,24 +102,22 @@ public class RecipeAction implements Action, AsyncTableContentProvider {
   }
 
   /**
-   * Tests whether the raw HTML report of the given task is archived with this build.
+   * Tests whether this recipe's raw report can be downloaded as a zip.
    *
-   * @param task task name ({@code test}, {@code coverage} or {@code checktest})
-   * @return true when the report is available
+   * @return true when an archived report directory exists for this recipe
    */
-  public boolean hasHtmlReport(String task) {
+  public boolean isRawReportDownloadable() {
     String dir = getReportDir();
-    return !dir.isEmpty() && getParentAction().hasHtmlReport(dir, task);
+    return !dir.isEmpty() && getParentAction().hasRawReport(dir);
   }
 
   /**
-   * Returns the URL of the raw HTML report of the given task, relative to this recipe's page.
+   * Returns the zip download URL of this recipe's raw report, relative to this recipe's page.
    *
-   * @param task task name ({@code test}, {@code coverage} or {@code checktest})
    * @return relative URL
    */
-  public String getHtmlReportUrl(String task) {
-    return "../html/" + Util.rawEncode(getReportDir()) + "/" + task + "/index.html";
+  public String getRawReportDownloadUrl() {
+    return "../download/" + Util.rawEncode(getReportDir());
   }
 
   @Override

@@ -4,6 +4,9 @@
     <f:entry title="Report Root Path" field="reportRoot">
       <f:textbox />
     </f:entry>
+    <f:entry title="Archive raw reports" field="archiveRawReports">
+      <f:checkbox default="true" />
+    </f:entry>
   </f:section>
   <f:block>
     <f:optionalBlock name="customConfiguration" title="Customize configurations"

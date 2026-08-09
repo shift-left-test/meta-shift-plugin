@@ -18,7 +18,7 @@
         <j:otherwise>
           <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
             <a href=".">&#8592; ${it.displayName}</a>
-            <span class="h5 mb-0 font-monospace">${s != null ? s.file : v.file}</span>
+            <h1 class="h4 mb-0 font-monospace">${s != null ? s.file : v.file}</h1>
             <j:if test="${v != null}">
               <j:forEach var="badge" items="${v.badges}">
                 <span class="badge ${badge.color}">${badge.name} ${badge.ratioText}</span>

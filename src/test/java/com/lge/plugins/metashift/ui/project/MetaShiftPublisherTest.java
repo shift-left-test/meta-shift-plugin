@@ -14,6 +14,7 @@ import com.lge.plugins.metashift.fixture.FakeRecipe;
 import com.lge.plugins.metashift.fixture.FakeReportBuilder;
 import com.lge.plugins.metashift.fixture.FakeSource;
 import com.lge.plugins.metashift.models.Configuration;
+import com.lge.plugins.metashift.ui.RawReportArchive;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import hudson.model.FreeStyleBuild;
@@ -22,7 +23,12 @@ import hudson.model.Result;
 import hudson.util.FormValidation;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
+import org.htmlunit.Page;
 import org.htmlunit.html.HtmlPage;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -75,6 +81,63 @@ public class MetaShiftPublisherTest {
     jenkins.assertEqualDataBoundBeans(
         new MetaShiftPublisher(report.getAbsolutePath()),
         project.getPublishersList().get(0));
+  }
+
+  @Test
+  public void testArchiveRawReportsDefaultsToOnAndRoundTrips() throws Exception {
+    FreeStyleProject project = jenkins.createFreeStyleProject();
+    MetaShiftPublisher before = new MetaShiftPublisher(report.getAbsolutePath());
+    // A publisher persisted before this option existed must keep archiving.
+    assertTrue(before.isArchiveRawReports());
+    before.setArchiveRawReports(false);
+    project.getPublishersList().add(before);
+
+    jenkins.submit(client.getPage(project, "configure").getFormByName("config"));
+
+    assertFalse(((MetaShiftPublisher) project.getPublishersList().get(0)).isArchiveRawReports());
+  }
+
+  @Test
+  public void testArchiveKeepsAssetsThatTheReportPagesReference() throws Exception {
+    FreeStyleProject project = jenkins.createFreeStyleProject();
+    project.setCustomWorkspace(workspace.getAbsolutePath());
+    project.getPublishersList().add(new MetaShiftPublisher(report.getName()));
+
+    fakeRecipe.add(new FakeSource(10, 4, 5, 6).setTests(1, 2, 3, 4)
+        .setStatementCoverage(1, 2).setBranchCoverage(3, 4).setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+    // gcovr writes its stylesheet and images next to the pages that reference them.
+    File coverage = new File(report, fakeRecipe.getName() + "/coverage");
+    FileUtils.forceMkdir(coverage);
+    FileUtils.writeStringToFile(new File(coverage, "gcov.css"), "body{}", StandardCharsets.UTF_8);
+    FileUtils.writeStringToFile(new File(coverage, "index.html"),
+        "<link href='gcov.css'/>", StandardCharsets.UTF_8);
+
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
+
+    File archive = RawReportArchive.archiveDir(run.getRootDir());
+    assertTrue(new File(archive, fakeRecipe.getName() + "/coverage/index.html").isFile());
+    assertTrue(new File(archive, fakeRecipe.getName() + "/coverage/gcov.css").isFile());
+  }
+
+  @Test
+  public void testArchiveCanBeTurnedOff() throws Exception {
+    FreeStyleProject project = jenkins.createFreeStyleProject();
+    project.setCustomWorkspace(workspace.getAbsolutePath());
+    MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
+    publisher.setArchiveRawReports(false);
+    project.getPublishersList().add(publisher);
+
+    fakeRecipe.add(new FakeSource(10, 4, 5, 6).setTests(1, 2, 3, 4)
+        .setStatementCoverage(1, 2).setBranchCoverage(3, 4).setMutationTests(1, 2, 3));
+    builder.add(fakeRecipe);
+    builder.toFile(report);
+
+    FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
+
+    assertFalse(RawReportArchive.archiveDir(run.getRootDir()).exists());
+    jenkins.assertLogContains("Raw report archiving is disabled", run);
   }
 
   @Test
@@ -134,46 +197,42 @@ public class MetaShiftPublisherTest {
   }
 
   @Test
-  public void testPerformArchivesRawHtmlReports() throws Exception {
+  public void testPerformArchivesRawReportsAndServesThemAsZip() throws Exception {
     FreeStyleProject project = jenkins.createFreeStyleProject();
     project.setCustomWorkspace(workspace.getAbsolutePath());
-    MetaShiftPublisher publisher = new MetaShiftPublisher(report.getName());
-    project.getPublishersList().add(publisher);
+    project.getPublishersList().add(new MetaShiftPublisher(report.getName()));
 
-    fakeRecipe
-        .add(new FakeSource(10, 4, 5, 6)
-            .setTests(1, 2, 3, 4)
-            .setStatementCoverage(1, 2)
-            .setBranchCoverage(3, 4)
-            .setMutationTests(1, 2, 3));
+    fakeRecipe.add(new FakeSource(10, 4, 5, 6).setTests(1, 2, 3, 4)
+        .setStatementCoverage(1, 2).setBranchCoverage(3, 4).setMutationTests(1, 2, 3));
     builder.add(fakeRecipe);
     builder.toFile(report);
 
-    File coverageHtml = FileUtils.getFile(
-        report, fakeRecipe.getName(), "coverage", "index.html");
+    File coverageHtml = FileUtils.getFile(report, fakeRecipe.getName(), "coverage", "index.html");
     FileUtils.forceMkdirParent(coverageHtml);
     FileUtils.writeStringToFile(coverageHtml, "<html>coverage report</html>",
         StandardCharsets.UTF_8);
+    // gcovr references its stylesheet from that page; an HTML-only archive would drop it.
+    FileUtils.writeStringToFile(
+        FileUtils.getFile(report, fakeRecipe.getName(), "coverage", "gcov.css"),
+        "body{}", StandardCharsets.UTF_8);
 
     FreeStyleBuild run = jenkins.buildAndAssertStatus(Result.SUCCESS, project);
     BuildAction action = run.getAction(BuildAction.class);
     RecipeAction recipeAction = action.getAction(RecipeAction.class);
+    assertTrue(action.hasRawReport(recipeAction.getReportDir()));
 
-    assertTrue(action.hasHtmlReport(recipeAction.getReportDir(), "coverage"));
-    assertFalse(action.hasHtmlReport(recipeAction.getReportDir(), "test"));
-
-    HtmlPage page = client.getPage(run,
-        "meta-shift-report/html/" + recipeAction.getReportDir() + "/coverage/index.html");
-    assertEquals("<html>coverage report</html>",
-        page.getWebResponse().getContentAsString());
-    assertEquals("sandbox allow-scripts; default-src 'none'; img-src 'self' data:; "
-            + "style-src 'unsafe-inline'; script-src 'unsafe-inline';",
-        page.getWebResponse().getResponseHeaderValue("Content-Security-Policy"));
-
-    client.getOptions().setThrowExceptionOnFailingStatusCode(false);
-    HtmlPage missing = client.getPage(run,
-        "meta-shift-report/html/" + recipeAction.getReportDir() + "/test/index.html");
-    assertEquals(404, missing.getWebResponse().getStatusCode());
+    Page zip = client.goTo(
+        run.getUrl() + "meta-shift-report/download/" + recipeAction.getReportDir(),
+        "application/zip");
+    Set<String> entries = new HashSet<>();
+    try (ZipInputStream in = new ZipInputStream(
+        zip.getWebResponse().getContentAsStream())) {
+      for (ZipEntry entry = in.getNextEntry(); entry != null; entry = in.getNextEntry()) {
+        entries.add(entry.getName());
+      }
+    }
+    assertTrue(entries.contains("coverage/index.html"));
+    assertTrue(entries.contains("coverage/gcov.css"));
   }
 
   @Test

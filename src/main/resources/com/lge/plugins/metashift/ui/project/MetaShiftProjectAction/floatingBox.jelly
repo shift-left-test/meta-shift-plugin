@@ -1,4 +1,15 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:c="/charts">
-  <c:trend-chart it="${from}" title="Trend" configurationId="default" enableLinks="true"/>
+<!--
+  Rendered on the job page. The projectActionFloatingBox taglib includes this view without
+  setting "it", so the action is reached through "from".
+
+  Unlike the trend page, this widget keeps click-through: there is no build table next to it,
+  so the chart is the only way to reach a build's report from here. The relative build URL that
+  the click builds is correct on the job page (../<n>/meta-shift-report resolves under the job).
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:ms="/metashift">
+  <j:if test="${from.lastResultBuildNumber != null}">
+    <div class="test-trend-caption">meta-shift report</div>
+    <ms:trend-chart action="${from}" width="520px" height="260px" resizable="true" links="true"/>
+  </j:if>
 </j:jelly>

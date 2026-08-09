@@ -12,8 +12,8 @@ import com.lge.plugins.metashift.models.Configuration;
 import com.lge.plugins.metashift.models.Recipe;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.HtmlReportServer;
 import com.lge.plugins.metashift.ui.MetricView;
+import com.lge.plugins.metashift.ui.RawReportArchive;
 import com.lge.plugins.metashift.ui.project.MetaShiftProjectAction;
 import com.lge.plugins.metashift.ui.recipe.RecipeAction;
 import com.lge.plugins.metashift.ui.tables.EvaluationSummaryTableModel;
@@ -200,35 +200,37 @@ public class BuildAction extends Actionable
         .filter(card -> !card.isQualified()).collect(Collectors.toList());
   }
 
-  private transient HtmlReportServer htmlReportServer;
+  private transient RawReportArchive rawReportArchive;
 
-  private HtmlReportServer getHtmlReportServer() {
-    if (htmlReportServer == null) {
-      htmlReportServer = new HtmlReportServer(getRun().getRootDir());
+  private RawReportArchive getRawReportArchive() {
+    if (rawReportArchive == null) {
+      rawReportArchive = new RawReportArchive(getRun().getRootDir());
     }
-    return htmlReportServer;
+    return rawReportArchive;
   }
 
   /**
-   * Serves the raw meta-shift HTML report archived with this build, under
-   * {@code meta-shift-report/html/}.
+   * Tests whether any raw report of the given recipe is archived with this build, i.e. whether
+   * the download link should be offered.
    *
-   * @param req stapler request
+   * @param reportDir report directory name of the recipe
+   * @return true when the recipe has an archived report directory
+   */
+  public boolean hasRawReport(String reportDir) {
+    return getRawReportArchive().hasDirectory(reportDir);
+  }
+
+  /**
+   * Streams the whole archived report of one recipe as a zip, under
+   * {@code meta-shift-report/download/&lt;reportDir&gt;}. Reachable only through this action, so
+   * Jenkins has already checked Item/Read on the owning build.
+   *
+   * @param req stapler request; the rest of the path names the recipe report directory
    * @param rsp stapler response
    */
-  public void doHtml(StaplerRequest2 req, StaplerResponse2 rsp) throws IOException {
-    getHtmlReportServer().serve(req, rsp);
-  }
-
-  /**
-   * Tests whether the raw HTML report of the given recipe task is archived with this build.
-   *
-   * @param reportDir report directory name of the recipe ({@code Recipe.getReportDir()})
-   * @param task      task name ({@code test}, {@code coverage} or {@code checktest})
-   * @return true when the report is available
-   */
-  public boolean hasHtmlReport(String reportDir, String task) {
-    return getHtmlReportServer().hasFile(reportDir + "/" + task + "/index.html");
+  public void doDownload(StaplerRequest2 req, StaplerResponse2 rsp)
+      throws IOException, InterruptedException {
+    getRawReportArchive().serveZip(req, rsp);
   }
 
   /**

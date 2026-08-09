@@ -5,12 +5,10 @@ xmlns:l="/lib/layout" xmlns:ms="/metashift" xmlns:dt="/data-tables">
     <st:include it="${it.run}" page="sidepanel.jelly" />
     <l:main-panel>
       <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
-      <script src="${rootURL}/plugin/echarts-api/js/echarts.min.js"
-              type="text/javascript"></script>
-      <st:adjunct includes="com.lge.plugins.metashift.ui.metashift"/>
+      <ms:charts/>
 
       <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-        <h1 class="h3 mb-0">meta-shift report</h1>
+        <h1 class="h4 mb-0">meta-shift report</h1>
         <span class="badge ${it.qualifiedCount == it.availableCount
             ? 'text-bg-success' : 'text-bg-danger'}">
           ${it.qualifiedCount}/${it.availableCount} metrics qualified
@@ -54,7 +52,7 @@ xmlns:l="/lib/layout" xmlns:ms="/metashift" xmlns:dt="/data-tables">
       <div class="tab-content">
         <div class="tab-pane fade show active" id="ms-panel-overview" role="tabpanel">
           <div class="mb-4">
-            <ms:dynamic-testing-row />
+            <ms:metric-cards cards="${it.metricCards}"/>
           </div>
           <j:if test="${it.availableCount &gt; 0}">
             <j:set var="attention" value="${it.attention}"/>

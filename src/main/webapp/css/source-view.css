@@ -1,6 +1,47 @@
-/* Annotated source view of the meta-shift report file page. */
+/*
+ * Annotated source view of the meta-shift report file page.
+ *
+ * The coverage colours live on :root so both the source table and the legend swatches beside it
+ * consume the same tokens. Only the dark values are restated, guarded so that an explicit theme
+ * choice beats the operating system setting in both directions.
+ */
+:root {
+  --msp-border: var(--input-border, #dee2e6);
+  --msp-gutter-bg: rgba(0, 0, 0, 0.03);
+  --msp-gutter-fg: var(--text-color-secondary, #888);
+  --msp-covered: rgba(25, 135, 84, 0.12);
+  --msp-partial: rgba(255, 193, 7, 0.18);
+  --msp-uncovered: rgba(220, 53, 69, 0.12);
+  /* The legend swatches are 12px squares, so they need a stronger tint than a full-width row. */
+  --msp-covered-swatch: rgba(25, 135, 84, 0.35);
+  --msp-partial-swatch: rgba(255, 193, 7, 0.45);
+  --msp-uncovered-swatch: rgba(220, 53, 69, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --msp-gutter-bg: rgba(255, 255, 255, 0.04);
+    --msp-covered: rgba(45, 190, 120, 0.20);
+    --msp-partial: rgba(255, 193, 7, 0.26);
+    --msp-uncovered: rgba(240, 110, 110, 0.22);
+    --msp-covered-swatch: rgba(45, 190, 120, 0.45);
+    --msp-partial-swatch: rgba(255, 193, 7, 0.55);
+    --msp-uncovered-swatch: rgba(240, 110, 110, 0.45);
+  }
+}
+
+:root[data-theme="dark"] {
+  --msp-gutter-bg: rgba(255, 255, 255, 0.04);
+  --msp-covered: rgba(45, 190, 120, 0.20);
+  --msp-partial: rgba(255, 193, 7, 0.26);
+  --msp-uncovered: rgba(240, 110, 110, 0.22);
+  --msp-covered-swatch: rgba(45, 190, 120, 0.45);
+  --msp-partial-swatch: rgba(255, 193, 7, 0.55);
+  --msp-uncovered-swatch: rgba(240, 110, 110, 0.45);
+}
+
 .msp-source {
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--msp-border);
   border-radius: 6px;
   overflow-x: auto;
   margin-bottom: 1.5rem;
@@ -25,9 +66,9 @@
   min-width: 44px;
   text-align: right;
   padding: 0 8px;
-  border-right: 1px solid #dee2e6;
-  background: rgba(0, 0, 0, 0.03);
-  color: #888;
+  border-right: 1px solid var(--msp-border);
+  background: var(--msp-gutter-bg);
+  color: var(--msp-gutter-fg);
   user-select: none;
 }
 
@@ -36,22 +77,34 @@
 }
 
 .msp-line--covered {
-  background-color: rgba(25, 135, 84, 0.12);
+  background-color: var(--msp-covered);
 }
 
 .msp-line--partial {
-  background-color: rgba(255, 193, 7, 0.18);
+  background-color: var(--msp-partial);
 }
 
 .msp-line--uncovered,
 .msp-row--survived {
-  background-color: rgba(220, 53, 69, 0.12);
+  background-color: var(--msp-uncovered);
 }
 
 .msp-legend {
   display: inline-block;
   width: 12px;
   height: 12px;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--msp-border);
   vertical-align: -2px;
+}
+
+.msp-legend.msp-line--covered {
+  background-color: var(--msp-covered-swatch);
+}
+
+.msp-legend.msp-line--partial {
+  background-color: var(--msp-partial-swatch);
+}
+
+.msp-legend.msp-line--uncovered {
+  background-color: var(--msp-uncovered-swatch);
 }

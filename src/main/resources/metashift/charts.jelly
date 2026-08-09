@@ -1,0 +1,13 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <st:documentation>
+    Loads echarts and this plugin's chart behaviour. Include once on any page that renders a
+    donut (data-ms-donut) or a trend (data-ms-trend).
+
+    metashift.js is served from src/main/webapp rather than declared as a Stapler adjunct: a bare
+    .js adjunct emits no script tag here, which left every chart on the page unrendered. The
+    plugin already serves its stylesheet the same way.
+  </st:documentation>
+  <st:adjunct includes="io.jenkins.plugins.echarts"/>
+  <script src="${rootURL}/plugin/meta-shift/js/metashift.js" type="text/javascript"><!-- --></script>
+</j:jelly>

@@ -1,0 +1,39 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:ms="/metashift">
+  <st:documentation>
+    Renders the build trend chart.
+
+    The model is fetched after page load through the action's @JavaScriptMethod, the same way
+    the echarts-api &lt;c:trend-chart&gt; taglib does it: reading it costs one disk read per
+    metric per build, which must not sit in front of the first byte of the job page.
+
+    <st:attribute name="action" use="required"
+                  type="com.lge.plugins.metashift.ui.project.MetaShiftProjectAction">
+      The project action supplying the trend model.
+    </st:attribute>
+    <st:attribute name="width" use="optional" type="String">
+      CSS width of the chart box. Defaults to filling the container, which is right for a page
+      column; the job page widget must name a width instead, because Jenkins wraps the floating
+      box in a shrink-to-fit float where a percentage collapses to the minimum.
+    </st:attribute>
+    <st:attribute name="height" use="optional" type="String">
+      CSS height of the chart box. Defaults to a viewport-relative height.
+    </st:attribute>
+    <st:attribute name="resizable" use="optional" type="Boolean">
+      When true, the reader can drag the box's corner and the size is remembered per page.
+    </st:attribute>
+    <st:attribute name="links" use="optional" type="Boolean">
+      When true, clicking a point opens that build's report. Leave it off on pages that already
+      list the builds, so there is only one way to reach a build.
+    </st:attribute>
+  </st:documentation>
+
+  <ms:charts/>
+
+  <j:set var="msTrendId" value="${h.generateId()}"/>
+  <st:bind var="msTrendProxy${msTrendId}" value="${action}"/>
+  <div data-ms-trend="${msTrendId}"
+       data-ms-trend-links="${links ? action.urlName : null}"
+       data-ms-resizable="${resizable ? 'true' : null}"
+       style="width:${width != null ? width : '100%'};height:${height != null ? height : 'clamp(220px, 26vh, 320px)'};${resizable ? 'resize:both;overflow:hidden;min-width:260px;' : ''}"></div>
+</j:jelly>

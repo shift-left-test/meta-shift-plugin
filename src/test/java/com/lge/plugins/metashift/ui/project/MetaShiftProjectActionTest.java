@@ -6,6 +6,7 @@
 package com.lge.plugins.metashift.ui.project;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -96,9 +97,27 @@ public class MetaShiftProjectActionTest {
       wc.getOptions().setThrowExceptionOnScriptError(false);
       HtmlPage page = wc.getPage(project);
       String content = page.getWebResponse().getContentAsString();
-      // The echarts-api <c:trend-chart> taglib renders a chart container with this class.
-      assertTrue(content.contains("echarts-trend"));
+      // The job page widget renders the chart container itself and keeps click-through,
+      // because there is no build table beside it. The model is fetched after load.
+      assertTrue(content.contains("data-ms-trend"));
+      assertTrue(content.contains("data-ms-trend-links"));
+      assertTrue(content.contains("resize:both"));
+      assertTrue(content.contains("msTrendProxy"));
     }
+  }
+
+  @Test
+  public void testTrendModelCarriesEveryMetricSeries() throws Exception {
+    configureReport();
+    jenkins.buildAndAssertStatus(Result.SUCCESS, project);
+
+    String json = project.getAction(MetaShiftProjectAction.class)
+        .getConfigurableBuildTrendModel("{}");
+    assertTrue(json.contains("\"Unit Tests\""));
+    assertTrue(json.contains("\"Statement Coverage\""));
+    assertTrue(json.contains("\"Branch Coverage\""));
+    assertTrue(json.contains("\"Mutation Tests\""));
+    assertTrue(json.contains("buildNumbers"));
   }
 
   @Test
@@ -124,10 +143,33 @@ public class MetaShiftProjectActionTest {
       wc.getOptions().setThrowExceptionOnScriptError(false);
       HtmlPage page = wc.getPage(project, "meta-shift-report/");
       String content = page.getWebResponse().getContentAsString();
+      // Current state first, then the trend, then the history: the three sections of the page.
+      assertTrue(content.contains("Current status"));
       assertTrue(content.contains("Recent builds"));
-      assertTrue(content.contains("Latest report"));
-      assertTrue(content.contains("echarts-trend"));
+      assertTrue(content.contains("data-ms-trend"));
+      // Click-through is intentionally absent here; the table below links every build instead.
+      assertFalse(content.contains("data-ms-trend-links"));
     }
+  }
+
+  @Test
+  public void testRecentBuildsCarryResultAndTimestamp() throws Exception {
+    configureReport();
+    jenkins.buildAndAssertStatus(Result.SUCCESS, project);
+
+    MetaShiftProjectAction.BuildRow row =
+        project.getAction(MetaShiftProjectAction.class).getRecentBuilds().get(0);
+    assertEquals("SUCCESS", row.getResult());
+    assertEquals("success", row.getResultClass());
+    assertFalse(row.getTimestamp().isEmpty());
+  }
+
+  @Test
+  public void testLatestCardsExposeEveryMetric() throws Exception {
+    configureReport();
+    jenkins.buildAndAssertStatus(Result.SUCCESS, project);
+
+    assertEquals(4, project.getAction(MetaShiftProjectAction.class).getLatestCards().size());
   }
 
 }

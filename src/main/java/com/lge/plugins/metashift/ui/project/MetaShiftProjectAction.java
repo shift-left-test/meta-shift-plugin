@@ -106,25 +106,43 @@ public class MetaShiftProjectAction implements ProminentProjectAction,
       if (action == null || action.getReport() == null) {
         continue;
       }
-      rows.add(new BuildRow(b.getNumber(), b.getDisplayName(),
+      rows.add(new BuildRow(b.getNumber(), b.getDisplayName(), b.getResult(),
+          b.getTimestampString() + " ago",
           MetricView.cardsFor(action.getReport(), null, null, null, null)));
     }
     return rows;
   }
 
   /**
-   * One row of the recent-builds table: a build and its four metric cards (deltas not computed,
-   * since the table already shows one row per build).
+   * Returns the metric cards of the most recent build that has a report, including the
+   * build-over-build deltas, so the trend page can open with the current state instead of making
+   * the reader derive it from the chart.
+   *
+   * @return metric cards of the latest reported build, empty when there is none
+   */
+  public List<MetricView> getLatestCards() {
+    BuildAction action = getLastResultBuild();
+    return action == null ? new ArrayList<>() : action.getMetricCards();
+  }
+
+  /**
+   * One row of the recent-builds table: a build, how it ended, when it ran, and its four metric
+   * cards (deltas not computed, since the table already shows one row per build).
    */
   public static final class BuildRow {
 
     private final int number;
     private final String displayName;
+    private final Result result;
+    private final String timestamp;
     private final List<MetricView> cards;
 
-    BuildRow(int number, String displayName, List<MetricView> cards) {
+    BuildRow(int number, String displayName, Result result, String timestamp,
+        List<MetricView> cards) {
       this.number = number;
       this.displayName = displayName;
+      this.result = result;
+      this.timestamp = timestamp;
       this.cards = cards;
     }
 
@@ -134,6 +152,26 @@ public class MetaShiftProjectAction implements ProminentProjectAction,
 
     public String getDisplayName() {
       return displayName;
+    }
+
+    public String getResult() {
+      return result == null ? "" : result.toString();
+    }
+
+    /**
+     * Bootstrap contextual suffix for the build result badge.
+     *
+     * @return "success", "warning" or "secondary"
+     */
+    public String getResultClass() {
+      if (Result.SUCCESS.equals(result)) {
+        return "success";
+      }
+      return Result.UNSTABLE.equals(result) ? "warning" : "secondary";
+    }
+
+    public String getTimestamp() {
+      return timestamp;
     }
 
     public List<MetricView> getCards() {

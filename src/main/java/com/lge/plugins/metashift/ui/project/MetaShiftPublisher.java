@@ -15,7 +15,7 @@ import com.lge.plugins.metashift.models.Evaluation;
 import com.lge.plugins.metashift.models.Recipes;
 import com.lge.plugins.metashift.parsers.FileParser;
 import com.lge.plugins.metashift.persistence.DataSource;
-import com.lge.plugins.metashift.ui.HtmlReportServer;
+import com.lge.plugins.metashift.ui.RawReportArchive;
 import com.lge.plugins.metashift.ui.build.BuildAction;
 import com.lge.plugins.metashift.utils.ExecutorServiceUtils;
 import hudson.AbortException;
@@ -32,6 +32,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.time.Duration;
@@ -39,6 +40,7 @@ import java.time.Instant;
 import java.util.concurrent.Callable;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -57,6 +59,13 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   private Configuration customConfiguration;
 
   /**
+   * Nullable so that publishers persisted before this option existed keep archiving, which is
+   * what they did. XStream leaves absent fields at their JVM default, so a primitive boolean
+   * would silently turn archiving off for every existing job.
+   */
+  private Boolean archiveRawReports;
+
+  /**
    * Default constructor.
    */
   @DataBoundConstructor
@@ -66,6 +75,15 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
 
   public String getReportRoot() {
     return reportRoot;
+  }
+
+  public boolean isArchiveRawReports() {
+    return archiveRawReports == null || archiveRawReports;
+  }
+
+  @DataBoundSetter
+  public void setArchiveRawReports(boolean archiveRawReports) {
+    this.archiveRawReports = archiveRawReports;
   }
 
   public boolean isUseCustomConfiguration() {
@@ -164,22 +182,31 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
   }
 
   /**
-   * Archives the raw meta-shift HTML reports (gcovr coverage, sentinel mutation testing, gtest
-   * unit test) with the build, so {@link HtmlReportServer} can serve them later. Best-effort:
+   * Archives the raw meta-shift reports (gcovr coverage, sentinel mutation testing, gtest unit
+   * test) with the build, so {@link RawReportArchive} can serve them later. Best-effort:
    * archiving failures never fail the build, matching the source-storage policy of
    * {@code RecipeReportBuilder.addSources}.
+   *
+   * <p>The whole report tree is copied, not just {@code *.html}: the generated pages reference
+   * their own stylesheet and images ({@code gcov.css}, {@code emerald.png}, ...), so an
+   * HTML-only archive renders unstyled with broken images.</p>
    *
    * @param run        the build to archive the reports with
    * @param reportPath the report root directory, possibly on a remote agent
    * @param logger     for logging
    */
-  private void archiveHtmlReports(Run<?, ?> run, FilePath reportPath, PrintStream logger) {
+  private void archiveRawReports(Run<?, ?> run, FilePath reportPath, PrintStream logger) {
+    if (!isArchiveRawReports()) {
+      logger.println("[meta-shift-plugin] Raw report archiving is disabled for this job.");
+      return;
+    }
     try {
-      FilePath target = new FilePath(HtmlReportServer.archiveDir(run.getRootDir()));
-      int count = reportPath.copyRecursiveTo("**/*.html", target);
-      logger.printf("[meta-shift-plugin] Archived %d raw HTML report file(s).%n", count);
+      File target = RawReportArchive.archiveDir(run.getRootDir());
+      int count = reportPath.copyRecursiveTo(new FilePath(target));
+      logger.printf("[meta-shift-plugin] Archived %d raw report file(s), %,d bytes.%n",
+          count, FileUtils.sizeOfDirectory(target));
     } catch (IOException | InterruptedException e) {
-      logger.println("[meta-shift-plugin] WARNING: failed to archive the raw HTML reports; "
+      logger.println("[meta-shift-plugin] WARNING: failed to archive the raw reports; "
           + "the raw report links will be unavailable for this build.");
       e.printStackTrace(logger);
     }
@@ -289,7 +316,7 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
       ExecutorServiceUtils.invoke(
           publishReport(run, listener, configuration, reportPath, recipes));
 
-      archiveHtmlReports(run, reportPath, logger);
+      archiveRawReports(run, reportPath, logger);
 
       Instant finished = Instant.now();
       logger.printf("[meta-shift-plugin] Finished at %s%n", finished.toString());

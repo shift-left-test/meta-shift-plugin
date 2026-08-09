@@ -1,8 +1,15 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <st:documentation>
+    Renders the row of four metric summary cards (value, pass/fail, distribution, threshold).
+
+    <st:attribute name="cards" use="required" type="java.util.List">
+      The list of MetricView cards to render.
+    </st:attribute>
+  </st:documentation>
   <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
   <div class="d-flex flex-wrap gap-3">
-    <j:forEach var="card" items="${it.metricCards}">
+    <j:forEach var="card" items="${cards}">
       <div class="card" style="flex: 1 1 220px; min-width: 220px;">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-1">
