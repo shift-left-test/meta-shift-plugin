@@ -15,7 +15,10 @@ pipeline {
         }
         stage("StaticAnalysis") {
             steps {
-                sh "mvn checkstyle:checkstyle jxr:jxr pmd:pmd pmd:cpd spotbugs:spotbugs"
+                // spotbugs:spotbugs analyses target/classes and does not fork a compile, so
+                // this stage has to compile first: it runs before the Test stage, and cleanWs
+                // wipes the workspace after every build, so nothing is there to analyse yet.
+                sh "mvn compile checkstyle:checkstyle jxr:jxr pmd:pmd pmd:cpd spotbugs:spotbugs"
             }
         }
         stage("Test") {

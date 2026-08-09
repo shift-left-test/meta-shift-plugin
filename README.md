@@ -76,8 +76,9 @@ metrics, charts and tables are unaffected.
 
 ### Requirements
 
-- Maven (3 or above)
-- Java development kit (9 or above)
+- Maven 3.9.6 or above. Older Maven fails with `Unknown packaging: hpi`, because
+  maven-hpi-plugin declares `<prerequisites><maven>3.9.6</maven>`.
+- Java development kit 17 or above (the build targets `maven.compiler.release=17`).
 
 ### How to build the plugin
 
@@ -89,7 +90,11 @@ metrics, charts and tables are unaffected.
 
 ### How to run locally (invokes a local Jenkins instance with the plugin installed)
 
-    $ mvn hpi:run -Dhost=0.0.0.0 -Djetty.port=12345
+    $ mvn hpi:run -Dhost=0.0.0.0
+
+The instance is served at <http://localhost:8080/jenkins/>. `-Dhost=0.0.0.0` is required to reach
+it from outside the machine running it, including from a Windows browser under WSL2, where
+localhost forwarding only relays what is bound to `0.0.0.0`.
 
 ## License
 
