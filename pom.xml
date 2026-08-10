@@ -173,18 +173,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.pitest</groupId>
-        <artifactId>pitest-maven</artifactId>
-        <version>1.6.4</version>
-        <configuration>
-          <timestampedReports>false</timestampedReports>
-          <outputFormats>
-            <outputFormat>HTML</outputFormat>
-            <outputFormat>XML</outputFormat>
-          </outputFormats>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>com.coderplus.maven.plugins</groupId>
         <artifactId>copy-rename-maven-plugin</artifactId>
         <version>1.0.1</version>

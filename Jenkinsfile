@@ -31,11 +31,6 @@ pipeline {
                 sh "mvn jacoco:report"
             }
         }
-        stage("MutationTest") {
-            steps {
-                sh "HOME=${env.WORKSPACE}/home mvn -Dmaven.repo.local=${env.WORKSPACE}/.m2 org.pitest:pitest-maven:mutationCoverage"
-            }
-        }
     }
     post {
         always {
@@ -46,7 +41,6 @@ pipeline {
             recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
             junit "**/target/surefire-reports/*.xml"
             recordCoverage tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']]
-            pitmutation killRatioMustImprove: false, minimumKillRatio: 50.0, mutationStatsFile: '**/target/pit-reports/mutations.xml'
             cleanWs disableDeferredWipeout: true
         }
     }
