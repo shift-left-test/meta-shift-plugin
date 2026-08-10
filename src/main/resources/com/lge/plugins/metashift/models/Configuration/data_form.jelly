@@ -1,7 +1,12 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core"
   xmlns:f="/lib/form">
-  <j:set var="publisher_class" value="com.lge.plugins.metashift.ui.project.MetaShiftPublisher"/>
+  <!--
+    The threshold fields deliberately carry no checkUrl: Jenkins derives it from @field and the
+    matching doCheck<Field> method on the publisher descriptor. Spelling the URL out here instead
+    would leave the field with the legacy form, which hudson-behavior.js has to run through eval,
+    and eval is blocked by the Content-Security-Policy Jenkins serves its pages with.
+  -->
   <style>
     .rate-input {
     width: 80px;
@@ -24,8 +29,16 @@
     width: 190px;
     display: inline-block;
     }
+    /*
+      Keeps the threshold box and the % that follows it on one line. The box is a core
+      .jenkins-input, which is display: block, so laying the cell out as flow content would push
+      the % onto a line of its own; only its width is overridden above. Centring is what pairs
+      the % with the box rather than with the bottom of its 2.375rem minimum height.
+    */
     .input {
-    display: inline;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     }
   </style>
   <f:entry title="Adequacy Criteria" field="configuration">
@@ -53,7 +66,6 @@
       <f:number field="testThreshold"
         value="${it.testThreshold}"
         default="${descriptor.configuration.testThreshold}"
-        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
         clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>
@@ -69,7 +81,6 @@
       <f:number field="statementCoverageThreshold"
         value="${it.statementCoverageThreshold}"
         default="${descriptor.configuration.statementCoverageThreshold}"
-        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
         clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>
@@ -85,7 +96,6 @@
       <f:number field="branchCoverageThreshold"
         value="${it.branchCoverageThreshold}"
         default="${descriptor.configuration.branchCoverageThreshold}"
-        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
         clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>
@@ -101,7 +111,6 @@
       <f:number field="mutationTestThreshold"
         value="${it.mutationTestThreshold}"
         default="${descriptor.configuration.mutationTestThreshold}"
-        checkUrl="'descriptorByName/${publisher_class}/checkPercentThreshold?value='+escape(this.value)"
         clazz="rate-input" min="0" max="100" />%
     </div>
   </f:entry>

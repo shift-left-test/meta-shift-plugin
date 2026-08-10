@@ -145,6 +145,58 @@ public class MetaShiftPublisher extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Form validation for the threshold fields of {@link Configuration}.
+     *
+     * <p>One method per field, all delegating to {@link #doCheckPercentThreshold}, so that
+     * {@code f:number field="..."} finds a {@code doCheck&lt;Field&gt;} method and lets Jenkins
+     * generate the validation URL itself. Wiring a single shared endpoint through an explicit
+     * {@code checkUrl} attribute instead would suppress that generation and leave the field with
+     * the legacy form, where the attribute holds a JavaScript expression that
+     * {@code hudson-behavior.js} evaluates with {@code eval}. Jenkins serves its pages with an
+     * enforcing Content-Security-Policy whose {@code script-src} omits {@code 'unsafe-eval'}, so
+     * that {@code eval} throws and the attribute text is requested as a URL, answering 404.</p>
+     *
+     * @param value the entered threshold
+     * @return the validation result
+     */
+    public FormValidation doCheckTestThreshold(@QueryParameter String value) {
+      return doCheckPercentThreshold(value);
+    }
+
+    /**
+     * Form validation for the statement coverage threshold.
+     *
+     * @param value the entered threshold
+     * @return the validation result
+     * @see #doCheckTestThreshold
+     */
+    public FormValidation doCheckStatementCoverageThreshold(@QueryParameter String value) {
+      return doCheckPercentThreshold(value);
+    }
+
+    /**
+     * Form validation for the branch coverage threshold.
+     *
+     * @param value the entered threshold
+     * @return the validation result
+     * @see #doCheckTestThreshold
+     */
+    public FormValidation doCheckBranchCoverageThreshold(@QueryParameter String value) {
+      return doCheckPercentThreshold(value);
+    }
+
+    /**
+     * Form validation for the mutation test threshold.
+     *
+     * @param value the entered threshold
+     * @return the validation result
+     * @see #doCheckTestThreshold
+     */
+    public FormValidation doCheckMutationTestThreshold(@QueryParameter String value) {
+      return doCheckPercentThreshold(value);
+    }
+
+    /**
      * check percent type threshold value validation.
      */
     public FormValidation doCheckPercentThreshold(@QueryParameter String value) {

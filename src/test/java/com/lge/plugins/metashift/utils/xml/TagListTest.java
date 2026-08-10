@@ -5,7 +5,7 @@
 
 package com.lge.plugins.metashift.utils.xml;
 
-import static net.sf.ezmorph.test.ArrayAssertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 

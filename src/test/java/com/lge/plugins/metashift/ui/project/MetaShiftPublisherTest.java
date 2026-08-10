@@ -22,9 +22,12 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.util.FormValidation;
 import java.io.File;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
@@ -326,4 +329,58 @@ public class MetaShiftPublisherTest {
     assertNotEquals(FormValidation.ok(), impl.doCheckPercentThreshold("test"));
   }
 
+  /**
+   * The threshold fields are rendered on both the job and the global configuration page, so both
+   * are checked.
+   *
+   * @see #assertPlainCheckUrls
+   */
+  @Test
+  public void testThresholdFieldsUsePlainCheckUrls() throws Exception {
+    FreeStyleProject project = jenkins.createFreeStyleProject();
+    MetaShiftPublisher publisher = new MetaShiftPublisher(report.getAbsolutePath());
+    publisher.setCustomConfiguration(new Configuration());
+    project.getPublishersList().add(publisher);
+
+    assertPlainCheckUrls(client.getPage(project, "configure"));
+    assertPlainCheckUrls(client.goTo("manage/configure"));
+  }
+
+  /**
+   * Asserts that the form validation URLs of the threshold fields are plain URLs paired with a
+   * checkDependsOn attribute, rather than the legacy form where the attribute holds a JavaScript
+   * expression.
+   *
+   * <p>Jenkins serves its pages with an enforcing Content-Security-Policy whose script-src omits
+   * 'unsafe-eval' (2.5xx and later), which makes the {@code eval(url)} that hudson-behavior.js
+   * uses for the legacy form throw. Its catch block then requests the attribute text itself as a
+   * URL, which resolves to nothing and answers 404 with the Jenkins error page. The modern form
+   * is recognised by the presence of checkDependsOn, and never reaches eval.</p>
+   *
+   * @param page a configuration page rendering the threshold fields
+   */
+  private void assertPlainCheckUrls(HtmlPage page) throws Exception {
+    Matcher matcher = Pattern.compile("<input[^>]*>").matcher(
+        page.getWebResponse().getContentAsString());
+    int checked = 0;
+    while (matcher.find()) {
+      String tag = matcher.group();
+      Matcher attribute = Pattern.compile("checkUrl=\"([^\"]*)\"").matcher(tag);
+      if (!attribute.find() || !attribute.group(1).contains(MetaShiftPublisher.class.getName())) {
+        continue;
+      }
+      checked++;
+      String checkUrl = attribute.group(1);
+      assertTrue(page.getUrl() + " renders a checkUrl that has to be evaluated as JavaScript, "
+          + "which a Content-Security-Policy without 'unsafe-eval' blocks: " + checkUrl,
+          checkUrl.startsWith("/"));
+      assertTrue(page.getUrl() + " renders a checkUrl without checkDependsOn, which makes "
+          + "hudson-behavior.js take the legacy eval path: " + tag,
+          tag.contains("checkDependsOn="));
+      // The URL has to answer, not just look right.
+      assertEquals(200, client.getPage(new URL(page.getUrl(), checkUrl + "?value=50"))
+          .getWebResponse().getStatusCode());
+    }
+    assertEquals("expected the four threshold fields on " + page.getUrl(), 4, checked);
+  }
 }
